@@ -2,10 +2,6 @@ __author__ = 'Vale Tolpegin'
 
 class image_parser:
     #image that needs to be parsed variable
-    
-    #shape #1
-    #shape #2
-    #shape #3
 
     def __init__( self, *args, **kwargs ):
         pass
