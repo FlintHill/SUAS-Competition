@@ -17,8 +17,9 @@ class shoot_image:
         stdout, stderr = running.communicate()
 
         #if shot was successfully taken:
+        if not stderr:
             #download image
 
-            #return true
-        #else
-            #return false
+            return True
+        else
+            return False

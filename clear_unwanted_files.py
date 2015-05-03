@@ -11,5 +11,9 @@ class clear_directory:
         #set output from os.walk function to appropriate variables
 
         #for filename in filenames found in directory walked:
-            #if filename contains file_name:
-                #delete filename
+        for root, dirs, files in os.walk( directory_name ):
+            for filename in files:
+                #if filename contains file_name:
+                if file_name in filename:
+                    #delete filename
+                    dirs.remove( file_name )
