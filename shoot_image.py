@@ -19,6 +19,8 @@ class shoot_image:
         #if shot was successfully taken:
         if not stderr:
             #download image
+            download = download_image()
+            download.download_most_recent_image()
 
             return True
         else
