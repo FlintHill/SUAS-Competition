@@ -1,17 +1,29 @@
 __author__ = 'Vale Tolpegin'
 
+import RPi.GPIO as GPIO
+
+#setting default GPIO board settings
+GPIO.setmode( GPIO.BOARD )
+
 class gpio_shooting:
-    #gpio connection variable
-    #Tx pin
     #Rx pin
+    inPin = 0
 
     def __init__( self, *args, **kwargs ):
-        #start a gpio connection with Tx & Rx pins
+        pass
+    
+    def setup_gpio_pin( rx ):
+        global inPin
+        
+        #start a gpio connection with Rx pin
+        GPIO.setup( rx, GPIO.IN )
+        
+        inPin = rx
 
     def get_shot_truefalse():
-        #get input from that gpio connection
-
-        #if input:
-            #return true
-        #else
-            #return false
+        global inPin
+        
+        if GPIO.input( inPin ):
+            return true
+        else:
+            return false
