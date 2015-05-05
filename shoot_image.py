@@ -1,7 +1,7 @@
 __author__ = 'Vale Tolpegin'
 
 import os
-import download_image from download_image
+import download_image
 import subprocess
 
 class shoot_image:
@@ -23,5 +23,8 @@ class shoot_image:
             download.download_most_recent_image()
 
             return True
-        else
+        else:
             return False
+
+if __name__ == '__main__':
+    pass

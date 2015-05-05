@@ -27,3 +27,6 @@ class gpio_shooting:
             return true
         else:
             return false
+
+if __name__ == '__main__':
+    pass

@@ -1,20 +1,25 @@
 __author__ = 'Vale Tolpegin'
 
-class image_parser:
-    #image that needs to be parsed variable
+import numpy as np
+import cv2
 
+class image_parser:
     def __init__( self, *args, **kwargs ):
         pass
 
-    def parse( picture_file ):
+    def parse( picture_file_name ):
         #set image variable here with the image file picture_file
 
         #find shapes in image ( basic geometric shapes such as circles, squares, triangles, etc )
 
         #inside of those geometric shapes, find the number of different colors
-        #if there are 2 colors ( no more and no less )
-            #compare the ratio of those 2 colors
-            #if that ratio is close to 2:1 ( shape:letter )
-                #return true
+        #if there are 2 colors ( other than black, no more and no less )
+            #if there are 2 distinct seperate colors ( other than black ) within a couple of pixels of each other
+                #compare the ratio of those 2 colors ( non black )
+                #if that ratio is close to 2:1 ( shape:letter )
+                    #return True
 
-        #return false
+        return false
+
+if __name__ == '__main__':
+    pass

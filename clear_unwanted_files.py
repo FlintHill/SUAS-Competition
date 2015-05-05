@@ -17,3 +17,6 @@ class clear_directory:
                 if file_name in filename:
                     #delete filename
                     dirs.remove( file_name )
+
+if __name__ == '__main__':
+    pass

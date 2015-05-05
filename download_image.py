@@ -19,3 +19,6 @@ class download_image:
             return true
         else:
             return false
+
+if __name__ == '__main__':
+    pass
