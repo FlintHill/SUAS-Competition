@@ -8,15 +8,40 @@ contours,h = cv2.findContours(thresh,1,2)
 
 PIXEL_COLOR_THRESHOLD = 35
 
-def img_copy( cnt ):
-    mask_img = np.zeros( img.shape, dtype=np.uint8 )
+def cropped_img_finding( cnt ):
+    x,y,w,h = cv2.boundingRect(cnt)
+    cropped_img = img[ (y - 50 ):(y+h+50), (x):(x+w+50) ]
+
+    largest = cnt
+    for index in range( 0, len( cnt ) ):
+        largest[index] = largest[index] - x #( x - 50 )
+
+    img_copy( cropped_img, largest )
+
+def img_copy( cropped_img, cnt ):
+    mask_img = np.zeros( cropped_img.shape, dtype=np.uint8 )
     roi_corners = np.array( cnt, dtype=np.int32 )
     black = (255, 255, 255)
     cv2.drawContours( mask_img, [cnt], 0, black, -1 )
     
-    masked_img = cv2.bitwise_and( img, mask_img )
+    masked_img = cv2.bitwise_and( cropped_img, mask_img )
     
-    if test_image( masked_img ):
+    Z = masked_img.reshape((-1,3))
+
+    # convert to np.float32
+    Z = np.float32(Z)
+
+    # define criteria, number of clusters(K) and apply kmeans()
+    criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 10, 1.0)
+    K = 3
+    ret,label,center=cv2.kmeans(Z,K,criteria,10,cv2.KMEANS_RANDOM_CENTERS)
+
+    # Now convert back into uint8, and make original image
+    center = np.uint8(center)
+    res = center[label.flatten()]
+    res2 = res.reshape((masked_img.shape))
+    
+    if test_image( res2 ):
         cv2.imshow( "Image", masked_img )
         cv2.waitKey(0)
         cv2.destroyAllWindows()
@@ -30,25 +55,22 @@ def test_image( masked_img ):
         for x in xrange( 0, masked_img.shape[0], 4 ):
             pixel_data = masked_img[ x, y ]
 
-            if int(pixel_data[0]) > 15 and int(pixel_data[1]) > 15 and int(pixel_data[2]) > 15 and int(pixel_data[0]) > 15 and int(pixel_data[1]) > 15 and int(pixel_data[2]) > 15:
+            if int(pixel_data[0]) > 15 and int(pixel_data[1]) > 15 and int(pixel_data[2]) > 15:
                 color_truth = True
             
                 for color in colors:
-                    if ( int(pixel_data[0]) - color[0] < 15 or int(pixel_data[0]) - color[0] > -15 ) and ( int(pixel_data[1]) - color[1] < 15 or int(pixel_data[1]) - color[1] > -15 ) and ( int(pixel_data[2]) - color[2] < 15 or int(pixel_data[2]) - color[2] > -15 ):
+                    if ( int(pixel_data[0]) - color[0] < 15 and int(pixel_data[0]) - color[0] > -15 ) and ( int(pixel_data[1]) - color[1] < 15 and int(pixel_data[1]) - color[1] > -15 ) and ( int(pixel_data[2]) - color[2] < 15 and int(pixel_data[2]) - color[2] > -15 ):
                         color_truth = False
         
                 if color_truth:
                     colors.append( [ int(pixel_data[0]), int(pixel_data[1]), int(pixel_data[2]) ] )
 
-            print str( ( ( ( y + 0.0 ) * img.shape[0] ) + x ) * 100 / size ) + "% of Color Test"
+            print str( ( ( ( y + 0.0 ) * masked_img.shape[0] ) + x ) * 100 / size ) + "% of Color Test"
 
-            if len(colors) > 4:
+            if len(colors) > 3:
                 return False
 
-    print colors
-    cv2.waitKey(0)
-
-    for y in xrange( 0, masked_img.shape[1], 3 ):
+    for y in xrange( 0, masked_img.shape[1], 1 ):
         for x in xrange( 0, masked_img.shape[0], 3 ):
             try:
                 pixel_value_left = masked_img[x - 5, y ]
@@ -62,12 +84,12 @@ def test_image( masked_img ):
             except:
                 pass
 
-            print str( ( ( ( y + 0.0 ) * img.shape[0] ) + x ) * 100 / size ) + "% of Adjacent Object Test"
-    
-    if index > 500:
-        return True
+            print str( ( ( ( y + 0.0 ) * masked_img.shape[0] ) + x ) * 100 / size ) + "% of Adjacent Object Test"
 
-    return False
+    if index < 500:
+        return False
+
+    return True
 
 for cnt in contours:
     approx = cv2.approxPolyDP(cnt,0.007*cv2.arcLength(cnt,True),True)
@@ -80,31 +102,25 @@ for cnt in contours:
         if len(approx)==5:
             print "pentagon"
             
-            img_copy( cnt )
+            cropped_img_finding( cnt )
             
             cv2.drawContours(img,[cnt],0,255,-1)
         elif len(approx)==3:
             print "triangle"
             
-            img_copy( cnt )
+            cropped_img_finding( cnt )
             
             cv2.drawContours(img,[cnt],0,(0,255,0),-1)
         elif len(approx)==4:
             print "square"
             
-            img_copy( cnt )
+            cropped_img_finding( cnt )
             
             cv2.drawContours(img,[cnt],0,(0,0,255),-1)
-        elif len(approx)==5:
-            print "pentagon"
-            
-            img_copy( cnt )
-            
-            cv2.drawContours(img,[cnt],0,(0,0,127),-1)
         elif len(approx) == 9:
             print "complex"
             
-            img_copy( cnt )
+            cropped_img_finding( cnt )
             
             cv2.drawContours(img,[cnt],0,(255,255,0),-1)
 
