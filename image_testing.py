@@ -74,7 +74,7 @@ class Image_Parser:
     # 1: I get the global setting values. These are threshold values applied when comparing different aspects of the pixels
     # 2: Color test. If the ratios of the colors are not the following, then return the image as a false positive ( TO DO )
     #   a: Ratio of Black:Non-Black is less than 1:1 ( eg, 2:1 )
-    #   b: Ratio of Color_1:Color_2 ( non black color comparison ) is somewhere from X:Y to A:B ( TO DO )
+    #   b: Ratio of Color_1:Color_2 ( non black color comparison ) is less than 1:10, return False. This means that there is too much or too little area covered by the letter on top of the shape
     # 3: Adjacent object test. If there are not 2 non-black colors within a couple of pixels of eachother, return False as the object is a false positive ( for more in depth info, see the comments on the actual process below )
     # 4: Since all of the tests have passed ( if they hadn't they would have stopped executing and returned false ), the method now returns True. This is the end of the image processing for this particular object.
     def image_tests( self, masked_img ):
@@ -85,30 +85,76 @@ class Image_Parser:
         colors = [ [ 0, 0, 0 ] ]
         size = int(masked_img.shape[0]) * int(masked_img.shape[1])
         index = 0
-    
-        #Color test -> Ratio test ( TO DO )
+        
+        #Finding the colors in the image. This will allow the ratio test to be completed
         for y in xrange( 0, masked_img.shape[1], 4 ):
             for x in xrange( 0, masked_img.shape[0], 4 ):
+                #Getting the current pixel's data
                 pixel_data = masked_img[ x, y ]
-            
+                
+                #if the pixel data is not black
                 if int(pixel_data[0]) > 15 and int(pixel_data[1]) > 15 and int(pixel_data[2]) > 15:
+                    #assume the pixel is a new color
                     color_truth = True
-            
+                    
+                    #if the color is not actually currently in the array, set color_truth to false
                     for color in colors:
                         if ( int(pixel_data[0]) - color[0] < 15 and int(pixel_data[0]) - color[0] > -15 ) and ( int(pixel_data[1]) - color[1] < 15 and int(pixel_data[1]) - color[1] > -15 ) and ( int(pixel_data[2]) - color[2] < 15 and int(pixel_data[2]) - color[2] > -15 ):
                             color_truth = False
-        
+                
+                    #if there color is not in the array, add it
                     if color_truth:
                         colors.append( [ int(pixel_data[0]), int(pixel_data[1]), int(pixel_data[2]) ] )
-
-                print str( ( ( ( y + 0.0 ) * masked_img.shape[0] ) + x ) * 100 / size ) + "% of Color Test"
-
-                if len(colors) > 3:
-                    return False
-
-        #Adjacent object test
         
-        #Check every other row, and every third pixel. Ever box, which represents a pixel, that has an X in it is checked by the program
+                #print the current status
+                print str( ( ( ( y + 0.0 ) * masked_img.shape[0] ) + x ) * 100 / size ) + "% of Color Test"
+            
+            #Since there can not be more than 3 colors ( since K-Means clustering has been applied ), if there are 3, all colors have been found
+            if len(colors) == 3:
+                break
+                   
+        #Ratio test
+        ratio_index = []
+        ratio_index.append( 0 )
+        ratio_index.append( 0 )
+        ratio_index.append( 0 )
+    
+        for y in range( 0, masked_img.shape[1] ):
+            for x in range( 0, masked_img.shape[0] ):
+                #get pixel data
+                pixel_data = masked_img[ x, y ]
+                
+                #reseting color index & iterating through the colors array
+                color_index = 0
+                for color in colors:
+                    #if the pixel data equals the color value, add one to that pixel count
+                    if int( pixel_data[0] ) == color[0] and int( pixel_data[1] ) == color[1] and int( pixel_data[2] ) == color[2]:
+                        ratio_index[ color_index ] += 1
+            
+                    #move on to the next color
+                    color_index += 1
+
+                #print out the current progress
+                print str( ( ( ( y + 0.0 ) * masked_img.shape[0] ) + x ) * 100 / size ) + "% Completed in determining Ratios"
+
+        #Complete ratio tests
+        #If black is greater than the other two colors ( signifying a runway ), return false
+        if ratio_index[0] >  ratio_index[1] + ratio_index[2]:
+            return False
+
+        #If the ratio of non-black 1 to non-black 2 colors is < 0.1 ( signifying the area covered is too little or too large )
+        if ratio_index[1] > ratio_index[2]:
+            ratio_value = ratio_index[2] * 1.0 / ratio_index[1] * 1.0
+            if ratio_value < 0.1:
+                return False
+        else:
+            ratio_value = ratio_index[1] * 1.0 / ratio_index[2] * 1.0
+            if ratio_value < 0.1:
+                return False
+
+        # Adjacent object test
+        
+        # Check every other row, and every third pixel. Ever box, which represents a pixel, that has an X in it is checked by the program
         #  --- --- --- --- --- --- ---
         # | X |   |   | X |   |   | X |
         # |---|---|---|---|---|---|---|
