@@ -119,6 +119,7 @@ class Image_Parser:
         ratio_index.append( 0 )
         ratio_index.append( 0 )
     
+        #Get pixel data
         for y in range( 0, masked_img.shape[1] ):
             for x in range( 0, masked_img.shape[0] ):
                 #get pixel data
