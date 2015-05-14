@@ -1,6 +1,7 @@
 __author__ = 'Vale'
 
 import numpy as np
+import datetime
 import cv2
 
 class Image_Parser:
@@ -65,9 +66,10 @@ class Image_Parser:
         #Sending the final image off to be tested to see if it is true or false
         if self.image_tests( res2 ):
             #Currently, the image is just being shown if it passes all of the test. In the future, other processes will applied & different actions taken ( TO DO )
-            cv2.imshow( "Image", res2 )
-            cv2.waitKey(0)
-            cv2.destroyAllWindows()
+            #cv2.imshow( "Image", res2 )
+            #cv2.waitKey(0)
+            #cv2.destroyAllWindows()
+            pass
 
     # Testing the image ( final part of the image processing process )
     # During this function, the following is completed:
@@ -204,6 +206,9 @@ class Image_Parser:
 
 
 # This is a temporary test. In the final version, this will be eliminated.
+
+start_time = datetime.datetime.now()
+
 img = cv2.imread( 'images/IMG_0117.jpg' )
 img2 = cv2.imread( 'images/IMG_0117.jpg', 0 )
 ret,thresh = cv2.threshold(img2,127,255,0)
@@ -244,6 +249,8 @@ for cnt in contours:
             
             cv2.drawContours(img,[cnt],0,(255,255,0),-1)
 
-cv2.imshow( "Image", img )
-cv2.waitKey(0)
-cv2.destroyAllWindows()
+#cv2.imshow( "Image", img )
+#cv2.waitKey(0)
+#cv2.destroyAllWindows()
+
+print datetime.datetime.now() - start_time
