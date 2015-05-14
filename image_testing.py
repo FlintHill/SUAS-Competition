@@ -5,14 +5,23 @@ import datetime
 import cv2
 
 class Image_Parser:
-    # These are the global image settings. These are set by specifically referencing them through the parser's properties
+    # These are1 the global image settings. These are set by specifically referencing them through the parser's properties
     global PIXEL_COLOR_THRESHOLD
+    global LOWER_CONTOUR_AREA
+    global HIGHER_CONTOUR_AREA
+    global BLACK_COLOR_THRESHOLD
 
     # This method is the initialization method and sets all of the picture settings to default
     def __init__( self, *args, **kwargs ):
         global PIXEL_COLOR_THRESHOLD
+        global LOWER_CONTOUR_AREA
+        global HIGHER_CONTOUR_AREA
+        global BLACK_COLOR_THRESHOLD
         
         PIXEL_COLOR_THRESHOLD = 35
+        BLACK_COLOR_THRESHOLD = 15
+        LOWER_CONTOUR_AREA = 20000
+        HIGHER_CONTOUR_AREA = 50000000
 
     # Main image processing method. This method will do the following things:
     # 1: Crop the image. This will create the smallest ( almost, with some border ) bounding rectangle around the object in question
@@ -82,6 +91,7 @@ class Image_Parser:
     def image_tests( self, masked_img ):
         #Get global variable settings
         global PIXEL_COLOR_THRESHOLD
+        global BLACK_COLOR_THRESHOLD
         
         #Set arrays and other associated required values
         colors = [ [ 0, 0, 0 ] ]
@@ -101,7 +111,7 @@ class Image_Parser:
                     
                     #if the color is not actually currently in the array, set color_truth to false
                     for color in colors:
-                        if ( int(pixel_data[0]) - color[0] < 15 and int(pixel_data[0]) - color[0] > -15 ) and ( int(pixel_data[1]) - color[1] < 15 and int(pixel_data[1]) - color[1] > -15 ) and ( int(pixel_data[2]) - color[2] < 15 and int(pixel_data[2]) - color[2] > -15 ):
+                        if ( int(pixel_data[0]) - color[0] < BLACK_COLOR_THRESHOLD and int(pixel_data[0]) - color[0] > -BLACK_COLOR_THRESHOLD ) and ( int(pixel_data[1]) - color[1] < BLACK_COLOR_THRESHOLD and int(pixel_data[1]) - color[1] > -BLACK_COLOR_THRESHOLD ) and ( int(pixel_data[2]) - color[2] < BLACK_COLOR_THRESHOLD and int(pixel_data[2]) - color[2] > -BLACK_COLOR_THRESHOLD ):
                             color_truth = False
                 
                     #if there color is not in the array, add it
@@ -184,13 +194,12 @@ class Image_Parser:
                     pixel_value_right = masked_img[ x + 5, y ]
                 
                     #The first if statement tests whether both of the pixels are non-black. This must be true because the background of the picture is black, so it would not work if that black was included in the comparison
-                    if int(pixel_value_left[0]) > 15 and int(pixel_value_left[1]) > 15 and int(pixel_value_left[2]) > 15 and int(pixel_value_right[0]) > 15 and int(pixel_value_right[1]) > 15 and int(pixel_value_right[2]) > 15:
+                    if int(pixel_value_left[0]) > BLACK_COLOR_THRESHOLD and int(pixel_value_left[1]) > BLACK_COLOR_THRESHOLD and int(pixel_value_left[2]) > BLACK_COLOR_THRESHOLD and int(pixel_value_right[0]) > BLACK_COLOR_THRESHOLD and int(pixel_value_right[1]) > BLACK_COLOR_THRESHOLD and int(pixel_value_right[2]) > BLACK_COLOR_THRESHOLD:
                         #These next 3 if statements determine whether the pixels are the same color. If not, the index value ( instances where there appears to be contrasting colors ) is increased by 1
                         if int(masked_img[ x + 5, y ][0]) - int(masked_img[ x - 5, y ][0]) > PIXEL_COLOR_THRESHOLD or int(masked_img[ x + 5, y ][0]) - int(masked_img[ x - 5, y ][0]) < -PIXEL_COLOR_THRESHOLD:
                             if int(masked_img[ x + 5, y ][1]) - int(masked_img[ x - 5, y ][1]) > PIXEL_COLOR_THRESHOLD or int(masked_img[ x + 5, y ][1]) - int(masked_img[ x - 5, y ][1]) < -PIXEL_COLOR_THRESHOLD:
                                 if int(masked_img[ x + 5, y ][2]) - int(masked_img[ x - 5, y ][2]) > PIXEL_COLOR_THRESHOLD or int(masked_img[ x + 5, y ][2]) - int(masked_img[ x - 5, y ][2]) < -PIXEL_COLOR_THRESHOLD:
                                     index += 1
-                                    print "INCREASED INDEX BY +1"
                 except:
                     pass
         
