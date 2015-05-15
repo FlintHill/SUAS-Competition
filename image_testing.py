@@ -19,7 +19,7 @@ class Image_Parser:
         global BLACK_COLOR_THRESHOLD
         
         PIXEL_COLOR_THRESHOLD = 35
-        BLACK_COLOR_THRESHOLD = 15
+        BLACK_COLOR_THRESHOLD = 5
         LOWER_CONTOUR_AREA = 20000
         HIGHER_CONTOUR_AREA = 50000000
 
