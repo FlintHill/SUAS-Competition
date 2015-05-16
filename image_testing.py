@@ -13,32 +13,98 @@ class Image_Parser:
 
     # This method is the initialization method and sets all of the picture settings to default
     def __init__( self, *args, **kwargs ):
+        #getting global variables
         global PIXEL_COLOR_THRESHOLD
         global LOWER_CONTOUR_AREA
         global HIGHER_CONTOUR_AREA
         global BLACK_COLOR_THRESHOLD
         
+        #setting global variables' values
         PIXEL_COLOR_THRESHOLD = 35
         BLACK_COLOR_THRESHOLD = 5
         LOWER_CONTOUR_AREA = 20000
         HIGHER_CONTOUR_AREA = 50000000
+    
+    # This method is called when the user would like to process any given image. This method completes the following in the image processing process:
+    # 1: TODO
+    def process_img( self, img_name ):
+        #get global variables
+        global LOWER_CONTOUR_AREA
+        global HIGHER_CONTOUR_AREA
+        
+        start_time = datetime.datetime.now()
+
+        img = cv2.imread( img_name )
+        img2 = cv2.imread( img_name, 0 )
+
+        ret,thresh = cv2.threshold(img2,127,255,0)
+        contours,h = cv2.findContours(thresh,1,2)
+
+        for cnt in contours:
+            approx = cv2.approxPolyDP(cnt,0.007*cv2.arcLength(cnt,True),True)
+    
+            if cv2.contourArea(cnt) < LOWER_CONTOUR_AREA or cv2.contourArea( cnt ) > HIGHER_CONTOUR_AREA:
+                pass
+            else:
+                print len(approx)
+        
+                if len(approx)==5:
+                    print "pentagon"
+            
+                    self.crop_img( cnt, img )
+                
+                    cv2.drawContours(img,[cnt],0,255,-1)
+                elif len(approx)==3:
+                    print "triangle"
+        
+                    self.crop_img( cnt, img )
+   
+                    cv2.drawContours(img,[cnt],0,(0,255,0),-1)
+                elif len(approx)==4:
+                    print "square"
+            
+                    self.crop_img( cnt, img )
+                
+                    cv2.drawContours(img,[cnt],0,(0,0,255),-1)
+                elif len(approx) == 9:
+                    print "complex"
+            
+                    self.crop_img( cnt, img )
+                        
+                    cv2.drawContours(img,[cnt],0,(255,255,0),-1)
+
+        print datetime.datetime.now() - start_time
+                    
+                    
+        cv2.imshow( "img", img )
+        cv2.waitKey( 0 )
+        cv2.destroyAllWindows()
 
     # Main image processing method. This method will do the following things:
     # 1: Crop the image. This will create the smallest ( almost, with some border ) bounding rectangle around the object in question
     # 2: Find the largest object in the cropped image. Since the cropped image is the bounding rect of the object in question, that object will be the largest object in the image using the contours in the main image read, just moved to the corresponding coordinates in this image
     # 3: Calls the img_copy method, passing along the cropped image and the contours of the largest object
-    def process_and_crop_img( self, cnt, img ):
+    def crop_img( self, cnt, img ):
         #Creating bounding rect & grabbing corresponding part of image
         x,y,w,h = cv2.boundingRect(cnt)
-        cropped_img = img[ (y - 50 ):(y+h+50), (x):(x+w+50) ]
+        #cropped_img = img[ (y - 50 ):(y+h+50), (x):(x+w+50) ]
+        cropped_img = img[ y:y+h, x:x+w ]
+        
+        cv2.imshow( "cropped_img", cropped_img )
+        cv2.waitKey( 0 )
+        cv2.destroyAllWindows()
 
         #Moving the contours from the main image to this image ( editing coordinates to fit the smaller image )
+        contour_change = x
+        if x > y:
+            contour_change = y
+        
         largest = cnt
         for index in range( 0, len( cnt ) ):
-            largest[index] = largest[index] - x
+            largest[index] = largest[index] - contour_change
 
         #Sending cropped image to the img_copy method where the remainder of the processing will occur
-        self.img_copy( cropped_img, largest )
+        return self.img_copy( cropped_img, largest )
 
     # Part 2 of the image processing ( part 1 is above )
     # This method accomplishes the following aspects of the image processing:
@@ -50,8 +116,12 @@ class Image_Parser:
         #Creating a mask & drawing the passed contours onto that mask
         mask_img = np.zeros( cropped_img.shape, dtype=np.uint8 )
         roi_corners = np.array( cnt, dtype=np.int32 )
-        black = (255, 255, 255)
-        cv2.drawContours( mask_img, [cnt], 0, black, -1 )
+        white = (255, 255, 255)
+        cv2.drawContours( mask_img, [cnt], 0, white, -1 )
+        
+        cv2.imshow( "mask_img", mask_img )
+        cv2.waitKey( 0 )
+        cv2.destroyAllWindows()
     
         #Copying over the image inside of the contours
         masked_img = cv2.bitwise_and( cropped_img, mask_img )
@@ -71,20 +141,20 @@ class Image_Parser:
         center = np.uint8(center)
         res = center[label.flatten()]
         res2 = res.reshape((masked_img.shape))
+        
+        cv2.imshow( "res2", res2 )
+        cv2.waitKey( 0 )
+        cv2.destroyAllWindows()
     
         #Sending the final image off to be tested to see if it is true or false
         if self.image_tests( res2 ):
-            #Currently, the image is just being shown if it passes all of the test. In the future, other processes will applied & different actions taken ( TO DO )
-            #cv2.imshow( "Image", res2 )
-            #cv2.waitKey(0)
-            #cv2.destroyAllWindows()
-            pass
+            return True, cropped_img
 
     # Testing the image ( final part of the image processing process )
     # During this function, the following is completed:
     # 1: I get the global setting values. These are threshold values applied when comparing different aspects of the pixels
-    # 2: Color test. If the ratios of the colors are not the following, then return the image as a false positive ( TO DO )
-    #   a: Ratio of Black:Non-Black is less than 1:1 ( eg, 2:1 )
+    # 2: Color test. If the ratios of the colors are not the following, then return the image as a false positive
+    #   a: Ratio of Black:Non-Black is greater than 1:1 ( eg, 2:1 )
     #   b: Ratio of Color_1:Color_2 ( non black color comparison ) is less than 1:10, return False. This means that there is too much or too little area covered by the letter on top of the shape
     # 3: Adjacent object test. If there are not 2 non-black colors within a couple of pixels of eachother, return False as the object is a false positive ( for more in depth info, see the comments on the actual process below )
     # 4: Since all of the tests have passed ( if they hadn't they would have stopped executing and returned false ), the method now returns True. This is the end of the image processing for this particular object.
@@ -213,53 +283,8 @@ class Image_Parser:
         #Since all of the tests have passed, return True
         return True
 
+# If this program is specifically called from the command line, execute the following
+if __name__ == '__main__':
+    parser = Image_Parser()
 
-# This is a temporary test. In the final version, this will be eliminated.
-
-start_time = datetime.datetime.now()
-
-img = cv2.imread( 'images/IMG_0117.jpg' )
-img2 = cv2.imread( 'images/IMG_0117.jpg', 0 )
-ret,thresh = cv2.threshold(img2,127,255,0)
-contours,h = cv2.findContours(thresh,1,2)
-
-my_parser = Image_Parser()
-
-for cnt in contours:
-    approx = cv2.approxPolyDP(cnt,0.007*cv2.arcLength(cnt,True),True)
-
-    if cv2.contourArea(cnt) < 20000 or cv2.contourArea( cnt ) > 50000000:
-        pass
-    else:
-        print len(approx)
-
-        if len(approx)==5:
-            print "pentagon"
-            
-            my_parser.process_and_crop_img( cnt, img )
-            
-            cv2.drawContours(img,[cnt],0,255,-1)
-        elif len(approx)==3:
-            print "triangle"
-            
-            my_parser.process_and_crop_img( cnt, img )
-            
-            cv2.drawContours(img,[cnt],0,(0,255,0),-1)
-        elif len(approx)==4:
-            print "square"
-            
-            my_parser.process_and_crop_img( cnt, img )
-            
-            cv2.drawContours(img,[cnt],0,(0,0,255),-1)
-        elif len(approx) == 9:
-            print "complex"
-            
-            my_parser.process_and_crop_img( cnt, img )
-            
-            cv2.drawContours(img,[cnt],0,(255,255,0),-1)
-
-#cv2.imshow( "Image", img )
-#cv2.waitKey(0)
-#cv2.destroyAllWindows()
-
-print datetime.datetime.now() - start_time
+    parser.process_img( 'images/IMG_0128.JPG' )
