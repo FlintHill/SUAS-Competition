@@ -95,13 +95,10 @@ class Image_Parser:
         cv2.destroyAllWindows()
 
         #Moving the contours from the main image to this image ( editing coordinates to fit the smaller image )
-        contour_change = x
-        if x > y:
-            contour_change = y
-        
         largest = cnt
         for index in range( 0, len( cnt ) ):
-            largest[index] = largest[index] - contour_change
+            largest[index][0][0] = largest[index][0][0] - x
+            largest[index][0][1] = largest[index][0][1] - y
 
         #Sending cropped image to the img_copy method where the remainder of the processing will occur
         return self.img_copy( cropped_img, largest )
