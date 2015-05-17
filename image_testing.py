@@ -10,6 +10,7 @@ class Image_Parser:
     global LOWER_CONTOUR_AREA
     global HIGHER_CONTOUR_AREA
     global BLACK_COLOR_THRESHOLD
+    global ADJACENT_OBJECT_INDEX
 
     # This method is the initialization method and sets all of the picture settings to default
     def __init__( self, *args, **kwargs ):
@@ -18,67 +19,49 @@ class Image_Parser:
         global LOWER_CONTOUR_AREA
         global HIGHER_CONTOUR_AREA
         global BLACK_COLOR_THRESHOLD
+        global ADJACENT_OBJECT_INDEX
         
         #setting global variables' values
         PIXEL_COLOR_THRESHOLD = 35
         BLACK_COLOR_THRESHOLD = 5
         LOWER_CONTOUR_AREA = 20000
-        HIGHER_CONTOUR_AREA = 50000000
+        HIGHER_CONTOUR_AREA = 5000000
+        ADJACENT_OBJECT_INDEX = 500
     
     # This method is called when the user would like to process any given image. This method completes the following in the image processing process:
-    # 1: TODO
+    # 1: Find objects in the passed image
+    # 2: For each object, as long as they fit a size parameter, parse/process that object to see if it fits a target's characteristics
+    # 3: If the object fits a target's characteristics, save that image to a particular directory
     def process_img( self, img_name ):
         #get global variables
         global LOWER_CONTOUR_AREA
         global HIGHER_CONTOUR_AREA
         
+        #get current time; this allows me to time the total length of the processing
         start_time = datetime.datetime.now()
 
+        #reading in image
         img = cv2.imread( img_name )
         img2 = cv2.imread( img_name, 0 )
 
+        #finding the objects in the image
         ret,thresh = cv2.threshold(img2,127,255,0)
         contours,h = cv2.findContours(thresh,1,2)
 
+        #for each contour
         for cnt in contours:
-            approx = cv2.approxPolyDP(cnt,0.007*cv2.arcLength(cnt,True),True)
-    
+            #if the object is either too small or too large, skip parsing
             if cv2.contourArea(cnt) < LOWER_CONTOUR_AREA or cv2.contourArea( cnt ) > HIGHER_CONTOUR_AREA:
                 pass
+            #otherwise, parse object
             else:
-                print len(approx)
-        
-                if len(approx)==5:
-                    print "pentagon"
-            
-                    self.crop_img( cnt, img )
-                
-                    cv2.drawContours(img,[cnt],0,255,-1)
-                elif len(approx)==3:
-                    print "triangle"
-        
-                    self.crop_img( cnt, img )
-   
-                    cv2.drawContours(img,[cnt],0,(0,255,0),-1)
-                elif len(approx)==4:
-                    print "square"
-            
-                    self.crop_img( cnt, img )
-                
-                    cv2.drawContours(img,[cnt],0,(0,0,255),-1)
-                elif len(approx) == 9:
-                    print "complex"
-            
-                    self.crop_img( cnt, img )
-                        
+                object_bool = self.crop_img( cnt, img )
+                    
+                if object_bool:
                     cv2.drawContours(img,[cnt],0,(255,255,0),-1)
 
+        #print the total time it took to parse the image
         print datetime.datetime.now() - start_time
-                    
-                    
-        cv2.imshow( "img", img )
-        cv2.waitKey( 0 )
-        cv2.destroyAllWindows()
 
     # Main image processing method. This method will do the following things:
     # 1: Crop the image. This will create the smallest ( almost, with some border ) bounding rectangle around the object in question
@@ -89,10 +72,6 @@ class Image_Parser:
         x,y,w,h = cv2.boundingRect(cnt)
         #cropped_img = img[ (y - 50 ):(y+h+50), (x):(x+w+50) ]
         cropped_img = img[ y:y+h, x:x+w ]
-        
-        cv2.imshow( "cropped_img", cropped_img )
-        cv2.waitKey( 0 )
-        cv2.destroyAllWindows()
 
         #Moving the contours from the main image to this image ( editing coordinates to fit the smaller image )
         largest = cnt
@@ -115,10 +94,6 @@ class Image_Parser:
         roi_corners = np.array( cnt, dtype=np.int32 )
         white = (255, 255, 255)
         cv2.drawContours( mask_img, [cnt], 0, white, -1 )
-        
-        cv2.imshow( "mask_img", mask_img )
-        cv2.waitKey( 0 )
-        cv2.destroyAllWindows()
     
         #Copying over the image inside of the contours
         masked_img = cv2.bitwise_and( cropped_img, mask_img )
@@ -138,14 +113,10 @@ class Image_Parser:
         center = np.uint8(center)
         res = center[label.flatten()]
         res2 = res.reshape((masked_img.shape))
-        
-        cv2.imshow( "res2", res2 )
-        cv2.waitKey( 0 )
-        cv2.destroyAllWindows()
     
         #Sending the final image off to be tested to see if it is true or false
         if self.image_tests( res2 ):
-            return True, cropped_img
+            return True
 
     # Testing the image ( final part of the image processing process )
     # During this function, the following is completed:
@@ -159,6 +130,7 @@ class Image_Parser:
         #Get global variable settings
         global PIXEL_COLOR_THRESHOLD
         global BLACK_COLOR_THRESHOLD
+        global ADJACENT_OBJECT_INDEX
         
         #Set arrays and other associated required values
         colors = [ [ 0, 0, 0 ] ]
@@ -273,8 +245,8 @@ class Image_Parser:
                 #Printing the progress of the calculations
                 print str( ( ( ( y + 0.0 ) * masked_img.shape[0] ) + x ) * 100 / size ) + "% of Adjacent Object Test"
 
-        #If there are not 500 instances ( eliminating the case where there are a couple of small random occurences of 2 pixels having different color value ), return False
-        if index < 500:
+        #If there are not ADJACENT_OBJECT_INDEX instances ( eliminating the case where there are a couple of small random occurences of 2 pixels having different color value ), return False
+        if index < ADJACENT_OBJECT_INDEX:
             return False
 
         #Since all of the tests have passed, return True
