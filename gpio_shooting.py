@@ -12,7 +12,7 @@ class gpio_shooting:
     def __init__( self, *args, **kwargs ):
         pass
     
-    def setup_gpio_pin( rx ):
+    def setup_gpio_pin( self, rx ):
         global inPin
         
         #start a gpio connection with Rx pin
@@ -20,7 +20,7 @@ class gpio_shooting:
         
         inPin = rx
 
-    def get_shot_truefalse():
+    def get_shot_truefalse( self ):
         global inPin
         
         if GPIO.input( inPin ):

@@ -16,7 +16,7 @@ class download_image:
     
         #if download was successful
         if not stderr:
-            return True
+            return stdout
         else:
             return False
 
