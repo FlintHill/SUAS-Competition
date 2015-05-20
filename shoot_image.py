@@ -1,17 +1,17 @@
 __author__ = 'Vale Tolpegin'
 
 import os
-import download_image
-import subprocess
+from download_image import download_image
+from subprocess import *
 
 class shoot_image:
 
     def __init__( self, *args, **kwargs ):
         pass
 
-    def shoot_an_image():
+    def shoot_an_image( self ):
         #popen terminal command
-        running = Popen( ['ptpcam', '--chdk="lua', "require('lptpgui').exec_luafile([[A/CHDK/SCRIPTS/$myScript]])" + '"'], stdout=PIPE, stderr=PIPE )
+        running = Popen( ['ptpcam', '--chdk="lua', "require('lptpgui').exec_luafile([[A/CHDK/SCRIPTS/$myScript]])", '"'], stdout=PIPE, stderr=PIPE, shell=True )
 
         #get output
         stdout, stderr = running.communicate()
@@ -27,4 +27,6 @@ class shoot_image:
             return False
 
 if __name__ == '__main__':
-    pass
+    test = shoot_image()
+
+    test.shoot_an_image()

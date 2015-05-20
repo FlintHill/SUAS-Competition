@@ -3,8 +3,9 @@ __author__ = 'Vale'
 import numpy as np
 import datetime
 import cv2
+import math
 
-class Image_Parser:
+class image_parser:
     # These are1 the global image settings. These are set by specifically referencing them through the parser's properties
     global PIXEL_COLOR_THRESHOLD
     global LOWER_CONTOUR_AREA
@@ -24,9 +25,9 @@ class Image_Parser:
         #setting global variables' values
         PIXEL_COLOR_THRESHOLD = 35
         BLACK_COLOR_THRESHOLD = 5
-        LOWER_CONTOUR_AREA = 20000
+        LOWER_CONTOUR_AREA = 2000
         HIGHER_CONTOUR_AREA = 5000000
-        ADJACENT_OBJECT_INDEX = 500
+        ADJACENT_OBJECT_INDEX = 300
     
     # This method is called when the user would like to process any given image. This method completes the following in the image processing process:
     # 1: Find objects in the passed image
@@ -43,6 +44,40 @@ class Image_Parser:
         #reading in image
         img = cv2.imread( img_name )
         img2 = cv2.imread( img_name, 0 )
+        
+        #ref_red = 192
+        #ref_green = 80
+        #ref_blue = 80
+        #threshold = 96
+        
+        ref_red = 255
+        ref_green = 255
+        ref_blue = 0
+        threshold = 0
+
+        # iterate over each pixel in the image
+        for x in range(0, img.shape[0]):
+            for y in range(0, img.shape[1]):
+                red, green, blue = img[x, y]
+            
+                # subtract the pixel colour from the reference
+                d_red = ref_red - red
+                d_green = ref_green - green
+                d_blue = ref_blue - blue
+                
+                # length of the difference vector
+                length = math.sqrt( (d_red * d_red) + (d_green * d_green) + (d_blue * d_blue) )
+                
+                if length > threshold:
+                    img[x, y] = 0, 0, 0
+                else:
+                    img[x, y] = 255, 255, 255
+        
+                print str( ( ( ( x + 0.0 ) * img.shape[1] ) + y ) * 100 / ( img.shape[0] * img.shape[1] ) ) + "% of B Test"
+    
+        cv2.imshow( "img", img )
+        cv2.waitKey( 0 )
+        cv2.destroyAllWindows()
 
         #finding the objects in the image
         ret,thresh = cv2.threshold(img2,127,255,0)
@@ -55,10 +90,14 @@ class Image_Parser:
                 pass
             #otherwise, parse object
             else:
-                object_bool = self.crop_img( cnt, img )
+                object_bool = True #self.crop_img( cnt, img )
                     
                 if object_bool:
                     cv2.drawContours(img,[cnt],0,(255,255,0),-1)
+    
+        cv2.imshow( "img", img )
+        cv2.waitKey( 0 )
+        cv2.destroyAllWindows()
 
         #print the total time it took to parse the image
         print datetime.datetime.now() - start_time
@@ -97,6 +136,9 @@ class Image_Parser:
     
         #Copying over the image inside of the contours
         masked_img = cv2.bitwise_and( cropped_img, mask_img )
+        
+        if self.image_tests( masked_img ):
+            return True
     
         #Applying K-Means clustering for color quantization
         Z = masked_img.reshape((-1,3))
@@ -163,7 +205,10 @@ class Image_Parser:
             #Since there can not be more than 3 colors ( since K-Means clustering has been applied ), if there are 3, all colors have been found
             if len(colors) == 3:
                 break
-                   
+    
+        if len(colors) > 3:
+            return False
+        
         #Ratio test
         ratio_index = []
         ratio_index.append( 0 )
@@ -195,14 +240,15 @@ class Image_Parser:
             return False
 
         #If the ratio of non-black 1 to non-black 2 colors is < 0.1 ( signifying the area covered is too little or too large )
-        if ratio_index[1] > ratio_index[2]:
-            ratio_value = ratio_index[2] * 1.0 / ratio_index[1] * 1.0
-            if ratio_value < 0.1:
-                return False
-        else:
-            ratio_value = ratio_index[1] * 1.0 / ratio_index[2] * 1.0
-            if ratio_value < 0.1:
-                return False
+        if ratio_index[1] > 0 and ratio_index[2] > 0:
+            if ratio_index[1] > ratio_index[2]:
+                ratio_value = ratio_index[2] * 1.0 / ratio_index[1] * 1.0
+                if ratio_value < 0.1:
+                    return False
+            else:
+                ratio_value = ratio_index[1] * 1.0 / ratio_index[2] * 1.0
+                if ratio_value < 0.1:
+                    return False
 
         # Adjacent object test
         
@@ -254,6 +300,6 @@ class Image_Parser:
 
 # If this program is specifically called from the command line, execute the following
 if __name__ == '__main__':
-    parser = Image_Parser()
+    parser = image_parser()
 
-    parser.process_img( 'images/IMG_0128.JPG' )
+    parser.process_img( 'images/IMG_0162.JPG' )

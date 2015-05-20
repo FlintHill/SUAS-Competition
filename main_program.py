@@ -1,14 +1,14 @@
 __author__ = 'Vale Tolpegin'
 
 #import all of my classes
-import shoot_image from shoot_image
-import image_parser from image_parser
-import clear_unwanted_files from clear_unwanted_files
-import download_image from download_image
+from shoot_image import shoot_image
+from image_parsing import image_parser
+from clear_unwanted_files import clear_directory
+from download_image import download_image
 
 #import all remaining classes that are needed
 import os
-import runnable
+import multiprocessing
 
 class main_program:
     #defining class objects
@@ -27,13 +27,14 @@ class main_program:
         #instantiating global objects
         image_shooter = shoot_image()
         imagery_parsing = image_parser()
-        unwanted_file_clearer = clear_unwanted_files()
+        unwanted_file_clearer = clear_directory()
         image_downloader = download_image()
 
     def run( self ):
         while True:
             #if incoming signal from GPIO pins
                 #start a new thread with the image method
+            pass
 
     def image_processor( self ):
         #shoot image
@@ -47,6 +48,7 @@ class main_program:
             #save full image
         #else
             #move image to trash directory
+        pass
 
 if __name__ == 'main':
     #create new object of the main program class
