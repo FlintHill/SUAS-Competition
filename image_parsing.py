@@ -24,8 +24,8 @@ class image_parser:
         #setting global variables' values
         PIXEL_COLOR_THRESHOLD = 0
         BLACK_COLOR_THRESHOLD = 5
-        LOWER_CONTOUR_AREA = 2000
-        HIGHER_CONTOUR_AREA = 5000000
+        LOWER_CONTOUR_AREA = 5000
+        HIGHER_CONTOUR_AREA = 50000
         ADJACENT_OBJECT_INDEX = 0
     
     # This method is called when the user would like to process any given image. This method completes the following in the image processing process:
@@ -42,6 +42,7 @@ class image_parser:
 
         #reading in image
         img = cv2.imread( img_name )
+        img_viewing = cv2.imread( img_name )
         
         hsv = cv2.cvtColor( img, cv2.COLOR_BGR2HSV )
         grey = cv2.cvtColor( hsv, cv2.COLOR_BGR2GRAY )
@@ -63,9 +64,9 @@ class image_parser:
                 object_bool = self.crop_img( cnt, img )
                     
                 if object_bool:
-                    cv2.drawContours(img,[object_coordinates],0,(255,255,0),-1)
+                    cv2.drawContours(img_viewing,[object_coordinates],0,(255,255,0),-1)
     
-        cv2.imshow( "img", img )
+        cv2.imshow( "img", img_viewing )
         cv2.waitKey( 0 )
         cv2.destroyAllWindows()
 
@@ -200,6 +201,7 @@ class image_parser:
                 print str( ( ( ( y + 0.0 ) * masked_img.shape[0] ) + x ) * 100 / size ) + "% Completed in determining Ratios"
 
         #Complete ratio tests
+        print str(ratio_index[0]) + " " + str(ratio_index[1]) + " " + str(ratio_index[2])
         #If black is greater than the other two colors ( signifying a runway ), return false
         if ratio_index[0] >  ratio_index[1] + ratio_index[2]:
             print "FAILED RATIO TEST"
@@ -217,6 +219,8 @@ class image_parser:
                 if ratio_value < 0.1:
                     print "FAILED RATIO TEST"
                     return False
+    
+        return True
 
         # Adjacent object test
         
