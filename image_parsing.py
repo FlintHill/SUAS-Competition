@@ -24,7 +24,7 @@ class image_parser:
         #setting global variables' values
         PIXEL_COLOR_THRESHOLD = 0
         BLACK_COLOR_THRESHOLD = 5
-        LOWER_CONTOUR_AREA = 5000
+        LOWER_CONTOUR_AREA = 1000
         HIGHER_CONTOUR_AREA = 50000
         ADJACENT_OBJECT_INDEX = 0
     
@@ -46,6 +46,10 @@ class image_parser:
         
         hsv = cv2.cvtColor( img, cv2.COLOR_BGR2HSV )
         grey = cv2.cvtColor( hsv, cv2.COLOR_BGR2GRAY )
+        
+        cv2.imshow( "img", grey )
+        cv2.waitKey( 0 )
+        cv2.destroyAllWindows()
 
         #finding the objects in the image
         ret,thresh = cv2.threshold(grey,127,255,0)
@@ -127,6 +131,10 @@ class image_parser:
     
         #Sending the final image off to be tested to see if it is true or false
         if self.image_tests( res2 ):
+            cv2.imshow( "img", res2 )
+            cv2.waitKey( 0 )
+            cv2.destroyAllWindows()
+            
             return True
 
     # Testing the image ( final part of the image processing process )
@@ -277,4 +285,4 @@ class image_parser:
 if __name__ == '__main__':
     parser = image_parser()
 
-    parser.process_img( 'images/IMG_0161.JPG' )
+    parser.process_img( 'images/IMG_0148.JPG' )
