@@ -230,7 +230,7 @@ class image_parser:
     
         return True
 
-        # Adjacent object test
+        # Adjacent object test -- NOTE: THIS IS CURRENTLY DISABLED FOR CAUSING ISSUES WITH OBJECT DETECTION
         
         # Check every other row, and every third pixel. Ever box, which represents a pixel, that has an X in it is checked by the program
         #  --- --- --- --- --- --- ---
