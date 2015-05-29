@@ -24,8 +24,8 @@ class image_parser:
         #setting global variables' values
         PIXEL_COLOR_THRESHOLD = 0
         BLACK_COLOR_THRESHOLD = 5
-        LOWER_CONTOUR_AREA = 1000
-        HIGHER_CONTOUR_AREA = 50000
+        LOWER_CONTOUR_AREA = 1200
+        HIGHER_CONTOUR_AREA = 100000
         ADJACENT_OBJECT_INDEX = 0
     
     # This method is called when the user would like to process any given image. This method completes the following in the image processing process:
@@ -131,10 +131,6 @@ class image_parser:
     
         #Sending the final image off to be tested to see if it is true or false
         if self.image_tests( res2 ):
-            cv2.imshow( "img", res2 )
-            cv2.waitKey( 0 )
-            cv2.destroyAllWindows()
-            
             return True
 
     # Testing the image ( final part of the image processing process )
@@ -285,4 +281,4 @@ class image_parser:
 if __name__ == '__main__':
     parser = image_parser()
 
-    parser.process_img( 'images/IMG_0148.JPG' )
+    parser.process_img( 'images/IMG_0160.JPG' )

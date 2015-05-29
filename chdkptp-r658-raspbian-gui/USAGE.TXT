@@ -1,0 +1,685 @@
+chdkptp supports console CLI, a GUI, and batch operation.
+
+The GUI is still unfinished
+
+Some additional information is available from the assembla project wiki:
+
+CLI information:
+https://www.assembla.com/spaces/chdkptp/wiki/CLI_Quickstart
+
+Scripting:
+https://www.assembla.com/spaces/chdkptp/wiki/Scripting_Guide
+
+=Installing=
+See INSTALL.TXT
+
+=Invoking=
+The interface is selected by command line options, described below.
+
+==Running under linux==
+Under linux, the .lua files will not automatically found relative to the
+executable directory. You can set LUA_PATH on the command line to allow them
+to be located:
+$ LUA_PATH="/path/to/chdkptp/lua/?.lua" /path/to/chdkptp ...
+
+Similarly, if the IUP and CD shared libraries are not on the default system
+path, you must also set LD_LIBARARY_PATH
+$ LD_LIBRARY_PATH=/path/to/iup LUA_PATH="/path/to/chdkptp/lua/?.lua" /path/to/chdkptp -g
+
+It is suggested that you put all this in a shell script, see chdkptp-sample.sh
+for an example.
+
+You may need to make permission changes to allow users other than root to open
+the USB device. Some notes can be found in this forum post:
+http://chdk.setepontos.com/index.php?topic=6231.msg89252#msg89252
+
+==Command line==
+Usage: chdkptp [options]
+Options:
+ -g  start GUI - default if GUI available and no options given
+ -i  start interactive CLI
+ -c  connect at startup, with optional device spec e.g. -c"-d001 -bbus-0"
+ -e  execute CLI command, multiple allowed, e.g -e"u DISKBOOT.BIN" -ereboot
+ -r  specify startup command file, if no file given skip default startup files
+ -h  help
+
+If invoked with no options, the GUI will be started if available.  Otherwise,
+the CLI will be started.
+
+If started with options and neither -g nor -i is given, chdkptp will run in
+batch mode, exiting after performing the actions specified by the options.
+
+When using -e, -c or -r, the values must immediately follow the option, without
+any space, e.g. -rmyfile or -r=myfile, not -r myfile. If any arguments that 
+include spaces, they must be quoted.
+
+==Startup files==
+Startup files can be used to automatically execute CLI commands at startup.
+Using the exec command, you may also execute arbitrary lua.
+
+If the -r command line option is used, it is treated as the full name of the
+file, and the default files are ignored. If -r is given without a filename,
+no startup file is used. 
+
+If -r is not used, CHDKPTP checks for startup files using the CHDKPTP_HOME
+environment variable, or if that is not set, the HOME environment variable.
+
+.chdkptprc (linux) / _chdkptprc (windows) is the default startup file in CLI
+or batch mode.
+
+.chdkptpguirc (linux) / _chdkptpguirc (windows) is the default startup file
+in GUI mode. This is run after the gui module is loaded, but before the GUI
+is started.
+
+=CLI=
+CLI commands are available from the console, GUI and the command line
+
+Many CLI commands have full descriptive name and a short name. The short 
+is listed in parenthesis in the command reference below.
+
+==CLI parsing==
+The cli commands lua, luar, exec and putm all accept a single line of free-form
+text and pass it unmodified to the underlying function.
+
+Most other commands parse the remaining input into switches and arguments
+Switches are in the for -switchname and may take values with -switch=value
+Arguments are any other sequence of non-space or quoted characters.
+
+Both switches and words may be quoted as follows:
+The characters " or ' can be used to quote arguments or switch values that
+contain spaces. Inside double quotes "",  backslash \ is treated as an escape
+character.
+
+==Command reference==
+output of help -v
+help (h)     [cmd]|[-v]  : - help on [cmd] or all commands
+ help -v gives full help on all commands, otherwise as summary is printed
+
+#                        : - comment
+exec (!)     <lua code>  : - execute local lua
+ Execute lua in chdkptp.
+ The global variable con accesses the current CLI connection.
+ Return values are printed in the console.
+
+set          [-v|-c] [option[=value]]: - show or set option
+ Use set with no options to see a list
+  -v show desciption when showing value
+  -c output as set command
+
+quit (q)                 : - quit program
+source       <file>      : - execute cli commands from file
+lua (.)      <lua code>  : - execute remote lua
+ Execute Lua code on the camera.
+ Returns immediately after the script is started.
+ Return values or error messages can be retrieved with getm after the script is completed.
+
+getm                     : - get messages
+putm         <msg string>: - send message
+luar (=)     <lua code>  : - execute remote lua, wait for result
+ Execute Lua code on the camera, waiting for the script to end.
+ Return values or error messages are printed after the script completes.
+
+killscript   [-noflush][-force][-nowait]: - kill running remote script
+ Terminate any running script on the camera
+   -noflush: don't discard script messages
+   -force: force kill even if camera does not support (crash / memory leaks likely!)
+
+rmem         <address> [count] [-i32[=fmt]]: - read memory
+ Dump <count> bytes or words starting at <address>
+  -i32 display as 32 bit words rather than byte oriented hex dump
+  -i32=<fmt> use printf format string fmt to display
+
+list                     : - list USB devices
+ Lists all recognized PTP devices in the following format on success
+  <status><num>:<modelname> b=<bus> d=<device> v=<usb vendor> p=<usb pid> s=<serial number>
+ or on error
+  <status><num> b=<bus> d=<device> ERROR: <error message>
+ status values
+  * connected, current target for CLI commands (con global variable)
+  + connected, not CLI target
+  - not connected
+  ! error querying status
+ serial numbers are not available from all models, nil will be shown if not available
+
+upload (u)   [-nolua] <local> [remote]: - upload a file to the camera
+ <local>  file to upload
+ [remote] destination
+   If not specified, file is uploaded to A/
+   If remote is a directory or ends in / uploaded to remote/<local file name>
+ -nolua   skip lua based checks on remote
+   Allows upload while running script
+   Prevents detecting if remote is a directory
+ Some cameras have problems with paths > 32 characters
+ Dryos cameras do not handle non 8.3 filenames well
+
+download (d) [-nolua] <remote> [local]: - download a file from the camera
+ <remote> file to download
+        A/ is prepended if not present
+ [local]  destination
+   If not specified, the file will be downloaded to the current directory
+   If a directory, the file will be downloaded into it
+ -nolua   skip lua based checks on remote
+   Allows download while running script
+
+imdl         [options] [src ...]: - download images from the camera
+ [src] source directories, default A/DCIM.
+  Specifying directories which do not follow normal image directory naming will
+  limit available substitution patterns.
+ options:
+   -d=<dest spec>    destination spec, using substitutions described below
+                     default ${subdir}/${name} which mirrors the DCIM image
+                     subdirectories into current working directory or ddir
+   -ddir=<path>      directory path to prepend to dest, default none
+   -last=n           download last N images based on file counter
+   -imin=n           download images number n or greater
+   -imax=n           download images number n or less
+   -dmin=n           download images from directory number n or greater
+   -dmax=n           download images from directory number n or less
+   -fmatch=<pattern> download only file with path/name matching <pattern>
+   -rmatch=<pattern> only recurse into directories with path/name matching <pattern>
+   -maxdepth=n       only recurse into N levels of directory, default 2
+   -pretend          print actions instead of doing them
+   -nomtime          don't preserve modification time of remote files
+   -batchsize=n      lower = slower, less memory used
+   -dbgmem           print memory usage info
+   -overwrite=<str>  overwrite existing files (y|n|old|ask), default ask
+   -quiet            don't display actions
+   -rm               delete files after downloading
+ note <pattern> is a lua pattern, not a filesystem glob like *.JPG
+
+Substitutions
+${serial,strfmt}  camera serial number, or empty if not available, default format %s
+${pid,strfmt}     camera platform ID, default format %x
+${ldate,datefmt}  PC clock date, os.date format, default %Y%m%d_%H%M%S
+${lts,strfmt}     PC clock date as unix timestamp + microseconds, default format %f
+${lms,strfmt}     PC clock milliseconds part, default format %03d
+${mdate,datefmt}  Camera file modified date, converted to PC time, os.date format, default %Y%m%d_%H%M%S
+${mts,strfmt}     Camera file modified date, as unix timestamp converted to PC time, default format %d
+${name}           Image full name, like IMG_1234.JPG
+${basename}       Image name without extension, like IMG_1234
+${ext}            Image extension, like .JPG
+${subdir}         Image DCIM subdirectory, like 100CANON or 100___01 or 100_0101
+${imgnum}         Image number like 1234
+${dirnum}         Image directory number like 101
+${dirmonth}       Image DCIM subdirectory month, like 01, date folder naming cameras only
+${dirday}         Image DCIM subdirectory day, like 01, date folder naming cameras only
+
+Unavailable values (e.g. ${dirday} without daily folders) result in an empty string
+PC clock times are set to the start of download, not per image
+
+imrm         [options] [path ...]: - delete images from the camera
+ [path] directories to delete from, default A/DCIM.
+ options:
+   -last=n           delete last N images based on file counter
+   -imin=n           delete images number n or greater
+   -imax=n           delete images number n or less
+   -dmin=n           delete images from directory number n or greater
+   -dmax=n           delete images from directory number n or less
+   -fmatch=<pattern> delete only file with path/name matching <pattern>
+   -rmatch=<pattern> only recurse into directories with path/name matching <pattern>
+   -maxdepth=n       only recurse into N levels of directory, default 2
+   -pretend          print actions instead of doing them
+   -batchsize=n      lower = slower, less memory used
+   -dbgmem           print memory usage info
+   -quiet            don't display actions
+ note <pattern> is a lua pattern, not a filesystem glob like *.JPG
+
+ file selection options are equivalent to imdl
+
+imls         [options] [path ...]: - list images on the camera
+ [path] directories to list from, default A/DCIM.
+ options:
+   -last=n           list last N images based on file counter
+   -imin=n           list images number n or greater
+   -imax=n           list images number n or less
+   -dmin=n           list images from directory number n or greater
+   -dmax=n           list images from directory number n or less
+   -fmatch=<pattern> list only files with path/name matching <pattern>
+   -rmatch=<pattern> only recurse into directories with path/name matching <pattern>
+   -maxdepth=n       only recurse into N levels of directory, default 2
+   -sort=order       where order is one of 'path','name','date','size' default 'path'
+   -r                sort descending instead of ascending
+   -batchsize=n      lower = slower, less memory used
+   -dbgmem           print memory usage info
+   -quiet            don't display actions
+ note <pattern> is a lua pattern, not a filesystem glob like *.JPG
+
+ file selection options are equivalent to imdl
+
+mdownload (mdl) [options] <remote, remote, ...> <target dir>: - download file/directories from the camera
+ <remote...> files/directories to download
+ <target dir> directory to download into
+ options:
+   -fmatch=<pattern> download only file with path/name matching <pattern>
+   -dmatch=<pattern> only create directories with path/name matching <pattern>
+   -rmatch=<pattern> only recurse into directories with path/name matching <pattern>
+   -nodirs           only create directories needed to download file
+   -maxdepth=n       only recurse into N levels of directory
+   -pretend          print actions instead of doing them
+   -nomtime          don't preserve modification time of remote files
+   -batchsize=n      lower = slower, less memory used
+   -dbgmem           print memory usage info
+   -overwrite=<str>  overwrite existing files (y|n|old|ask), default ask
+ note <pattern> is a lua pattern, not a filesystem glob like *.JPG
+
+mupload (mup) [options] <local, local, ...> <target dir>: - upload file/directories to the camera
+ <local...> files/directories to upload
+ <target dir> directory to upload into
+ options:
+   -fmatch=<pattern> upload only file with path/name matching <pattern>
+   -dmatch=<pattern> only create directories with path/name matching <pattern>
+   -rmatch=<pattern> only recurse into directories with path/name matching <pattern>
+   -nodirs           only create directories needed to upload file
+   -maxdepth=n       only recurse into N levels of directory
+   -pretend          print actions instead of doing them
+   -nomtime          don't preserve local modification time
+ note <pattern> is a lua pattern, not a filesystem glob like *.JPG
+
+delete (rm)  [options] <target, target,...>: - delete file/directories from the camera
+ <target...> files/directories to remote
+ options:
+   -fmatch=<pattern> upload only file with names matching <pattern>
+   -dmatch=<pattern> only delete directories with names matching <pattern>
+   -rmatch=<pattern> only recurse into directories with names matching <pattern>
+   -nodirs           don't delete drictories recursed into, only files
+   -maxdepth=n       only recurse into N levels of directory
+   -pretend          print actions instead of doing them
+   -ignore_errors    don't abort if delete fails, continue to next item
+   -skip_topdirs     don't delete directories given in command line, only contents
+ note <pattern> is a lua pattern, not a filesystem glob like *.JPG
+
+mkdir        <directory> : - create directories on camera
+ <directory> directory to create. Intermediate directories will be created as needed
+
+version (ver) [-p][-l]    : - print API and program versions
+ -p print program version
+ -l print library versions
+
+connect (c)  [-nodis] [USB dev spec] | -h=host [-p=port]: - connect to device
+ If no options are given, connects to the first available USB device.
+ USB dev spec:
+  -b=<bus>
+  -d=<dev>
+  -p=<pid>
+  -s=<serial>
+  model
+ <pid> is the USB product ID, as a decimal or hexadecimal number.
+ All other values are treated as a Lua pattern, unless -nopat is given.
+ If the serial or model are specified, a temporary connection will be made to each device
+ If <model> includes spaces, it must be quoted.
+ If multiple devices match, the first matching device will be connected.
+ other options:
+  -nodis do not close current connection
+  -nopat use plain substring matches instead of patterns
+
+reconnect (r)             : - reconnect to current device
+disconnect (dis)             : - disconnect from device
+ls           [-l] [path] : - list files/directories on camera
+reboot       [options] [file]: - reboot the camera
+ file: Optional file to boot.
+  Must be an unencoded binary or for DryOS only, an encoded .FI2
+  Format is assumed based on extension
+  If not set, firmware boots normally, loading diskboot.bin if configured
+ options:
+   -norecon  don't try to reconnect
+   -wait=<N> wait N ms before attempting to reconnect, default 3500
+
+lvdump (dumpframes) [options] [file]: - dump camera display frames to file
+ file:
+        optional output file name, defaults to chdk_<pid>_<date>_<time>.lvdump
+ options:
+   -count=<N> number of frames to dump
+   -wait=<N>  wait N ms between frames
+   -novp      don't get viewfinder data
+   -nobm      don't get ui overlay data
+   -nopal     don't get palette for ui overlay
+   -quiet     don't print progress
+
+lvdumpimg    [options]   : - dump camera display frames to netpbm images
+ options:
+   -count=<N> number of frames to dump, default 1
+   -wait=<N>  wait N ms between frames
+   -fps=<N>   specify wait as a frame rate, default 10
+   -vp[=dest] get viewfinder in ppm format
+   -bm[=dest] get ui overlay in pam format
+   -pipevp[=oneproc]
+   -pipebm[=oneproc]
+      treat vp or bm 'dest' as a command to pipe to. With =oneproc a single process
+      receives all frames. Otherwise, a new process is spawned for each frame
+   -nopal     don't get palette for ui overlay
+   -quiet     don't print progress
+   -nosubst   don't do pattern substitution on file names
+  vp and bm 'dest' may include substitution patterns
+   ${date,datefmt} current time formatted with os.date()
+   ${frame,strfmt} current frame number formatted with string.format
+   ${time,strfmt}  current time in seconds, as float, formatted with string.format
+   default vp_${time,%014.3f}.ppm bm_${time,%014.3f}.pam for viewfinder and ui respectively
+   if piping with oneproc, time will be the start of the first frame and frame will be 1
+
+shoot        [options]   : - shoot a picture with specified exposure
+ options:
+   -u=<s|a|96>
+      s   standard units (default)
+      a   APEX
+      96  APEX*96
+   -tv=<v>    shutter speed. In standard units both decimal and X/Y accepted
+   -sv=<v>    ISO value, Canon "real" ISO
+   -svm=<v>   ISO value, Canon "Market" ISO (requires CHDK 1.3)
+   -av=<v>    Aperture value. In standard units, f number
+   -isomode=<v> ISO mode, must be ISO value in Canon UI, shooting mode must have manual ISO
+   -nd=<in|out> set ND filter state
+   -sd=<v>[units]  subject distance, units one of m, mm, in, ft default m
+   -raw[=1|0] Force raw on or off, defaults to current camera setting
+   -dng[=1|0] Force DNG on or off, implies raw if on, default current camera setting
+   -pretend   print actions instead of running them
+   -nowait    don't wait for shot to complete
+   -dl        download shot file(s)
+   -rm        remove file after shooting
+  Any exposure parameters not set use camera defaults
+
+remoteshoot (rs) [local] [options]: - shoot and download without saving to SD (requires CHDK 1.2)
+ [local]       local destination directory or filename (w/o extension!)
+ options:
+   -u=<s|a|96>
+      s   standard units (default)
+      a   APEX
+      96  APEX*96
+   -tv=<v>    shutter speed. In standard units both decimal and X/Y accepted
+   -sv=<v>    ISO value, Canon "real" ISO
+   -svm=<v>   ISO value, Canon "Market" ISO (requires CHDK 1.3)
+   -av=<v>    Aperture value. In standard units, f number
+   -isomode=<v> ISO mode, must be ISO value in Canon UI, shooting mode must have manual ISO
+   -nd=<in|out> set ND filter state
+   -sd=<v>[units]  subject distance, units one of m, mm, in, ft default m
+   -jpg         jpeg, default if no other options (not supported on all cams)
+   -raw         framebuffer dump raw
+   -dng         DNG format raw
+   -dnghdr      save DNG header to a separate file, ignored with -dng
+   -s=<start>   first line of for subimage raw
+   -c=<count>   number of lines for subimage
+   -cont[=n]    shoot in continuous mode, optionally specifying number of shots
+   -quick[=n]   shoot by holding halfshoot and repeatedly clicking full
+   -shots=<n>   shoot n shots
+   -int=<n.m>   interval for multiple shots, in seconds
+   -badpix[=n]  interpolate over pixels with value <= n, default 0, (dng only)
+
+rsint        [local] [options]: - shoot and download with interactive control
+ [local]       local destination directory or filename (w/o extension!)
+ options:
+   -u=<s|a|96>
+      s   standard units (default)
+      a   APEX
+      96  APEX*96
+   -tv=<v>    shutter speed. In standard units both decimal and X/Y accepted
+   -sv=<v>    ISO value, Canon "real" ISO
+   -svm=<v>   ISO value, Canon "Market" ISO (requires CHDK 1.3)
+   -av=<v>    Aperture value. In standard units, f number
+   -isomode=<v> ISO mode, must be ISO value in Canon UI, shooting mode must have manual ISO
+   -nd=<in|out> set ND filter state
+   -sd=<v>[units]  subject distance, units one of m, mm, in, ft default m
+   -jpg         jpeg, default if no other options (not supported on all cams)
+   -raw         framebuffer dump raw
+   -dng         DNG format raw
+   -dnghdr      save DNG header to a seperate file, ignored with -dng
+   -s=<start>   first line of for subimage raw
+   -c=<count>   number of lines for subimage
+   -badpix[=n]  interpolate over pixels with value <= n, default 0, (dng only)
+   -cmdwait=n   wait n seconds for command, default 60
+   -cont        use continuous mode
+
+
+ The following commands are available at the rsint> prompt
+  s    shoot
+  l    shoot and then quit rsint
+  q    quit (not available in continuous mode, use l)
+  exec <lua code>   execute code on the camera
+  pcall <lua code>  execute code on the camera in pcall
+  path[=path] change download destination, equivalent to [local] in the initial command
+
+ In -cont mode, the following restrictions apply:
+ The camera must be set to continuous mode in the Canon UI
+ CHDK 1.3 shoot hooks must be available
+ The l command must be used to exit
+
+rec                      : - switch camera to shooting mode
+play                     : - switch camera to playback mode
+dngload      [options] <file>: - load a dng file
+ file: file to load
+   only DNGs generated by CHDK or chdkptp are supported
+ options
+   -nosel  do not automatically select loaded file
+
+dngsave      [options] [image num] [file]: - save a dng file
+ file:       file or directory to write to
+   defaults to loaded name. if directory, appends original filename
+ options:
+   -over     overwrite existing files
+   -keepmtime preserve existing modification time
+
+dngunload    [image num] : - unload dng file
+dnginfo      [options] [image num]: - display information about a dng
+ options:
+   -s   summary info, default if no other options given
+   -h   tiff header
+   -ifd[=<ifd>]
+         raw, exif, main, or 0, 0.0 etc. default 0
+   -r   recurse into sub-ifds
+   -vals[=N]
+     display up to N values for each IFD entry, default 20
+
+dnghist      [options] [image num]: - generate a histogram
+ options:
+  -min=N   list pixels with value >= N
+  -max=N   list pixels with value <= N
+  -reg=<active|all>
+        region of image to search, either active area (default) or all
+  -bin=<n>
+    number of values in histogram bin
+  -fmt=<count|%>
+    format for output
+
+dnglistpixels [options] [image num]: - generate a list of pixel coordinates
+ options:
+  -min=N   list pixels with value >= N
+  -max=N   list pixels with value <= N
+  -out=<file>
+        <file> is name of output file
+  -fmt=<chdk|rt|dcraw|count>
+        format badpixel list for chdk badpixel.txt, raw therapee, dcraw, or just count them
+  -reg=<active|all>
+        region of image to search, either active area (default) or all
+  -coords=<abs|rel>
+    output coordinates relative to region, or absolute
+    use rel for raw therapee and dcraw
+
+dnglist                  : - list loaded dng files
+dngsel       <number>    : - select dng
+ number:
+   dng number from dnglist to select
+
+dngmod       [options] [files]: - modify dng
+ options:
+   -patch[=n]   interpolate over pixels with value less than n (default 0)
+
+dngdump      [options] [image num]: - extract data from dng
+ options:
+   -thm[=name]   extract thumbnail to name, default dngname_thm.(rgb|ppm)
+   -raw[=name]   extract raw data to name, default dngname.(raw|pgm)
+   -over         overwrite existing file
+   -rfmt=fmt raw format (default: unmodified from DNG)
+     format is <bpp>[endian][pgm], e.g. 8pgm or 12l
+         pgm is only valid for 8 and 16 bpp
+         endian is l or b and defaults to little, except for 16 bit pgm
+   -tfmt=fmt thumb format (default, unmodified rgb)
+     ppm   8 bit rgb ppm
+
+dngbatch     [options] [files] { command ; command ... }: - manipulate multiple files
+ options:
+   -odir             output directory, if no name specified in file commands
+   -pretend          print actions instead of doing them
+   -verbose[=n]      print detail about actions
+ file selection
+   -fmatch=<pattern> only file with path/name matching <pattern>
+   -rmatch=<pattern> only recurse into directories with path/name matching <pattern>
+   -maxdepth=n       only recurse into N levels of directory (default 1, only those specified in command)
+   -ext=string       only files with specified extension, default dng, * for all. Not a pattern
+ commands:
+   mod dump save info listpixels
+  take the same options as the corresponding standalone commands
+  load and unload are implicitly called for each file
+
+==Runtime options==
+The set command allows you to set the following runtime options
+cli_time=false       - boolean: show cli execution times
+cli_xferstats=false  - boolean: show cli data transfer stats
+cli_verbose=1        - number: control verbosity of cli
+cli_source_max=10    - number: max nested source calls
+warn_deprecated=true - boolean: warn on deprecated libraries
+core_verbose=0       - number: ptp core verbosity
+err_trace=critical   - string: stack trace on error, values: 'always', 'critical', 'never'
+
+In the GUI, the following additional options are available:
+gui_live_sched=false - boolean: use scheduler for live updates
+gui_live_dropframes=false - boolean: drop frames if target fps too high
+gui_dump_palette=false - boolean: dump live palette data on state change
+gui_context_plus=false - boolean: use IUP context plus if available
+gui_force_replay_palette=-1 - number: override palette type dump replay, -1 disable
+gui_verbose=1        - number: control verbosity of gui
+gui_dev_check_interval=500 - number: connection/device list check time in ms, 0=never
+gui_shoot_half_timeout=3000 - number: max time to wait for shoot_half, in ms
+
+Notes:
+1) Outside of startup files, setting a gui option when the gui is not running
+   is currently an error
+2) gui_context_plus must be set in a startup file to take effect.
+3) gui_live_dropframes defaults to true under Linux
+
+=Examples=
+start chdkptp in interactive mode and connect to the first available camera
+ chdkptp -i -c
+
+execute lua on host PC and print the result
+con> !return 1+1
+=2
+
+execute lua on the camera, and print the result
+con> =return get_buildinfo()
+1:return:table:{platformid=12732,platform="d10",version="CHDK",platsub="100a",build_number="0.9.9",os="dryos",build_date="May  3 2011",build_time="20:54:20",}
+
+upload diskboot.bin to A/diskboot.bin, reboot camera, enter interactive mode
+ chdkptp -c -e"u bin/diskboot.bin" -ereboot -i
+
+upload interval.lua to A/CHDK/SCRIPTS/interval.lua, from the command line
+ chdkptp -c -e"u interval.lua CHDK/SCRIPTS/"
+
+download A/CHDK/CCHDK.CFG to BACKUP.CFG in the current directory
+ chdkptp -c -e"d CHDK/CCHDK.CFG BACKUP.CFG"
+
+connect to the device with name containing D10 on bus "bus-0", 
+ chdkptp -c"D10 -b=bus%-0" -i
+note connect -b takes a lua pattern by default, so % is used to escape the -
+
+download all images from the DCIM directory to a corresponding tree in c:/images
+con> imdl -ddir=c:/images
+
+download all images from the DCIM directory to c:/images/, into directories
+organized by date
+con> imdl -d=c:/images/${mdate,%Y/%m/%d}/${name}
+
+download and delete images with numbers between 3060 and 3070 from DCIM/100CANON
+con> imdl -imin=3070 -imax=3080 -rm DCIM/100CANON
+
+download some jpeg images (in 100CANON etc folders)
+con> mdl -fmatch=%.JPG$ DCIM C:\temp
+
+delete some raw images
+con> rm -nodirs -fmatch=%.CRW$ DCIM
+
+upload some scripts
+con> mup c:\CHDK\SCRIPTS CHDK/SCRIPTS
+
+ad hoc scripting on PC side - download some files
+con> !t=con:listdir('A/DCIM/100CANON',{match="%.JPG$"})
+con> !for i,n in ipairs(t) do con:download("A/DCIM/100CANON/"..n,"C:/TEMP/"..n) end
+NOTE the mdownload cli command above is probably more convenient
+
+list devices and connect to a specific camera
+___> list
+ 1:Canon PowerShot D10 b=bus-0 d=\\.\libusb0-0001--0x04a9-0x31bc v=0x4a9 p=0x31bc s=12345678123456781234567812345678
+ 2:Canon PowerShot A540 b=bus-0 d=\\.\libusb0-0002--0x04a9-0x311b v=0x4a9 p=0x311b s=nil
+___> c 540
+con> list
+ 1:Canon PowerShot D10 b=bus-0 d=\\.\libusb0-0001--0x04a9-0x31bc v=0x4a9 p=0x31bc s=12345678123456781234567812345678
+*2:Canon PowerShot A540 b=bus-0 d=\\.\libusb0-0002--0x04a9-0x311b v=0x4a9 p=0x311b s=nil
+
+
+==Run a script file on the camera==
+The suggested way to run a lua script file on the cameras is
+
+con> .loadfile('A/CHDK/SCRIPTS/MY.LUA')()
+
+loadfile returns a function, the following () executes it immediately.
+
+The reason to loadfile instead of the more obvious dofile() or require() is
+that code executed in these functions cannot yield, which means you wouldn't
+be able to use sleep or keyboard functions.
+
+If the script was written to be loaded from the CHDK script menu and expects
+menu settings, you will need to manually set the corresponding variables, e.g.
+
+con> .a=1; b=2; loadfile("A/CHDK/SCRIPTS/MY.LUA")()
+
+While the script is running you will not be able to control the camera from
+chdkptp using the GUI key buttons or any other script commands. You also will
+note be able to gracefully terminate the script without physically pressing the
+shutter button.
+
+If you want to have a script that runs for a long time on the camera, but still
+be able to control it over ptp, you will probably need to write your own script
+using the ptp message interface. Some examples of this in the chdkptp lua code
+lua/rlibs.lua msg_shell and lua/multicam.lua
+
+==Grabbing images from the camera display==
+lvdumpimg can be used capture the viewfinder (viewport) and UI (bitmap) from
+the camera display. The output may be saved to files or piped to the standard
+input of another process.
+
+The -vp and -bm options are used to specify the output files or pipe commands.
+
+The -pipevp and -pipebm options are used to indicate that -vp or -bm specifies
+a command to pipe to rather than a file.
+
+By default, a new process is started for each frame. To send all frames to a
+single process, pass oneproc to the pipe option, like -pipevm=oneproc
+
+It is not currently possible to pipe both viewport and bitmap data to the same
+process.
+
+The viewport is saved before the bitmap, so if oneproc is not used, commands
+for the bitmap may also access the previously saved viewport data.
+
+By default substitution patterns of the form ${foo} may be used to generate
+unique files names using the date, time captured frame counter. Substitutions
+may be disabled using -nosubst.
+
+Some examples:
+Grab 10 viewport frames to files organized in date and time directories
+lvdumpimg -vp=vp_${date,%Y%m%d}/${date,%H%M%S}/${frame}.ppm -count=10
+
+Grab a single viewport frame, use imagemagick to convert to jpeg, re-size to 640x480
+and naming by date and time:
+
+lvdumpimg -vp='convert - -resize 640x480! vp_${date,%B_%d_%Y-%H_%M_%S}.jpg' -pipevp -count=1
+
+NOTE:
+On windows, convert conflicts with system file. You might need to use a full path.
+
+Capture viewport and bitmap, and merge them into a single PNG:
+lvdumpimg -pipebm -count=3 -vp=tmp.ppm -bm='convert tmp.ppm - -resize 640x480! -layers merge merged_${frame}.png'
+
+pipe 100 frames of viewport to ffmpeg and stream over rtp 
+lvdumpimg -pipevp=oneproc -count=100 -vp='ffmpeg -vcodec pgm -f image2pipe -i - -vcodec mpeg2video -s 640x480 -r 24 -pix_fmt yuv420p -f rtp rtp://127.0.0.1:1234'
+
+NOTE:
+You could use VLC and open rtp://127.0.0.1:1234 to watch the stream
+These probably aren't the best parameters to use
