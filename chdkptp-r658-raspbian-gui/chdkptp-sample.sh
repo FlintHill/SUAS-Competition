@@ -9,3 +9,5 @@ CHDKPTP_DIR=/home/pi/Desktop/chdkptp-r658-raspbian-gui
 export LD_LIBRARY_PATH=$CHDKPTP_DIR/libs.cd:$CHDKPTP_DIR/libs/iup
 export LUA_PATH="$CHDKPTP_DIR/lua/?.lua"
 "$CHDKPTP_DIR/$CHDKPTP_EXE" "$@"
+
+# ***NOTE: THIS DOCUMENT HAS BEEN MODIFIED***
