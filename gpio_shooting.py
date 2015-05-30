@@ -15,8 +15,11 @@ class gpio_shooting:
     def setup_gpio_pin( self, rx ):
         global inPin
         
-        #start a gpio connection with Rx pin
-        GPIO.setup( rx, GPIO.IN )
+        try:
+            #start a gpio connection with Rx pin
+            GPIO.setup( rx, GPIO.IN )
+        except:
+            print "[ Error ] Could not setup GPIO pin. Please restart program"
         
         inPin = rx
 

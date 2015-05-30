@@ -46,10 +46,6 @@ class image_parser:
         
         hsv = cv2.cvtColor( img, cv2.COLOR_BGR2HSV )
         grey = cv2.cvtColor( hsv, cv2.COLOR_BGR2GRAY )
-        
-        cv2.imshow( "img", grey )
-        cv2.waitKey( 0 )
-        cv2.destroyAllWindows()
 
         #finding the objects in the image
         ret,thresh = cv2.threshold(grey,127,255,0)
@@ -68,14 +64,12 @@ class image_parser:
                 object_bool = self.crop_img( cnt, img )
                     
                 if object_bool:
-                    cv2.drawContours(img_viewing,[object_coordinates],0,(255,255,0),-1)
-    
-        cv2.imshow( "img", img_viewing )
-        cv2.waitKey( 0 )
-        cv2.destroyAllWindows()
+                    print datetime.datetime.now() - start_time
+                    return True
 
         #print the total time it took to parse the image
         print datetime.datetime.now() - start_time
+        return False
 
     # Main image processing method. This method will do the following things:
     # 1: Crop the image. This will create the smallest ( almost, with some border ) bounding rectangle around the object in question
@@ -173,7 +167,7 @@ class image_parser:
                         colors.append( [ int(pixel_data[0]), int(pixel_data[1]), int(pixel_data[2]) ] )
         
                 #print the current status
-                print str( ( ( ( y + 0.0 ) * masked_img.shape[0] ) + x ) * 100 / size ) + "% of Color Test"
+                #print str( ( ( ( y + 0.0 ) * masked_img.shape[0] ) + x ) * 100 / size ) + "% of Color Test"
             
             #Since there can not be more than 3 colors ( since K-Means clustering has been applied ), if there are 3, all colors have been found
             if len(colors) == 3:
@@ -202,13 +196,12 @@ class image_parser:
                     color_index += 1
 
                 #print out the current progress
-                print str( ( ( ( y + 0.0 ) * masked_img.shape[0] ) + x ) * 100 / size ) + "% Completed in determining Ratios"
+                #print str( ( ( ( y + 0.0 ) * masked_img.shape[0] ) + x ) * 100 / size ) + "% Completed in determining Ratios"
 
         #Complete ratio tests
-        print str(ratio_index[0]) + " " + str(ratio_index[1]) + " " + str(ratio_index[2])
         #If black is greater than the other two colors ( signifying a runway ), return false
         if ratio_index[0] >  ratio_index[1] + ratio_index[2]:
-            print "FAILED RATIO TEST"
+            #print "OBJECT FAILED RATIO TEST"
             return False
 
         #If the ratio of non-black 1 to non-black 2 colors is < 0.1 ( signifying the area covered is too little or too large )
@@ -216,12 +209,12 @@ class image_parser:
             if ratio_index[1] > ratio_index[2]:
                 ratio_value = ratio_index[2] * 1.0 / ratio_index[1] * 1.0
                 if ratio_value < 0.1:
-                    print "FAILED RATIO TEST"
+                    #print "OBJECT FAILED RATIO TEST"
                     return False
             else:
                 ratio_value = ratio_index[1] * 1.0 / ratio_index[2] * 1.0
                 if ratio_value < 0.1:
-                    print "FAILED RATIO TEST"
+                    #print "OBJECT FAILED RATIO TEST"
                     return False
     
         return True
@@ -267,11 +260,11 @@ class image_parser:
                     pass
         
                 #Printing the progress of the calculations
-                print str( ( ( ( y + 0.0 ) * masked_img.shape[0] ) + x ) * 100 / size ) + "% of Adjacent Object Test"
+                #print str( ( ( ( y + 0.0 ) * masked_img.shape[0] ) + x ) * 100 / size ) + "% of Adjacent Object Test"
 
         #If there are not ADJACENT_OBJECT_INDEX instances ( eliminating the case where there are a couple of small random occurences of 2 pixels having different color value ), return False
         if index < ADJACENT_OBJECT_INDEX:
-            print "FAILED ADJACENT OBJECT TEST"
+            print "OBJECT FAILED ADJACENT OBJECT TEST"
             return False
 
         #Since all of the tests have passed, return True

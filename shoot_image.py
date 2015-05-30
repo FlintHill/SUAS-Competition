@@ -15,7 +15,8 @@ class shoot_image:
         #Taking a picture
         running.stdin.write( 'connect\n' )
         running.stdin.write( 'rec\n' )
-        running.stdin.write( 'remoteshoot ../\n' )
+        running.stdin.write( 'remoteshoot ../images\n' )
+        running.stdin.write( 'disconnect\n' )
         running.stdin.write( 'quit\n' )
 
         #get output
@@ -23,9 +24,11 @@ class shoot_image:
 
         #if the shot was successfully taken and downloaded:
         if not stderr:
-            return True
+            print "[ Info ] Image Taken and Downloaded"
         else:
-            return False
+            print "[ Error ] Encountered An Error While Taking A Picture"
+
+        return True
 
 if __name__ == '__main__':
     test = shoot_image()
