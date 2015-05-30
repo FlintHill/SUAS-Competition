@@ -98,7 +98,7 @@ class main_program:
             os.unlink( os.getcwd() + "/images/" + file_name )
 
 
-if __name__ == 'main':
+if __name__ == '__main__':
     #create new object of the main program class
     current_main = main_program()
 
