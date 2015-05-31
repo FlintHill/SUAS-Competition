@@ -90,11 +90,11 @@ class main_program:
 
         #if an image was not found in the images directory, return after 5 seconds
         if file_name == "":
-            #wait 5 seconds
-            time.sleep( 5 )
-            
             #print no images found in directory
             print self.bcolors.WARNING + "[ Warning ]" + self.bcolors.ENDC + " No Images Found In Images Directory "
+            
+            #wait 5 seconds
+            time.sleep( 5 )
             
             #return, where this method will be called again
             return
