@@ -102,12 +102,14 @@ class main_program:
         #parse image & if successful, move image to positive images folder
         print self.bcolors.OKGREEN  + "[ Info ]" + self.bcolors.ENDC + " Parsing Image"
         if imagery_parsing.process_img( "images/" + file_name ):
+            os.rename( "../images/" + file_name, "../positive_images/" + file_name )
             os.unlink( os.getcwd() + "/images/" + file_name )
             print self.bcolors.OKGREEN + "[ Info ]" + self.bcolors.ENDC + " Image Copied Over To Positive Images Folder"
         #otherwise, if the parsing is not successful, move the file to the negative images folders
         else:
-            print self.bcolors.OKGREEN + "[ Info ]" + self.bcolors.ENDC + " Image Copied Over To Negative Images Folder"
+            os.rename( "../images/" + file_name, "../negative_images/" + file_name )
             os.unlink( os.getcwd() + "/images/" + file_name )
+            print self.bcolors.OKGREEN + "[ Info ]" + self.bcolors.ENDC + " Image Copied Over To Negative Images Folder"
 
 
 if __name__ == '__main__':
