@@ -54,8 +54,13 @@ class image_parser:
         img = cv2.imread( img_name )
         img_viewing = cv2.imread( img_name )
         
-        hsv = cv2.cvtColor( img, cv2.COLOR_BGR2HSV )
-        grey = cv2.cvtColor( hsv, cv2.COLOR_BGR2GRAY )
+        try:
+            hsv = cv2.cvtColor( img, cv2.COLOR_BGR2HSV )
+            grey = cv2.cvtColor( hsv, cv2.COLOR_BGR2GRAY )
+        except:
+            print self.bcolors.FAIL + "[ Error ]" + self.bcolors.ENDC + " Failed Image Parsing"
+            print self.bcolors.OKBLUE + "[ Action ]" + self.bcolors.ENDC + " Resetting Thread"
+            return ""
 
         #finding the objects in the image
         ret,thresh = cv2.threshold(grey,127,255,0)
@@ -74,12 +79,12 @@ class image_parser:
                 object_bool = self.crop_img( cnt, img )
                     
                 if object_bool:
-                    print self.bcolors.OKGREEN + "[ Info ]" + self.bcolors.ENDC + " Finished processing " + img_name + " at " + str(datetime.datetime.now())
-                    return True
+                    print self.bcolors.OKGREEN + "[ Info ]" + self.bcolors.ENDC + " Finished processing " + img_name[7:] + " at " + str(datetime.datetime.now())
+                    return "True"
 
         #print the total time it took to parse the image
         print self.bcolors.OKGREEN + "[ Info ]" + self.bcolors.ENDC + " Finished processing " + img_name + " at " + str(datetime.datetime.now())
-        return False
+        return "False"
 
     # Main image processing method. This method will do the following things:
     # 1: Crop the image. This will create the smallest ( almost, with some border ) bounding rectangle around the object in question
