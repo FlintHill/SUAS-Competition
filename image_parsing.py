@@ -5,6 +5,16 @@ import datetime
 import cv2
 
 class image_parser:
+    class bcolors:
+        HEADER = '\033[95m'
+        OKBLUE = '\033[94m'
+        OKGREEN = '\033[92m'
+        WARNING = '\033[93m'
+        FAIL = '\033[91m'
+        ENDC = '\033[0m'
+        BOLD = '\033[1m'
+        UNDERLINE = '\033[4m'
+    
     # These are1 the global image settings. These are set by specifically referencing them through the parser's properties
     global PIXEL_COLOR_THRESHOLD
     global LOWER_CONTOUR_AREA
@@ -64,11 +74,11 @@ class image_parser:
                 object_bool = self.crop_img( cnt, img )
                     
                 if object_bool:
-                    print datetime.datetime.now() - start_time
+                    print self.bcolors.OKGREEN + "[ Info ]" + self.bcolors.ENDC + " Finished processing " + img_name + " at " + str(datetime.datetime.now())
                     return True
 
         #print the total time it took to parse the image
-        print datetime.datetime.now() - start_time
+        print self.bcolors.OKGREEN + "[ Info ]" + self.bcolors.ENDC + " Finished processing " + img_name + " at " + str(datetime.datetime.now())
         return False
 
     # Main image processing method. This method will do the following things:

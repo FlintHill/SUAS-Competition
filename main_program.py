@@ -11,6 +11,16 @@ import multiprocessing
 import time
 
 class main_program:
+    class bcolors:
+        HEADER = '\033[95m'
+        OKBLUE = '\033[94m'
+        OKGREEN = '\033[92m'
+        WARNING = '\033[93m'
+        FAIL = '\033[91m'
+        ENDC = '\033[0m'
+        BOLD = '\033[1m'
+        UNDERLINE = '\033[4m'
+    
     #defining class objects
     global image_shooter
     global imagery_parsing
@@ -37,7 +47,7 @@ class main_program:
         multiprocessing.Process(target=self.get_images, args=()).start()
         
         while True:
-            print "[ Info ] Parsing Started..."
+            print self.bcolors.OKGREEN + "[ Info ]" + self.bcolors.ENDC + " Image Finding Started"
                 
             self.image_processor()
 
@@ -72,6 +82,7 @@ class main_program:
                         pass
                     else:
                         #otherwise, if the image is a real image that needs to be parsed
+                        print self.bcolors.OKGREEN + "[ Info ]" + self.bcolors.ENDC + " Image found"
                         file_name = file
 
                         #stop looking at additional files since an image has already been found
@@ -83,18 +94,19 @@ class main_program:
             time.sleep( 5 )
             
             #print no images found in directory
-            print "[ Info ] No Images Found In Images Directory "
+            print self.bcolors.WARNING + "[ Warning ]" + self.bcolors.ENDC + " No Images Found In Images Directory "
             
             #return, where this method will be called again
             return
         
         #parse image & if successful, move image to positive images folder
+        print self.bcolors.OKGREEN  + "[ Info ]" + self.bcolors.ENDC + " Parsing Image"
         if imagery_parsing.process_img( "images/" + file_name ):
             os.unlink( os.getcwd() + "/images/" + file_name )
-            print "[ Info ] Image Copied Over To Positive Images Folder"
+            print self.bcolors.OKGREEN + "[ Info ]" + self.bcolors.ENDC + " Image Copied Over To Positive Images Folder"
         #otherwise, if the parsing is not successful, move the file to the negative images folders
         else:
-            print "[ Info ] Image Copied Over To Negative Images Folder"
+            print self.bcolors.OKGREEN + "[ Info ]" + self.bcolors.ENDC + " Image Copied Over To Negative Images Folder"
             os.unlink( os.getcwd() + "/images/" + file_name )
 
 
