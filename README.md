@@ -1,5 +1,12 @@
 # SUAS-Competition
 
+## Status and Future Roadmap
+
+Since the 2015 SUAS-Competition just finished, this will not be actively updated for a couple of months. However, the future roadmap, if you would like to contribute or just look at it, is below:
+
+- Apply machine learning to recognize shapes ( ie targets )
+- Apply machine learning to recognize letters
+
 ## License Information
 Copyright 2015 Vale Tolpegin
 
