@@ -293,6 +293,18 @@ class image_parser:
 
 # If this program is specifically called from the command line, execute the following
 if __name__ == '__main__':
-    parser = image_parser()
+    #parser = image_parser()
 
-    parser.process_img( 'images/IMG_0544.JPG' )
+    #parser.process_img( 'images/IMG_0544.JPG' )
+
+    img = cv2.imread( 'images/IMG_0160.JPG' )
+
+    cv2.imshow( "Original", img )
+    cv2.waitKey( 0 )
+    cv2.destroyAllWindows()
+
+    smoothed = cv2.blur( img, (10, 10) )
+
+    cv2.imshow( "Smoothed", smoothed )
+    cv2.waitKey( 0 )
+    cv2.destroyAllWindows()

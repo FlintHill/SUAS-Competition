@@ -1,13 +1,44 @@
 # SUAS-Competition
 
 ## License Information
-Copyright 2015-2016 Vale Tolpegin
+Copyright 2015 Vale Tolpegin
 
 Licensed under the MIT License. Please see the LICENSE file for more information
 
 ## Installation
 
 A number of dependencies must be setup before you can use this library.
+
+### Installing chdkptp
+
+To install chdkptp, simple cd to SUAS-Competition, and open chdkptp-sample.sh. Below is what you have to change
+
+```
+export LD_LIBRARY_PATH=$CHDKPTP_DIR/libs.cd:$CHDKPTP_DIR/libs/iup
+```
+
+This needs to be placed right above
+
+```
+export LUA_PATH="$CHDKPTP_DIR/lua/?.lua"
+```
+
+In addition, this variable needs to be set to the path to this folder. This must be manually edited before you can use chdkptp
+
+```
+CHDKPTP_DIR=/home/pi/Desktop/SUAS-Competition/chdkptp-r658-raspbian-gui
+```
+
+Finally, you must do the following before the first time you run chdkptp on your device.
+
+```
+cd SUAS-Competition/chdkptp-r658-raspbian-gui
+sudo su root
+sudo chmond +x *
+exit
+```
+
+Now, you can leave this directory. Chdkptp has been successfully installed.
 
 ### Installing OpenCV
 
@@ -41,5 +72,5 @@ This will take a long time, about 2 - 4 hours. Once this is done, OpenCV will be
 To run this package, do the following ( once you are in the SUAS-Competition library ).
 
 ```
-python processor.py
+python main_program.py
 ```
