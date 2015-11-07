@@ -36,6 +36,43 @@ sudo make install -j4
 
 This will take a long time, about 2 - 4 hours. Once this is done, OpenCV will be installed.
 
+## Installing & Setting up the Interoperability server
+
+To setup the server, you need to follow this documentation: http://auvsi-suas-competition-interoperability-system.readthedocs.org/en/latest/index.html#
+
+Specifically, if you would like to reduce overhead and simplify the installation process on a VM, follow the below steps:
+
+1. Identify & download appropriate Ubuntu operating system .iso file. Since this is subject to change, you need to look at the above documentation to find the latest
+2. Clone Github repository by running the following commands
+
+```
+$ sudo apt-get -y install git
+$ cd ~/
+$ git clone https://github.com/auvsi-suas/interop.git
+```
+
+3. Setup the installation
+
+```
+$ cd ~/interop/setup
+$ ./setup.sh
+```
+
+4. Attempt to run tests
+
+```
+$ cd ~/interop
+$ ./test.sh
+```
+
+If this fails and the Python clients are the cause of the errors thrown, run the following commands. Following the completeion of these commands, restart the server and rerun the tests (commands located right above).
+
+```
+$ cd ~/interop/server
+$ source venv/bin/activate
+$ python manage.py loaddata fixtures/test_fixture.yaml
+```
+
 ## Running
 
 To run this package, do the following ( once you are in the SUAS-Competition library ).
