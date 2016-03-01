@@ -1,13 +1,13 @@
 # SUAS-Competition
 
+Flint Hill School's code for the Student Unmanned Aerial Systems competition.
+
 ## License Information
 Copyright 2015-2016 Vale Tolpegin
 
 Licensed under the MIT License. Please see the LICENSE file for more information
 
 ## Installation
-
-A number of dependencies must be setup before you can use this library.
 
 ### Installing OpenCV
 
@@ -71,12 +71,4 @@ If this fails and the Python clients are the cause of the errors thrown, run the
 $ cd ~/interop/server
 $ source venv/bin/activate
 $ python manage.py loaddata fixtures/test_fixture.yaml
-```
-
-## Running
-
-To run this package, do the following ( once you are in the SUAS-Competition library ).
-
-```
-python processor.py
 ```
