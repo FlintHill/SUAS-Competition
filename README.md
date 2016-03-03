@@ -9,7 +9,7 @@ Licensed under the MIT License. Please see the LICENSE file for more information
 
 ## Installation
 
-### Installing OpenCV
+### Installing OpenCV Raspberry Pi
 
 This project requires OpenCV to be built and compiled. The below code is only usable for Raspberry Pis. Other installation tutorials can be found online.
 
@@ -35,6 +35,30 @@ sudo make install -j4
 ```
 
 This will take a long time, about 2 - 4 hours. Once this is done, OpenCV will be installed.
+
+### Installing OpenCV Mac OS X
+
+OpenCV must be installed for this project to work. To install OpenCV's latest release, use Homebrew:
+
+```
+brew install opencv3 --with-python3
+```
+
+This is a long process. After it is completed, you will have to link the python libraries.
+
+```
+echo /usr/local/opt/opencv3/lib/python2.7/site-packages >> /usr/local/lib/python2.7/site-packages/opencv3.pth
+mkdir -p /Users/{ADD YOUR USERNAME HERE}/Library/Python/2.7/lib/python/site-packages
+echo 'import site; site.addsitedir("/usr/local/lib/python2.7/site-packages")' >> /Users/{ADD YOUR USERNAME HERE}/Library/Python/2.7/lib/python/site-packages/homebrew.pth
+```
+
+To test the installation, simply enter a quick command into terminal
+
+```
+python -c 'import cv2; print(cv2.__version__)'
+```
+
+This should print something like ```3.1.0```. If you get an error, that means that you did not install OpenCV correctly.
 
 ## Installing & Setting up the Interoperability server
 
