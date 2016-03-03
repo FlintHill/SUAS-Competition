@@ -9,7 +9,11 @@ Licensed under the MIT License. Please see the LICENSE file for more information
 
 ## Installation
 
-### Installing OpenCV Raspberry Pi
+### Installing Python
+
+Python 2.7.x must be installed. Without it, OpenCV will not install correctly and nothing will work.
+
+### Installing OpenCV -- Raspberry Pi
 
 This project requires OpenCV to be built and compiled. The below code is only usable for Raspberry Pis. Other installation tutorials can be found online.
 
@@ -36,7 +40,7 @@ sudo make install -j4
 
 This will take a long time, about 2 - 4 hours. Once this is done, OpenCV will be installed.
 
-### Installing OpenCV Mac OS X
+### Installing OpenCV -- Mac OS X
 
 OpenCV must be installed for this project to work. To install OpenCV's latest release, use Homebrew:
 
