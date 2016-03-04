@@ -9,6 +9,16 @@ Licensed under the MIT License. Please see the LICENSE file for more information
 
 ## Installation
 
+First, you need to clone this repository and install it.
+
+```
+git clone https://github.com/FlintHill/SUAS-Competition.git
+cd SUAS-Competition
+pip install . --upgrade
+```
+
+After you have installed the code, install the dependencies.
+
 ### Installing Python
 
 Python 2.7.x must be installed. Without it, OpenCV will not install correctly and nothing will work.
