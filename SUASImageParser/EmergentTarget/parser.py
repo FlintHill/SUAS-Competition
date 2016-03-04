@@ -3,9 +3,9 @@ from SUASImageParser.utils.color import bcolors
 
 import cv2
 
-class ADLCParser:
+class EmergentTargetParser:
     """
-    General class for processing ADLC-related images
+    General class for processing EmergentTarget-related images
     """
 
     def __init__(self):
@@ -32,8 +32,8 @@ class ADLCParser:
 
     def parse(self, filename):
         """
-        Parses the given image to identify potential ADLC targets. Returns a
-        list of possible targets.
+        Parses the given image to identify potential EmergentTarget targets.
+        Returns a list of possible targets.
         """
         # Load image
         self.image.load(filename)
@@ -50,12 +50,3 @@ class ADLCParser:
 
         # Returning the grayed out image
         return grayed
-
-    def identify_characteristics(self, target):
-        """
-        Identifies the characteristics of the target "target" and returns
-        them as a dictionary object
-        """
-        # @TODO: Implement characteristic identification
-
-        return {}

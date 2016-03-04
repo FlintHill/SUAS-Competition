@@ -1,15 +1,14 @@
-import numpy as np
+from SUASImageParser import ImageParser
+
 import cv2
 
-img = cv2.imread( 'images/IMG_0160.JPG' )
 
-cv2.imshow( "Original", img )
-cv2.waitKey( 0 )
-cv2.destroyAllWindows()
+# ------------------------ Loading image & parsing ------------------------
+my_parser = ImageParser("ADLC", True)
+img = my_parser.parse('images/IMG_0160.JPG')
 
-hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-cleaned = cv2.cvtColor( hsv, cv2.COLOR_BGR2GRAY )
 
-cv2.imshow( "Cleaned", cleaned )
+# ------------------------ Displaying loaded image ------------------------
+cv2.imshow("Parsed", img)
 cv2.waitKey( 0 )
 cv2.destroyAllWindows()
