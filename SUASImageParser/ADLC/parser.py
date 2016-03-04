@@ -2,15 +2,23 @@ from SUASImageParser.utils.image import Image
 from SUASImageParser.utils.color import bcolors
 
 import cv2
+import timeit
 
 class ADLCParser:
     """
     General class for processing ADLC-related images
     """
 
-    def __init__(self):
+    def __init__(self, **kwargs):
         self.image = Image()
         self.debug = False
+        self.start_time = None
+
+        self.PIXEL_COLOR_THRESHOLD = 0
+        self.BLACK_COLOR_THRESHOLD = 5
+        self.LOWER_CONTOUR_AREA = 1200
+        self.HIGHER_CONTOUR_AREA = 100000
+        self.ADJACENT_OBJECT_INDEX = 0
 
     def set_debug(self, updated_debug):
         """
@@ -35,6 +43,10 @@ class ADLCParser:
         Parses the given image to identify potential ADLC targets. Returns a
         list of possible targets.
         """
+        # If debugging is enabled, setting the time started
+        if self.debug:
+            self.start_time = timeit.default_timer()
+
         # Load image
         self.image.load(filename)
 
@@ -46,10 +58,24 @@ class ADLCParser:
 
         if self.debug:
             print bcolors.INFO + "[ Info ]" + bcolors.ENDC + " Converting HSV to GRAY"
-        grayed = cv2.cvtColor(hsv, cv2.COLOR_BGR2GRAY)
+        img = cv2.cvtColor(hsv, cv2.COLOR_BGR2GRAY)
+
+
+        # Thresholding & getting contours
+        #ret,thresh = cv2.threshold(img,127,255,0)
+        #ret,thresh = cv2.threshold(img,127,255,cv2.THRESH_TRUNC)
+        thresh = cv2.adaptiveThreshold(img,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY,11,14)
+        _,contours,hierarchy = cv2.findContours(thresh, 1, 2)
+
+        cv2.drawContours(img, contours, -1, (255,0,0), 3)
+
+        # If debugging is enabled, calculating time took to parse
+        if self.debug:
+            end_time = timeit.default_timer()
+            print bcolors.INFO + "[ Info ]" + bcolors.ENDC + " Took " + str(end_time - self.start_time) + " SECONDS to parse the image"
 
         # Returning the grayed out image
-        return grayed
+        return img
 
     def identify_characteristics(self, target):
         """
