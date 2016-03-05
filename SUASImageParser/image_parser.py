@@ -2,9 +2,9 @@ from SUASImageParser.ADLC import ADLCParser
 
 class ImageParser:
 
-    def __init__(self, mode, debug):
-        self.mode = mode
-        self.debug = debug
+    def __init__(self, **kwargs):
+        self.mode = kwargs.get("mode")
+        self.debug = kwargs.get("debug")
 
         self.adlc_parser = ADLCParser()
         self.adlc_parser.set_debug(self.debug)

@@ -28,7 +28,10 @@ class Image:
         Returns the region of the image as defined by the point
         [start[x], start[y]], [end[x], end[y]]
         """
-        return self.image[ start[y] : end[y], start[x] : end[x] ]
+        cropped = Image()
+        cropped.setImage(self.image[start[y] : end[y], start[x] : end[x]])
+
+        return cropped
 
     def set_image(self, image):
         """
