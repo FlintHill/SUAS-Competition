@@ -1,10 +1,13 @@
 from SUASImageParser.utils.image import Image
 from SUASImageParser.utils.color import bcolors
 from SUASImageParser.modules import k_means
+from SUASImageParser.modules import edge_vectorization
+from SUASImageParser.modules import summing
 
 import cv2
 import timeit
 import numpy as np
+
 
 class ADLCParser:
     """
@@ -13,14 +16,10 @@ class ADLCParser:
 
     def __init__(self, **kwargs):
         self.image = Image()
-        self.debug = False
-        self.start_time = None
+        self.debug = kwargs.get("debug")
 
-        self.PIXEL_COLOR_THRESHOLD = 0
-        self.BLACK_COLOR_THRESHOLD = 5
         self.LOWER_CONTOUR_AREA = 1200
         self.HIGHER_CONTOUR_AREA = 100000
-        self.ADJACENT_OBJECT_INDEX = 0
 
     def set_debug(self, updated_debug):
         """
@@ -55,27 +54,30 @@ class ADLCParser:
         # Convert image to HSV then to GRAY to help make it easy to identify
         #   possible targets
         if self.debug:
-            print bcolors.INFO + "[ Info ]" + bcolors.ENDC + " Converting image to HSV"
+            print(bcolors.INFO + "[ Info ]" + bcolors.ENDC + " Converting image to HSV")
         hsv = cv2.cvtColor(self.image.get_image(), cv2.COLOR_BGR2HSV)
 
         if self.debug:
-            print bcolors.INFO + "[ Info ]" + bcolors.ENDC + " Converting HSV to GRAY"
+            print(bcolors.INFO + "[ Info ]" + bcolors.ENDC + " Converting HSV to GRAY")
         img = cv2.cvtColor(hsv, cv2.COLOR_BGR2GRAY)
 
         # Identifying targets
+        if self.debug:
+            print(bcolors.INFO + "[ Info ]" + bcolors.ENDC + " Identifying targets")
         targets = self.identify_targets(img)
 
         # Identifying target characteristics
-        # @TODO: Implement target characteristic identification
+        if self.debug:
+            print(bcolors.INFO + "[ Info ]" + bcolors.ENDC + " Identifying target characteristics")
+        target_characteristics = self.identify_characteristics(targets)
 
         # If debugging is enabled, calculating time took to parse
         if self.debug:
             end_time = timeit.default_timer()
-            print bcolors.INFO + "[ Info ]" + bcolors.ENDC + " Took " + str(end_time - self.start_time) + " SECONDS to parse the image"
+            print(bcolors.INFO + "[ Info ]" + bcolors.ENDC + " Took " + str(end_time - self.start_time) + " SECONDS to parse the image")
 
         # Returning the grayed out image
-        # @TODO: Return the targets and their characteristics
-        return targets
+        return targets, target_characteristics
 
     def identify_targets(self, img):
         """
@@ -143,4 +145,15 @@ class ADLCParser:
         """
         # @TODO: Implement characteristic identification
 
+        # My thoughts so far to accomplish this is to break the problem down
+        #   into the following tasks:
+        #   1) Segmentation
+        #   2) OCR
+        #   3) Pixhawk log parse to gather data about
+        #       3a) GPS
+        #       3b) Heading
+        # I'm not really sure how to implement this process, which is why I am
+        #   leaving it in this comment as a "stub" which needs to be resolved.
+
+        # Returning the characteristics for each target
         return {}
