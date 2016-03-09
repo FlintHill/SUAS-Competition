@@ -1,7 +1,6 @@
 from SUASImageParser.utils.image import Image
 from SUASImageParser.utils.color import bcolors
 from SUASImageParser.modules import k_means
-from SUASImageParser.modules import edge_vectorization
 from SUASImageParser.modules import summing
 
 import cv2
