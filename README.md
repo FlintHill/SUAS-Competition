@@ -76,6 +76,8 @@ This should print something like ```3.1.0```. If you get an error, that means th
 
 ## Installing & Setting up the Interoperability server
 
+### Installation & Testing
+
 To setup the server, you need to follow this documentation: http://auvsi-suas-competition-interoperability-system.readthedocs.org/en/latest/index.html#
 
 Specifically, if you would like to reduce overhead and simplify the installation process on a VM, follow the below steps:
@@ -110,3 +112,15 @@ $ cd ~/interop/server
 $ source venv/bin/activate
 $ python manage.py loaddata fixtures/test_fixture.yaml
 ```
+
+### Operation
+
+1. Make sure your local network is configured as is requested in the manual
+
+2. Run the Interop VM (after going through the installation process)
+
+3. Verify the interop server is running
+
+4. Run the local server ```python interop/clientproxy.py --url http://IP_ADDRESS_OF_INTEROP --username USERNAME --password PASSWORD```
+
+5. Finally, run the Mission Planner script through MPI's scripting interface
