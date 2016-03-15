@@ -3,3 +3,5 @@
 *.pyc
 
 generated_data/
+
+ImageProcessingAlgorithms/img_tests.py
