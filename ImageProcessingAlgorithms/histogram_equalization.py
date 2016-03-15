@@ -13,6 +13,7 @@ Requires:
 1) Grayscale image
 """
 
+
 def histeq(im, nbr_bins=1024):
     """
     Histogram equalization of a grayscale image
@@ -34,5 +35,5 @@ if __name__ == '__main__':
     im2, cdf = histeq(im)
 
     cv2.imshow("im2", im2)
-    cv2.waitKey( 0 )
+    cv2.waitKey(0)
     cv2.destroyAllWindows()
