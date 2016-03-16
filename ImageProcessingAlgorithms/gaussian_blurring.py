@@ -13,6 +13,7 @@ Requires:
 1) Image name
 """
 
+
 def gaussian_blurring(imname, standard_deviation=5):
     """
     Uses Gaussian blurring to blur an image
