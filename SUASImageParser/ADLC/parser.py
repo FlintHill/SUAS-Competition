@@ -2,7 +2,6 @@ from SUASImageParser.utils.image import Image
 from SUASImageParser.utils.color import bcolors
 from SUASImageParser.modules import k_means
 from SUASImageParser.modules import summing
-from SUASImageParser.modules import denoising
 from SUASImageParser.modules import gaussian_blurring
 
 import cv2
@@ -141,6 +140,11 @@ class ADLCParser:
         if is_target:
             # Blurring
             cropped_img = gaussian_blurring.gaussian_blurring(cropped_img, 1)
+        
+        # Getting shape of target to remove false positives
+        approx_sides = cv2.approxPolyDP(contours, 0.15 * cv2.arcLength(contours, True), True)
+        if len(approx_sides) != 5 and len(approx_sides) != 4 and len(approx_sides) != 3:
+            is_target = False
 
         # Returning results from tests
         return is_target, cropped_img
