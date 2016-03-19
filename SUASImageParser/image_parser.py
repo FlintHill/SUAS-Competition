@@ -30,6 +30,9 @@ class ImageParser:
         """
         if self.mode == "ADLC":
             targets, characteristics = self.adlc_parser.parse(filename)
+            
+            # @TODO: Implement target characteristic saving here
+            
             return targets
 
         return None
@@ -43,4 +46,4 @@ class ImageParser:
         if not os.path.exists("generated_data"):
             os.mkdir("generated_data")
 
-        # @TODO: Implement optimization for each gold standard available
+        # @TODO: Implement optimization here

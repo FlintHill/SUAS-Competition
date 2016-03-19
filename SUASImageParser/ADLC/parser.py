@@ -118,7 +118,7 @@ class ADLCParser:
                 
                 is_a_target, possible_target = self.parse_possible_target(img, cnt)
                 if is_a_target:
-                    targets.append(k_means.simplify_by_k_means(possible_target))
+                    targets.append(possible_target)
 
         # Return the identified targets
         return targets
@@ -128,9 +128,15 @@ class ADLCParser:
         Parse the possible target and determine whether or not the image
         should be classified as a target.
         """
-        # @TODO: Implement target parsing here
+        # Getting target
+        cropped_img = k_means.simplify_by_k_means(self.crop_img(contours))
+        is_target = True
+        
+        # Running tests
+        is_target = self.color_comparisons(cropped_img)
 
-        return True, self.crop_img(contours)
+        # Returning results from tests
+        return is_target, cropped_img
 
     def crop_img(self, contours):
         """
@@ -150,14 +156,46 @@ class ADLCParser:
         mask_img = np.zeros(cropped_img.get_image().shape, dtype=np.uint8)
         
         roi_corners = np.array(corrected, dtype=np.int32)
-        white = (255, 255, 255)
-        cv2.drawContours(mask_img, [corrected], 0, white, -1)
+        black = (255, 255, 255)
+        cv2.drawContours(mask_img, [corrected], 0, black, -1)
         
         # Copying over the image inside of the contours
         masked_img = cv2.bitwise_and(cropped_img.get_image(), mask_img)
         
         # Returning the cropped image
         return masked_img
+
+    def color_comparisons(self, img, COLOR_THRESHOLD=15):
+        """
+        Compare colors in img to ensure that they are sufficietly
+        different (removing multiple shades of the same color.
+        """
+        passes = True
+        
+        # Finding the colors in the image
+        colors = [[255, 255, 255]]
+        for x in xrange(0, img.shape[0], 1):
+            for y in xrange(0, img.shape[1], 1):
+                should_add = True
+                for color in colors:
+                    if img[x, y, 0] == color[0] and img[x, y, 1] == color[1] and img[x, y, 2] == color[2]:
+                        should_add = False
+                if should_add:
+                    colors.append([img[x, y, 0], img[x, y, 1], img[x, y, 2]])
+    
+        # Remove useless colors that are in all images
+        colors = colors[2:]
+        
+        # Comparing colors to see if they are multiple shades of the same color
+        threshold_num = 0
+        for rgb_index in range(3):
+            if abs(colors[0][rgb_index] - colors[1][rgb_index]) < COLOR_THRESHOLD:
+                threshold_num += 1
+        if threshold_num >= 1:
+            passes = False
+    
+        # Return whether the result of the test
+        return passes
 
     def identify_characteristics(self, target):
         """
