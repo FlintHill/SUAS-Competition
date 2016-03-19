@@ -176,7 +176,7 @@ class ADLCParser:
         # Returning the cropped image
         return masked_img
 
-    def color_comparisons(self, img, COLOR_THRESHOLD=15):
+    def color_comparisons(self, img, COLOR_THRESHOLD=5):
         """
         Compare colors in img to ensure that they are sufficietly
         different (removing multiple shades of the same color.
