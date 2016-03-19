@@ -17,8 +17,9 @@ class ADLCParser:
         self.image = Image()
         self.debug = kwargs.get("debug")
         
-        self.LOWER_CONTOUR_AREA = 1000
-        self.HIGHER_CONTOUR_AREA = 100000
+        # @TODO: Calculate correct lower and upper areas
+        self.LOWER_CONTOUR_AREA = kwargs.get("LOWER_CONTOUR_AREA", 1000)
+        self.HIGHER_CONTOUR_AREA = kwargs.get("HIGHER_CONTOUR_AREA", 50000)
 
     def set_debug(self, updated_debug):
         """
@@ -73,6 +74,10 @@ class ADLCParser:
             print(len(targets))
             for target in targets:
                 target_characteristics = self.identify_characteristics(target)
+    
+                cv2.imshow("target", target)
+                cv2.waitKey(0)
+                cv2.destroyAllWindows()
 
         # If debugging is enabled, calculating time took to parse
         if self.debug:
@@ -113,10 +118,9 @@ class ADLCParser:
                 
                 is_a_target, possible_target = self.parse_possible_target(img, cnt)
                 if is_a_target:
-                    targets.append(possible_target)
+                    targets.append(k_means.simplify_by_k_means(possible_target))
 
         # Return the identified targets
-        # @TODO: return the identified targets and not the given image
         return targets
 
     def parse_possible_target(self, img, contours):
@@ -136,27 +140,24 @@ class ADLCParser:
         x,y,w,h = cv2.boundingRect(contours)
         cropped_img = self.image.get_ROI([x, y], [x+w, y+h])
         
-        #Moving the contours from the main image to this image ( editing coordinates to fit the smaller image )
-        largest = contours
-        for index in range( 0, len( contours ) ):
-            largest[index][0][0] = largest[index][0][0] - x
-            largest[index][0][1] = largest[index][0][1] - y
+        # Moving the contours from the main image to this image (editing coordinates to fit the smaller image)
+        corrected = contours
+        for index in range(len(contours)):
+            corrected[index][0][0] = corrected[index][0][0] - x
+            corrected[index][0][1] = corrected[index][0][1] - y
 
-        # Returning cropped image
-        return self.img_copy( cropped_img, largest )
-
-    def img_copy(self, cropped_img, cnt):
-        #Creating a mask & drawing the passed contours onto that mask
+        # Creating a mask & drawing the passed contours onto that mask
         mask_img = np.zeros(cropped_img.get_image().shape, dtype=np.uint8)
         
-        roi_corners = np.array(cnt, dtype=np.int32)
+        roi_corners = np.array(corrected, dtype=np.int32)
         white = (255, 255, 255)
-        cv2.drawContours(mask_img, [cnt], 0, white, -1)
+        cv2.drawContours(mask_img, [corrected], 0, white, -1)
         
-        #Copying over the image inside of the contours
+        # Copying over the image inside of the contours
         masked_img = cv2.bitwise_and(cropped_img.get_image(), mask_img)
         
-        return k_means.simplify_by_k_means(masked_img)
+        # Returning the cropped image
+        return masked_img
 
     def identify_characteristics(self, target):
         """
@@ -174,11 +175,6 @@ class ADLCParser:
         #       3b) Heading
         # I'm not really sure how to implement this process, which is why I am
         #   leaving it in this comment as a "stub" which needs to be resolved.
-
-        # Currently just displaying target
-        cv2.imshow("cropped", target)
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
 
         # Returning the characteristics for each target
         return {}
