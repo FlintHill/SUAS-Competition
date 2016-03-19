@@ -29,7 +29,7 @@ class Image:
         [start[x], start[y]], [end[x], end[y]]
         """
         cropped = Image()
-        cropped.setImage(self.image[start[y] : end[y], start[x] : end[x]])
+        cropped.set_image(self.image[start[1] : end[1], start[0] : end[0]])
 
         return cropped
 
