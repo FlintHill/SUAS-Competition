@@ -2,6 +2,8 @@ from SUASImageParser.utils.image import Image
 from SUASImageParser.utils.color import bcolors
 from SUASImageParser.modules import k_means
 from SUASImageParser.modules import summing
+from SUASImageParser.modules import denoising
+from SUASImageParser.modules import gaussian_blurring
 
 import cv2
 import timeit
@@ -134,6 +136,11 @@ class ADLCParser:
         
         # Running tests
         is_target = self.color_comparisons(cropped_img)
+        
+        # Cleaning up the image
+        if is_target:
+            # Blurring
+            cropped_img = gaussian_blurring.gaussian_blurring(cropped_img, 1)
 
         # Returning results from tests
         return is_target, cropped_img
