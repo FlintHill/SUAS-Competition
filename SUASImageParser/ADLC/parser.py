@@ -156,7 +156,7 @@ class ADLCParser:
         #Copying over the image inside of the contours
         masked_img = cv2.bitwise_and(cropped_img.get_image(), mask_img)
         
-        return masked_img
+        return k_means.simplify_by_k_means(masked_img)
 
     def identify_characteristics(self, target):
         """
