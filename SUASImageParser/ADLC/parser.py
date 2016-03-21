@@ -4,6 +4,8 @@ from SUASImageParser.modules import k_means
 from SUASImageParser.modules import summing
 from SUASImageParser.modules import gaussian_blurring
 
+from .characteristic_identifier import CharacteristicIdentifier
+
 import cv2
 import timeit
 import numpy as np
@@ -21,6 +23,8 @@ class ADLCParser:
         # @TODO: Calculate correct lower and upper areas
         self.LOWER_CONTOUR_AREA = kwargs.get("LOWER_CONTOUR_AREA", 1000)
         self.HIGHER_CONTOUR_AREA = kwargs.get("HIGHER_CONTOUR_AREA", 50000)
+    
+        self.target_characteristic_identifier = CharacteristicIdentifier()
 
     def set_debug(self, updated_debug):
         """
@@ -213,17 +217,4 @@ class ADLCParser:
         Identifies the characteristics of the target "target" and returns
         them as a dictionary object
         """
-        # @TODO: Implement characteristic identification
-
-        # My thoughts so far to accomplish this is to break the problem down
-        #   into the following tasks:
-        #   1) Segmentation
-        #   2) OCR
-        #   3) Pixhawk log parse to gather data about
-        #       3a) GPS
-        #       3b) Heading
-        # I'm not really sure how to implement this process, which is why I am
-        #   leaving it in this comment as a "stub" which needs to be resolved.
-
-        # Returning the characteristics for each target
-        return {}
+        return self.target_characteristic_identifier.identify_characteristics(target)
