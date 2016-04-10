@@ -132,3 +132,11 @@ $ cd ~/interop/server
 $ source venv/bin/activate
 $ python manage.py dumpdata > exported.json
 ```
+
+### Resetting database
+
+```
+$ cd ~/interop/server
+$ source venv/bin/activate
+$ python manage.py syncdb
+```
