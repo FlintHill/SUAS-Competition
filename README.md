@@ -128,9 +128,9 @@ $ python manage.py loaddata fixtures/test_fixture.yaml
 ### Exporting database to JSON
 
 ```
-$ cd ~/interop/server
+$ cd interop/server
 $ source venv/bin/activate
-$ python manage.py dumpdata > exported.json
+$ python manage.py dumpdata --indent 2 > out.json
 ```
 
 ### Resetting database
@@ -138,5 +138,6 @@ $ python manage.py dumpdata > exported.json
 ```
 $ cd ~/interop/server
 $ source venv/bin/activate
+$ python manage.py flush
 $ python manage.py syncdb
 ```
