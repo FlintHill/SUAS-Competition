@@ -131,6 +131,7 @@ $ python manage.py loaddata fixtures/test_fixture.yaml
 $ cd interop/server
 $ source venv/bin/activate
 $ python manage.py dumpdata --indent 2 > out.json
+$ deactivate
 ```
 
 ### Resetting database
@@ -140,4 +141,6 @@ $ cd ~/interop/server
 $ source venv/bin/activate
 $ python manage.py flush
 $ python manage.py syncdb
+$ python manage.py loaddata fixtures/test_fixture.yaml
+$ deactivate
 ```
