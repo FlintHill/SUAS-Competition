@@ -22,9 +22,6 @@ class CharacteristicIdentifier:
         #   into the following tasks:
         #   1) Segmentation
         #   2) OCR
-        #   3) Pixhawk log parse to gather data about
-        #       3a) GPS
-        #       3b) Heading
         # I'm not really sure how to implement this process, which is why I am
         #   leaving it in this comment as a "stub" which needs to be resolved.
 
@@ -37,7 +34,7 @@ class CharacteristicIdentifier:
         to extract the letter within the image
         """
         # @TODO: Implement segmentation here
-        
+
         return target
 
     def OCR(self, target):
