@@ -121,9 +121,9 @@ $ python manage.py loaddata fixtures/test_fixture.yaml
 
 3. Verify the interop server is running
 
-4. Run the local server ```python interop/clientproxy.py --url http://IP_ADDRESS_OF_INTEROP --username USERNAME --password PASSWORD```
+4. Run the local server ```python clientproxy.py --url http://IP_ADDRESS_OF_INTEROP --username USERNAME --password PASSWORD```
 
-5. Finally, run the Mission Planner script through MPI's scripting interface
+5. Finally, run the Mission Planner script through MPI's scripting interface (auvsi_mp.py)
 
 ### Exporting database to JSON
 
