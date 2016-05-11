@@ -59,21 +59,21 @@ class ADLCParser:
         # Convert image to HSV then to GRAY to help make it easy to identify
         #   possible targets
         if self.debug:
-            print(bcolors.INFO + "[ Info ]" + bcolors.ENDC + " Converting image to HSV")
+            print(bcolors.INFO + "[Info]" + bcolors.ENDC + " Converting image to HSV")
         hsv = cv2.cvtColor(self.image.get_image(), cv2.COLOR_BGR2HSV)
 
         if self.debug:
-            print(bcolors.INFO + "[ Info ]" + bcolors.ENDC + " Converting HSV to GRAY")
+            print(bcolors.INFO + "[Info]" + bcolors.ENDC + " Converting HSV to GRAY")
         img = cv2.cvtColor(hsv, cv2.COLOR_BGR2GRAY)
 
         # Identifying targets
         if self.debug:
-            print(bcolors.INFO + "[ Info ]" + bcolors.ENDC + " Identifying targets")
+            print(bcolors.INFO + "[Info]" + bcolors.ENDC + " Identifying targets")
         targets = self.identify_targets(img)
 
         # Identifying target characteristics
         if self.debug:
-            print(bcolors.INFO + "[ Info ]" + bcolors.ENDC + " Identifying target characteristics")
+            print(bcolors.INFO + "[Info]" + bcolors.ENDC + " Identifying target characteristics")
         target_characteristics = None
         if len(targets) > 0:
             print(len(targets))
@@ -87,7 +87,7 @@ class ADLCParser:
         # If debugging is enabled, calculating time took to parse
         if self.debug:
             end_time = timeit.default_timer()
-            print(bcolors.INFO + "[ Info ]" + bcolors.ENDC + " Took " + str(end_time - self.start_time) + " SECONDS to parse the image")
+            print(bcolors.INFO + "[Info]" + bcolors.ENDC + " Took " + str(end_time - self.start_time) + " seconds to parse the image")
 
         # Returning the grayed out image
         return img, target_characteristics
@@ -204,8 +204,11 @@ class ADLCParser:
         # Comparing colors to see if they are multiple shades of the same color
         threshold_num = 0
         for rgb_index in range(3):
-            if abs(colors[0][rgb_index] - colors[1][rgb_index]) < COLOR_THRESHOLD:
-                threshold_num += 1
+            try:
+                if abs(colors[0][rgb_index] - colors[1][rgb_index]) < COLOR_THRESHOLD:
+                    threshold_num += 1
+            except:
+                print(bcolors.FAIL + "[Error]" + bcolors.ENDC + " Color comparisons failed")
         if threshold_num >= 1:
             passes = False
 
