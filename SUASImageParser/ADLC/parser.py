@@ -146,12 +146,22 @@ class ADLCParser:
             cropped_img = gaussian_blurring.gaussian_blurring(cropped_img, 1)
 
         # Getting shape of target to remove false positives
-        approx_sides = cv2.approxPolyDP(contours, 0.15 * cv2.arcLength(contours, True), True)
-        if len(approx_sides) != 5 and len(approx_sides) != 4 and len(approx_sides) != 3:
+        if not self.is_shape(cropped_img, contours):
             is_target = False
 
         # Returning results from tests
         return is_target, cropped_img
+
+    def is_shape(self, cropped_img, contours):
+        """
+        Return true if the cropped image sent to this method is a shape, and
+        false if it is not.
+        """
+        approx_sides = cv2.approxPolyDP(contours, 0.15 * cv2.arcLength(contours, True), True)
+        if len(approx_sides) != 5 and len(approx_sides) != 4 and len(approx_sides) != 3:
+            return False
+
+        return True
 
     def crop_img(self, contours):
         """
