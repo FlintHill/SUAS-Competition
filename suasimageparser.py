@@ -5,7 +5,7 @@ import cv2
 
 # ------------------------ Loading image & parsing ------------------------
 my_parser = ImageParser(mode="ADLC", debug=True)
-img = my_parser.parse('images/IMG_0159.JPG')
+img = my_parser.parse('images/targets_400.JPG')
 
 
 # ------------------------ Displaying loaded image ------------------------

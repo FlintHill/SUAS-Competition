@@ -21,7 +21,7 @@ class ADLCParser:
         self.debug = kwargs.get("debug")
 
         # @TODO: Calculate correct lower and upper areas
-        self.LOWER_CONTOUR_AREA = kwargs.get("LOWER_CONTOUR_AREA", 1000)
+        self.LOWER_CONTOUR_AREA = kwargs.get("LOWER_CONTOUR_AREA", 500)
         self.HIGHER_CONTOUR_AREA = kwargs.get("HIGHER_CONTOUR_AREA", 50000)
 
         self.target_characteristic_identifier = CharacteristicIdentifier()
