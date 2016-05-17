@@ -34,16 +34,6 @@ class ADLCParser:
         """
         self.debug = updated_debug
 
-    def simple_parse(self, image):
-        """
-        Returns true/false whether an in-depth parse should be applied. This
-        method only does a couple of quick checks to remove images where it is
-        clear there are no targets.
-        """
-        # @TODO: Implement simple parsing
-
-        return True
-
     def parse(self, filename):
         """
         Parses the given image to identify potential ADLC targets. Returns a
