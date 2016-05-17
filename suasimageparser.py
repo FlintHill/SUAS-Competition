@@ -1,11 +1,19 @@
 from SUASImageParser import ImageParser
 
+from options import parseOptions
+from options import getOption
+
 import cv2
+
+
+# ------------------------ Creating option parser -------------------------
+parseOptions()
 
 
 # ------------------------ Loading image & parsing ------------------------
 my_parser = ImageParser(mode="ADLC", debug=True)
-img = my_parser.parse('images/targets_400.JPG')
+
+img = my_parser.parse(getOption("image"))#'images/targets_400.JPG')
 
 
 # ------------------------ Displaying loaded image ------------------------

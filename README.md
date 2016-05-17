@@ -74,6 +74,14 @@ python -c 'import cv2; print(cv2.__version__)'
 
 This should print something like ```3.1.0```. If you get an error, that means that you did not install OpenCV correctly.
 
+## Usage
+
+Sample run:
+
+```
+python suasimageparser.py -i images/targets_400.jpg
+```
+
 ## Installing & Setting up the Interoperability server
 
 ### Installation & Testing
