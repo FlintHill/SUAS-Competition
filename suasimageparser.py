@@ -13,7 +13,7 @@ parseOptions()
 # ------------------------ Loading image & parsing ------------------------
 my_parser = ImageParser(mode="ADLC", debug=True)
 
-img = my_parser.parse(getOption("image"))#'images/targets_400.JPG')
+img = my_parser.parse(getOption("image"))
 
 
 # ------------------------ Displaying loaded image ------------------------
