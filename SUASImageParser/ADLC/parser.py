@@ -91,6 +91,8 @@ class ADLCParser:
         targets = []
 
         # Thresholding image
+        if self.debug:
+            print(bcolors.INFO + "[Info]" + bcolors.ENDC + " Thresholding the image")
         # @TODO: Figure out a way to optimize this process to pick the correct
         #   thresholding method & settings
         ret,thresh = cv2.threshold(img,127,255,0)
@@ -98,6 +100,8 @@ class ADLCParser:
         #thresh = cv2.adaptiveThreshold(img,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY,11,14)
 
         # Getting contours
+        if self.debug:
+            print(bcolors.INFO + "[Info]" + bcolors.ENDC + " Getting the contours of objects")
         # @TODO: Investigate possibly using a different method to avoid this.
         #   Line detection might be a much better route to go (if used in
         #   conjunction with approxPolyDP() & edge vectorization to identify
@@ -113,6 +117,8 @@ class ADLCParser:
 
                 is_a_target, possible_target = self.parse_possible_target(img, cnt)
                 if is_a_target:
+                    if self.debug:
+                        print(bcolors.INFO + "[Info]" + bcolors.ENDC + " Found a target")
                     targets.append(possible_target)
 
         # Return the identified targets
@@ -208,7 +214,7 @@ class ADLCParser:
                 if abs(colors[0][rgb_index] - colors[1][rgb_index]) < COLOR_THRESHOLD:
                     threshold_num += 1
             except:
-                print(bcolors.FAIL + "[Error]" + bcolors.ENDC + " Color comparisons failed")
+                print(bcolors.FAIL + "[Error]" + bcolors.ENDC + " Color comparisons threw an exception")
         if threshold_num >= 1:
             passes = False
 
