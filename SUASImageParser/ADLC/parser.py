@@ -18,14 +18,26 @@ class ADLCParser:
     """
 
     def __init__(self, **kwargs):
+        # Initializing settings
+        self.setup(kwargs)
+
+        # Creating instance variables
         self.image = Image()
-        self.debug = kwargs.get("debug")
-
-        # @TODO: Calculate correct lower and upper areas
-        self.LOWER_CONTOUR_AREA = kwargs.get("LOWER_CONTOUR_AREA", 500)
-        self.HIGHER_CONTOUR_AREA = kwargs.get("HIGHER_CONTOUR_AREA", 50000)
-
         self.target_characteristic_identifier = CharacteristicIdentifier()
+
+    def setup(self, settings):
+        """
+        Initialize all settings
+        """
+        self.settings = settings
+
+        # Setting up general settings
+        self.debug = settings.get("debug")
+
+        # Setting up all parsing specific settings
+        # @TODO: Calculate correct lower and upper areas
+        self.LOWER_CONTOUR_AREA = settings.get("LOWER_CONTOUR_AREA", 500)
+        self.HIGHER_CONTOUR_AREA = settings.get("HIGHER_CONTOUR_AREA", 50000)
 
     def set_debug(self, updated_debug):
         """
