@@ -29,7 +29,7 @@ def parseOptions():
 	"""
 	Completes command line argument parsing
 	"""
-	parser = OptionParser(usage='usage: %prog [options] portname[-portversion]', version='0.0.1')
+	parser = OptionParser(usage='usage: %prog [options]', version='0.0.1')
 	parser.add_option('-i', '--image', dest='image', help="relative path to image")
 
 	global __Options__
