@@ -54,8 +54,16 @@ class ADLCParser:
         hsv = cv2.cvtColor(self.image.get_image(), cv2.COLOR_BGR2HSV)
 
         if self.debug:
+            print(bcolors.INFO + "[Info]" + bcolors.ENDC + " Applying histogram equalization")
+        equalized = histogram_equalization.histeq(hsv)[0].astype(np.uint8)
+
+        if self.debug:
             print(bcolors.INFO + "[Info]" + bcolors.ENDC + " Converting HSV to GRAY")
-        img = cv2.cvtColor(hsv, cv2.COLOR_BGR2GRAY)
+        img = cv2.cvtColor(equalized, cv2.COLOR_BGR2GRAY)
+
+        if self.debug:
+            print(bcolors.INFO + "[Info]" + bcolors.ENDC + " Inverting the image")
+        img = (255-img)
 
         # Identifying targets
         if self.debug:
