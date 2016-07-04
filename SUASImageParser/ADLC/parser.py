@@ -37,7 +37,7 @@ class ADLCParser:
         # Setting up all parsing specific settings
         # @TODO: Calculate correct lower and bounds for target detection
         self.LOWER_CONTOUR_AREA = settings.get("LOWER_CONTOUR_AREA", 500)
-        self.HIGHER_CONTOUR_AREA = settings.get("HIGHER_CONTOUR_AREA", 50000)
+        self.HIGHER_CONTOUR_AREA = settings.get("HIGHER_CONTOUR_AREA", 10000)
 
         self.THRESH_TYPE = cv2.THRESH_BINARY
         self.THRESH_VALUE = 127
@@ -75,7 +75,7 @@ class ADLCParser:
 
         if self.DEBUG:
             print(bcolors.INFO + "[Info]" + bcolors.ENDC + " Converting HSV to GRAY")
-        img = cv2.cvtColor(equalized, cv2.COLOR_BGR2GRAY)
+        img = cv2.cvtColor(cv2.cvtColor(equalized, cv2.COLOR_HSV2BGR), cv2.COLOR_BGR2GRAY)
 
         if self.DEBUG:
             print(bcolors.INFO + "[Info]" + bcolors.ENDC + " Inverting the image")
@@ -120,14 +120,9 @@ class ADLCParser:
             print(bcolors.INFO + "[Info]" + bcolors.ENDC + " Thresholding the image")
         # @TODO: Figure out a way to optimize this process to pick the correct
         #   thresholding method & settings
-        #ret,thresh = cv2.threshold(img, self.THRESH_VALUE, self.THRESH_POS_VAL, self.THRESH_TYPE)
+        ret,thresh = cv2.threshold(img, self.THRESH_VALUE, self.THRESH_POS_VAL, self.THRESH_TYPE)
         #thresh = cv2.adaptiveThreshold(img,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY,11,14)
         #thresh = cv2.Canny(img,175,225)
-        thresh = self.new_thresh(img)
-
-        cv2.imshow("target", thresh)
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
 
         # Getting contours
         if self.DEBUG:
@@ -136,7 +131,7 @@ class ADLCParser:
         #   Line detection might be a much better route to go (if used in
         #   conjunction with approxPolyDP() & edge vectorization to identify
         #   shapes)
-        _,contours,hierarchy = cv2.findContours(thresh, 1, 2)
+        _,contours,hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, 2)
 
         # Looking for possible targets
         for cnt in contours:
@@ -153,23 +148,6 @@ class ADLCParser:
 
         # Return the identified targets
         return targets
-
-    def new_thresh(self, img, LOWER_THRESH=105, UPPER_THRESH=255):
-        """
-        Custom thresholding method to help normalize the image. Pixels with colors
-        between the LOWER_THRESH & UPPER_THRESH are turned black, while the outer
-        regions are turned white.
-        """
-        for x in xrange(0, img.shape[0], 1):
-            for y in xrange(0, img.shape[1], 1):
-                if img[x, y] > LOWER_THRESH and img[x, y] < UPPER_THRESH:
-                    img[x, y] = 255
-                else:
-                    img[x, y] = 0
-
-            print(str(x) + " out of " + str(img.shape[0]))
-
-        return img
 
     def parse_possible_target(self, img, contours):
         """
@@ -200,13 +178,16 @@ class ADLCParser:
         Return true if the cropped image sent to this method is a shape, and
         false if it is not.
         """
-        approx_sides = cv2.approxPolyDP(contours, 0.15 * cv2.arcLength(contours, True), True)
-        # NOTE: This will have to be rewritten because of the possibility of a cross, hexagon,
-        #   etc. being present at competition
-        if len(approx_sides) != 5 and len(approx_sides) != 4 and len(approx_sides) != 3:
-            return False
+        area = -1
+        scale_factor = 0.15
 
-        return True
+        approx_sides = cv2.approxPolyDP(contours, scale_factor * cv2.arcLength(contours, True), True)
+        while (len(approx_sides) != 3 and scale_factor < 1.0):
+            approx_sides = cv2.approxPolyDP(contours, scale_factor * cv2.arcLength(contours, True), True)
+
+            scale_factor += 0.01
+
+        return len(approx_sides) == 3
 
     def crop_img(self, contours):
         """
