@@ -21,3 +21,16 @@ Each section in the above image will be discussed in more detail in the followin
    The Target Recognition Application is in charge of submitting targets to the interoperability server.
 #. :doc:`interoperabilityclient`.
    This allows the TRA and MP scripts to communicate with the interoperability server.
+
+--------------
+
+.. toctree::
+  :hidden:
+
+  hardware
+  navio2
+  tx1
+  missionplanner
+  mp
+  tra
+  interoperabilityclient
