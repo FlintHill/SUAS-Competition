@@ -1,22 +1,33 @@
-.. SUAS-Competition documentation master file, created by
-   sphinx-quickstart on Wed Aug 24 14:04:22 2016.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+SUAS Competition Code
+=====================
 
-Welcome to SUAS-Competition's documentation!
-============================================
+This is the documentation for Flint Hill's SUAS team's code.
 
-Contents:
+If you have questions or would like to submit an issue/feature please see the `issue tracker
+<https://github.com/FlintHill/SUAS-Competition>`__.
+
+Getting Started
+---------------
+
+Developers should read through the entire documentation before working with the image processing system. The contents of this doc are as follows:
+
+#. :doc: 'system/index'.
+   Information developers need to know about the system as a whole as well as its components. This should be read before beginning development on the system.
+#. :doc: 'integration/index'.
+   Information how to use this library.
+
+Contents
+--------
 
 .. toctree::
    :maxdepth: 2
 
+   system/index
+   integration/index
 
-
-Indices and tables
-==================
+Indices & Tables
+----------------
 
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-
