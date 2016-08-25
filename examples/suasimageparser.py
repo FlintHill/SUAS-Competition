@@ -19,7 +19,6 @@ if getOption("image") == None:
 
 # ------------------------ Loading image & parsing ------------------------
 my_parser = ImageParser(mode="ADLC", debug=True)
-
 img = my_parser.parse(getOption("image"))
 
 
