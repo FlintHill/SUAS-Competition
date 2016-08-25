@@ -1,5 +1,8 @@
 # SUAS-Competition
 
+[![docs status](http://suas-competition.readthedocs.io/en/latest/?badge=latest)]
+
+
 Flint Hill School's code for the Student Unmanned Aerial Systems competition.
 
 ## License Information
