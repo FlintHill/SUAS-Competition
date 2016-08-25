@@ -22,8 +22,8 @@ Contents
 .. toctree::
    :maxdepth: 2
 
-   system/index
-   integration/index
+   system
+   integration
 
 Indices & Tables
 ----------------
