@@ -23,7 +23,7 @@ Contents
    :maxdepth: 2
 
    system
-   integration
+   integration/index
 
 Indices & Tables
 ----------------
