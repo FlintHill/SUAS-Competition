@@ -58,7 +58,7 @@ This will take a long time, about 2 - 4 hours. Once this is done, OpenCV will be
 OpenCV must be installed for this project to work. To install OpenCV's latest release, use Homebrew:
 
 ```
-brew install opencv3 --with-python3 --with-tbb
+brew install opencv3 --with-python3 --with-tbb --with-cuda --with-contrib
 ```
 
 This is a long process. After it is completed, you will have to link the python libraries.
