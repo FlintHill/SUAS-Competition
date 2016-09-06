@@ -20,6 +20,9 @@ if __name__ == '__main__':
 
     print("[*] Starting Target Recognition Application...")
 
+    server = ServerProxy(cmd_args.url)
+    print('Server Info: {}'.format(server.server_info()))
+
     try:
         print('[*] Use Control-C to exit')
     except KeyboardInterrupt:
