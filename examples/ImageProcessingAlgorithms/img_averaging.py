@@ -1,5 +1,4 @@
 import cv2
-import PIL
 from numpy import *
 
 """
@@ -34,7 +33,7 @@ def compute_average(imlist):
     return averageim
 
 if __name__ == '__main__':
-    img_list = ["../images/IMG_0147.jpg", "../images/IMG_0148.jpg"]
+    img_list = ["../images/targets_300.jpg", "../images/targets_400.jpg"]
 
     cv2.imshow("average", compute_average(img_list) / 255.0)
     cv2.waitKey(0)

@@ -33,7 +33,7 @@ def gaussian_blurring(imname, standard_deviation=5):
     return filtered
 
 if __name__ == '__main__':
-    imname = "../images/IMG_0147.jpg"
+    imname = "../images/targets_300.jpg"
 
     cv2.imshow("filtered", gaussian_blurring(imname))
     cv2.waitKey(0)

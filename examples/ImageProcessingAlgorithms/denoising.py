@@ -62,7 +62,7 @@ def denoise(im, U_init, tolerance=0.1, tau=0.125, tv_weight=100):
     return U, im - U
 
 if __name__ == '__main__':
-    imname = "../images/IMG_0150.jpg"
+    imname = "../images/targets_300.jpg"
     blurred = cv2.cvtColor(gaussian_blurring.gaussian_blurring(imname, 10), cv2.COLOR_BGR2GRAY)
 
     cv2.imshow("blurred", blurred)

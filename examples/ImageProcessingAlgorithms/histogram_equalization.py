@@ -1,5 +1,4 @@
 import cv2
-import PIL
 from numpy import *
 
 """
@@ -31,7 +30,7 @@ def histeq(im, nbr_bins=1024):
 
 # Testing histogram equalization
 if __name__ == '__main__':
-    im = array(cv2.cvtColor(cv2.imread("../images/IMG_0150.jpg"), cv2.COLOR_BGR2GRAY))
+    im = array(cv2.cvtColor(cv2.imread("../images/targets_300.jpg"), cv2.COLOR_BGR2GRAY))
     im2, cdf = histeq(im)
 
     cv2.imshow("im2", im2)

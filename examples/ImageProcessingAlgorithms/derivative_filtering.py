@@ -47,7 +47,7 @@ def gaussian_xy_derivatives(img, standard_deviation=5):
     return magnitude
 
 if __name__ == '__main__':
-    img = cv2.imread("../images/IMG_0147.jpg")
+    img = cv2.imread("../images/targets_300.jpg")
 
     cv2.imshow("sobel filtered", sobel_xy_derivative(img))
     cv2.waitKey(0)
