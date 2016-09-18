@@ -225,8 +225,8 @@ class ADLCParser:
 
         # Finding the colors in the image
         colors = [[255, 255, 255]]
-        for x in xrange(0, img.shape[0], 1):
-            for y in xrange(0, img.shape[1], 1):
+        for x in range(0, img.shape[0]):
+            for y in range(0, img.shape[1]):
                 should_add = True
                 for color in colors:
                     if img[x, y, 0] == color[0] and img[x, y, 1] == color[1] and img[x, y, 2] == color[2]:

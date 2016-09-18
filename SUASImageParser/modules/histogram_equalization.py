@@ -1,5 +1,4 @@
 import cv2
-import PIL
 from numpy import *
 
 """

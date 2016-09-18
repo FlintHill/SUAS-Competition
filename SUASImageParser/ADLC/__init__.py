@@ -1,1 +1,1 @@
-from parser import ADLCParser
+from .parser import ADLCParser
