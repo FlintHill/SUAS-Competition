@@ -12,21 +12,23 @@ Licensed under the MIT License. Please see the LICENSE file for more information
 
 ## Installation
 
-First, you need to clone this repository and install it.
-
-```
-git clone https://github.com/FlintHill/SUAS-Competition.git
-cd SUAS-Competition
-pip install . --upgrade
-```
-
-After you have installed the code, install the dependencies.
-
 ### Installing Python
 
 Python 3.5.x must be installed. Without it, OpenCV will not install correctly and nothing will work.
 
+### Installing the library
+
+```
+git clone https://github.com/FlintHill/SUAS-Competition.git
+cd SUAS-Competition
+pip3 install . --upgrade
+```
+
+After you have installed the code, install the dependencies.
+
 ### Installing OpenCV -- Raspberry Pi
+
+*NOTE This tab of instructions does NOT apply to OpenCV 3 nor Python3, and so will not work with the current system*
 
 This project requires OpenCV to be built and compiled. The below code is only usable for Raspberry Pis. Other installation tutorials can be found online.
 
@@ -64,7 +66,7 @@ brew install opencv3 --with-python3 --with-tbb --with-cuda --with-contrib
 This is a long process. After it is completed, you will have to link the python libraries.
 
 ```
-echo /usr/local/opt/opencv3/lib/python2.7/site-packages >> /usr/local/lib/python2.7/site-packages/opencv3.pth
+echo /usr/local/opt/opencv3/lib/python2.7/site-packages >> /Library/Python/3.5/site-packages/opencv3.pth
 mkdir -p /Users/{ADD YOUR USERNAME HERE}/Library/Python/2.7/lib/python/site-packages
 echo 'import site; site.addsitedir("/usr/local/lib/python2.7/site-packages")' >> /Users/{ADD YOUR USERNAME HERE}/Library/Python/2.7/lib/python/site-packages/homebrew.pth
 ```
@@ -72,7 +74,7 @@ echo 'import site; site.addsitedir("/usr/local/lib/python2.7/site-packages")' >>
 To test the installation, simply enter a quick command into terminal
 
 ```
-python -c 'import cv2; print(cv2.__version__)'
+python3 -c 'import cv2; print(cv2.__version__)'
 ```
 
 This should print something like ```3.1.0```. If you get an error, that means that you did not install OpenCV correctly.
@@ -82,7 +84,7 @@ This should print something like ```3.1.0```. If you get an error, that means th
 Sample run:
 
 ```
-python suasimageparser.py -i images/targets_400.jpg
+python3 suasimageparser.py -i images/targets_400.jpg
 ```
 
 ## Installing & Setting up the Interoperability server

@@ -30,9 +30,9 @@ class ImageParser:
         """
         if self.mode == "ADLC":
             targets, characteristics = self.adlc_parser.parse(filename)
-            
+
             # @TODO: Implement target characteristic saving here
-            
+
             return targets
 
         return None
