@@ -21,7 +21,10 @@ class RelayService:
                                   password=password)
         self.last_telemetry = time()
 
-    def telemetry(self, lat, lon, alt, heading):
+    def post_telemetry(self, lat, lon, alt, heading):
+        """
+        POST telemetry to interoperability server.
+        """
         t = Telemetry(latitude=lat,
                       longitude=lon,
                       altitude_msl=alt,
@@ -34,7 +37,10 @@ class RelayService:
 
         return True
 
-    def server_info(self):
+    def get_server_info(self):
+        """
+        GET server information.
+        """
         info = self.client.get_server_info().result()
         return str(info.message)
 
