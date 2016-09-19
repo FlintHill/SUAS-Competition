@@ -74,8 +74,20 @@ class ADLCParser:
         equalized = histogram_equalization.histeq(hsv)[0].astype(np.uint8)
 
         if self.DEBUG:
-            print(bcolors.INFO + "[Info]" + bcolors.ENDC + " Converting HSV to GRAY")
+            print(bcolors.INFO + "[Info]" + bcolors.ENDC + " Converting histogram equalized to GRAY")
         img = cv2.cvtColor(cv2.cvtColor(equalized, cv2.COLOR_HSV2BGR), cv2.COLOR_BGR2GRAY)
+
+        detector = cv2.MSER_create(1, 3000, 30000)
+        keypoints = detector.detect(equalized)
+        keypoints2 = detector.detect((255-img))
+
+        im_with_keypoints = cv2.drawKeypoints(img, keypoints, np.array([]), (0,0,255), cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
+        im_with_keypoints = cv2.drawKeypoints(im_with_keypoints, keypoints2, np.array([]), (0,0,255), cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
+
+        cv2.imshow("Histogram Equalized with Blobs", im_with_keypoints)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
+        exit(0)
 
         if self.DEBUG:
             print(bcolors.INFO + "[Info]" + bcolors.ENDC + " Inverting the image")
