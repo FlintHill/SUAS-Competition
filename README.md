@@ -24,7 +24,7 @@ After you have installed the code, install the dependencies.
 
 ### Installing Python
 
-Python 2.7.x must be installed. Without it, OpenCV will not install correctly and nothing will work.
+Python 3.5.x must be installed. Without it, OpenCV will not install correctly and nothing will work.
 
 ### Installing OpenCV -- Raspberry Pi
 
