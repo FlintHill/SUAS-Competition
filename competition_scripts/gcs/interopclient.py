@@ -3,13 +3,7 @@ from interop import AsyncClient
 from interop import Telemetry
 from time import time
 import argparse
-
-try:
-    # Python 3
-    from xmlrpc.server import SimpleXMLRPCServer
-except ImportError:
-    # Python 2
-    from SimpleXMLRPCServer import SimpleXMLRPCServer
+from xmlrpc.server import SimpleXMLRPCServer
 
 __author__ = 'Joseph Moster'
 
