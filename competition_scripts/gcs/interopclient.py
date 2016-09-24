@@ -12,6 +12,8 @@ import threading
 
 __author__ = 'Vale Tolpegin'
 
+LARGE_FONT = ("Robot", 18)
+
 class RelayService:
     def __init__(self, url, username, password):
         self.client = AsyncClient(url=url,
@@ -43,61 +45,64 @@ class RelayService:
         return str(info.message)
 
 
-class Main(tk.Tk):
-    def __init__(self, **kwargs):
-        tk.Tk.__init__(self)
+class InteropClient(tk.Tk):
 
-        self.title('Interoperability Client')
+    def __init__(self, *args, **kwargs):
+        tk.Tk.__init__(self, *args, **kwargs)
+        tk.Tk.wm_title(self, "Interoperability Client")
+
+        container = tk.Frame(self)
+        container.pack(side="top", fill="both", expand=True)
+        container.grid_rowconfigure(0, weight=1)
+        container.grid_columnconfigure(0, weight=1)
+
+        self.frames = {}
+        for page in (LoadPage,):
+            frame = page(container, self)
+            self.frames[page] = frame
+            frame.grid(row=0, column=0, sticky="nesw")
+
+        self.show_frame(LoadPage)
+
+    def show_frame(self, cont):
+        frame = self.frames[cont]
+        frame.tkraise()
+
+class LoadPage(tk.Frame):
+
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
 
         self.server = None
-        self.kwargs = kwargs
-        self.initialize()
-
-    def initialize(self):
-        self.grid()
-
-        self.lbl_ip_address = ttk.Label(self, anchor=tk.E, text=' Input: ')
-        self.lbl_ip_address.grid(column=0, row=0, sticky='w')
-
-        #self.input_text = ScrolledText.ScrolledText(self, state='normal')
-        #self.input_text.grid(column=0, row=1, columnspan=2, sticky='nesw', padx=3, pady=3)
-        #self.input_text.insert(tk.END, "Enter text to parse")
-
-        self.lbl_ip_address = ttk.Label(self, anchor=tk.E, text=' Output: ')
-        self.lbl_ip_address.grid(column=0, row=2, sticky='w')
-
-        #self.output_text = ScrolledText.ScrolledText(self, state='disabled')
-        #self.output_text.grid(column=0, row=3, columnspan=2, sticky='nesw', padx=3, pady=3)
-
-        #self.btn_convert = ttk.Button(self, text='Exit', command=self.handle_close)
-        #self.btn_convert.grid(column=0, row=3, columnspan=2, sticky='s', pady=15)
-
-        self.resizable(True, True)
-        self.minsize(300, 300)
-
-        self.protocol("WM_DELETE_WINDOW", self.handle_close)
-
+        self.client_running = False
         self.server_thread = threading.Thread(target=self.create_server)
         self.server_thread.daemon = True
         self.server_thread.start()
 
-    def handle_close(self):
-        exit(0)
+        label = tk.Label(self, text="""ALPHA Bitcoin trading application
+        use at your own risk there is no promise
+        of warranty.""", font=LARGE_FONT)
+        label.pack(padx=10, pady=10)
+
+        button = ttk.Button(self, text="Agree", command=lambda: controller.show_frame(BTCe_page))
+        button.pack()
+
+        button = ttk.Button(self, text="Disagree", command=quit)
+        button.pack()
 
     def create_server(self):
         """
         Connect the client to the interoperability server
         """
-        client_running = False
-        while not client_running:
+        while not self.client_running:
             try:
                 print("[*] Attempting to connect to interoperability server...")
 
                 sleep(0.1)
 
-                self.relay = RelayService(url=self.kwargs.get("cmd_args").url,
-                                     username=self.kwargs.get("cmd_args").username,
-                                     password=self.kwargs.get("cmd_args").password)
+                self.relay = RelayService(url="URL",
+                                     username="USERNAME",
+                                     password="PASSWORD")
                 self.server = SimpleXMLRPCServer(
                     ('127.0.0.1', 9000),
                     logRequests=True,
@@ -105,36 +110,17 @@ class Main(tk.Tk):
                 self.server.register_instance(self.relay)
                 self.server.serve_forever()
 
-                client_running = True
+                self.client_running = True
             except:
+                self.client_running = False
                 self.server = None
 
                 sleep(0.1)
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(
-        description='AUVSI SUAS Server Interface Relay')
-    parser.add_argument(
-        '--url',
-        dest='url',
-        help='Interoperability Server URL, example: http://10.10.130.10:80',
-        required=True)
-    parser.add_argument(
-        '--username',
-        dest='username',
-        help='Interoperability Username, example: calpoly-broncos',
-        required=True)
-    parser.add_argument('--password',
-                        dest='password',
-                        help='Interoperability Password, example: 4597630144',
-                        required=True)
-
-    cmd_args = parser.parse_args()
-
     try:
         print('Use Control-C to exit')
-        Main(cmd_args=cmd_args).mainloop()
-        #server.serve_forever()
+        InteropClient().mainloop()
     except KeyboardInterrupt:
         print('Exiting')
