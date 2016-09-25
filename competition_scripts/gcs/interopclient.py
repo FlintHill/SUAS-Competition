@@ -5,14 +5,21 @@ from time import time
 from time import sleep
 import argparse
 from xmlrpc.server import SimpleXMLRPCServer
-
 import tkinter as tk
 from tkinter import ttk as ttk
 import threading
+import logging
+import subprocess
+import io
+import multiprocessing
 
 __author__ = 'Vale Tolpegin'
 
-LARGE_FONT = ("Robot", 18)
+LARGE_FONT = ("Robot", 36)
+MEDIUM_FONT = ("Robot", 24)
+SMALL_FONT = ("Robot", 18)
+
+log_capture = io.StringIO()
 
 class RelayService:
     def __init__(self, url, username, password):
@@ -51,7 +58,7 @@ class InteropClient(tk.Tk):
         tk.Tk.__init__(self, *args, **kwargs)
         tk.Tk.wm_title(self, "Interoperability Client")
 
-        container = tk.Frame(self)
+        container = ttk.Frame(self, padding="5 5 5 5")
         container.pack(side="top", fill="both", expand=True)
         container.grid_rowconfigure(0, weight=1)
         container.grid_columnconfigure(0, weight=1)
@@ -73,54 +80,94 @@ class LoadPage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
 
+        self.parent = parent
+
+        # Creating server time display
+        timelbl = ttk.Label(self, text="--:--", font=LARGE_FONT)
+
+        # Creating authentication fields
+        urllbl = ttk.Label(self, text="URL", font=SMALL_FONT)
+        usernamelbl = ttk.Label(self, text="USR", font=SMALL_FONT)
+        passwordlbl = ttk.Label(self, text="PWD", font=("Robot", 17))
+
+        self.url = ttk.Entry(self)
+        self.username = ttk.Entry(self)
+        self.password = ttk.Entry(self)
+
+        # Creating off axis target field
+        self.off_axis_dfttxt = "Off-Axis Target: -----------------"
+        self.off_axis_targetlbl = ttk.Label(self, text=self.off_axis_dfttxt, font=SMALL_FONT)
+
+        # Creating telemetry upload rate info field
+        self.telemetry_dfttxt = "Telemetry Upload Rate (Hz): -----"
+        self.telemetrylbl = ttk.Label(self, text=self.telemetry_dfttxt, font=SMALL_FONT)
+
+        # Placing everything on frame
+        timelbl.place(relx=0.5, y=20, anchor="center")
+        urllbl.place(x=20, rely=0.15, anchor="n")
+        self.url.place(relx=0.28, rely=0.15, anchor="n")
+        usernamelbl.place(x=20, rely=0.2, anchor="n")
+        self.username.place(relx=0.28, rely=0.2, anchor="n")
+        passwordlbl.place(x=20, rely=0.25, anchor="n")
+        self.password.place(relx=0.28, rely=0.25, anchor="n")
+        self.off_axis_targetlbl.place(x=138, rely=0.35, anchor="n")
+        self.telemetrylbl.place(x=138, rely=0.40, anchor="n")
+
         self.server = None
         self.client_running = False
         self.server_thread = threading.Thread(target=self.create_server)
         self.server_thread.daemon = True
         self.server_thread.start()
 
-        label = tk.Label(self, text="""ALPHA Bitcoin trading application
-        use at your own risk there is no promise
-        of warranty.""", font=LARGE_FONT)
-        label.pack(padx=10, pady=10)
+        self.update()
 
-        button = ttk.Button(self, text="Agree", command=lambda: controller.show_frame(BTCe_page))
-        button.pack()
+    def update(self):
+        log = log_capture.getvalue()
+        if log != "":
+            print(log.replace("\n", ""))
 
-        button = ttk.Button(self, text="Disagree", command=quit)
-        button.pack()
+        self.parent.after(1000, self.update)
 
     def create_server(self):
         """
         Connect the client to the interoperability server
         """
-        while not self.client_running:
-            try:
-                print("[*] Attempting to connect to interoperability server...")
+        url = str(self.url.get())
+        username = str(self.username.get())
+        password = str(self.password.get())
 
-                sleep(0.1)
+        msg_base = "attempting to connect to interop server"
+        msg = msg_base + " at \"" + url + "\" with the username \"" + username + "\" and the password \"" + password + "\""
+        logging.debug(msg)
+        subprocess.Popen(['espeak', '-s150', '-ven+f1', msg_base], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()
 
-                self.relay = RelayService(url="URL",
-                                     username="USERNAME",
-                                     password="PASSWORD")
-                self.server = SimpleXMLRPCServer(
-                    ('127.0.0.1', 9000),
-                    logRequests=True,
-                    allow_none=True)
-                self.server.register_instance(self.relay)
-                self.server.serve_forever()
+        try:
+            self.relay = RelayService(url=url,
+                                username=username,
+                                password=password)
+            self.server = SimpleXMLRPCServer(
+                ('127.0.0.1', 9000),
+                logRequests=True,
+                allow_none=True)
+            self.server.register_instance(self.relay)
+            self.server.serve_forever()
 
-                self.client_running = True
-            except:
-                self.client_running = False
-                self.server = None
+            self.client_running = True
+        except:
+            self.client_running = False
+            self.server = None
 
-                sleep(0.1)
+            self.parent.after(1000, self.update)
 
 
 if __name__ == '__main__':
+    logging.basicConfig(stream=log_capture, format='[%(asctime)s %(threadName)s]  %(message)s ', datefmt='%m/%d/%Y %I:%M:%S %p', level=logging.DEBUG)
+
     try:
         print('Use Control-C to exit')
-        InteropClient().mainloop()
+        client = InteropClient()
+        client.minsize(500, 500)
+        client.resizable(width=False, height=False)
+        client.mainloop()
     except KeyboardInterrupt:
         print('Exiting')
