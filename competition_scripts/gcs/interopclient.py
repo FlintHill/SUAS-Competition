@@ -7,11 +7,14 @@ import argparse
 from xmlrpc.server import SimpleXMLRPCServer
 import tkinter as tk
 from tkinter import ttk as ttk
+import tkinter.scrolledtext as tkst
 import threading
 import logging
 import subprocess
 import io
 import multiprocessing
+import os
+import shutil
 
 __author__ = 'Vale Tolpegin'
 
@@ -20,6 +23,24 @@ MEDIUM_FONT = ("Robot", 24)
 SMALL_FONT = ("Robot", 18)
 
 log_capture = io.StringIO()
+
+if not os.path.exists("LogFiles"):
+    os.makedirs("LogFiles")
+else:
+    shutil.rmtree("LogFiles")
+    os.makedirs("LogFiles")
+
+def setup_logger(logger_name, log_file, level=logging.DEBUG):
+    l = logging.getLogger(logger_name)
+    formatter = logging.Formatter('[%(asctime)s %(threadName)s]  %(message)s ', datefmt='%m/%d/%Y %I:%M:%S %p')
+    fileHandler = logging.FileHandler(log_file, mode='w')
+    fileHandler.setFormatter(formatter)
+    streamHandler = logging.StreamHandler(stream=log_capture)
+    streamHandler.setFormatter(formatter)
+
+    l.setLevel(level)
+    l.addHandler(fileHandler)
+    l.addHandler(streamHandler)
 
 class RelayService:
     def __init__(self, url, username, password):
@@ -102,6 +123,10 @@ class LoadPage(tk.Frame):
         self.telemetry_dfttxt = "Telemetry Upload Rate (Hz): -----"
         self.telemetrylbl = ttk.Label(self, text=self.telemetry_dfttxt, font=SMALL_FONT)
 
+        # Creating log text field
+        self.loglbl = ttk.Label(self, text="LOGFILE", font=SMALL_FONT)
+        self.log_file = ttk.Entry(self)
+
         # Placing everything on frame
         timelbl.place(relx=0.5, y=20, anchor="center")
         urllbl.place(x=20, rely=0.15, anchor="n")
@@ -112,6 +137,8 @@ class LoadPage(tk.Frame):
         self.password.place(relx=0.28, rely=0.25, anchor="n")
         self.off_axis_targetlbl.place(x=138, rely=0.35, anchor="n")
         self.telemetrylbl.place(x=138, rely=0.40, anchor="n")
+        self.loglbl.place(x=0, rely=0.5)
+        self.log_file.place(relx=0.16, rely=0.5)
 
         self.server = None
         self.client_running = False
@@ -125,6 +152,7 @@ class LoadPage(tk.Frame):
         log = log_capture.getvalue()
         if log != "":
             print(log.replace("\n", ""))
+
             log_capture.seek(0)
             log_capture.truncate()
 
@@ -150,7 +178,7 @@ class LoadPage(tk.Frame):
 
         msg_base = "Attempting to connect to interop server"
         msg = msg_base + " at \"" + url + "\" with the username \"" + username + "\" and the password \"" + password + "\""
-        logging.debug(msg)
+        logging.getLogger('main').debug(msg)
         subprocess.Popen(['espeak', '-s150', '-ven+f1', msg_base], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()
 
         if url != "" and username != "" and password != "":
@@ -164,6 +192,13 @@ class LoadPage(tk.Frame):
                     allow_none=True)
                 self.server.register_instance(self.relay)
                 self.client_running = True
+
+                msg = "Successfully connected to interop server"
+                logging.getLogger('main').debug(msg)
+                subprocess.Popen(['espeak', '-s150', '-ven+f1', msg], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()
+
+                tk.Frame.config(self, bg="green")
+
                 self.server.serve_forever()
             except:
                 self.client_running = False
@@ -175,7 +210,7 @@ class LoadPage(tk.Frame):
 
 
 if __name__ == '__main__':
-    logging.basicConfig(stream=log_capture, format='[%(asctime)s %(threadName)s]  %(message)s ', datefmt='%m/%d/%Y %I:%M:%S %p', level=logging.DEBUG)
+    setup_logger('main', r'LogFiles/main.log')
 
     try:
         print('Use Control-C to exit')
