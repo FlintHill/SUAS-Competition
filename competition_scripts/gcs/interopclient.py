@@ -47,6 +47,7 @@ class RelayService:
                                   username=username,
                                   password=password)
         self.last_telemetry = time()
+        self.upload_rate = -1
 
     def post_telemetry(self, lat, lon, alt, heading):
         """
@@ -59,7 +60,7 @@ class RelayService:
         self.client.post_telemetry(t)
 
         new_time = time()
-        print(1 / (new_time - self.last_telemetry))
+        self.upload_rate = 1 / (new_time - self.last_telemetry)
         self.last_telemetry = new_time
 
         return True
@@ -70,6 +71,12 @@ class RelayService:
         """
         info = self.client.get_server_info().result()
         return str(info.message)
+
+    def get_upload_rate(self):
+        """
+        Return the upload rate.
+        """
+        return self.upload_rate
 
 
 class InteropClient(tk.Tk):
@@ -140,6 +147,7 @@ class LoadPage(tk.Frame):
         self.update()
 
     def update(self):
+        # Updating captured log information
         global log_capture
 
         log = log_capture.getvalue()
@@ -148,6 +156,10 @@ class LoadPage(tk.Frame):
 
             log_capture.seek(0)
             log_capture.truncate()
+
+        # Updating UI
+        if self.client_running:
+            logging.getLogger('main').debug(str(self.relay.get_server_info()))
 
         self.parent.after(1000, self.update)
 
