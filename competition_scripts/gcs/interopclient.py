@@ -119,12 +119,18 @@ class LoadPage(tk.Frame):
         self.server_thread.daemon = True
         self.server_thread.start()
 
-        self.update()
+        self.update_thread = threading.Thread(target=self.update)
+        self.update_thread.daemon = True
+        self.update_thread.start()
 
     def update(self):
+        global log_capture
+
         log = log_capture.getvalue()
         if log != "":
             print(log.replace("\n", ""))
+            log_capture.seek(0)
+            log_capture.truncate()
 
         self.parent.after(1000, self.update)
 
@@ -136,28 +142,30 @@ class LoadPage(tk.Frame):
         username = str(self.username.get())
         password = str(self.password.get())
 
-        msg_base = "attempting to connect to interop server"
+        msg_base = "Attempting to connect to interop server"
         msg = msg_base + " at \"" + url + "\" with the username \"" + username + "\" and the password \"" + password + "\""
         logging.debug(msg)
         subprocess.Popen(['espeak', '-s150', '-ven+f1', msg_base], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()
 
-        try:
-            self.relay = RelayService(url=url,
-                                username=username,
-                                password=password)
-            self.server = SimpleXMLRPCServer(
-                ('127.0.0.1', 9000),
-                logRequests=True,
-                allow_none=True)
-            self.server.register_instance(self.relay)
-            self.server.serve_forever()
+        if url != "" and username != "" and password != "":
+            try:
+                self.relay = RelayService(url=url,
+                                    username=username,
+                                    password=password)
+                self.server = SimpleXMLRPCServer(
+                    ('127.0.0.1', 9000),
+                    logRequests=True,
+                    allow_none=True)
+                self.server.register_instance(self.relay)
+                self.client_running = True
+                self.server.serve_forever()
+            except:
+                self.client_running = False
+                self.server = None
 
-            self.client_running = True
-        except:
-            self.client_running = False
-            self.server = None
-
-            self.parent.after(1000, self.update)
+                self.parent.after(1000, self.create_server)
+        else:
+            self.parent.after(1000, self.create_server)
 
 
 if __name__ == '__main__':
