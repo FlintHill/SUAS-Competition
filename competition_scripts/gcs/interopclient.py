@@ -3,7 +3,6 @@ from interop import AsyncClient
 from interop import Telemetry
 from time import time
 from time import sleep
-import argparse
 from xmlrpc.server import SimpleXMLRPCServer
 import tkinter as tk
 from tkinter import ttk as ttk
@@ -32,7 +31,7 @@ else:
 
 def setup_logger(logger_name, log_file, level=logging.DEBUG):
     l = logging.getLogger(logger_name)
-    formatter = logging.Formatter('[%(asctime)s %(threadName)s]  %(message)s ', datefmt='%m/%d/%Y %I:%M:%S %p')
+    formatter = logging.Formatter('[%(asctime)s %(threadName)s] %(levelname)s:  %(message)s ', datefmt='%m/%d/%Y %I:%M:%S %p')
     fileHandler = logging.FileHandler(log_file, mode='w')
     fileHandler.setFormatter(formatter)
     streamHandler = logging.StreamHandler(stream=log_capture)
