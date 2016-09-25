@@ -123,10 +123,6 @@ class LoadPage(tk.Frame):
         self.telemetry_dfttxt = "Telemetry Upload Rate (Hz): -----"
         self.telemetrylbl = ttk.Label(self, text=self.telemetry_dfttxt, font=SMALL_FONT)
 
-        # Creating log text field
-        self.loglbl = ttk.Label(self, text="LOGFILE", font=SMALL_FONT)
-        self.log_file = ttk.Entry(self)
-
         # Placing everything on frame
         timelbl.place(relx=0.5, y=20, anchor="center")
         urllbl.place(x=20, rely=0.15, anchor="n")
@@ -137,8 +133,6 @@ class LoadPage(tk.Frame):
         self.password.place(relx=0.28, rely=0.25, anchor="n")
         self.off_axis_targetlbl.place(x=138, rely=0.35, anchor="n")
         self.telemetrylbl.place(x=138, rely=0.40, anchor="n")
-        self.loglbl.place(x=0, rely=0.5)
-        self.log_file.place(relx=0.16, rely=0.5)
 
         self.server = None
         self.client_running = False
