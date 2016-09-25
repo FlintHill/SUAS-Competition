@@ -115,13 +115,9 @@ class LoadPage(tk.Frame):
 
         self.server = None
         self.client_running = False
-        self.server_thread = threading.Thread(target=self.create_server)
-        self.server_thread.daemon = True
-        self.server_thread.start()
+        self.initialize()
 
-        self.update_thread = threading.Thread(target=self.update)
-        self.update_thread.daemon = True
-        self.update_thread.start()
+        self.update()
 
     def update(self):
         global log_capture
@@ -133,6 +129,16 @@ class LoadPage(tk.Frame):
             log_capture.truncate()
 
         self.parent.after(1000, self.update)
+
+    def initialize(self):
+        if self.client_running:
+            self.server.server_close()
+
+        self.server = None
+        self.client_running = False
+        self.server_thread = threading.Thread(target=self.create_server)
+        self.server_thread.daemon = True
+        self.server_thread.start()
 
     def create_server(self):
         """
@@ -163,9 +169,9 @@ class LoadPage(tk.Frame):
                 self.client_running = False
                 self.server = None
 
-                self.parent.after(1000, self.create_server)
+                self.parent.after(1000, self.initialize)
         else:
-            self.parent.after(1000, self.create_server)
+            self.parent.after(1000, self.initialize)
 
 
 if __name__ == '__main__':
