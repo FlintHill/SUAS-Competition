@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>FH SUAS SDA: Viewer</title>
+		<link href="data:image/x-icon;base64,AAABAAEAEBAQAAEABAAoAQAAFgAAACgAAAAQAAAAIAAAAAEABAAAAAAAgAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAA/4QAAB7PGwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAiIRERAAAAIiIREiIRAAESIREiIiEQARERESIiIhARESIRESIiIRESIiEREiIhESIiIhESIiERIiIiERIiIREiIiERESIRESIiIREREREREiIRERERERESIhEREiERAREiERIiIRABEREhEiIhEAARERESIiEAAAAREREiAADwDwAAwAMAAIABAACAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAQAAgAEAAMADAADwDwAA" rel="icon" type="image/x-icon" />
+
+		<meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+		<meta name="description" content="Watch a live view of the current loaded map in Mission Planner with waypoints, obstacles, and sense, detect, avoidance systems in action.">
+		<meta name="author" content="James Villemarette">
+
+		<style type="text/css">
+			html, body {
+				font-family:'Arial',sans-serif,serif;
+				overflow-y:hidden;
+				margin:0;
+			}
+			td {
+				font-size:1.03em;
+				padding:4px 0;
+			}
+			#map {
+				width:100%;
+				height:100vh;
+			}
+			.shadow {
+				-webkit-box-shadow:6px 6px 0px 0px rgba(0,0,0,0.54);
+				-moz-box-shadow:6px 6px 0px 0px rgba(0,0,0,0.54);
+				box-shadow:6px 6px 0px 0px rgba(0,0,0,0.54);
+			}
+			.window {
+				width:100%;
+				height:100vh;
+			}
+			.status {
+				background-color:white;
+				position:absolute;
+				top:8px;
+				right:12px;
+				border:4px solid black;
+				padding:4px;
+				width:350px;
+			}
+			.num {
+				font-size:2.5em !important;
+			}
+			.obstacle {
+				position:absolute;
+				z-index:1;
+				background-color:#e74c3c;
+				color:#ecf0f1;
+				width:450px;
+				height:110px;
+				top:25px;
+				margin:0 auto;
+				left:0;
+				right:0;
+				padding:16px;
+				font-family:"Consolas","Inconsolata",sans-serif;
+				font-size:1.9em;
+				-moz-box-sizing:border-box; 
+				-webkit-box-sizing:border-box; 
+				box-sizing:border-box;
+
+				-webkit-animation: flash 1s linear infinite;
+				-moz-animation: flash 1s linear infinite;
+				animation: flash 1s linear infinite;
+			}
+			@-webkit-keyframes flash {
+				0% {
+					border:3px solid black;
+				}
+				100% {
+					border:3px solid red;
+				}
+			}​
+			@-moz-keyframes flash {
+				0% {
+					border:3px solid black;
+				}
+				100% {
+					border:3px solid red;
+				}
+			}
+			@keyframes flash {
+				0% {
+					border:3px solid black;
+				}
+				100% {
+					border:3px solid red;
+				}
+			}
+			.g-button {
+				width:100%;
+				height:38px
+			}
+			.SvgOverlay svg {
+				position:absolute;
+				top:-4000px;
+				left:-4000px;
+				width:8000px;
+				height:8000px;
+			}
+			#droneSymbol {
+				position:absolute;
+			}
+		</style>
+
+		<!--<link rel="stylesheet" href="rsc/css/leaflet.css">-->
+		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+		<!--<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.2.6/d3.min.js"></script>-->
+		<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
+
+		<!--[if lt IE 9]>
+			<script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+	<body>
+		<script type="text/javascript">
+			
+
+			$(function () {
+				var ws = new WebSocket("ws://127.0.0.1:5678/");
+
+				ws.onmessage = function(event) {
+					console.log( event.data );
+					var obj = JSON.parse( event.data );
+					if( obj.status == "connected" ) {
+						console.log( "CONNECTED TO WEBSOCKET" );
+					} else {
+						document.getElementById("alt").innerHTML = Math.round(obj.alt);
+						document.getElementById("dir").innerHTML = Math.round(obj.dir);
+						document.getElementById("speed").innerHTML = Math.round(obj.speed);
+						document.getElementById("vert_speed").innerHTML = Math.round(obj.vert_speed);
+						marker.setPosition( new google.maps.LatLng( obj.lat, obj.long ) );
+
+					}
+				};
+
+				map = new google.maps.Map(document.getElementById('map'), {
+					center:{lat: 38.8712152, lng: -77.319965},
+					zoom:17,
+					mapTypeControlOptions: {
+						mapTypeIds: ['roadmap', 'satellite', 'hybrid', 'terrain',
+							'styled_map']
+					}
+				});
+
+				var marker = new google.maps.Marker({
+					position: map.getCenter(),
+					icon: {
+						path:google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+						scale:5
+					},
+					draggable: true,
+					map: map
+				});
+				
+				var styledMapType = new google.maps.StyledMapType([
+					{elementType: 'geometry', stylers: [{color: '#242f3e'}]},
+					{elementType: 'labels.text.stroke', stylers: [{color: '#242f3e'}]},
+					{elementType: 'labels.text.fill', stylers: [{color: '#746855'}]},
+					{
+						featureType: 'administrative.locality',
+						elementType: 'labels.text.fill',
+						stylers: [{color: '#d59563'}]
+					},
+					{
+						featureType: 'poi',
+						elementType: 'labels.text.fill',
+						stylers: [{color: '#d59563'}]
+					},
+					{
+						featureType: 'poi.park',
+						elementType: 'geometry',
+						stylers: [{color: '#263c3f'}]
+					},
+					{
+						featureType: 'poi.park',
+						elementType: 'labels.text.fill',
+						stylers: [{color: '#6b9a76'}]
+					},
+					{
+						featureType: 'road',
+						elementType: 'geometry',
+						stylers: [{color: '#38414e'}]
+					},
+					{
+						featureType: 'road',
+						elementType: 'geometry.stroke',
+						stylers: [{color: '#212a37'}]
+					},
+					{
+						featureType: 'road',
+						elementType: 'labels.text.fill',
+						stylers: [{color: '#9ca5b3'}]
+					},
+					{
+						featureType: 'road.highway',
+						elementType: 'geometry',
+						stylers: [{color: '#746855'}]
+					},
+					{
+						featureType: 'road.highway',
+						elementType: 'geometry.stroke',
+						stylers: [{color: '#1f2835'}]
+					},
+					{
+						featureType: 'road.highway',
+						elementType: 'labels.text.fill',
+						stylers: [{color: '#f3d19c'}]
+					},
+					{
+						featureType: 'transit',
+						elementType: 'geometry',
+						stylers: [{color: '#2f3948'}]
+					},
+					{
+						featureType: 'transit.station',
+						elementType: 'labels.text.fill',
+						stylers: [{color: '#d59563'}]
+					},
+					{
+						featureType: 'water',
+						elementType: 'geometry',
+						stylers: [{color: '#17263c'}]
+					},
+					{
+						featureType: 'water',
+						elementType: 'labels.text.fill',
+						stylers: [{color: '#515c6d'}]
+					},
+					{
+						featureType: 'water',
+						elementType: 'labels.text.stroke',
+						stylers: [{color: '#17263c'}]
+					}
+				], {name: 'Dark'});
+
+				map.mapTypes.set('styled_map', styledMapType);
+				map.setMapTypeId('styled_map');
+
+				/*
+				map = new google.maps.Map($map[0], {
+					zoom:6,
+					mapTypeId:google.maps.MapTypeId.ROADMAP,
+					center: {lat: 38.8712152, lng: -77.319965},
+					zoom:16.5,
+					styles:[{"stylers": [{"saturation": -75},{"lightness": 75}]}]           
+				});*/
+			});
+		</script>
+		<div class="window">
+			<canvas id="droneSymbol" width="1" height="1"></canvas>
+			<div class="obstacle shadow">
+				<center>
+					<b><u>! OBSTACLE DETECT !</u></b><br>
+					<span style="font-size:0.75em">Object avoidance now activated.</span>
+				</center>
+			</div>
+			<div id="map-wrap">
+				<div id="map"></div>
+			</div>
+			<div class="status shadow">
+				<center style="font-size:2.2em"><u>FlintHill: SDA</u></center>
+				<div style="font-size:1.05em">
+					<hr>
+					<p>
+						<u>Description:</u><br>
+						This is a web-based, live view of the drone's position and current obstacles. Like Mission Planner, this page displays all the relevant information such as altitude, direction, and speed in multiple directions. But this page also includes obstacle visualization and avoidance trajectories on a 2D plane.
+					</p>
+					<hr>
+					<p style="margin-bottom:0">
+						<u>How it works:</u>
+						<ol style="margin-top:0">
+							<li>Disregards any obstacle not within 15 feet of our current altitude.</li>
+							<li>Calculates the current, straight trajectory of our drone and any intersections with other obstacles, whether they be stationary or moving.</li>
+							<li>If a collision is imminent, the drone either:
+								<ul>
+									<li>Climbs to a new, higher altitude.</li>
+									<li>Stops and stay in the same position.</li>
+								</ul>
+							</li>
+							<li>Repeats.</li>
+						</ol>
+					</p>
+					<hr>
+					<p style="margin-bottom:0">
+						<u>Controls:</u>
+						<form name="connect" id="conn">
+							<div style="padding:0 2px">
+								<input type="button" class="g-button" onclick="connect()" value="CONNECT">
+							</div>
+							<table style="width:100%">
+								<col width="50%">
+								<col width="50%">
+								<tr>
+									<td>
+										<input type="button" class="g-button" value="DISCONNECT">
+									</td>
+									<td>
+										<input type="button" class="g-button" value="PAUSE">
+									</td>
+								</tr>
+							</table>
+						</form>
+					</p>
+				</div>
+				<hr>
+				<center><u>Flight Instruments:</u></center>
+				<table border="1" style="width:100%;text-align:center;margin:8px 0">
+					<col width="50%">
+					<col width="50%">
+					<tr>
+						<td>
+							<b><div class="num" id="alt">N/a</div></b>
+							Altitude (feet)
+						</td>
+						<td>
+							<b><div class="num" id="dir">N/a&deg;</div></b>
+							Direction (mag)
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<b><div class="num" id="speed">N/a</div></b>
+							Speed (m/s)
+						</td>
+						<td>
+							<b><div class="num" id="vert_speed">N/a</div></b>
+							Vertical Speed (m/s)
+						</td>
+					</tr>
+				</table>
+				<div style="font-family:Consolas,Inconsolata;text-align:center;font-style:italic;">v0.1 BETA EDUCATIONAL</div>
+			</div>
+		</div>
+	</body>
+</html>
