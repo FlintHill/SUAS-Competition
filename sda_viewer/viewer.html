@@ -104,11 +104,45 @@
 			#droneSymbol {
 				position:absolute;
 			}
+			#dropdown {
+				cursor:pointer;
+				padding:5px 8px;
+				border-radius:5px;
+				display:inline-block;
+			}
+			#dropdown:hover {
+				background-color:#95a5a6;
+			}
+			.inline {
+				margin-bottom:4px;
+			}
+			fieldset {
+				border:1px solid black;
+				background-color:rgba(0,0,0,0.09);
+			}
+			legend {
+				background-color:#fff;
+			}
+			label {
+				display:block;
+				position:relative;
+				padding-left:40px; /* adjust if necessary */
+			}
+			label > span {
+				position:absolute;
+				left:0;
+			}
+			.noselect {
+				-webkit-touch-callout:none;
+				-webkit-user-select:none;
+				-khtml-user-select:none;
+				-moz-user-select:none;
+				-ms-user-select:none;
+				user-select:none;
+			}
 		</style>
 
-		<!--<link rel="stylesheet" href="rsc/css/leaflet.css">-->
 		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-		<!--<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.2.6/d3.min.js"></script>-->
 		<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
 
 		<!--[if lt IE 9]>
@@ -117,7 +151,16 @@
 	</head>
 	<body>
 		<script type="text/javascript">
-			
+			function rips() {
+				if( $("#information").css("display") == "block" ) {
+					$("#information").css("display", "none");
+					$("#dropdown").text("Show Description"); // &uarr;
+				} else {
+					$("#information").css("display", "block");
+					$("#dropdown").text("Show Description"); // &darr;
+				}
+			};
+
 
 			$(function () {
 				var ws = new WebSocket("ws://127.0.0.1:5678/");
@@ -239,15 +282,6 @@
 
 				map.mapTypes.set('styled_map', styledMapType);
 				map.setMapTypeId('styled_map');
-
-				/*
-				map = new google.maps.Map($map[0], {
-					zoom:6,
-					mapTypeId:google.maps.MapTypeId.ROADMAP,
-					center: {lat: 38.8712152, lng: -77.319965},
-					zoom:16.5,
-					styles:[{"stylers": [{"saturation": -75},{"lightness": 75}]}]           
-				});*/
 			});
 		</script>
 		<div class="window">
@@ -263,16 +297,15 @@
 			</div>
 			<div class="status shadow">
 				<center style="font-size:2.2em"><u>FlintHill: SDA</u></center>
-				<div style="font-size:1.05em">
-					<hr>
-					<p>
-						<u>Description:</u><br>
+				<center><div class="noselect" id="dropdown" onclick="rips()">Show Description</div></center>
+				<div id="information" style="font-size:1.05em">
+					<fieldset>
+				    	<legend><u>Description:</u></legend>
 						This is a web-based, live view of the drone's position and current obstacles. Like Mission Planner, this page displays all the relevant information such as altitude, direction, and speed in multiple directions. But this page also includes obstacle visualization and avoidance trajectories on a 2D plane.
-					</p>
-					<hr>
-					<p style="margin-bottom:0">
-						<u>How it works:</u>
-						<ol style="margin-top:0">
+					</fieldset>
+					<fieldset>
+				    	<legend><u>How it works:</u></legend>
+						<ol style="margin:0 auto">
 							<li>Disregards any obstacle not within 15 feet of our current altitude.</li>
 							<li>Calculates the current, straight trajectory of our drone and any intersections with other obstacles, whether they be stationary or moving.</li>
 							<li>If a collision is imminent, the drone either:
@@ -283,12 +316,16 @@
 							</li>
 							<li>Repeats.</li>
 						</ol>
-					</p>
-					<hr>
-					<p style="margin-bottom:0">
-						<u>Controls:</u>
+					</fieldset>
+				</div>
+				<div style="font-size:1.05em">
+					<fieldset>
+				    	<legend><u>Controls:</u></legend>
 						<form name="connect" id="conn">
 							<div style="padding:0 2px">
+								<div class="inline">
+									<label for="url"><span class="noselect">ws://</span><input type="text" id="url" style="width:76%"value="127.0.0.1">&nbsp;:5678/</label>
+								</div>
 								<input type="button" class="g-button" onclick="connect()" value="CONNECT">
 							</div>
 							<table style="width:100%">
@@ -304,7 +341,7 @@
 								</tr>
 							</table>
 						</form>
-					</p>
+					</fieldset>
 				</div>
 				<hr>
 				<center><u>Flight Instruments:</u></center>
@@ -332,7 +369,7 @@
 						</td>
 					</tr>
 				</table>
-				<div style="font-family:Consolas,Inconsolata;text-align:center;font-style:italic;">v0.1 BETA EDUCATIONAL</div>
+				<div style="font-family:Consolas,Inconsolata,sans-serif,serif;text-align:center;font-style:italic;">v0.1 BETA EDUCATIONAL</div>
 			</div>
 		</div>
 	</body>
