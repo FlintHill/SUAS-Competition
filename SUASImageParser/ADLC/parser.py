@@ -1,7 +1,6 @@
 from SUASImageParser.utils.image import Image
 from SUASImageParser.utils.color import bcolors
 from SUASImageParser.modules import k_means
-from SUASImageParser.modules import summing
 from SUASImageParser.modules import gaussian_blurring
 from SUASImageParser.modules import histogram_equalization
 
