@@ -12,7 +12,11 @@ class ADLCOptimizer:
         perform with the best results. It then saves that data so that future
         runs of the program use the optimized settings.
         """
-        # @TODO: Implement optimization
+        # get starting parameters
+
+        # for each possible combo, run with the set of params
+
+        # return params
 
     def score(self):
         """
