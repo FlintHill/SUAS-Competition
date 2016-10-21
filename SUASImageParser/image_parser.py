@@ -1,7 +1,5 @@
 from SUASImageParser.ADLC import ADLCParser
-
 import os
-
 
 class ImageParser:
     """

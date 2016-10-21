@@ -1,6 +1,5 @@
 from SUASImageParser.utils.image import Image
 from SUASImageParser.utils.color import bcolors
-
 import cv2
 
 class EmergentTargetParser:

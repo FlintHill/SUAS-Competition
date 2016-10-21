@@ -1,9 +1,7 @@
 from SUASImageParser import ImageParser
 from SUASImageParser.utils.color import bcolors
-
-from options import parseOptions
-from options import getOption
-
+from img_parser_options import parseOptions
+from img_parser_options import getOption
 import cv2
 
 
