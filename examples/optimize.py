@@ -9,7 +9,7 @@ import cv2
 parseOptions()
 
 
-# ------------------------ Ensuring necessary options provided ------------------------
+# ------------------------ Ensuring necessary options provided ------------
 should_exit = False
 if getOption("mode") == None:
     print(bcolors.FAIL + "[Error]" + bcolors.ENDC + " Please provide a mode to use")
@@ -26,4 +26,9 @@ if getOption("img_directory") == None:
 if should_exit:
     exit(0)
 
-optimizer = Optimizer(img_directory=getOption("img_directory"), output_file=getOption("output_file"))
+
+# ------------------------ Optimizing -------------------------------------
+print(bcolors.INFO + "[Info]" + bcolors.ENDC + " Beginning Optimization...")
+optimizer = Optimizer(debug=True, img_directory=getOption("img_directory"), output_file=getOption("output_file"))
+optimizer.optimize(mode="ADLC", output_file=getOption("output_file"), img_directory=getOption("img_directory"))
+print(bcolors.INFO + "[Info]" + bcolors.ENDC + " Optimization Complete!")

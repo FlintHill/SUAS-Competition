@@ -1,12 +1,13 @@
 from SUASImageParser.ADLC import ADLCParser
 import cv2
+import os
 
 class ADLCOptimizer:
 
     def __init__(self, **kwargs):
         self.debug = kwargs.get("debug", False)
 
-    def optimize(self):
+    def optimize(self, output_file, img_directory):
         """
         This creates the optimization data and optimizes the ADLC parser to
         perform with the best results. It then saves that data so that future
@@ -14,9 +15,15 @@ class ADLCOptimizer:
         """
         # get starting parameters
 
+        # get ranges
+
+        # get accuracy
+
         # for each possible combo, run with the set of params
+        images = self.load_images(img_directory)
 
         # return params
+        return {"test" : "empty"}
 
     def score(self):
         """
@@ -24,15 +31,23 @@ class ADLCOptimizer:
 
         Returns:
         - True/False if the target is correct
-        - x/5 for number of characteristics correct
         """
         pass
 
-    def load_image(self):
+    def load_images(self, img_directory=None):
         """
         Load an image and its known solutions
         """
-        pass
+        if img_directory == None:
+            raise ValueError('load_image() cannot be passed a directory with type None')
+
+        for dir in next(os.walk(img_directory))[1]:
+            print(dir)
+
+        for file in next(os.walk(img_directory))[2]:
+            print(file)
+
+        return []
 
     def run_params(self, image):
         """
