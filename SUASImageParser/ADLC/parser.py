@@ -37,8 +37,10 @@ class ADLCParser:
         self.HIGHER_CONTOUR_AREA = settings.get("HIGHER_CONTOUR_AREA", 10000)
 
         self.THRESH_TYPE = cv2.THRESH_BINARY
-        self.THRESH_VALUE = 127
-        self.THRESH_POS_VAL = 255
+        self.THRESH_VALUE = settings.get("THRESH_VALUE", 127)
+        self.THRESH_POS_VAL = settings.get("THRESH_POS_VAL", 255)
+
+        self.SCALE_FACTOR = settings.get("SCALE_FACTOR", 0.15)
 
     def set_debug(self, updated_debug):
         """
@@ -48,7 +50,17 @@ class ADLCParser:
         """
         self.DEBUG = updated_debug
 
-    def parse(self, filename):
+    def parse(self, filename, settings):
+        """
+        Parses the given image to identify potential ADLC targets. Returns a
+        list of possible targets.
+        """
+        self.setup(settings)
+
+        #return self.parse_file(filename)
+        return [], [], []
+
+    def parse_file(self, filename):
         """
         Parses the given image to identify potential ADLC targets. Returns a
         list of possible targets.
@@ -74,6 +86,9 @@ class ADLCParser:
             print(bcolors.INFO + "[Info]" + bcolors.ENDC + " Converting histogram equalized to GRAY")
         img = cv2.cvtColor(cv2.cvtColor(equalized, cv2.COLOR_HSV2BGR), cv2.COLOR_BGR2GRAY)
 
+        """
+        # Test for using OpenCV's Blob detection to identify targets
+
         detector = cv2.MSER_create(1, 3000, 30000)
         keypoints = detector.detect(equalized)
         keypoints2 = detector.detect((255-img))
@@ -85,6 +100,7 @@ class ADLCParser:
         cv2.waitKey(0)
         cv2.destroyAllWindows()
         exit(0)
+        """
 
         if self.DEBUG:
             print(bcolors.INFO + "[Info]" + bcolors.ENDC + " Inverting the image")
@@ -93,7 +109,7 @@ class ADLCParser:
         # Identifying targets
         if self.DEBUG:
             print(bcolors.INFO + "[Info]" + bcolors.ENDC + " Identifying targets")
-        targets = self.identify_targets(img)
+        targets, locations = self.identify_targets(img)
 
         # Identifying target characteristics
         if self.DEBUG:
@@ -114,7 +130,7 @@ class ADLCParser:
             print(bcolors.INFO + "[Info]" + bcolors.ENDC + " Took " + str(end_time - self.start_time) + " seconds to parse the image")
 
         # Returning the grayed out image
-        return img, target_characteristics
+        return targets, target_characteristics, locations
 
     def identify_targets(self, img):
         """
@@ -156,7 +172,8 @@ class ADLCParser:
                     targets.append(possible_target)
 
         # Return the identified targets
-        return targets
+        # TODO: ADD LOCATION RETURN HERE
+        return targets, []
 
     def parse_possible_target(self, img, contours):
         """
@@ -187,11 +204,8 @@ class ADLCParser:
         Return true if the cropped image sent to this method is a shape, and
         false if it is not.
         """
-        area = -1
-        scale_factor = 0.15
-
-        approx_sides = cv2.approxPolyDP(contours, scale_factor * cv2.arcLength(contours, True), True)
-        while (len(approx_sides) != 3 and scale_factor < 1.0):
+        approx_sides = cv2.approxPolyDP(contours, self.SCALE_FACTOR * cv2.arcLength(contours, True), True)
+        while (len(approx_sides) != 3 and self.SCALE_FACTOR < 1.0):
             approx_sides = cv2.approxPolyDP(contours, scale_factor * cv2.arcLength(contours, True), True)
 
             scale_factor += 0.01
