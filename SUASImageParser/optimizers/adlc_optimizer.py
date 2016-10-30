@@ -70,9 +70,6 @@ class ADLCOptimizer:
                 best_params = scenario
                 best_score = score
 
-        print(best_params)
-        print(best_score)
-
         return best_params, best_score
 
     def create_scenarios(self, index, scenarios, parameters):
@@ -115,18 +112,34 @@ class ADLCOptimizer:
         """
         score = 0.0
         for test_img in test:
-            best_score = 0.0
+            img_score = 0.0
 
             for correct_img in correct:
-                img_score = 0.0
-                for row in test_img:
-                    if row in correct_img:
-                        img_score += 1.0
+                current_test_index = 0
+                for x in range(0, test_img.shape[0]):
+                    for y in range(0, test_img.shape[1]):
+                        if current_test_index > 1000 and img_score < 100:
+                            img_score = -1.0
 
-                if img_score > best_score:
-                    best_score = score
+                            break
 
-            score += best_score
+                        if test_img.item(x, y, 0) != 255 or test_img.item(x, y, 1) != 255 or test_img.item(x, y, 2) != 255:
+                            if test_img[x, y] in correct_img:
+                                img_score += 1.0
+
+                        current_test_index += 1
+
+                    if current_test_index > 1000 and img_score < 100:
+                        break
+
+                img_score /= float(test_img.shape[0] * test_img.shape[1])
+                if img_score > 0.6:
+                    img_score = 1.0
+                    break
+                else:
+                    img_score = 0.0
+
+            score += img_score
 
         score = score / float(len(correct))
 
@@ -160,7 +173,7 @@ class ADLCOptimizer:
 
                 if "image" in file and file.endswith(".jpg"):
                     new_img_set = [cv2.imread(path)] + new_img_set
-                if file.endswith(".jpg"):
+                elif file.endswith(".jpg"):
                     new_img_set.append(cv2.imread(path))
 
             images.append(new_img_set)
@@ -191,16 +204,13 @@ class ADLCOptimizer:
                 start_time = timeit.default_timer()
 
             targets, _ = self.ADLC_parser.parse(test_image)
+            score = self.score(targets, image[1:])
+            scores += score
 
             if self.debug:
                 end_time = timeit.default_timer()
                 image_run_time = end_time - start_time
                 total_time += image_run_time
-
-            print(targets)
-
-            score = self.score(targets, image[1:])
-            scores += score
 
             if self.debug:
                 print(bcolors.INFO + "[Info]" + bcolors.ENDC + " Image number " + str(img_index) + " scored a " + str(score*100) + "% (" + str(image_run_time) + " seconds)")

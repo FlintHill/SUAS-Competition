@@ -115,7 +115,7 @@ class ADLCParser:
             print(bcolors.INFO + "[Info]" + bcolors.ENDC + " Identifying target characteristics")
         target_characteristics = None
         if len(targets) > 0:
-            print(len(targets))
+            #print(len(targets))
             for target in targets:
                 target_characteristics = self.identify_characteristics(target)
 
@@ -265,7 +265,8 @@ class ADLCParser:
                 if abs(colors[0][rgb_index] - colors[1][rgb_index]) < COLOR_THRESHOLD:
                     threshold_num += 1
             except:
-                print(bcolors.FAIL + "[Error]" + bcolors.ENDC + " Color comparisons threw an exception")
+                if self.DEBUG:
+                    print(bcolors.FAIL + "[Error]" + bcolors.ENDC + " Color comparisons threw an exception")
         if threshold_num >= 1:
             passes = False
 
