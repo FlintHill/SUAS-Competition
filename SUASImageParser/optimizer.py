@@ -21,7 +21,7 @@ class Optimizer:
         if self.image_directory == None:
             raise ValueError('Please specify a data directory to get images from')
 
-        self.adlc_optimizer = ADLCOptimizer()
+        self.adlc_optimizer = ADLCOptimizer(debug=self.debug)
 
     def optimize(self, **kwargs):
         """

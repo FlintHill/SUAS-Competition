@@ -29,7 +29,7 @@ class ADLCParser:
         self.settings = settings
 
         # Setting up general settings
-        self.DEBUG = settings.get("debug")
+        self.DEBUG = settings.get("debug", False)
 
         # Setting up all parsing specific settings
         # @TODO: Calculate correct lower and bounds for target detection
@@ -50,17 +50,16 @@ class ADLCParser:
         """
         self.DEBUG = updated_debug
 
-    def parse(self, filename, settings):
+    def parse_file(self, filename):
         """
         Parses the given image to identify potential ADLC targets. Returns a
         list of possible targets.
         """
-        self.setup(settings)
+        self.image.load(filename)
 
-        #return self.parse_file(filename)
-        return [], [], []
+        return self.parse(self.image.get_image())
 
-    def parse_file(self, filename):
+    def parse(self, img):
         """
         Parses the given image to identify potential ADLC targets. Returns a
         list of possible targets.
@@ -70,7 +69,7 @@ class ADLCParser:
             self.start_time = timeit.default_timer()
 
         # Load image
-        self.image.load(filename)
+        self.image.set_image(img)
 
         # Convert image to HSV then to GRAY to help make it easy to identify
         #   possible targets
@@ -109,7 +108,7 @@ class ADLCParser:
         # Identifying targets
         if self.DEBUG:
             print(bcolors.INFO + "[Info]" + bcolors.ENDC + " Identifying targets")
-        targets, locations = self.identify_targets(img)
+        targets = self.identify_targets(img)
 
         # Identifying target characteristics
         if self.DEBUG:
@@ -120,9 +119,9 @@ class ADLCParser:
             for target in targets:
                 target_characteristics = self.identify_characteristics(target)
 
-                cv2.imshow("target", target)
-                cv2.waitKey(0)
-                cv2.destroyAllWindows()
+                #cv2.imshow("target", target)
+                #cv2.waitKey(0)
+                #cv2.destroyAllWindows()
 
         # If debugging is enabled, calculating time took to parse
         if self.DEBUG:
@@ -130,7 +129,7 @@ class ADLCParser:
             print(bcolors.INFO + "[Info]" + bcolors.ENDC + " Took " + str(end_time - self.start_time) + " seconds to parse the image")
 
         # Returning the grayed out image
-        return targets, target_characteristics, locations
+        return targets, target_characteristics
 
     def identify_targets(self, img):
         """
@@ -172,8 +171,7 @@ class ADLCParser:
                     targets.append(possible_target)
 
         # Return the identified targets
-        # TODO: ADD LOCATION RETURN HERE
-        return targets, []
+        return targets
 
     def parse_possible_target(self, img, contours):
         """
@@ -206,9 +204,9 @@ class ADLCParser:
         """
         approx_sides = cv2.approxPolyDP(contours, self.SCALE_FACTOR * cv2.arcLength(contours, True), True)
         while (len(approx_sides) != 3 and self.SCALE_FACTOR < 1.0):
-            approx_sides = cv2.approxPolyDP(contours, scale_factor * cv2.arcLength(contours, True), True)
+            approx_sides = cv2.approxPolyDP(contours, self.SCALE_FACTOR * cv2.arcLength(contours, True), True)
 
-            scale_factor += 0.01
+            self.SCALE_FACTOR += 0.01
 
         return len(approx_sides) == 3
 
