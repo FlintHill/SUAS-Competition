@@ -4,6 +4,7 @@ import cv2
 import numpy as np
 import os
 import timeit
+import json
 
 class ADLCOptimizer:
 
@@ -40,6 +41,8 @@ class ADLCOptimizer:
                 "ACCURACY" : 2
             }
         }
+
+        self.total_time = 0.0
 
         self.ADLC_parser = ADLCParser()
         images = self.load_images(img_directory)
@@ -112,38 +115,29 @@ class ADLCOptimizer:
         """
         score = 0.0
         for test_img in test:
-            img_score = 0.0
+            num_pixels = float(len(test_img))
+            best_img_score = 0.0
+            x,y,w,h = cv2.boundingRect(test_img)
 
             for correct_img in correct:
-                current_test_index = 0
-                for x in range(0, test_img.shape[0]):
-                    for y in range(0, test_img.shape[1]):
-                        if current_test_index > 1000 and img_score < 100:
-                            img_score = -1.0
+                area = float(correct_img["x_finish"] - correct_img["x_start"]) * float(correct_img["y_finish"] - correct_img["y_start"])
+                img_score = 0.0
 
-                            break
+                SI = max(0, max(x + w, correct_img["x_finish"]) - min(x, correct_img["x_start"])) * max(0, max(y + h, correct_img["y_finish"]) - min(y, correct_img["y_start"]))
+                img_score = float(h * w) + area - SI
 
-                        if test_img.item(x, y, 0) != 255 or test_img.item(x, y, 1) != 255 or test_img.item(x, y, 2) != 255:
-                            if test_img[x, y] in correct_img:
-                                img_score += 1.0
+                """for point in test_img:
+                    if point[0] > int(correct_img["y_start"]) and point[0] < int(correct_img["y_finish"]):
+                        if point[1] > int(correct_img["x_start"]) and point[1] < int(correct_img["x_finish"]):
+                            img_score += 1.0 / num_pixels
+                """
 
-                        current_test_index += 1
+                if img_score > best_img_score:
+                    best_img_score = img_score
 
-                    if current_test_index > 1000 and img_score < 100:
-                        break
+            score += best_img_score
 
-                img_score /= float(test_img.shape[0] * test_img.shape[1])
-                if img_score > 0.6:
-                    img_score = 1.0
-                    break
-                else:
-                    img_score = 0.0
-
-            score += img_score
-
-        score = score / float(len(correct))
-
-        return score
+        return score / float(len(correct))
 
     def load_images(self, img_directory=None):
         """
@@ -173,8 +167,9 @@ class ADLCOptimizer:
 
                 if "image" in file and file.endswith(".jpg"):
                     new_img_set = [cv2.imread(path)] + new_img_set
-                elif file.endswith(".jpg"):
-                    new_img_set.append(cv2.imread(path))
+                elif file.endswith(".txt"):
+                    with open(path) as data_file:
+                        new_img_set.append(json.load(data_file))
 
             images.append(new_img_set)
 
@@ -194,7 +189,6 @@ class ADLCOptimizer:
 
         scores = 0.0
         img_index = 0
-        total_time = 0.0
         for image in images:
             img_index += 1
             test_image = image[0]
@@ -203,14 +197,20 @@ class ADLCOptimizer:
             if self.debug:
                 start_time = timeit.default_timer()
 
-            targets, _ = self.ADLC_parser.parse(test_image)
-            score = self.score(targets, image[1:])
+            targets, _, contours = self.ADLC_parser.parse(test_image)
+            score = self.score(contours, image[1:])
             scores += score
+
+            if score > 0.0:
+                for target in targets:
+                    cv2.imshow("target", target)
+                    cv2.waitKey(0)
+                    cv2.destroyAllWindows()
 
             if self.debug:
                 end_time = timeit.default_timer()
                 image_run_time = end_time - start_time
-                total_time += image_run_time
+                self.total_time += image_run_time
 
             if self.debug:
                 print(bcolors.INFO + "[Info]" + bcolors.ENDC + " Image number " + str(img_index) + " scored a " + str(score*100) + "% (" + str(image_run_time) + " seconds)")
@@ -219,7 +219,7 @@ class ADLCOptimizer:
 
         if self.debug:
             print(bcolors.INFO + "[Info]" + bcolors.ENDC + " Scenario " + str(self.scenario_index) + " got a score of " + str(scores*100) + "%")
-            estimated_time_remaining = float(self.num_scenarios) * total_time / 3600.0
+            estimated_time_remaining = float(self.num_scenarios) * self.total_time / (3600.0 * self.scenario_index)
             print(bcolors.INFO + "[Info]" + bcolors.ENDC + " Estimated time remaining: " + str(estimated_time_remaining) + " hours")
 
         return scores

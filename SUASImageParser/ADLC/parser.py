@@ -108,7 +108,7 @@ class ADLCParser:
         # Identifying targets
         if self.DEBUG:
             print(bcolors.INFO + "[Info]" + bcolors.ENDC + " Identifying targets")
-        targets = self.identify_targets(img)
+        targets, contours = self.identify_targets(img)
 
         # Identifying target characteristics
         if self.DEBUG:
@@ -129,7 +129,7 @@ class ADLCParser:
             print(bcolors.INFO + "[Info]" + bcolors.ENDC + " Took " + str(end_time - self.start_time) + " seconds to parse the image")
 
         # Returning the grayed out image
-        return targets, target_characteristics
+        return targets, target_characteristics, contours
 
     def identify_targets(self, img):
         """
@@ -138,6 +138,7 @@ class ADLCParser:
         """
         # Creating temp variables
         targets = []
+        target_contours = []
 
         # Thresholding image
         if self.DEBUG:
@@ -169,9 +170,10 @@ class ADLCParser:
                     if self.DEBUG:
                         print(bcolors.INFO + "[Info]" + bcolors.ENDC + " Found a target")
                     targets.append(possible_target)
+                    target_contours.append(cnt)
 
         # Return the identified targets
-        return targets
+        return targets, target_contours
 
     def parse_possible_target(self, img, contours):
         """

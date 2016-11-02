@@ -1,0 +1,1 @@
+{"y_start": 2097, "x_start": 3228, "x_finish": 3454, "y_finish": 2312}

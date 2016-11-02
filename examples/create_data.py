@@ -4,6 +4,7 @@ from SUASImageParser.utils.color import bcolors
 from create_data_options import parseOptions
 from create_data_options import getOption
 import os
+import json
 
 parseOptions()
 
@@ -47,7 +48,14 @@ def on_event(event,x,y,flags,param):
     elif event == cv2.EVENT_LBUTTONUP:
         rectangle = False
         draw_image = resized.copy()
-        cv2.imwrite(output + str(obj_index) + ".jpg", image[int(y_scale * startpointy) : int(y_scale * y), int(x_scale * startpointx) : int(x_scale * x)])
+        area = {
+            "x_start" : int(x_scale * startpointx),
+            "y_start" : int(y_scale * startpointy),
+            "x_finish" : int(x_scale * x),
+            "y_finish" : int(y_scale * y)
+        }
+        with open(output + str(obj_index) + ".txt", 'w+') as output_f:
+            json.dump(area, output_f)
         obj_index += 1
         print('Target successfully saved')
 
