@@ -12,14 +12,20 @@ class Optimizer:
 
     def __init__(self, **kwargs):
         self.debug = kwargs.get("debug", False)
-        self.output_file = kwargs.get("output_file", None)
+        self.output_directory = kwargs.get("output_directory", None)
         self.image_directory = kwargs.get("img_directory", None)
 
-        if self.output_file == None:
+        if not os.path.exists(self.output_directory):
+            os.makedir(self.output_directory)
+
+        if self.output_directory == None:
             raise ValueError('Please specify an output file to save tuned parameters to')
 
         if self.image_directory == None:
             raise ValueError('Please specify a data directory to get images from')
+
+        self.output_params_file = os.path.join(self.output_directory, 'optimized_params.txt')
+        self.output_log_file = os.path.join(self.output_directory, 'log.txt')
 
         self.adlc_optimizer = ADLCOptimizer(debug=self.debug)
 
@@ -34,7 +40,7 @@ class Optimizer:
 
         optimized_parameters = {}
         if mode.lower() == "adlc":
-            optimized_parameters = self.adlc_optimizer.optimize(self.output_file, self.image_directory)
+            optimized_parameters = self.adlc_optimizer.optimize(self.output_log_file, self.image_directory)
 
         self.save_params(optimized_parameters, kwargs.get("output_file"))
 

@@ -11,7 +11,7 @@ class ADLCOptimizer:
     def __init__(self, **kwargs):
         self.debug = kwargs.get("debug", False)
 
-    def optimize(self, output_file, img_directory):
+    def optimize(self, output_log_file, img_directory):
         """
         This creates the optimization data and optimizes the ADLC parser to
         perform with the best results. It then saves that data so that future
@@ -42,8 +42,18 @@ class ADLCOptimizer:
             }
         }
 
-        self.total_time = 0.0
+        self.output_log_file = output_log_file
+        self.scenario_log = {
+            "scenarios" : [],
+            "scenario_index" : 0,
+            "total_time" : 0.0
+        }
 
+        if os.path.exists(self.output_log_file):
+            with open(self.output_log_file, 'r') as data_file:
+                self.scenario_log = json.load(data_file)
+
+        self.total_time = self.scenario_log["total_time"]
         self.ADLC_parser = ADLCParser()
         images = self.load_images(img_directory)
 
@@ -57,17 +67,28 @@ class ADLCOptimizer:
         """
         best_score = -1.0
         best_params = {}
-
         scenarios = self.create_scenarios(0, [], parameters)
 
         if self.debug:
             print(bcolors.INFO + "[Info]" + bcolors.ENDC + " Calculated " + str(len(scenarios)) + " scenarios to run")
 
-        self.scenario_index = 0
+        self.scenario_index = self.scenario_log["scenario_index"]
+
+        if self.scenario_index != 0 and self.debug:
+            print(bcolors.INFO + "[Info]" + bcolors.ENDC + " Resuming optimization from log file")
+
         self.num_scenarios = len(scenarios)
-        for scenario in scenarios:
+        for index in range(self.scenario_index, self.num_scenarios):
+            scenario = scenarios[index]
             self.scenario_index += 1
+
             score = self.run_params(images, scenario)
+
+            self.scenario_log["scenario_index"] = self.scenario_index
+            self.scenario_log["total_time"] = self.total_time
+            self.scenario_log["scenarios"].append([self.scenario_index, score, scenario])
+            with open(self.output_log_file, 'w+') as output:
+                json.dump(self.scenario_log, output, indent=4, sort_keys=True)
 
             if score > best_score:
                 best_params = scenario
@@ -149,7 +170,7 @@ class ADLCOptimizer:
         if self.debug:
             num_images = 0
             for dir in next(os.walk(img_directory))[1]:
-                for file in next(os.walk(img_directory + dir + "/"))[2]:
+                for file in next(os.walk(os.path.join(img_directory, dir)))[2]:
                     if file.endswith(".jpg"):
                         num_images += 1
             print(bcolors.INFO + "[Info]" + bcolors.ENDC + " Loading " + str(num_images) + " images")
@@ -162,8 +183,8 @@ class ADLCOptimizer:
         images = []
         for dir in next(os.walk(img_directory))[1]:
             new_img_set = []
-            for file in next(os.walk(img_directory + dir + "/"))[2]:
-                path = img_directory + dir + "/" + file
+            for file in next(os.walk(os.path.join(img_directory, dir)))[2]:
+                path = os.path.join(img_directory, dir, file)
 
                 if "image" in file and file.endswith(".jpg"):
                     new_img_set = [cv2.imread(path)] + new_img_set

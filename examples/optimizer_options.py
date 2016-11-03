@@ -30,7 +30,7 @@ def parseOptions():
 	Completes command line argument parsing
 	"""
 	parser = OptionParser(usage='usage: %prog [options]', version='0.0.1')
-	parser.add_option('-o', '--output_file', dest='output_file', help="relative path to output file")
+	parser.add_option('-o', '--output_directory', dest='output_directory', help="relative path to output directory")
 	parser.add_option('-d', '--image_directory', dest='img_directory', help="relative path to image directory")
 	parser.add_option('-m', '--mode', dest="mode", help="task to optimize")
 
