@@ -11,7 +11,7 @@ class ADLCOptimizer:
     def __init__(self, **kwargs):
         self.debug = kwargs.get("debug", False)
 
-    def optimize(self, output_log_file, img_directory):
+    def optimize(self, output_log_file, img_directory, num_threads):
         """
         This creates the optimization data and optimizes the ADLC parser to
         perform with the best results. It then saves that data so that future
@@ -42,11 +42,16 @@ class ADLCOptimizer:
             }
         }
 
+        self.num_threads = num_threads
         self.output_log_file = output_log_file
         self.scenario_log = {
             "scenarios" : [],
             "scenario_index" : 0,
-            "total_time" : 0.0
+            "total_time" : 0.0,
+            "best" : {
+                "best_params" : {},
+                "best_score" : -1
+            }
         }
 
         if os.path.exists(self.output_log_file):
@@ -65,8 +70,8 @@ class ADLCOptimizer:
         """
         Run optimization on a given set of parameters and images.
         """
-        best_score = -1.0
-        best_params = {}
+        best_score = self.scenario_log["best"]["best_score"]
+        best_params = self.scenario_log["best"]["best_params"]
         scenarios = self.create_scenarios(0, [], parameters)
 
         if self.debug:
@@ -93,6 +98,8 @@ class ADLCOptimizer:
             if score > best_score:
                 best_params = scenario
                 best_score = score
+                self.scenario_log["best"]["best_params"] = best_params
+                self.scenario_log["best"]["best_score"] = best_score
 
         return best_params, best_score
 
