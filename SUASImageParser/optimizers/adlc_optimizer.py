@@ -229,7 +229,7 @@ class ADLCOptimizer:
             score = self.score(contours, image[1:])
             scores += score
 
-            if score > 0.0:
+            if score > 0.0 and self.debug:
                 for target in targets:
                     cv2.imshow("target", target)
                     cv2.waitKey(0)
