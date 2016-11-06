@@ -5,13 +5,15 @@ import numpy as np
 import os
 import timeit
 import json
+from concurrent.futures import ProcessPoolExecutor
+from concurrent.futures import as_completed
 
 class ADLCOptimizer:
 
     def __init__(self, **kwargs):
         self.debug = kwargs.get("debug", False)
 
-    def optimize(self, output_log_file, img_directory, num_threads):
+    def optimize(self, output_log_file, img_directory, multithread):
         """
         This creates the optimization data and optimizes the ADLC parser to
         perform with the best results. It then saves that data so that future
@@ -42,7 +44,7 @@ class ADLCOptimizer:
             }
         }
 
-        self.num_threads = num_threads
+        self.multithread = multithread
         self.output_log_file = output_log_file
         self.scenario_log = {
             "scenarios" : [],
@@ -148,17 +150,11 @@ class ADLCOptimizer:
             x,y,w,h = cv2.boundingRect(test_img)
 
             for correct_img in correct:
-                area = float(correct_img["x_finish"] - correct_img["x_start"]) * float(correct_img["y_finish"] - correct_img["y_start"])
                 img_score = 0.0
+                area = float(correct_img["x_finish"] - correct_img["x_start"]) * float(correct_img["y_finish"] - correct_img["y_start"])
 
                 SI = max(0, max(x + w, correct_img["x_finish"]) - min(x, correct_img["x_start"])) * max(0, max(y + h, correct_img["y_finish"]) - min(y, correct_img["y_start"]))
                 img_score = float(h * w) + area - SI
-
-                """for point in test_img:
-                    if point[0] > int(correct_img["y_start"]) and point[0] < int(correct_img["y_finish"]):
-                        if point[1] > int(correct_img["x_start"]) and point[1] < int(correct_img["x_finish"]):
-                            img_score += 1.0 / num_pixels
-                """
 
                 if img_score > best_img_score:
                     best_img_score = img_score
@@ -217,31 +213,42 @@ class ADLCOptimizer:
 
         scores = 0.0
         img_index = 0
-        for image in images:
-            img_index += 1
-            test_image = image[0]
-            self.ADLC_parser.setup(parameters)
+        if self.multithread:
+            pool = ProcessPoolExecutor(len(images))
+            futures = []
+            for image in images:
+                img_index += 1
+                futures.append(pool.submit(self.solve, scores, parameters, img_index, image))
 
-            if self.debug:
-                start_time = timeit.default_timer()
+            for x in as_completed(futures):
+                result = x.result()
 
-            targets, _, contours = self.ADLC_parser.parse(test_image)
-            score = self.score(contours, image[1:])
-            scores += score
+                scores = result["scores"] / float(len(images))
+                self.total_time += result["image_run_time"]
+        else:
+            for image in images:
+                img_index += 1
+                test_image = image[0]
+                self.ADLC_parser.setup(parameters)
 
-            if score > 0.0 and self.debug:
-                for target in targets:
-                    cv2.imshow("target", target)
-                    cv2.waitKey(0)
-                    cv2.destroyAllWindows()
+                if self.debug:
+                    start_time = timeit.default_timer()
 
-            if self.debug:
-                end_time = timeit.default_timer()
-                image_run_time = end_time - start_time
-                self.total_time += image_run_time
+                targets, _, contours = self.ADLC_parser.parse(test_image)
+                score = self.score(contours, image[1:])
+                scores += score
 
-            if self.debug:
-                print(bcolors.INFO + "[Info]" + bcolors.ENDC + " Image number " + str(img_index) + " scored a " + str(score*100) + "% (" + str(image_run_time) + " seconds)")
+                if score > 0.0 and self.debug:
+                    for target in targets:
+                        cv2.imshow("target", target)
+                        cv2.waitKey(0)
+                        cv2.destroyAllWindows()
+
+                if self.debug:
+                    end_time = timeit.default_timer()
+                    image_run_time = end_time - start_time
+                    self.total_time += image_run_time
+                    print(bcolors.INFO + "[Info]" + bcolors.ENDC + " Image number " + str(img_index) + " scored a " + str(score*100) + "% (" + str(image_run_time) + " seconds)")
 
         scores = scores / float(len(images))
 
@@ -251,3 +258,27 @@ class ADLCOptimizer:
             print(bcolors.INFO + "[Info]" + bcolors.ENDC + " Estimated time remaining: " + str(estimated_time_remaining) + " hours")
 
         return scores
+
+    def solve(self, scores, parameters, img_index, image):
+        ADLC_parser = ADLCParser()
+        ADLC_parser.setup(parameters)
+
+        if self.debug:
+            start_time = timeit.default_timer()
+
+        targets, _, contours = ADLC_parser.parse(image[0])
+        score = self.score(contours, image[1:])
+        scores += score
+
+        if score > 0.0 and self.debug:
+            for target in targets:
+                cv2.imshow("target", target)
+                cv2.waitKey(0)
+                cv2.destroyAllWindows()
+
+        if self.debug:
+            end_time = timeit.default_timer()
+            image_run_time = end_time - start_time
+            print(bcolors.INFO + "[Info]" + bcolors.ENDC + " Image number " + str(img_index) + " scored a " + str(score*100) + "% (" + str(image_run_time) + " seconds)")
+
+        return {"scores" : scores, "image_run_time" : image_run_time}

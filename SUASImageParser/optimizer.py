@@ -34,14 +34,14 @@ class Optimizer:
         Optimize the parameters
         """
         mode = kwargs.get("mode", None)
-        num_threads = kwargs.get("num_threads", 1)
+        multithread = kwargs.get("multithread", False)
 
         if mode == None:
             raise ValueError('Please specify a mode to use (i.e. "ADLC" if you would like to use the ADLC optimizer)')
 
         optimized_parameters = {}
         if mode.lower() == "adlc":
-            optimized_parameters = self.adlc_optimizer.optimize(self.output_log_file, self.image_directory, num_threads)
+            optimized_parameters = self.adlc_optimizer.optimize(self.output_log_file, self.image_directory, multithread)
 
         self.save_params(optimized_parameters, kwargs.get("output_file"))
 

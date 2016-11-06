@@ -28,5 +28,5 @@ if should_exit:
 # ------------------------ Optimizing -------------------------------------
 print(bcolors.INFO + "[Info]" + bcolors.ENDC + " Beginning Optimization...")
 optimizer = Optimizer(debug=True, img_directory=getOption("img_directory"), output_directory=getOption("output_directory"))
-optimizer.optimize(mode="ADLC", output_directory=getOption("output_directory"), img_directory=getOption("img_directory"), num_threads=5)
+optimizer.optimize(mode="ADLC", output_directory=getOption("output_directory"), img_directory=getOption("img_directory"), multithread=True)
 print(bcolors.INFO + "[Info]" + bcolors.ENDC + " Optimization Complete!")
