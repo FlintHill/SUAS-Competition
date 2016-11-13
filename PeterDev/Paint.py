@@ -41,5 +41,11 @@ class Paint:
         paint.drawVerticalLine(imgIn, rect.getX() + rect.getWidth(), rect.getY(), rect.getHeight(), color)
         return imgIn
         
-        
+    def superimposeImage(self, bottomImg, topImg):
+        bottomImage = bottomImg.load()
+        topImage = topIma.load()
+        for x in range(0, topImg.size[0]):
+            for y in range(0, topImg.size[1]):
+                bottomImage[x,y]=topImage[x,y]
+        return bottomImage
         

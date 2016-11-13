@@ -1,27 +1,22 @@
-'''
-Created on Nov 3, 2016
-
-@author: phusisian
-'''
 import math
 from random import randint
 
 class KMeans:
     def getKMeans(self, imgIn, numRounds, numToRun):
-        kmeans = KMeans()
+        #kmeans = KMeans()
         image = imgIn.load()
         dim = imgIn.size
         clusters = [0 for j in range(0,numRounds)]
         for i in range(0,numRounds):
-            randX = randint(0,dim[0])
-            randY = randint(0,dim[1])
+            randX = randint(0,dim[0]-1)
+            randY = randint(0,dim[1]-1)
             cluster = Cluster(image[randX, randY])
             clusters[i] = cluster
-            print(image[randX,randY])
+            #print(image[randX,randY])
         
-        kmeans.fitToClusters(imgIn, clusters, numRounds)
-        kmeans.resetClustersToAverage(imgIn, clusters, numRounds, 0, numToRun)
-        return kmeans.roundToClusters(imgIn, clusters)
+        self.fitToClusters(imgIn, clusters, numRounds)
+        self.resetClustersToAverage(imgIn, clusters, numRounds, 0, numToRun)
+        return self.roundToClusters(imgIn, clusters)
         #return kmeans.roundToClusters(imgIn, clusters)       
         #for i in range(0, numRounds):
             #clusters[i] = Cluster(clusters[i].getAverageColor())
