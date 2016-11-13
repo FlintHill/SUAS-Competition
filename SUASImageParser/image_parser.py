@@ -27,7 +27,7 @@ class ImageParser:
         Parses the image "filename" and returns the generated image
         """
         if self.mode == "ADLC":
-            targets, characteristics = self.adlc_parser.parse(filename)
+            targets, characteristics = self.adlc_parser.parse_file(filename)
 
             # @TODO: Implement target characteristic saving here
 
