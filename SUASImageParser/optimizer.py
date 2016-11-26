@@ -54,4 +54,4 @@ class Optimizer:
                 print(bcolors.WARNING + "[Warning]" + bcolors.ENDC + " Output file already exists")
 
         with open(output_file, 'w+') as output:
-            json.dump(optimized_parameters, output)
+            json.dump(optimized_parameters, output, indent=4, sort_keys=True)
