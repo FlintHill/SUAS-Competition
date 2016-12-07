@@ -1,119 +1,209 @@
-import math
-from random import randint
+from math import sqrt
+from math import pi
+import random
 
 class KMeans:
-    def getKMeans(self, imgIn, numRounds, numToRun):
-        #kmeans = KMeans()
-        image = imgIn.load()
-        dim = imgIn.size
-        clusters = [0 for j in range(0,numRounds)]
-        for i in range(0,numRounds):
-            randX = randint(0,dim[0]-1)
-            randY = randint(0,dim[1]-1)
-            cluster = Cluster(image[randX, randY])
-            clusters[i] = cluster
-            #print(image[randX,randY])
+    
+    def __init__(self, dataIn, numClustersIn, timesToRun, step = None):
+        if step == None:
+            step = timesToRun
+        self.data = dataIn
+        self.clusters = Clusters()
+        self.timesToRun = timesToRun
+        self.numClusters = numClustersIn
+        self.addRandomVectorsToClusters()
+        stepCount = 0
+        self.fitDataToClusters(step, stepCount)
         
-        self.fitToClusters(imgIn, clusters, numRounds)
-        self.resetClustersToAverage(imgIn, clusters, numRounds, 0, numToRun)
-        return self.roundToClusters(imgIn, clusters)
-        #return kmeans.roundToClusters(imgIn, clusters)       
-        #for i in range(0, numRounds):
-            #clusters[i] = Cluster(clusters[i].getAverageColor())
-        
-    def resetClustersToAverage(self, imgIn, clusters, numRounds, numRun, timesToRun):
-        print(numRun)
-        kmeans = KMeans()
-        for i in range(0, numRounds):
-            clusters[i] = Cluster(clusters[i].getAverageColor())
-        clusters = kmeans.fitToClusters(imgIn, clusters, numRounds)
-        if numRun < timesToRun:
-            kmeans.resetClustersToAverage(imgIn, clusters, numRounds, numRun+1, timesToRun)
-        else:
-            return clusters
-        
-    def fitToClusters(self, imgIn, clusters, numRounds):
-        image = imgIn.load()
-        dim = imgIn.size
-        for x in range(0, dim[0]):
-            for y in range(0, dim[1]):
-                colorPixel = image[x,y]
-                smallestDistClusterIndex = 0
-                smallestDist = clusters[0].getDist(colorPixel)
-                for clusterNum in range(1, numRounds):
-                    if clusters[clusterNum].getDist(colorPixel) < clusters[smallestDistClusterIndex].getDist(colorPixel):
-                        smallestDistClusterIndex = clusterNum
+        for i in range(0, timesToRun):
+            self.resetClustersToAverage()
+            self.fitDataToClusters(step, stepCount)
+            stepCount += 1
+            if(step > step):
+                step = 0
+            
+    
+    @classmethod
+    def initWithPicture(cls, img, image, numClusters, timesToRun, step = None):
+        data = []
+        for i in range(0, img.size[0]):
+            for j in range(0, img.size[1]):
+                data.append(image[i,j])
+        KMeans.removeBlackFromData(data)
+        return KMeans(data, numClusters, timesToRun, step)
+    
+    @staticmethod
+    def removeBlackFromData(data):
+        i = 0
+        while i < len(data):
+            if data[i] == (0,0,0):
+                data.pop(i)
+            else:
+                i+=1
                 
-                clusterColor = ClusterColor(colorPixel, smallestDist)
-                clusters[smallestDistClusterIndex].addColor(clusterColor)
-        return clusters
+    def filterImageThroughClusters(self, img, image):
+        for x in range(0, img.size[0]):
+            for y in range(0, img.size[1]):
+                if image[x,y] != (0,0,0):#using black as a bacground, don't want picked up. Possible that a pure black will appear in real world?
+                    image[x,y] = self.clusters.getSmallestDistanceCluster(image[x,y]).getIntClusterVector()
+        return img
         
-    def roundToClusters(self, imgIn, clusters):
-        image = imgIn.load()
-        dim = imgIn.size
+    def __getitem__(self, index):
+        return self.data[index]
+    
+    def __len__(self):
+        return len(self.data)
+    
+    def __repr__(self):
+        return str(self.clusters)
         
-        for x in range(0, dim[0]):
-            for y in range(0, dim[1]):
-                    colorPixel = image[x,y]
-                    smallestDistIndex = 0
-                    #smallestDist = clusters[0].getDist(colorPixel)
+    def getClusterVectors(self):
+        vectors = []
+        for i in range(0, len(self.clusters)):
+            vectors.append(self.clusters[i].getClusterVector())
+        return vectors
+    
+    def getIntClusterVectors(self):
+        vectors = []
+        for i in range(0, len(self.clusters)):
+            vectors.append(self.clusters[i].getIntClusterVector())
+        return vectors
+
+    def addRandomVectorsToClusters(self):
+        for i in range(0, self.numClusters):
+            print("Len: " + str(len(self)))
+            randomVector = self[int(random.random() * (len(self)-1))]
+            self.clusters.append(Cluster(randomVector))#not sure if appending works with special methods
+            
+    def fitDataToClusters(self, step, stepCount):
+        for i in range(stepCount, len(self), step):
+            self.clusters.appendVectorToLeastDistanceCluster(self[i])
+    
+    def getClusters(self):
+        return self.clusters
+    
+    def resetClustersToAverage(self):
+        self.clusters.moveClustersToAverageAndReset()
                     
-                    for clusterNum in range(1, len(clusters)):
-                        if clusters[clusterNum].getDist(colorPixel) < clusters[smallestDistIndex].getDist(colorPixel):
-                            smallestDistIndex = clusterNum
-                    #cColor = ClusterColor(colorPixel, smallestDist)
-                    
-                    image[x,y] = clusters[smallestDistIndex].getClusterColor()
-        return imgIn
-                    #clusters[smallestDistIndex] = cColor
-                        
+            
+class Clusters:
+    
+    def __init__(self):
+        self.clusters = []
+        
+    def __getitem__(self, index):
+        return self.clusters[index]
+    
+    def __len__(self):
+        return len(self.clusters)
+    
+    def __repr__(self):
+        stringReturn = ""
+        for i in range(0, len(self)):
+            stringReturn += str(self[i]) + "\n "
+        #stringReturn = stringReturn[0 : len(stringReturn) - 2]
+        return stringReturn
+    
+    
+    def append(self, clusterIn, name = None):
+        self.clusters.append(clusterIn)
+        if name != None:
+            clusterIn.setName(name)
+            
+    
+    def getSmallestDistanceCluster(self, vectorIn):
+        smallestIndex = 0
+        smallestDistance = self[smallestIndex].calculateDistanceFromCluster(vectorIn)
+        
+        for i in range(1, len(self)):
+            distanceCalc = self[i].calculateDistanceFromCluster(vectorIn)
+            if distanceCalc < smallestDistance:
+                smallestDistance = distanceCalc
+                smallestIndex = i
+                
+        return self[smallestIndex]
+
+    def moveClustersToAverageAndReset(self):
+        for i in range(0, len(self)):
+            self[i].moveClusterToAverageAndReset()
+
+    def appendVectorToLeastDistanceCluster(self, vectorIn):
+        
+        self.getSmallestDistanceCluster(vectorIn).append(vectorIn)#not sure if special methods are enough to make append work this way 
 
 class Cluster:
-    #colors = [0]
-    def __init__(self, colorIn):
-        self.color = colorIn
-        self.cColors = []
-    def getDist(self, colorIn):
-        return math.sqrt((colorIn[0]-self.color[0])**2 + (colorIn[1]-self.color[1])**2 + (colorIn[2]-self.color[2])**2)
     
-    def getClusterColor(self):
-        return self.color
+    def __init__(self, clusterVector):
+        self.clusterVector = clusterVector
+        self.clusterVectors = []
+
+    def __getitem__(self, index):
+        return self.clusterVectors[index]
     
-    def setClusterColor(self, colorIn):
-        self.color = colorIn
+    def __len__(self):
+        return len(self.clusterVectors)
+    
+    def __repr__(self):
+        return str(self.clusterVector) + ", with average vector of: " + str(self.getAverageVector()) + ", with cluster size of: " + str(len(self))
+    
+    def getNumPointsInRadius(self, radius):
+        count = 0
+        for i in range(0, len(self)):
+            if self.calculateDistanceFromCluster(self[i]) < radius:
+                count += 1
+        return count
+    
+    def getAreaOfCircle(self, radius):
+        return 2*pi*(radius**2)
+    
+    def getDataDensityInRadius(self, radius):
+        areaCircle = self.getAreaOfCircle(radius)
+        if(areaCircle > 0):
+            return float(self.getNumPointsInRadius(radius))/areaCircle
+    
+    def append(self, vectorIn):
+        self.clusterVectors.append(vectorIn)
+    
+    def getClusterVector(self):
+        return self.clusterVector
+    
+    def getIntClusterVector(self):#probably a better python way of doing this
+        intList = []
+        for i in range(0, len(self.clusterVector)):
+            intList.append(int(self.clusterVector[i]))
+            
+        return tuple(intList)
+     
+    def setName(self, name):
+        self.name = name   
+    def getName(self):
+        return self.name
+    def moveClusterToAverageAndReset(self):
+        self.clusterVector = self.getAverageVector()
+        self.clusterVectors = []
+    
+    def getAverageVector(self):
+        distanceAdds = [0 for i in range(0, len(self.clusterVector))]
+        for i in range(len(self)):#for each vector
+            for j in range(0, len(distanceAdds)):#for each dimension
+                distanceAdds[j] += self[i][j]#adds to the appropriate index the vector at the dimension and index
         
-    def addColor(self, colorIn):#takes a ClusteredColor
-        self.cColors.append(colorIn)
-        
-    def getAverageDist(self):
+        for i in range(0, len(distanceAdds)):
+            if(len(self) != 0):
+                distanceAdds[i] /= len(self)
+            
+        return tuple(distanceAdds)
+    
+    def appendClusterVector(self, vectorIn):#may throw error here
+        self.append(vectorIn)
+    
+    #couldn't find an appropriate python special method to perfrom a distance calculation
+    def calculateDistanceFromCluster(self, vectorIn):
         addNum = 0
-        for i in range(0, len(self.cColors)):
-            addNum += self.cColors[i].getDist()
-        return addNum/len(self.cColors)
+        for i in range(0, len(vectorIn)):
+            addNum += (vectorIn[i] - self.clusterVector[i])**2
+            
+        return sqrt(addNum)
     
-    def getAverageColor(self):
-        addRed = 0
-        addBlue = 0
-        addGreen = 0
-        for i in range(0,len(self.cColors)):
-            addRed += self.cColors[i].getColor()[0]
-            addGreen += self.cColors[i].getColor()[1]
-            addBlue += self.cColors[i].getColor()[2]
-        addRed = int(addRed/len(self.cColors))
-        addGreen = int(addGreen/len(self.cColors))
-        addBlue = int(addBlue/len(self.cColors))
-        return (addRed,addGreen,addBlue)
-        
-    def printCluster(self):
-        for i in range(0, len(self.cColors)):
-            print("Distance")
-            print(self.cColors[i].getDist())
-        
-class ClusterColor:
-    def __init__(self, colorIn, distIn):
-        self.color = colorIn
-        self.dist = distIn
-    def getColor(self):
-        return self.color
-    def getDist(self):
-        return self.dist
+
+    
