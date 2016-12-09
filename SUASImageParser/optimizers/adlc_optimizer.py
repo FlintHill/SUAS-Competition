@@ -5,6 +5,7 @@ import numpy as np
 import os
 import timeit
 import json
+import itertools
 from concurrent.futures import ProcessPoolExecutor
 from concurrent.futures import as_completed
 

@@ -16,7 +16,7 @@ class Optimizer:
         self.image_directory = kwargs.get("img_directory", None)
 
         if not os.path.exists(self.output_directory):
-            os.makedir(self.output_directory)
+            os.mkdir(self.output_directory)
 
         if self.output_directory == None:
             raise ValueError('Please specify an output file to save tuned parameters to')
