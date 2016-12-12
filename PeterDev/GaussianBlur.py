@@ -7,7 +7,7 @@ Created on Dec 1, 2016
 from PIL import Image
 import math
 class GaussianBlur:
-    
+    #possible that I am filtering incorrectly. Wasn't sure if standard deviation was taken as an input or derived from the kernel. I derived from the kernel.
     @staticmethod
     def getGaussianFilteredImage(img, image, kernelSize):
         dim = img.size

@@ -20,7 +20,12 @@ class Rectangle:
         self.x = xIn
     def setY(self, yIn):
         self.y = yIn
+    
+    def getMidpoint(self):
+        return ((2*self.x+self.width)/2.0, (2*self.y+self.height)/2.0)    
+    
     def setWidth(self, widthIn):
         self.width = widthIn
     def setHeight(self, heightIn):
         self.height = heightIn
+        

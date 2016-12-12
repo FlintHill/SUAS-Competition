@@ -18,9 +18,9 @@ class Drawer:
                     image[x,y] = color
                     
     @staticmethod
-    def drawCircle(img, image, point, radius, color):
+    def drawCircle(img, image, point, radius, color, numSteps = 64):
         theta = 0
-        thetaInc = math.pi/16.0
+        thetaInc = 2*math.pi/float(numSteps)
         while theta < math.pi*2.0:
             x = point[0] + int(radius * math.cos(theta))
             y = point[1] + int(radius * math.sin(theta))

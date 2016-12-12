@@ -7,29 +7,38 @@ from root.nested.LetterFrame import LetterFrame
 from root.nested.LetterFrames import LetterFrames
 from root.nested.FieldObject import FieldObject
 from root.nested.KMeans import KMeans
+from root.nested.ImageFinder import ImageFinder
 import timeit
 
-img = Image.open("/Users/phusisian/Desktop/Senior year/SUAS/Object images/300 crop 6480x4320.jpeg")
-image = img.load()
+#img = Image.open("/Users/phusisian/Desktop/Senior year/SUAS/Object images/300 crop 6480x4320.jpeg")
+#image = img.load()
 
 startTime = timeit.default_timer()
-'''
-grayImg = GrayScale.getGrayScaledImage(img, image)
-gaussianImg = GaussianBlur.getGaussianFilteredImage(grayImg, grayImg.load(), 3)
-gaussianImg.show()
-sobelEdge = SobelEdge(gaussianImg, gaussianImg.load())
-sobelEdge.getSobelEdgeImg().show()
-cannyEdgeImg = CannyEdge.getCannyEdgeImage(sobelEdge, 35, 15)
-cannyEdgeImg.show()'''
+
+
+imageFinder = ImageFinder("/Users/phusisian/Desktop/Senior year/SUAS/Object images test", ".jpeg")
+imageFinder.waitUntilImagePresent()
+imageFinder.printDir()
+imgPaths = imageFinder.getImgPaths()
+
+for filepath in imgPaths:
+    img = Image.open(filepath)
+    image = img.load()
+    fieldObject = FieldObject(img, image)
+    fieldObject.getColorLayers().printLayerDistancesToCorner()
+    fieldObject.getLetterLayerCrappyVersion().getColorImg().show()
+    print(fieldObject)
 
 #kMeansImg.show()
-letterFrames = LetterFrames("Dual-300.ttf", 40)
-fieldObject = FieldObject(img, image)
+#letterFrames = LetterFrames("Dual-300.ttf", 49)##instead of scaling letter to fit frame, you need to have frames that fit the letter
+'''fieldObject = FieldObject(img, image)
 fieldObject.getColorLayers().printLayerDistancesToCorner()
 fieldObject.getLetterLayerCrappyVersion().getColorImg().show()
-print("Letter: " + str(letterFrames.getBestFitLetterFrameFromSobel(fieldObject.getLetterSobel(), 0).getLetter()))
+print(fieldObject)'''
+#print("Letter: " + str(letterFrames.getBestFitLetterFrameFromSobel(fieldObject.getLetterSobel(), 0).getLetter()))
 #bFrame = LetterFrame("B", "Amble-Regular.ttf", 124)
 #letterFrames.getBestFitLetterFrameFromSobel(bFrame.getSobelEdge(), 45).showLetterImg()
+#IDEA: For letter recognition, maybe use KMeans to get points of concentration then compare their location (sort for least fit distance). Another advantage is being able to grade it off things relative to image width and size
 #print(fieldObject.getObjectColorName())
 #fieldObject.getLetterColorLayer()
 #fieldObject.showLayerImg()  

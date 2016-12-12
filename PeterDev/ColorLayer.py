@@ -49,7 +49,6 @@ class ColorLayer:
     def toTuples(self):
         tuples = []
         bounds = self.getColorLayerBounds()
-        print(str(bounds))
         for x in range(bounds.getX(), bounds.getX() + bounds.getWidth()):
             for y in range(bounds.getY(), bounds.getY() + bounds.getHeight()):
                 if self.colorImage[x,y] != (0,0,0):
@@ -57,7 +56,6 @@ class ColorLayer:
         return tuples
     
     def getDensity(self):
-        print(str(float(self.getLayerPixelArea())/float(self.getLayerImageArea())))
         return float(self.getLayerPixelArea())/float(self.getLayerImageArea())
     
     def fillWithLayer(self, layer):
@@ -120,15 +118,18 @@ class ColorLayer:
         
         if leftX >= 3:
             leftX -= 3
-            if rightX <= self.colorImg.size[0] - 5:
-                rightX += 5
+            #if rightX <= self.colorImg.size[0] - 5:
+            rightX += 5
                 
         if topY >= 3:
             topY -= 3
-            if bottomY <= self.colorImg.size[1] - 5:
-                bottomY += 5
+            #if bottomY <= self.colorImg.size[1] - 5:
+            bottomY += 5
         
         return Rectangle(leftX, topY, rightX - leftX, bottomY - topY)
+    
+    def getIfXYInLayer(self, x, y):
+        return self.colorImage[x,y] != (0,0,0)
     
     def getColorLayerBoundsMidpoint(self):
         rect = self.getColorLayerBounds()

@@ -51,15 +51,12 @@ class ColorLayers:
             i -= 1
     
     def getDensestColorLayer(self):
-        print("Len: " + str(len(self)))
         densestIndex = 0
         bigDensity = self[0].getDensity()
-        print(bigDensity)
         for i in range(1, len(self)):
             compareDensity = self[i].getDensity()
             
             if compareDensity > bigDensity:
-                print(str(compareDensity) + ", " + str(bigDensity))
                 bigDensity = compareDensity
                 densestIndex = i
         return self[densestIndex]

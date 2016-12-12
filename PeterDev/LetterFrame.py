@@ -6,6 +6,7 @@ from root.nested.ColorSeparation import ColorSeparation
 from root.nested.ColorLayers import ColorLayers
 from root.nested.ColorLayer import ColorLayer
 from root.nested.AngleFitter import AngleFitter
+from root.nested.GaussianBlur import GaussianBlur
 
 class LetterFrame:
     
@@ -27,7 +28,7 @@ class LetterFrame:
         self.size = sizeIn
         self.letter = letterIn
         self.setLetterImg()
-        self.letterImage = self.letterImg.load()
+        
         cropLayer = ColorLayer(self.letterImg, self.letterImage, (255,255,255))
         cropLayer.cropLayerToBounds()
         self.letterImg = cropLayer.getColorImg()
@@ -70,6 +71,7 @@ class LetterFrame:
         draw = ImageDraw.Draw(self.letterImg)
         draw.fontmode = "1" #one sets to not antialias. If camera antialiases, set to zero.
         draw.text((1,1), self.letter, (255,255,255), font = self.font)
-        
+        self.letterImage = self.letterImg.load()
+        self.letterImg = GaussianBlur.getGaussianFilteredImage(self.letterImg, self.letterImage, 3)
     
         

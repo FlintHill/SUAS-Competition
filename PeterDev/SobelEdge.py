@@ -6,7 +6,7 @@ from root.nested.CannyEdge import CannyEdge
 class SobelEdge:
     global sobelKernelX, sobelKernelY;
     sobelKernelX = [[-1,0,1],[-2,0,2],[-1,0,1]]
-    sobelKernelY = [[-1,-2,-1],[0,0,0],[1,2,1]]
+    sobelKernelY = [[-1,-2,-1],[0,0,0],[1,2,1]] #kernel made up of the derivative of a gaussian function
     
     
     
