@@ -1,0 +1,3 @@
+/home/robotics/Desktop/cropper/CMakeFiles/rebuild_cache.dir
+/home/robotics/Desktop/cropper/CMakeFiles/edit_cache.dir
+/home/robotics/Desktop/cropper/CMakeFiles/cropper.dir
