@@ -1,24 +1,4 @@
-'''
-Created on Nov 3, 2016
-
-@author: phusisian
-'''
-'''
-Created on Oct 20, 2016
-
-@author: phusisian
-'''
-
-from PIL import Image
-import time
-import os.path
 import math
-import numpy
-from matplotlib.pyplot import colors
-from SystemEvents.Standard_Suite import color
-from Carbon.Aliases import true
-import sys
-import EdgeDetection
 
 class Point:
     def __init__(self, xIn, yIn): 
@@ -32,6 +12,13 @@ class Point:
         self.x=xIn
     def setY(self, yIn):
         self.y=yIn
+
+    def __getitem__(self, index):
+        if index == 0:
+            return self.x
+        else:
+            return self.y
+
     def rotate(self, pivot, spin):#may have issues with the origin being at the top left corner
         dy = self.y-pivot.getY()
         dx = self.x-pivot.getX()
