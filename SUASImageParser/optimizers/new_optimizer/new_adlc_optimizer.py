@@ -60,13 +60,13 @@ class ADLCOptimizer:
             with open(self.output_log_file, 'r') as data_file:
                 self.scenario_log = json.load(data_file)
 
-        images = self.load_images(img_directory)
+        self.img_directory = img_directory
 
         # return optimized parameters
-        optimized_params, score = self.run_optimization(images, parameters)
+        optimized_params, score = self.run_optimization(parameters)
         return optimized_params
 
-    def run_optimization(self, images, parameters):
+    def run_optimization(self, parameters):
         """
         Run optimization on a given set of parameters and images.
         """
@@ -83,13 +83,14 @@ class ADLCOptimizer:
             print(bcolors.INFO + "[Info]" + bcolors.ENDC + " Resuming optimization from log file")
 
         self.optimization_server = OptimizerServer(debug=True)
-        completed_scenarios = self.optimization_server.serve(images, scenarios)
+        completed_scenarios = self.optimization_server.serve(scenarios, self.img_directory)
         for completed_scenario in completed_scenarios:
             # Each completed scenario takes the form of:
             # [ scenario_index, score, scenario ]
             self.scenario_log["scenarios"].append(completed_scenario)
 
             if completed_scenario[1] > best_score:
+                print("FOUND A BETTER SCORE")
                 best_params = completed_scenario[2]
                 best_score = completed_scenario[1]
                 self.scenario_log["best"]["best_params"] = best_params

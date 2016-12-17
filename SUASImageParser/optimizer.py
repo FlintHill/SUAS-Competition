@@ -43,7 +43,7 @@ class Optimizer:
         if mode.lower() == "adlc":
             optimized_parameters = self.adlc_optimizer.optimize(self.output_log_file, self.image_directory, multithread)
 
-        self.save_params(optimized_parameters, kwargs.get("output_file"))
+        self.save_params(optimized_parameters, self.output_params_file)
 
     def save_params(self, optimized_parameters, output_file):
         """

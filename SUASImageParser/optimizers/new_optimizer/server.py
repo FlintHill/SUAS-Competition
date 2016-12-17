@@ -14,7 +14,7 @@ class OptimizerServer:
         self.server.initialize()
         self.debug = debug
 
-    def serve(self, images, scenarios):
+    def serve(self, scenarios, img_directory):
         """
         Run the optimization server to optimize the scenarios to a set
         of images.
@@ -29,7 +29,7 @@ class OptimizerServer:
             print(bcolors.INFO + "[Info]" + bcolors.ENDC + " Connection to at least one worker has been established")
 
         for i in range(len(scenarios)):
-            task = {"scenario_index" : i}#, "images" : images, "scenario" : scenarios[i]}
+            task = {"scenario_index" : i, "scenario" : scenarios[i], "img_directory" : img_directory}
             self.server.send_task(task)
 
         completed_scenarios = []
@@ -40,5 +40,7 @@ class OptimizerServer:
                 if self.debug:
                     print(bcolors.INFO + "[Info]" + bcolors.ENDC + " Completed task number " + str(i))
                 completed_scenarios.append(completed_task.get_generated_data()["result"])
+
+        self.server.stop()
 
         return completed_scenarios

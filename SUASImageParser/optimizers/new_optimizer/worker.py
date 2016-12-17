@@ -1,4 +1,5 @@
 from hurricane import SlaveNode
+from time import sleep
 
 class OptimizerWorker:
     """
@@ -15,6 +16,7 @@ class OptimizerWorker:
         self.client_node.wait_for_initialize()
 
         self.debug = debug
+        self.images = None
 
     def run(self, optimizer):
         """
@@ -26,9 +28,11 @@ class OptimizerWorker:
 
         while True:
             task_data = self.client_node.wait_for_task()
-            #images = task_data["images"]
-            scenario = {}#task_data["scenario"]
+
+            if not self.images:
+                self.images = self.optimizer.load_images(img_directory=task_data["img_directory"])
+            scenario = task_data["scenario"]
             scenario_index = task_data["scenario_index"]
-            score = 0.0#self.optimizer.run_params(images, scenario)
+            score = self.optimizer.run_params(self.images, scenario)
 
             self.client_node.finish_task(generated_data={"result" : [scenario_index, score, scenario]})
