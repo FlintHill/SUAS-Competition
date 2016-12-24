@@ -1,11 +1,11 @@
 from SUASImageParser.ADLC import ADLCParser
 from SUASImageParser.utils.color import bcolors
+from SUASImageParser.optimizers.new_optimizer import OptimizerServer
 import cv2
 import numpy as np
 import os
 import timeit
 import json
-import itertools
 from concurrent.futures import ProcessPoolExecutor
 from concurrent.futures import as_completed
 
@@ -45,7 +45,6 @@ class ADLCOptimizer:
             }
         }
 
-        self.multithread = multithread
         self.output_log_file = output_log_file
         self.scenario_log = {
             "scenarios" : [],
@@ -61,15 +60,13 @@ class ADLCOptimizer:
             with open(self.output_log_file, 'r') as data_file:
                 self.scenario_log = json.load(data_file)
 
-        self.total_time = self.scenario_log["total_time"]
-        self.ADLC_parser = ADLCParser()
-        images = self.load_images(img_directory)
+        self.img_directory = img_directory
 
         # return optimized parameters
-        optimized_params, score = self.run_optimization(images, parameters)
+        optimized_params, score = self.run_optimization(parameters)
         return optimized_params
 
-    def run_optimization(self, images, parameters):
+    def run_optimization(self, parameters):
         """
         Run optimization on a given set of parameters and images.
         """
@@ -85,22 +82,17 @@ class ADLCOptimizer:
         if self.scenario_index != 0 and self.debug:
             print(bcolors.INFO + "[Info]" + bcolors.ENDC + " Resuming optimization from log file")
 
-        self.num_scenarios = len(scenarios)
-        for index in range(self.scenario_index, self.num_scenarios):
-            scenario = scenarios[index]
-            self.scenario_index += 1
+        self.optimization_server = OptimizerServer(debug=True)
+        completed_scenarios = self.optimization_server.serve(scenarios, self.img_directory)
+        for completed_scenario in completed_scenarios:
+            # Each completed scenario takes the form of:
+            # [ scenario_index, score, scenario ]
+            self.scenario_log["scenarios"].append(completed_scenario)
 
-            score = self.run_params(images, scenario)
-
-            self.scenario_log["scenario_index"] = self.scenario_index
-            self.scenario_log["total_time"] = self.total_time
-            self.scenario_log["scenarios"].append([self.scenario_index, score, scenario])
-            with open(self.output_log_file, 'w+') as output:
-                json.dump(self.scenario_log, output, indent=4, sort_keys=True)
-
-            if score > best_score:
-                best_params = scenario
-                best_score = score
+            if completed_scenario[1] > best_score:
+                print("FOUND A BETTER SCORE")
+                best_params = completed_scenario[2]
+                best_score = completed_scenario[1]
                 self.scenario_log["best"]["best_params"] = best_params
                 self.scenario_log["best"]["best_score"] = best_score
 
@@ -136,33 +128,6 @@ class ADLCOptimizer:
             scenario[parameter] = parameters[parameter]["STARTING_VAL"]
 
         return scenario
-
-    def score(self, test, correct):
-        """
-        Compare proposed target and the actual solution.
-
-        Returns:
-        - How many of the targets are correctly found. For every FA
-        """
-        score = 0.0
-        for test_img in test:
-            num_pixels = float(len(test_img))
-            best_img_score = 0.0
-            x,y,w,h = cv2.boundingRect(test_img)
-
-            for correct_img in correct:
-                img_score = 0.0
-                area = float(correct_img["x_finish"] - correct_img["x_start"]) * float(correct_img["y_finish"] - correct_img["y_start"])
-
-                SI = max(0, max(x + w, correct_img["x_finish"]) - min(x, correct_img["x_start"])) * max(0, max(y + h, correct_img["y_finish"]) - min(y, correct_img["y_start"]))
-                img_score = float(h * w) + area - SI
-
-                if img_score > best_img_score:
-                    best_img_score = img_score
-
-            score += best_img_score
-
-        return score / float(len(correct))
 
     def load_images(self, img_directory=None):
         """
@@ -208,78 +173,65 @@ class ADLCOptimizer:
         Run an image through the ADLC Parser, score all of the components found,
         return the resulting information.
         """
+        ADLC_parser = ADLCParser()
         if self.debug:
-            print()
-            print(bcolors.INFO + "[Info]" + bcolors.ENDC + " Running scenario " + str(self.scenario_index) + " of " + str(self.num_scenarios))
+            print("\n" + bcolors.INFO + "[Info]" + bcolors.ENDC + " Running a new scenario...")
 
         scores = 0.0
         img_index = 0
-        if self.multithread:
-            pool = ProcessPoolExecutor(len(images))
-            futures = []
-            for image in images:
-                img_index += 1
-                futures.append(pool.submit(self.solve, scores, parameters, img_index, image))
+        for image in images:
+            img_index += 1
+            test_image = image[0]
+            ADLC_parser.setup(parameters)
 
-            for x in as_completed(futures):
-                result = x.result()
+            if self.debug:
+                start_time = timeit.default_timer()
 
-                scores = result["scores"] / float(len(images))
-                self.total_time += result["image_run_time"]
-        else:
-            for image in images:
-                img_index += 1
-                test_image = image[0]
-                self.ADLC_parser.setup(parameters)
+            targets, _, contours = ADLC_parser.parse(test_image)
+            score = self.score(contours, image[1:])
+            scores += score
 
-                if self.debug:
-                    start_time = timeit.default_timer()
+            if score > 0.0 and debug:
+                for target in targets:
+                    cv2.imshow("target", target)
+                    cv2.waitKey(0)
+                    cv2.destroyAllWindows()
 
-                targets, _, contours = self.ADLC_parser.parse(test_image)
-                score = self.score(contours, image[1:])
-                scores += score
-
-                if score > 0.0 and self.debug:
-                    for target in targets:
-                        cv2.imshow("target", target)
-                        cv2.waitKey(0)
-                        cv2.destroyAllWindows()
-
-                if self.debug:
-                    end_time = timeit.default_timer()
-                    image_run_time = end_time - start_time
-                    self.total_time += image_run_time
-                    print(bcolors.INFO + "[Info]" + bcolors.ENDC + " Image number " + str(img_index) + " scored a " + str(score*100) + "% (" + str(image_run_time) + " seconds)")
+            if self.debug:
+                end_time = timeit.default_timer()
+                image_run_time = end_time - start_time
+                print(bcolors.INFO + "[Info]" + bcolors.ENDC + " Image number " + str(img_index) + " scored a " + str(score*100) + "% (" + str(image_run_time) + " seconds)")
 
         scores = scores / float(len(images))
-
         if self.debug:
-            print(bcolors.INFO + "[Info]" + bcolors.ENDC + " Scenario " + str(self.scenario_index) + " got a score of " + str(scores*100) + "%")
-            estimated_time_remaining = float(self.num_scenarios) * self.total_time / (3600.0 * self.scenario_index)
-            print(bcolors.INFO + "[Info]" + bcolors.ENDC + " Estimated time remaining: " + str(estimated_time_remaining) + " hours")
+            print(bcolors.INFO + "[Info]" + bcolors.ENDC + " The scenario got a score of " + str(scores*100) + "%")
 
         return scores
 
-    def solve(self, scores, parameters, img_index, image):
-        ADLC_parser = ADLCParser()
-        ADLC_parser.setup(parameters)
+    def score(self, test, correct):
+        """
+        Compare proposed target and the actual solution.
 
-        if self.debug:
-            start_time = timeit.default_timer()
+        Returns:
+        - How many of the targets are correctly found. For every FA
+            (False Alarm)
+        """
+        score = 0.0
+        for test_img in test:
+            num_pixels = float(len(test_img))
+            best_img_score = 0.0
+            x,y,w,h = cv2.boundingRect(test_img)
 
-        targets, _, contours = ADLC_parser.parse(image[0])
-        score = self.score(contours, image[1:])
-        scores += score
+            for correct_img in correct:
+                img_score = 0.0
+                area = float(correct_img["x_finish"] - correct_img["x_start"]) * float(correct_img["y_finish"] - correct_img["y_start"])
 
-        if score > 0.0 and self.debug:
-            for target in targets:
-                cv2.imshow("target", target)
-                cv2.waitKey(0)
-                cv2.destroyAllWindows()
+                SI = max(0, max(x + w, correct_img["x_finish"]) - min(x, correct_img["x_start"])) * max(0, max(y + h, correct_img["y_finish"]) - min(y, correct_img["y_start"]))
+                img_score = float(h * w) + area - SI
 
-        if self.debug:
-            end_time = timeit.default_timer()
-            image_run_time = end_time - start_time
-            print(bcolors.INFO + "[Info]" + bcolors.ENDC + " Image number " + str(img_index) + " scored a " + str(score*100) + "% (" + str(image_run_time) + " seconds)")
+                if img_score > best_img_score:
+                    best_img_score = img_score
 
-        return {"scores" : scores, "image_run_time" : image_run_time}
+            score += best_img_score
+
+        return score / float(len(correct))
