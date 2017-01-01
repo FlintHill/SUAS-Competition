@@ -11,7 +11,7 @@ class OptimizerWorker:
         """
         Initialize the worker
         """
-        self.client_node = SlaveNode(debug=debug, master_node='127.0.0.1')
+        self.client_node = SlaveNode(debug=debug)
         self.client_node.initialize()
         self.client_node.wait_for_initialize()
 
