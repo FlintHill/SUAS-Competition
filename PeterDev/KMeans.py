@@ -1,14 +1,15 @@
 from math import sqrt
 from math import pi
 import random
-
+from root.nested.Drawer import Drawer
+from root.nested.Point import Point
 class KMeans:
     
     def __init__(self, dataIn, numClustersIn, timesToRun, step = None):
         if step == None:
             step = timesToRun
         self.data = dataIn
-        self.clusters = Clusters()
+        self.clusters = Clusters(self)
         self.timesToRun = timesToRun
         self.numClusters = numClustersIn
         self.addRandomVectorsToClusters()
@@ -19,8 +20,8 @@ class KMeans:
             self.resetClustersToAverage()
             self.fitDataToClusters(step, stepCount)
             stepCount += 1
-            if(step > step):
-                step = 0
+            if(stepCount > step):
+                stepCount = 0
             
     
     @classmethod
@@ -40,7 +41,12 @@ class KMeans:
                 data.pop(i)
             else:
                 i+=1
-                
+      
+    def draw(self, img, image):
+        for i in range(0, len(self.clusters)):
+            self.clusters[i].draw(img, image)    
+        
+                  
     def filterImageThroughClusters(self, img, image):
         for x in range(0, img.size[0]):
             for y in range(0, img.size[1]):
@@ -63,6 +69,9 @@ class KMeans:
             vectors.append(self.clusters[i].getClusterVector())
         return vectors
     
+    def getRandomDataVector(self):
+        return self.data[random.randint(0, len(self) - 1)]
+    
     def getIntClusterVectors(self):
         vectors = []
         for i in range(0, len(self.clusters)):
@@ -71,9 +80,9 @@ class KMeans:
 
     def addRandomVectorsToClusters(self):
         for i in range(0, self.numClusters):
-            print("Len: " + str(len(self)))
+            #print("Len: " + str(len(self)))
             randomVector = self[int(random.random() * (len(self)-1))]
-            self.clusters.append(Cluster(randomVector))#not sure if appending works with special methods
+            self.clusters.append(Cluster(self.clusters, randomVector))#not sure if appending works with special methods
             
     def fitDataToClusters(self, step, stepCount):
         for i in range(stepCount, len(self), step):
@@ -88,14 +97,17 @@ class KMeans:
             
 class Clusters:
     
-    def __init__(self):
+    def __init__(self, boundKMeans):
         self.clusters = []
-        
+        self.boundKMeans = boundKMeans
     def __getitem__(self, index):
         return self.clusters[index]
     
     def __len__(self):
         return len(self.clusters)
+    
+    def __setitem__(self, index, objIn):
+        self.clusters[index] = objIn
     
     def __repr__(self):
         stringReturn = ""
@@ -128,12 +140,15 @@ class Clusters:
             self[i].moveClusterToAverageAndReset()
 
     def appendVectorToLeastDistanceCluster(self, vectorIn):
-        
         self.getSmallestDistanceCluster(vectorIn).append(vectorIn)#not sure if special methods are enough to make append work this way 
+        
+    def getRandomDataVector(self):
+        return self.boundKMeans.getRandomDataVector()
 
 class Cluster:
     
-    def __init__(self, clusterVector):
+    def __init__(self, boundClusters, clusterVector):
+        self.boundClusters = boundClusters
         self.clusterVector = clusterVector
         self.clusterVectors = []
 
@@ -181,21 +196,41 @@ class Cluster:
     def moveClusterToAverageAndReset(self):
         self.clusterVector = self.getAverageVector()
         self.clusterVectors = []
-    
+        
     def getAverageVector(self):
         distanceAdds = [0 for i in range(0, len(self.clusterVector))]
-        for i in range(len(self)):#for each vector
-            for j in range(0, len(distanceAdds)):#for each dimension
-                distanceAdds[j] += self[i][j]#adds to the appropriate index the vector at the dimension and index
-        
-        for i in range(0, len(distanceAdds)):
-            if(len(self) != 0):
-                distanceAdds[i] /= len(self)
+        if len(self) != 0:
+            for i in range(len(self)):#for each vector
+                for j in range(0, len(distanceAdds)):#for each dimension
+                    distanceAdds[j] += float(self[i][j])#adds to the appropriate index the vector at the dimension and index
+            
+            for i in range(0, len(distanceAdds)):
+                distanceAdds[i] /= float(len(self))
+        else:
+            '''divide by zero can occur if the cluster has ZERO points. for small datasets especially, it is possible
+            that the cluster has ZERO better fit points than the others, thus never can be moved. My solution is to 
+            either move the cluster vector to somewhere random, or shove the cluster in the average between two close, 
+            working clusters'''
+            return self.boundClusters.getRandomDataVector()
             
         return tuple(distanceAdds)
     
-    def appendClusterVector(self, vectorIn):#may throw error here
-        self.append(vectorIn)
+    
+    '''def appendClusterVector(self, vectorIn):#may throw error here
+        self.append(vectorIn)'''
+    
+    def draw(self, img, image):
+        Drawer.drawCircle(img, image, Point(int(self.clusterVector[0]), int(self.clusterVector[1])), self.getMaximumRadius(), (255,0,0))
+    
+    def getMaximumRadius(self):
+        if len(self.clusterVectors) != 0:
+            biggestRadius = self.calculateDistanceFromCluster(self.clusterVectors[0])
+            for i in range(1, len(self.clusterVectors)):
+                iterRadius = self.calculateDistanceFromCluster(self.clusterVectors[i])
+                if iterRadius > biggestRadius:
+                    biggestRadius = iterRadius
+            return biggestRadius
+        return 0
     
     #couldn't find an appropriate python special method to perfrom a distance calculation
     def calculateDistanceFromCluster(self, vectorIn):

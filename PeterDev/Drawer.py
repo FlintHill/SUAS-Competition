@@ -22,9 +22,12 @@ class Drawer:
         theta = 0
         thetaInc = 2*math.pi/float(numSteps)
         while theta < math.pi*2.0:
-            x = point[0] + int(radius * math.cos(theta))
-            y = point[1] + int(radius * math.sin(theta))
-            image[x,y] = color
+            try:
+                x = point[0] + int(radius * math.cos(theta))
+                y = point[1] + int(radius * math.sin(theta))
+                image[x,y] = color
+            except: 
+                pass
             theta += thetaInc
         
         

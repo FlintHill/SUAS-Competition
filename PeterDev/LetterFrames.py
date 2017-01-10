@@ -21,12 +21,24 @@ class LetterFrames:
         for i in range(0, len(letterList)):
             print(letterList[i])
             self.letterFrames.append(LetterFrame(letterList[i], self.font, self.size))
-            
+    
+    def __getitem__(self, index):
+        return self.letterFrames[index] 
+    
+    def __len__(self):
+        return len(self.letterFrames)       
     
     def getLetterFrames(self):
         return self.letterFrames
     
+    '''def getAverageFrameHeight(self):
+        heightAdd = 0
+        for i in range(0, len(self)):
+            heightAdd += self[i].getLetterImg().size[1]
+        return float(heightAdd)/float(len(self))'''
     
+    def getFrameHeight(self):
+        return self[0].getLetterImg().size[1]
     
     def checkAccuracyUsingLeastSquare(self, compareLetterFrames, threshold):
         numCorrect = len(compareLetterFrames.getLetterFrames())
@@ -36,9 +48,6 @@ class LetterFrames:
             fitLetterFrame = self.getBestFitLetterFrameFromLetterFrame(compareLetterFrames.getLetterFrames()[i], threshold)
             
             if fitLetterFrame.getLetter() != compareLetterFrames.getLetterFrames()[i].getLetter():
-                fitLetterFrame.showLetterImg()#getAngleImage().show()
-                self.letterFrames[i].showLetterImg()
-                #compareLetterFrames.getLetterFrames()[i].showLetterImg()
                 print("Fit Letter: " + fitLetterFrame.getLetter() + " Check Letter: " + str(compareLetterFrames.getLetterFrames()[i].getLetter()))
                 numCorrect -= 1
                

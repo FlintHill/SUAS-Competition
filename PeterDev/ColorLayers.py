@@ -79,13 +79,6 @@ class ColorLayers:
             if self.colorLayers[i].getColor() == color:
                 return i
         return -1
-     
-    '''def getLayerAtIndex(self, index):
-        return self.colorLayers[index]'''
-     
-    '''def getLayers(self):
-        return self.colorLayers'''
-    
     def showColorLayers(self):
         for i in range(0, len(self.colorLayers)):
             self.colorLayers[i].getColorImg().show()
