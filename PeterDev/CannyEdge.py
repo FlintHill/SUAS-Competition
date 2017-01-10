@@ -14,7 +14,6 @@ class CannyEdge:
         img = Image.new("RGB", (len(sobelEdge.getGradientsX()), len(sobelEdge.getGradientsX()[0])))
         image = img.load()
         dim = img.size
-        #sobelEdge.getSobelEdgeImg().show()
         
         for x in range(0, dim[0]):
             for y in range(0, dim[1]):

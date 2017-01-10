@@ -19,10 +19,8 @@ from root.nested.LetterFrames import LetterFrames
 from itertools import count
 class FieldObject:
 
-    def __init__(self, img, image):
-        
-        img.show()
-        self.letterFrames = LetterFrames("Dual-300.ttf", 48)
+    def __init__(self, letterFramesIn, img, image):
+        self.letterFrames = letterFramesIn#LetterFrames("Dual-300.ttf", 48)
         self.rotation = 45
         self.img = img
         self.img = self.img.rotate(self.rotation)
@@ -35,22 +33,16 @@ class FieldObject:
         #self.kMeans = KMeans.initWithPicture(img, image, 3, 12)#12 is toggleable -- num times KMeans runs
         self.colorLayers = ColorSeparation.getColorLayers(self.kMeansImg, self.kMeansImage)
         self.colorLayers.sortLayersByDistanceToCorner()
-        #self.colorLayers.showColorLayers()
         #letterImg = self.removeLayersUntilLetter()
         self.removeBackground()
         self.colorRounder = ColorRounder()
         self.letterCropper = LetterCropper(self.getLetterLayerCrappyVersion())
-        self.letterCropper.getCroppedImg().show()
         
         self.sideCounter = SideCounter(self.getObjectColorLayer())
-        #print("Num Sides: " + str(SideCounter(self.getObjectColorLayer()).getNumSides()))
-        #self.colorLayers.showColorLayers()
-        #letterImg.show()
         
     
     def __repr__(self):
         bestFitLetter = self.getBestFitLetterFrame()
-        bestFitLetter.showLetterImg()
         return ("Color: " + self.getObjectColorName() +
         "\nShape: " + str(SideRounder.getShapeType(self.sideCounter.getNumSides())) + 
         "\nLetter: " + bestFitLetter.getLetter() + 
@@ -63,43 +55,10 @@ class FieldObject:
         return self.letterFrames.getBestFitLetterFrameFromSobel(self.letterCropper.getSobelEdge(), 25)
     
     def removeBackground(self):#could make this iterable if for some reason I have more than 3 colors 
-        #self.img.show()
-        #self.img = self.colorLayers[len(self.colorLayers) - 1].removeLayerFromImg(self.img, self.image)
         self.kMeansImg = self.colorLayers[len(self.colorLayers) - 1].removeLayerFromImg(self.kMeansImg, self.kMeansImage)
-        #self.img.show()
-        #self.colorLayers[len(self.colorLayers) - 1].getColorImg().show()
         self.colorLayers.pop(len(self.colorLayers) - 1)
-        #self.img.show()
-        
-        #for i in range(0, len(self.colorLayers)):
-        '''    
-        pointTuples = self.colorLayers[1].getPointsOfGreatestConcentration(150, 10)
-        for j in range(0, len(pointTuples)):
-            rect = Rectangle(pointTuples[j][0] - 2, pointTuples[j][1] - 2, 4, 4)
-            Drawer.fillRect(self.img, self.image, rect, (0,255,0))
-    
-        self.img.show()'''
-        
-        '''copyImg = self.img.copy()
-        copyImg.show()
-        kMeans = KMeans.initWithPicture(copyImg, copyImg.load(), 2, 20)
-        copyImg.show()
-        kMeansImg2 = kMeans.filterImageThroughClusters(copyImg, copyImg.load())
-        kMeansImg2.show()
-        newColorLayers = ColorSeparation.getColorLayers(kMeansImg2, kMeansImg2.load())
-        newColorLayers.sortLayersByDistanceToCorner()
-        letterImg = newColorLayers[len(newColorLayers) - 1].removeLayerFromImg(self.img, self.image)
-        letterImg.show()
-        self.img.show()'''
-    '''def showLayerImg(self):
-        self.colorLayers.overlayLayersIntoImg().show()'''
-    
-    '''def getLetterColorLayer(self):
-        self.colorLayers[0].getColorImg().show()
-        return self.colorLayers[0]    '''
         
     def getObjectColor(self):
-        #self.getObjectColorLayer().getColorImg().show()
         return self.getObjectColorLayer().getColor()
     
     def getObjectColorName(self):
@@ -142,7 +101,6 @@ class LetterCropper:
         self.croppedImg = GrayScale.getGrayScaledImage(self.croppedImg, self.croppedImg.load())
         self.croppedImg = GaussianBlur.getGaussianFilteredImage(self.croppedImg, self.croppedImg.load(), 3)
         self.sobelEdge = SobelEdge(self.croppedImg, self.croppedImg.load())
-        self.sobelEdge.getSobelEdgeImg().show()
         
     def getSobelEdge(self):
         return self.sobelEdge
@@ -180,7 +138,8 @@ class LetterCropper:
         for i in range(1, len(self.maximumDensityLocations) - 1):
             gap = self.maximumDensityLocations[i+1] - self.maximumDensityLocations[i]
             
-            if gap > greatestGap:
+            if gap >= greatestGap:
+                print("Greater gap found")
                 greatestGap = gap
                 greatestIndex = i
                 
@@ -213,7 +172,6 @@ class SideCounter:
     #Fuzzy edges lead to this being inaccurate because it could clip in and outside a noisy edge and count it as a side.  
     #Solution is to decrease number of steps, but then it could be possible it skips sides entirely (especially on very acute angles)  
     def countSides(self, numSteps = 64):
-        self.sideLayer.getColorImg().show()
         thetaAdd = 2*math.pi/float(numSteps)
         theta = thetaAdd
         radius = self.getRadius() #the constant subtracted NEEDS to be as low as possible. Radius needs to be small enough to actually go under all points of the shape.
@@ -227,8 +185,6 @@ class SideCounter:
             
             theta += thetaAdd
     
-        #Drawer.drawCircle(self.sideLayer.getColorImg(), self.sideLayer.getColorImage(), self.densestPoint, radius, (0,255,0), numSteps)
-        self.sideLayer.getColorImg().show()
     
         return count/2
     

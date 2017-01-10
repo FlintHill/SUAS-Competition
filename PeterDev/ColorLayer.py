@@ -36,7 +36,6 @@ class ColorLayer:
         data = self.toTuples()
         kMeans = KMeans(data, numPoints, timesToRun, step)
         clusterTuples = kMeans.getIntClusterVectors()
-        
         return clusterTuples
     
     def getClusterOfGreatestConcentration(self, numPoints, timesToRun = 10, step = 1):#represented as tuple, which could be confusing (not a point)
@@ -51,8 +50,9 @@ class ColorLayer:
         bounds = self.getColorLayerBounds()
         for x in range(bounds.getX(), bounds.getX() + bounds.getWidth()):
             for y in range(bounds.getY(), bounds.getY() + bounds.getHeight()):
-                if self.colorImage[x,y] != (0,0,0):
-                    tuples.append((x,y))
+                if(x > 0 and x < self.colorImg.size[0] and y > 0 and y < self.colorImg.size[1]):
+                    if self.colorImage[x,y] != (0,0,0):
+                        tuples.append((x,y))
         return tuples
     
     def getDensity(self):
@@ -129,7 +129,9 @@ class ColorLayer:
         return Rectangle(leftX, topY, rightX - leftX, bottomY - topY)
     
     def getIfXYInLayer(self, x, y):
-        return self.colorImage[x,y] != (0,0,0)
+        if(x > 0 and x < self.colorImg.size[0] and y > 0 and y < self.colorImg.size[1]):
+            return (self.colorImage[x,y] != (0,0,0))
+        return False
     
     def getColorLayerBoundsMidpoint(self):
         rect = self.getColorLayerBounds()

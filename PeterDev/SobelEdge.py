@@ -9,6 +9,7 @@ class SobelEdge:
     sobelKernelY = [[-1,-2,-1],[0,0,0],[1,2,1]] #kernel made up of the derivative of a gaussian function
     
     
+    ###SOBEL EDGE KERNEL NOT THE SAME AS GRADIENT KERNEL?????
     
     def __init__(self, imgIn, imageIn):
         self.image = imageIn
@@ -16,14 +17,7 @@ class SobelEdge:
         self.setImageGradients()
         self.setSobelEdgeImg() 
         self.setAngles()
-        
-    '''@classmethod
-    def getResizedSobelEdge(cls, sobelEdgeIn, sizeRect):
-        newImg = sobelEdgeIn.getImg().resize((sizeRect.getWidth(), sizeRect.getHeight()), Image.BILINEAR)
-        newImage = newImg.load()
-        newImg.show()
-        return SobelEdge(newImg, newImage)
-      '''  
+
         
     def setImageGradients(self):
         gradients = numpy.zeros( (2, self.img.size[0], self.img.size[1]) )#[0 for i in range(0, len(sobelKernel))][0 for j in range(0, img.size[0])][0 for k in range(0, img.size[1])]
@@ -35,13 +29,9 @@ class SobelEdge:
                 gradients[1][x][y] = appliedKernels[1]
         
         self.gradients = gradients
-        #self.gradientsX = gradients[0]
-        #self.gradientsY = gradients[1]
                 
                 
     def setSobelEdgeImg(self):
-        #print(len(gradients[0]))
-        #print(len(gradients[0][0]))
         outputImage = Image.new("RGB", (len(self.gradients[0]), len(self.gradients[0][0])))
         image = outputImage.load()
         
