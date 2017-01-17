@@ -192,8 +192,10 @@ class ClusterSquareFitter:
         #height of image * imgRatio = width of image
         imgRatio = float(letterImg.size[0])/float(letterImg.size[1])
         cornerFrames = self.getFramesWithNumCornersWithinRange(numCorners, ClusterLeastSquare.MIN_CORNER_RANGE + int(ClusterLeastSquare.CORNER_RANGE_RATIO * float(numCorners)) + 1)
+        
         #self.removeFramesWithCirclesOutsideOfRange(cornerFrames, numCircles, 4)
         cornerFrames = self.getFramesWithNumCirclesInRange(cornerFrames, numCircles, ClusterLeastSquare.MIN_CIRCLE_RANGE + (numCircles * ClusterLeastSquare.CIRCLE_RANGE_RATIO))
+        print("corner frames length: " + str(len(cornerFrames)))
         #print("Corner Frames Size: " + str(len(cornerFrames)))
         
         for i in range(0, len(cornerFrames)):

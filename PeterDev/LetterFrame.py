@@ -16,20 +16,11 @@ class LetterFrame:
     HARRIS_THRESHOLD = 750000
     HARRIS_KERNELSIZE = 3
     HARRIS_STDDEV = 5
-    CIRCLE_THRESHOLD = 40#58#used for 64 point font
-    RADIUS_BOUNDS = (7, 19)#This needs to be tuned based on the font size. However, performance doesn't seem too affected, since it goes by a range of circles. It just happens that the circles it finds are smaller
-    '''***Idea: for user understandability and simplicity, consider making a new image made up of ONLY angles, layer by layer, so, say, F, would turn into 
-    
-    ____         instead of _____
-    |___                    |  (with variable gap here)
-    |                       |____
-                            |
-                            |  (with variable gap here)
-    '''
-    
-    '''***Remember that there could be flawed comparisons between letters that have a "tail" 
-    that goes under the line (q for example). Tailed letter will be compared at the same height
-     as normal, as if the tail were on the line***'''
+    CIRCLE_THRESHOLD = 40
+    '''This needs to be tuned based on the font size. However, performance doesn't seem too affected, 
+    since it goes by a range of circles. It just happens that the circles it finds are smaller'''
+    RADIUS_BOUNDS = (7, 19)
+   
     
     def __init__(self, letterIn, fontIn, sizeIn):
         self.font = ImageFont.truetype(fontIn, sizeIn)
@@ -42,15 +33,15 @@ class LetterFrame:
         self.letterImg = cropLayer.getColorImg()
         self.letterImage = cropLayer.getColorImage()#may not be necessary to update letterImage, might update on crop
         self.sobelEdge = SobelEdge(self.letterImg, self.letterImage)
-        self.angleFitter = AngleFitter(self.sobelEdge)
+        #self.angleFitter = AngleFitter(self.sobelEdge)
         self.cannyImg = CannyEdge.getCannyEdgeImage(self.sobelEdge, 40, 20)
         self.corners = HarrisCorner.getCorners(self.letterImg, self.letterImage, self.sobelEdge, LetterFrame.HARRIS_KERNELSIZE, LetterFrame.HARRIS_STDDEV, LetterFrame.HARRIS_THRESHOLD)
         self.houghCircles = HoughCircles(self.cannyImg, self.cannyImg.load(), LetterFrame.RADIUS_BOUNDS)
         self.circles = self.houghCircles.getCirclesOverThreshold(LetterFrame.CIRCLE_THRESHOLD)
-        cannyImgCopy = self.cannyImg.copy()
+        #cannyImgCopy = self.cannyImg.copy()
         #self.houghCircles.circleCirclesOverThreshold(cannyImgCopy, cannyImgCopy.load(), LetterFrame.CIRCLE_THRESHOLD).show()
-        self.dimRatio = float(self.letterImg.size[0])/float(self.letterImg.size[1])
-        
+        #self.dimRatio = float(self.letterImg.size[0])/float(self.letterImg.size[1])
+        #self.letterImg.show()
     
     '''def resizeLetterFrame(self, sizeRect):
         self.letterImg = self.letterImg.resize(sizeRect.getWidth(), sizeRect.getHeight())
