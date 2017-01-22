@@ -3,10 +3,9 @@ Created on Jan 10, 2017
 
 @author: phusisian
 '''
-from ObjAvoid.graphics import *
-from ObjAvoid.Window import Window
+from graphics import *
+from Window import Window
 
-from ObjAvoid.Test import Test
+from Test import Test
 test = Test()
-window = Window(test, (1440,1050))
-
+window = Window(test, (1300,700))

@@ -4,17 +4,17 @@ Created on Jan 10, 2017
 @author: phusisian
 '''
 from math import sqrt
-from ObjAvoid.Vector import Vector
+from Vector import Vector
 class MultiDimPoint:
     def __init__(self, coords):
         self.coords = coords
-        
+
     def __getitem__(self, index):
         return self.coords[index]
 
     def __len__(self):
         return len(self.coords)
-    
+
     def __iadd__(self, vectorIn):
         try:
             for i in range(0, len(vectorIn)):
@@ -33,7 +33,7 @@ class MultiDimPoint:
         except:
             raise ValueError("Vector and point do not ahve same dimensions")
             return None
-    
+
     def getVectorToPoint(self, secondPoint):
         components = []
         try:
@@ -43,11 +43,11 @@ class MultiDimPoint:
         except:
             raise ValueError("Points have different dimensions")
             return None
-        
+
     def getUnitVectorToPoint(self, secondPoint):
         vector = self.getVectorToPoint(secondPoint)
         return vector.getUnitVector()
-    
+
     def __repr__(self):
         strOut = ""
         for i in range(0, len(self)):
