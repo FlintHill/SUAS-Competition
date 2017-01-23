@@ -31,7 +31,7 @@ class MassHolder:
         for i in range(0, len(self)):
             self[i].draw(win)
 
-        middlePoint = MultiDimPoint([700,-500])
+        middlePoint = MultiDimPoint([0,0])
         for i in range(0, len(self.droneMasses)):
             midVector = self.droneMasses[i].getPoint().getVectorToPoint(middlePoint).getUnitVector()
             self.droneMasses[i].setVelocityVector(midVector * 100)
