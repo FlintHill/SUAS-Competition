@@ -6,6 +6,26 @@ from time import sleep
 
 INTEROP_CLIENT_ADDRESS = ('localhost', 9000)
 
+class Message(object):
+    """
+    Simple container class to send messages through multiprocessing
+    pipes
+    """
+
+    def __init__(self, message):
+        """
+        Initialize a Message object
+
+        :param message: Message to send through the pipe
+        """
+        self.message = message
+
+    def get_message(self):
+        """
+        Returns the message
+        """
+        return self.message
+
 def haversine(lon1, lat1, lon2, lat2):
     """
     Calculate the great circle distance between two points
@@ -29,22 +49,61 @@ def bearing(lon1, lat1, lon2, lat2):
 
     return bearing
 
-def obj_receive(object_array):
-    """
-    Receive obstacles from the interoperability server
-    """
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    sock.bind(INTEROP_CLIENT_ADDRESS)
-    sock.listen(1)
-    print("Waiting for a connection to INTEROP_CLIENT...")
-    connection, client_address = sock.accept()
+def send_data(connection, data):
+	connection.sendall(data)
 
-    while True:
-        sleep(0.5)
+def obj_receive(object_array):
+	"""
+	Receive obstacles from the interoperability server
+
+	:param object_array: The multiprocessing list to use to store obstacles
+		from interop server
+	"""
+	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+	sock.bind(INTEROP_CLIENT_ADDRESS)
+	sock.listen(1)
+	print("Waiting for a connection to INTEROP_CLIENT...")
+	connection, client_address = sock.accept()
+
+	while True:
+		sleep(0.5)
+
+def send_course(input_pipe):
+    """
+    Send course to mission planner instance
+
+    :param output_pipe: The data to send to the mission planner instances
+        goes through this pipe
+	"""
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_address = ('localhost', 10001)
+	is_connected = False
+	while not is_connected:
+		try:
+			print("Connecting to send_course socket...")
+			sock.connect(server_address)
+
+			is_connected = True
+		except:
+			print("Socket for send_course is not open...")
+			sleep(0.1)
+
+	while True:
+		if input_pipe.poll():
+			data = input_pipe.recv()
+
+			send_data(sock, data)
+        else:
+            send_data(sock, "------------NO DATA------------")
+
+        sleep(0.05)
 
 def receive_telem(current_coordinates_array):
     """
     Receive telemetry from the local mission planner instance
+
+    :param current_coordinates_array: The multiprocessing list to use to
+        store received telem data from mission planner
     """
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_address = ('localhost', 10000)
@@ -68,7 +127,7 @@ def receive_telem(current_coordinates_array):
             print('received "%s"' % data)
 
             messages = data.split(" ")
-            for index in range(len(message) - 1):
+            for index in range(len(messages) - 1):
                 if previous_message:
                     curr_coords[previous_message] = float(messages[index])
                     previous_message = None
@@ -88,11 +147,16 @@ if __name__ == '__main__':
     current_coordinates.extend([0.0, 0.0, 0.0, 0.0])
     current_obstacles = manager.list()
 
+    guided_waypoint_input, guided_waypoint_output = multiprocessing.Pipe()
+
     telem_process = multiprocessing.Process(target=receive_telem, args=(current_coordinates,))
     telem_process.start()
 
     obj_process = multiprocessing.Process(target=obj_receive, args=(current_obstacles,))
     obj_process.start()
+
+    send_course_process = multiprocessing.Process(target=send_course, args=(guided_waypoint_input,))
+    send_course_process.start()
 
     while True:
         print(current_coordinates[0])

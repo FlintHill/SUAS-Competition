@@ -19,9 +19,43 @@ def timing(rate):
             Script.Sleep(delay)
         yield
 
+def receive_location(connection):
+    curr_coords = {
+        "lat" : -1.0,
+        "lng" : -1.0,
+        "alt" : -1.0,
+        "heading" : -1
+    }
+
+    previous_message = None
+    while curr_coords["lat"] == -1.0 or curr_coords["lng"] == -1.0 or curr_coords["alt"] == -1.0 or curr_coords["heading"] == -1:
+        print("Receiving data...")
+        data = connection.recv(64).decode("utf-8")
+        print('received "%s"' % data)
+
+        if data == "NO DATA":
+            return curr_coords
+
+        messages = data.split(" ")
+        for index in range(len(messages) - 1):
+            if previous_message:
+                curr_coords[previous_message] = float(messages[index])
+                previous_message = None
+            elif messages[index] in curr_coords:
+                previous_message = messages[index]
+
+    return curr_coords
+
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server_address = ('localhost', 10000)
 sock.connect(server_address)
+
+receive_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+receive_address = ('localhost', 10001)
+receive_socket.bind(receive_address)
+receive_socket.listen(1)
+print("Waiting for a connection...")
+receive_connection, receive_connection_address = receive_socket.accept()
 
 while True:
     for _ in timing(rate=2):
@@ -34,3 +68,6 @@ while True:
         send_data(sock, "lng " + str(cs.lng) + " ")
         send_data(sock, "alt " + str(cs.alt) + " ")
         send_data(sock, "heading " + str(cs.groundcourse) + " ")
+
+        new_coords = receive_location(receive_connection)
+        print(new_coords)
