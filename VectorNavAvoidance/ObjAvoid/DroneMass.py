@@ -3,19 +3,24 @@ Created on Jan 10, 2017
 
 @author: phusisian
 '''
+#from ObjAvoid.Test import Test
 from ObjAvoid.Mass import Mass
 from ObjAvoid.Vector import Vector
 from ObjAvoid.MultiDimPoint import MultiDimPoint
 from ObjAvoid.graphics import *
 from ObjAvoid.Window import Window
-
+from ObjAvoid.NavVectorMaker import NavVectorMaker
+from ObjAvoid.TestFunctions import TestFunctions
 
 class DroneMass(Mass):
+    DEFAULT_DRONE_MASS = 1
     
     def __init__(self, boundMassHolder, pointIn, massIn):
         Mass.__init__(self, boundMassHolder, pointIn, massIn)
         self.velocityVector = Vector.createEmptyVectorWithDim(len(self.getPoint()))
-        
+        randNavPoints = TestFunctions.getRandomPointsInBounds(2, 25, [(-350, 350), (-350, 350)])
+        self.navVectorMaker = NavVectorMaker(self, randNavPoints)
+        self.speed = 500
     '''currently masses can't have any forces of their own. set netVector to the force of the mass 
     if I ever do ad it instead of (0,0,0)'''
     def getNetForceVector(self):
@@ -27,6 +32,7 @@ class DroneMass(Mass):
         return netVector
     
     def applyMotions(self):
+        self.navVectorMaker.setVelocityVectorToNextTravelPoint(self.speed)
         self.applyForce(self.getNetForceVector())
         self.applyVelocity()
     
@@ -39,13 +45,27 @@ class DroneMass(Mass):
         self.point += self.velocityVector*Window.REFRESH_TIME
     
     def draw(self, win):
-        c = Circle(Point(int(self.point[0] + win.getCenterPoint()[0]), int(win.getCenterPoint()[1] - self.point[1])), 10)#subtracted so reversed y axis graphics work.
-        c.setFill("red") 
-        c.draw(win.getGraphWin())
+        self.point.draw(win, "red")
+        #self.navVectorMaker.draw(win)
+        #c = Circle(Point(int(self.point[0] + win.getCenterPoint()[0]), int(win.getCenterPoint()[1] - self.point[1])), 2)#subtracted so reversed y axis graphics work.
+        #c.setFill("red") 
+        #c.draw(win.getGraphWin())
+    
+    def getNavVectorMaker(self):
+        return self.navVectorMaker
+    
+    def setSpeed(self, speedIn):
+        self.speed = speedIn
+        
+    def getSpeed(self):
+        return self.speed
     
     def setVelocityVector(self, vectorIn):
         self.velocityVector = vectorIn
         
+    def getVelocityVector(self):
+        return self.velocityVector
+    
     def __repr__(self):
         returnString = "Drone Mass "
         returnString += Mass.__repr__(self)
