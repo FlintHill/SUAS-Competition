@@ -5,7 +5,12 @@ Created on Jan 10, 2017
 '''
 from math import sqrt
 from Vector import Vector
+from graphics import *
+from ThreeDDraw import ThreeDDraw
+from Window import Window
+
 class MultiDimPoint:
+    BASE_RADIUS = 3
     def __init__(self, coords):
         self.coords = coords
 
@@ -47,6 +52,20 @@ class MultiDimPoint:
     def getUnitVectorToPoint(self, secondPoint):
         vector = self.getVectorToPoint(secondPoint)
         return vector.getUnitVector()
+
+    def pointWithinDistance(self, pointTwo, distance):
+        mag = self.getVectorToPoint(pointTwo).getMagnitude()
+        return (mag < distance)
+
+    def draw(self, win, color):
+        if len(self) == 3:
+            c = Circle(Point(int(self[0] + Window.CENTERPOINT[0]), int(Window.CENTERPOINT[1] - self[1])), ThreeDDraw.getScaledNumber(self[2], MultiDimPoint.BASE_RADIUS))#subtracted so reversed y axis graphics work.
+            c.setFill(color)
+            c.draw(win.getGraphWin())
+        else:
+            c = Circle(Point(int(self[0] + Window.CENTERPOINT[0]), int(Window.CENTERPOINT[1] - self[1])), MultiDimPoint.BASE_RADIUS)#subtracted so reversed y axis graphics work.
+            c.setFill(color)
+            c.draw(win.getGraphWin())
 
     def __repr__(self):
         strOut = ""

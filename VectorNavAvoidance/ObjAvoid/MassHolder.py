@@ -10,6 +10,7 @@ class MassHolder:
     def __init__(self):
         self.masses = []
         self.droneMasses = []
+        self.tickCount = 0
 
     def __getitem__(self, index):
         return self.masses[index]
@@ -24,17 +25,35 @@ class MassHolder:
         self.droneMasses.append(droneMassIn)
 
     def tick(self):
+
+
         for i in range(0, len(self.droneMasses)):
+            for j in range(0, len(self)):
+                self[j].updateForce(self.droneMasses[i])
             self.droneMasses[i].applyMotions()
 
-    def draw(self, win):
+        if self.tickCount > 20:
+            self.tickMasses()
+            self.tickCount = 0
+        self.tickCount += 1
+    def tickMasses(self):
+        for i in range(0, len(self)):
+            self[i].move2DRandomWithMagnitude(40)
+
+    def drawStationaryObjects(self, win):
         for i in range(0, len(self)):
             self[i].draw(win)
-
-        middlePoint = MultiDimPoint([0,0])
         for i in range(0, len(self.droneMasses)):
-            midVector = self.droneMasses[i].getPoint().getVectorToPoint(middlePoint).getUnitVector()
-            self.droneMasses[i].setVelocityVector(midVector * 100)
+            self.droneMasses[i].getNavVectorMaker().draw(win)
+
+    def draw(self, win):
+        '''for i in range(0, len(self)):
+            self[i].draw(win)'''
+
+        #middlePoint = MultiDimPoint([700,-500])
+        '''for i in range(0, len(self)):
+            self[i].draw(win)'''
+        for i in range(0, len(self.droneMasses)):
             self.droneMasses[i].draw(win)
 
     def __repr__(self):

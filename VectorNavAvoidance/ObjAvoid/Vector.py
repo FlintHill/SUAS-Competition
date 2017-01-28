@@ -40,6 +40,13 @@ class Vector:
             squareSum += self[i]**2
         return sqrt(squareSum)
     
+    def __repr__(self):
+        outString = ""
+        for i in range(0, len(self)):
+            outString += str(self[i]) + ", "
+            
+        return outString
+    
     '''multiplies the vector by a constant'''#may be swaping mul and imul's fucntion
     def __imul__(self, num):
         for i in range(0, len(self)):
@@ -55,6 +62,22 @@ class Vector:
     def getUnitVector(self):
         magnitude = float(self.getMagnitude())#cast to float in case it thinks its an int and rounds to it
         return self * (1.0/magnitude)
+      
+    def getProjectionOntoSelf(self, vectorTwo):
+        #print(vectorTwo)
+        dotProd = self.dotProduct(vectorTwo)
+        #print(dotProd)
+        mag = self.getMagnitude()
+        return self*(dotProd/(mag**2))
+    
+    def dotProduct(self, vectorTwo):
+        try:
+            sum = 0
+            for i in range(0, len(vectorTwo)):  
+                sum += self[i]*vectorTwo[i]
+            return sum
+        except:
+            raise ValueError("Vectors added do not have same dimensions")
         
     def __iadd(self, vectorTwo):
         try:
