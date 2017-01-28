@@ -5,10 +5,10 @@ Created on Jan 24, 2017
 '''
 
 import random
-from ObjAvoid.MultiDimPoint import MultiDimPoint
+from MultiDimPoint import MultiDimPoint
 
 class TestFunctions:
-    
+
     @staticmethod
     def getRandomPointsInBounds(dimensions, numPoints, bounds):
         points = []
@@ -18,5 +18,4 @@ class TestFunctions:
                 randComp = random.randint(bounds[dim][0], bounds[dim][1])
                 components.append(randComp)
             points.append(MultiDimPoint(components))
-        return points    
-    
+        return points
