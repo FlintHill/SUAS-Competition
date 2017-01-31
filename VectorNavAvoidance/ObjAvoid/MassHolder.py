@@ -3,7 +3,7 @@ Created on Jan 10, 2017
 
 @author: phusisian
 '''
-from MultiDimPoint import MultiDimPoint
+from ObjAvoid import MultiDimPoint
 
 class MassHolder:
     GRAVITY_CONSTANT = 5000

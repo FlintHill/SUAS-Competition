@@ -4,10 +4,10 @@ Created on Jan 10, 2017
 @author: phusisian
 '''
 from math import sqrt
-from Vector import Vector
-from graphics import *
-from ThreeDDraw import ThreeDDraw
-from Window import Window
+from ObjAvoid import Vector
+from ObjAvoid import *
+from ObjAvoid import ThreeDDraw
+from ObjAvoid import Window
 
 class MultiDimPoint:
     BASE_RADIUS = 3

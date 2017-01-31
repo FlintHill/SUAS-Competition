@@ -3,17 +3,8 @@ Created on Jan 10, 2017
 
 @author: phusisian
 '''
-from MultiDimPoint import MultiDimPoint
 import random
-from Vector import Vector
-from Mass import Mass
-from MassHolder import MassHolder
-from DroneMass import DroneMass
-from time import sleep
-from SafetyRadiusMass import SafetyRadiusMass
-from RandomPointMaker import RandomPointMaker
-from Window import Window
-from TestFunctions import TestFunctions
+from ObjAvoid import *
 
 class Test:
 

@@ -3,9 +3,9 @@ Created on Jan 27, 2017
 
 @author: phusisian
 '''
-from MassHolder import MassHolder
-from DroneMass import DroneMass
-from MultiDimPoint import MultiDimPoint
+from ObjAvoid import MassHolder
+from ObjAvoid import DroneMass
+from ObjAvoid import MultiDimPoint
 from math import sin, cos
 
 class ClientConverter:

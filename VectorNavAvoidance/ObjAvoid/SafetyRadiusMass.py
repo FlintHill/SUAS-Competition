@@ -3,13 +3,9 @@ Created on Jan 23, 2017
 
 @author: phusisian
 '''
-from Mass import Mass
-from MassHolder import MassHolder
-from Window import Window
-from graphics import *
+from ObjAvoid import *
 import random
 import math
-from Vector import Vector
 
 class SafetyRadiusMass(Mass):
     def __init__(self, boundMassHolder, pointIn, massIn, safetyRadiusIn, timeIncrementIn):

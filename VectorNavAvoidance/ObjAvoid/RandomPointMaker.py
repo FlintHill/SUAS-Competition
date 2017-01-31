@@ -3,8 +3,9 @@ Created on Jan 10, 2017
 
 @author: phusisian
 '''
-from MultiDimPoint import MultiDimPoint
+from ObjAvoid import MultiDimPoint
 from random import randint
+
 class RandomPointMaker:
     def __init__(self, numDimensions, bounds):
         self.numDimensions = numDimensions

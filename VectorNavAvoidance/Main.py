@@ -4,13 +4,13 @@ Created on Jan 10, 2017
 @author: phusisian
 @author: vtolpegin
 '''
-from MultiDimPoint import MultiDimPoint
-from Vector import Vector
-from Mass import Mass
-from MassHolder import MassHolder
-from DroneMass import DroneMass
+from ObjAvoid import MultiDimPoint
+from ObjAvoid import Vector
+from ObjAvoid import Mass
+from ObjAvoid import MassHolder
+from ObjAvoid import DroneMass
 from time import sleep
-from RandomPointMaker import RandomPointMaker
+from ObjAvoid import RandomPointMaker
 
 massHolder = MassHolder()
 droneMass = DroneMass(massHolder, MultiDimPoint([0,0]), 1)

@@ -3,10 +3,7 @@ Created on Jan 10, 2017
 
 @author: phusisian
 '''
-from Vector import Vector
-from MassHolder import MassHolder
-from graphics import *
-from Window import Window
+from ObjAvoid import *
 import random
 import math
 

@@ -5,7 +5,7 @@ Created on Jan 24, 2017
 '''
 
 import random
-from MultiDimPoint import MultiDimPoint
+from ObjAvoid import MultiDimPoint
 
 class TestFunctions:
 

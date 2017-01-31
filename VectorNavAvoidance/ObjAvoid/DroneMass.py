@@ -3,14 +3,7 @@ Created on Jan 10, 2017
 
 @author: phusisian
 '''
-#from ObjAvoid.Test import Test
-from Mass import Mass
-from Vector import Vector
-from MultiDimPoint import MultiDimPoint
-from graphics import *
-from Window import Window
-from NavVectorMaker import NavVectorMaker
-from TestFunctions import TestFunctions
+from ObjAvoid import *
 
 class DroneMass(Mass):
     DEFAULT_DRONE_MASS = 1
