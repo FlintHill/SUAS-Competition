@@ -3,28 +3,12 @@ import multiprocessing
 import sys
 from math import radians, cos, sin, asin, sqrt
 from time import sleep
+from .current_coordinates import CurrentCoordinates
+from .converter_data_update import ConverterDataUpdate
+from .ClientConverter import ClientConverter
+from .message import Message
 
 INTEROP_CLIENT_ADDRESS = ('localhost', 9000)
-
-class Message(object):
-    """
-    Simple container class to send messages through multiprocessing
-    pipes
-    """
-
-    def __init__(self, message):
-        """
-        Initialize a Message object
-
-        :param message: Message to send through the pipe
-        """
-        self.message = message
-
-    def get_message(self):
-        """
-        Returns the message
-        """
-        return self.message
 
 def haversine(lon1, lat1, lon2, lat2):
     """
@@ -135,16 +119,13 @@ def receive_telem(current_coordinates_array):
                     previous_message = messages[index]
 
         print(curr_coords)
-        current_coordinates_array[0] = curr_coords["lat"]
-        current_coordinates_array[1] = curr_coords["lng"]
-        current_coordinates_array[2] = curr_coords["alt"]
-        current_coordinates_array[3] = curr_coords["heading"]
+        current_coordinates_array[0] = CurrentCoordinates(curr_coords["lat"], curr_coords["lng"], curr_coords["alt"], curr_coords["heading"])
 
 if __name__ == '__main__':
     manager = multiprocessing.Manager()
 
     current_coordinates = manager.list()
-    current_coordinates.extend([0.0, 0.0, 0.0, 0.0])
+    current_coordinates.extend([CurrentCoordinates(0.0, 0.0, 0.0, 0.0)])
     current_obstacles = manager.list()
 
     guided_waypoint_input, guided_waypoint_output = multiprocessing.Pipe()
@@ -158,7 +139,21 @@ if __name__ == '__main__':
     send_course_process = multiprocessing.Process(target=send_course, args=(guided_waypoint_input,))
     send_course_process.start()
 
+    obstacle_map = ClientConverter(current_coordinates[0])
+    is_obstacle_map_initialized = False
+
     while True:
-        print(current_coordinates[0])
-        print(current_obstacles[:])
-        sleep(0.5)
+        if not is_obstacle_map_initialized and current_coordinates[0].get_latitude() != 0.0:
+            obstacle_map = ClientConverter(current_coordinates[0])
+            is_obstacle_map_initialized = True
+        elif is_obstacle_map_initialized:
+            print(current_coordinates[0])
+            print(current_obstacles[:])
+
+            initialCoords = obstacle_map.getInitialCoordinates()
+            haversine_distance = haversine(initialCoords.get_latitude(), initialCoords.get_longitude(), currentCoords[0].get_latitude(), currentCoords[0].get_longitude())
+            convertedData = [haversineDistance, currentCoords[3], currentCoords[2]]#returns list in form: haversine distance, heading, altitude
+            updated_drone_location = ConverterDataUpdate(haversine_distance, current_coordinates[0].get_heading(), current_coordinates[0].get_altitude())
+            obstacle_map.updateMainDroneMass(updated_drone_location)
+
+            sleep(0.05)

@@ -6,9 +6,10 @@ Created on Jan 27, 2017
 from ObjAvoid import MassHolder
 from ObjAvoid import DroneMass
 from ObjAvoid import MultiDimPoint
+from .current_coordinates import CurrentCoordinates
 from math import sin, cos
 
-class ClientConverter:
+class ClientConverter(object):
 
     '''initialCoordinates will be current_coordinates from client class'''
     '''the role of the class is to funnel data from the client script into forms that are usable with my code.
@@ -41,13 +42,3 @@ class ClientConverter:
 
     '''reminder not to switch to guided mode unless tgher are nearby obstacles nearby. Search all the masses
     in massHolder to see if any are close enough that they should be avoided'''
-
-
-
-    '''this should be added to the client file, and will not be kept here. It assumes you have an instance of
-    "ClientConverter" named client_converter'''
-    def convertCoordinatesForClientConverter(self, currentCoords):
-        initialCoords = client_converter.getInitialCoordinates()
-        haversineDistance = haversine(initialCoords[0], initialCoords[1], currentCoords[0], currentCoords[1])
-        convertedData = [haversineDistance, currentCoords[3], currentCoords[2]]#returns list in form: haversine distance, heading, altitude
-        return convertedData
