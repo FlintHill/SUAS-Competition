@@ -3,10 +3,10 @@ import multiprocessing
 import sys
 from math import radians, cos, sin, asin, sqrt
 from time import sleep
-from .current_coordinates import CurrentCoordinates
-from .converter_data_update import ConverterDataUpdate
-from .ClientConverter import ClientConverter
-from .message import Message
+from current_coordinates import CurrentCoordinates
+from converter_data_update import ConverterDataUpdate
+from ClientConverter import ClientConverter
+from message import Message
 
 INTEROP_CLIENT_ADDRESS = ('localhost', 9000)
 
@@ -48,6 +48,7 @@ def obj_receive(object_array):
 	sock.listen(1)
 	print("Waiting for a connection to INTEROP_CLIENT...")
 	connection, client_address = sock.accept()
+    print("Connected to INTEROP_CLIENT")
 
 	while True:
 		sleep(0.5)
@@ -71,6 +72,7 @@ def send_course(input_pipe):
 		except:
 			print("Socket for send_course is not open...")
 			sleep(0.1)
+    print("Connected to send_course socket")
 
 	while True:
 		if input_pipe.poll():
@@ -95,6 +97,7 @@ def receive_telem(current_coordinates_array):
     sock.listen(1)
     print("Waiting for a connection to MP...")
     connection, client_address = sock.accept()
+    print("Connected to MP")
 
     while True:
         curr_coords = {
@@ -118,7 +121,6 @@ def receive_telem(current_coordinates_array):
                 elif messages[index] in curr_coords:
                     previous_message = messages[index]
 
-        print(curr_coords)
         current_coordinates_array[0] = CurrentCoordinates(curr_coords["lat"], curr_coords["lng"], curr_coords["alt"], curr_coords["heading"])
 
 if __name__ == '__main__':
@@ -147,13 +149,9 @@ if __name__ == '__main__':
             obstacle_map = ClientConverter(current_coordinates[0])
             is_obstacle_map_initialized = True
         elif is_obstacle_map_initialized:
-            print(current_coordinates[0])
-            print(current_obstacles[:])
-
             initialCoords = obstacle_map.getInitialCoordinates()
-            haversine_distance = haversine(initialCoords.get_latitude(), initialCoords.get_longitude(), currentCoords[0].get_latitude(), currentCoords[0].get_longitude())
-            convertedData = [haversineDistance, currentCoords[3], currentCoords[2]]#returns list in form: haversine distance, heading, altitude
+            haversine_distance = haversine(initialCoords.get_latitude(), initialCoords.get_longitude(), current_coordinates[0].get_latitude(), current_coordinates[0].get_longitude())
             updated_drone_location = ConverterDataUpdate(haversine_distance, current_coordinates[0].get_heading(), current_coordinates[0].get_altitude())
             obstacle_map.updateMainDroneMass(updated_drone_location)
 
-            sleep(0.05)
+            sleep(0.5)

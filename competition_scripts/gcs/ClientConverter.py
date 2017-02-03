@@ -6,7 +6,7 @@ Created on Jan 27, 2017
 from ObjAvoid import MassHolder
 from ObjAvoid import DroneMass
 from ObjAvoid import MultiDimPoint
-from .current_coordinates import CurrentCoordinates
+from current_coordinates import CurrentCoordinates
 from math import sin, cos
 
 class ClientConverter(object):
