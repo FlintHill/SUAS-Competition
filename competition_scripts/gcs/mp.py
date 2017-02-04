@@ -2,6 +2,9 @@ from time import time
 import socket
 import sys
 
+receive_address = ('localhost', 10001)
+server_address = ('localhost', 10000)
+
 def send_data(connection, data):
     connection.sendall(data)
 
@@ -20,11 +23,9 @@ def timing(rate):
         yield
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server_address = ('localhost', 10000)
 sock.connect(server_address)
 
 receive_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-receive_address = ('localhost', 10001)
 receive_socket.bind(receive_address)
 receive_socket.listen(1)
 print("Waiting for a connection...")
@@ -46,9 +47,7 @@ while True:
         send_data(sock, "alt " + str(cs.alt) + " ")
         send_data(sock, "heading " + str(cs.groundcourse) + " ")
 
-        print("Receiving data...")
         data = receive_connection.recv(64).decode("utf-8")
-        print('received "%s"' % data)
 
         if "NO DATA" not in data:
             messages = data.split(" ")

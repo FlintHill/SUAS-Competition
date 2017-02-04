@@ -1,0 +1,202 @@
+{
+  "MAV_AUTOPILOT": 3,
+  "complexItems": [
+    "0"
+  ],
+  "groundStation": "MissionPlanner",
+  "items": [
+    {
+      "autoContinue": true,
+      "command": 22,
+      "coordinate": [
+        0.0,
+        0.0,
+        30.450000762939453
+      ],
+      "frame": 0,
+      "id": 0,
+      "param1": 0.0,
+      "param2": 0.0,
+      "param3": 0.0,
+      "param4": 0.0,
+      "type": null
+    },
+    {
+      "autoContinue": true,
+      "command": 16,
+      "coordinate": [
+        38.8703041,
+        -77.3214035,
+        60.950000762939453
+      ],
+      "frame": 0,
+      "id": 1,
+      "param1": 0.0,
+      "param2": 0.0,
+      "param3": 0.0,
+      "param4": 0.0,
+      "type": null
+    },
+    {
+      "autoContinue": true,
+      "command": 16,
+      "coordinate": [
+        38.8742103,
+        -77.3217697,
+        91.44000244140625
+      ],
+      "frame": 0,
+      "id": 2,
+      "param1": 0.0,
+      "param2": 0.0,
+      "param3": 0.0,
+      "param4": 0.0,
+      "type": null
+    },
+    {
+      "autoContinue": true,
+      "command": 16,
+      "coordinate": [
+        38.875122,
+        -77.3231353,
+        91.44000244140625
+      ],
+      "frame": 0,
+      "id": 3,
+      "param1": 0.0,
+      "param2": 0.0,
+      "param3": 0.0,
+      "param4": 0.0,
+      "type": null
+    },
+    {
+      "autoContinue": true,
+      "command": 16,
+      "coordinate": [
+        38.8739395,
+        -77.3245697,
+        91.44000244140625
+      ],
+      "frame": 0,
+      "id": 4,
+      "param1": 0.0,
+      "param2": 0.0,
+      "param3": 0.0,
+      "param4": 0.0,
+      "type": null
+    },
+    {
+      "autoContinue": true,
+      "command": 16,
+      "coordinate": [
+        38.8720016,
+        -77.3229217,
+        121.91000366210937
+      ],
+      "frame": 0,
+      "id": 5,
+      "param1": 0.0,
+      "param2": 0.0,
+      "param3": 0.0,
+      "param4": 0.0,
+      "type": null
+    },
+    {
+      "autoContinue": true,
+      "command": 16,
+      "coordinate": [
+        38.8687705,
+        -77.3242797,
+        60.950000762939453
+      ],
+      "frame": 0,
+      "id": 6,
+      "param1": 0.0,
+      "param2": 0.0,
+      "param3": 0.0,
+      "param4": 0.0,
+      "type": null
+    },
+    {
+      "autoContinue": true,
+      "command": 19,
+      "coordinate": [
+        38.8687705,
+        -77.3242797,
+        30.450000762939453
+      ],
+      "frame": 0,
+      "id": 7,
+      "param1": 10.0,
+      "param2": 0.0,
+      "param3": 1.0,
+      "param4": 0.0,
+      "type": null
+    },
+    {
+      "autoContinue": true,
+      "command": 183,
+      "coordinate": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "frame": 0,
+      "id": 8,
+      "param1": 0.0,
+      "param2": 0.0,
+      "param3": 0.0,
+      "param4": 0.0,
+      "type": null
+    },
+    {
+      "autoContinue": true,
+      "command": 19,
+      "coordinate": [
+        38.8687705,
+        -77.3242797,
+        0.0
+      ],
+      "frame": 0,
+      "id": 9,
+      "param1": 10.0,
+      "param2": 0.0,
+      "param3": 1.0,
+      "param4": 0.0,
+      "type": null
+    },
+    {
+      "autoContinue": true,
+      "command": 20,
+      "coordinate": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "frame": 0,
+      "id": 10,
+      "param1": 0.0,
+      "param2": 0.0,
+      "param3": 0.0,
+      "param4": 0.0,
+      "type": null
+    }
+  ],
+  "plannedHomePosition": {
+    "autoContinue": true,
+    "command": 16,
+    "coordinate": [
+      38.8703031,
+      -77.3214026,
+      138.02000427246094
+    ],
+    "frame": 0,
+    "id": 0,
+    "param1": 0.0,
+    "param2": 0.0,
+    "param3": 0.0,
+    "param4": 0.0,
+    "type": null
+  },
+  "version": "1.0"
+}

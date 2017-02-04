@@ -35,7 +35,7 @@ class CurrentCoordinates:
         """
         return self.altitude
 
-    def heading(self):
+    def get_heading(self):
         """
         Return heading
         """
