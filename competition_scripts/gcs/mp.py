@@ -2,7 +2,7 @@ from time import time
 import socket
 import sys
 
-receive_address = ('localhost', 10001)
+receive_address = ('localhost', 10002)
 server_address = ('localhost', 10000)
 
 def send_data(connection, data):
@@ -35,8 +35,7 @@ print("Connected")
 curr_coords = {
     "lat" : -1.0,
     "lng" : -1.0,
-    "alt" : -1.0,
-    "heading" : -1
+    "alt" : -1.0
 }
 
 previous_message = None
@@ -49,6 +48,8 @@ while True:
 
         data = receive_connection.recv(64).decode("utf-8")
 
+        print(data)
+        print("")
         if "NO DATA" not in data:
             messages = data.split(" ")
             for index in range(len(messages) - 1):
@@ -58,12 +59,11 @@ while True:
                 elif messages[index] in curr_coords:
                     previous_message = messages[index]
 
-        if curr_coords["lat"] != -1.0 and curr_coords["lng"] != -1.0 and curr_coords["alt"] != -1.0 and curr_coords["heading"] != -1:
+        if curr_coords["lat"] != -1.0 and curr_coords["lng"] != -1.0 and curr_coords["alt"] != -1.0:
             print(curr_coords)
 
             curr_coords = {
                 "lat" : -1.0,
                 "lng" : -1.0,
-                "alt" : -1.0,
-                "heading" : -1
+                "alt" : -1.0
             }
