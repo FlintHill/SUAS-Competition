@@ -68,7 +68,7 @@ def send_course(input_pipe):
 			data = input_pipe.recv()
 
 			print("Sending telem to send_course socket: " + str(data))
-			send_data(sock, str(data))
+			send_data(sock, data)
 		else:
 			pass
 
