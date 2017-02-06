@@ -57,15 +57,11 @@ int main(int argc, char** argv){
   int noi = atoi( argv[2] );
 
   for (int i = 1; i < (noi+1); i++) {
-    /*ss << i;
+    ss << i;
     string imgNumb = ss.str();
     string imgName = "./" + imgNumb + ".JPG";
     ss.str("");
 
-    Mat source = imread(imgName, 1);
-    printf("loaded image number %i\n",i);
-    findInterestingImage(source, 85, (12 * ppi), (72 * ppi));
-    ss.str("");*/
     // Get the image
 		Image rawImage;
 		Error error = camera.RetrieveBuffer( &rawImage );
@@ -77,7 +73,7 @@ int main(int argc, char** argv){
 
 		// convert to rgb
 	  Image rgbImage;
-    rawImage.Convert( FlyCapture2::PIXEL_FORMAT_BGR16, &rgbImage );
+    rawImage.Convert( FlyCapture2::PIXEL_FORMAT_RGB12, &rgbImage );
 
 		// convert to OpenCV Mat
 		unsigned int rowBytes = (double)rgbImage.GetReceivedDataSize()/(double)rgbImage.GetRows();
