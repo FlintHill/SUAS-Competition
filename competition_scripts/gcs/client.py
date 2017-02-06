@@ -12,7 +12,7 @@ from waypoint import Waypoint
 from message import Message
 
 INTEROP_CLIENT_ADDRESS = ('localhost', 9000)
-server_address = ('localhost', 10002)
+server_address = 'localhost'
 waypoint_JSON_file_path = "./data/demo_waypoints.mission"
 
 def send_data(connection, data):
@@ -23,7 +23,7 @@ def obj_receive(object_array):
 	Receive obstacles from the interoperability server
 
 	:param object_array: The multiprocessing list to use to store obstacles
-	    from interop server
+		from interop server
 	"""
 	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	sock.bind(INTEROP_CLIENT_ADDRESS)
@@ -33,46 +33,53 @@ def obj_receive(object_array):
 	print("Connected to INTEROP_CLIENT")
 
 	while True:
-	    sleep(0.5)
+		sleep(0.5)
 
 def send_course(input_pipe):
 	"""
 	Send course to mission planner instance
 
 	:param output_pipe: The data to send to the mission planner instances
-	    goes through this pipe
+		goes through this pipe
 	"""
 	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	is_connected = False
-	while not is_connected:
-	    try:
-	        print("Connecting to send_course socket...")
-	        sock.connect(server_address)
+	port = 10010
 
-	        is_connected = True
-	    except:
-	        print("Socket for send_course is not open...")
-	        sleep(0.1)
+	sleep(10)
+
+	while not is_connected:
+		try:
+			print("Connecting to send_course socket on port " + str(port) + "...")
+			sock.connect((server_address, port))
+
+			is_connected = True
+		except:
+			print("Socket for send_course is not open...")
+			sleep(0.1)
+
+			port -= 1
+			if port < 10000:
+				port = 10010
 	print("Connected to send_course socket")
 
 	while True:
-	    if input_pipe.poll():
-	        data = input_pipe.recv()
+		if input_pipe.poll():
+			data = input_pipe.recv()
 
-	        print("Sending telem to send_course socket: " + str(data))
-	        send_data(sock, str(data))
-	        sleep(100)
-	    else:
-	        pass#send_data(sock, "--------------NO DATA--------------")
+			print("Sending telem to send_course socket: " + str(data))
+			send_data(sock, str(data))
+		else:
+			pass
 
-	    sleep(0.05)
+		sleep(0.05)
 
 def receive_telem(current_coordinates_array):
 	"""
 	Receive telemetry from the local mission planner instance
 
 	:param current_coordinates_array: The multiprocessing list to use to
-	    store received telem data from mission planner
+		store received telem data from mission planner
 	"""
 	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	server_address = ('localhost', 10000)
@@ -102,7 +109,8 @@ def receive_telem(current_coordinates_array):
 				elif messages[index] in curr_coords:
 					previous_message = messages[index]
 
-			current_coordinates_array[0] = CurrentCoordinates(curr_coords["lat"], curr_coords["lng"], curr_coords["alt"], curr_coords["heading"])
+		print(curr_coords)
+		current_coordinates_array[0] = CurrentCoordinates(curr_coords["lat"], curr_coords["lng"], curr_coords["alt"], curr_coords["heading"])
 
 if __name__ == '__main__':
 	manager = multiprocessing.Manager()
@@ -132,23 +140,21 @@ if __name__ == '__main__':
 
 	index = 0
 	while True:
-	    if not is_obstacle_map_initialized and current_coordinates[0].get_latitude() != 0.0:
-	        obstacle_map = ClientConverter(current_coordinates[0])
-	        is_obstacle_map_initialized = True
-	    elif is_obstacle_map_initialized:
-	        print("Updating obstacle map...")
+		if not is_obstacle_map_initialized and current_coordinates[0].get_latitude() != 0.0:
+			obstacle_map = ClientConverter(current_coordinates[0])
+			is_obstacle_map_initialized = True
+		elif is_obstacle_map_initialized:
+			if index == 100:
+				print("Sending initial coordinates from main...")
+				initial_coordinates = obstacle_map.getInitialCoordinates()
+				guided_waypoint_output.send("lat " + str(initial_coordinates.get_latitude()) + " ")
+				guided_waypoint_output.send("lng " + str(initial_coordinates.get_longitude()) + " ")
+				guided_waypoint_output.send("alt " + str(initial_coordinates.get_altitude()) + " ")
 
-	        if index == 100:
-	        	print("Sending initial coordinates from main...")
-	        	initial_coordinates = obstacle_map.getInitialCoordinates()
-	        	guided_waypoint_output.send("lat " + str(initial_coordinates.get_latitude()) + " ")
-	        	guided_waypoint_output.send("lng " + str(initial_coordinates.get_longitude()) + " ")
-	        	guided_waypoint_output.send("alt " + str(initial_coordinates.get_altitude()) + " ")
+			initialCoords = obstacle_map.getInitialCoordinates()
+			haversine_distance = haversine(initialCoords.get_latitude(), initialCoords.get_longitude(), current_coordinates[0].get_latitude(), current_coordinates[0].get_longitude())
+			updated_drone_location = ConverterDataUpdate(haversine_distance, current_coordinates[0].get_heading(), current_coordinates[0].get_altitude())
+			obstacle_map.updateMainDroneMass(updated_drone_location)
 
-	        initialCoords = obstacle_map.getInitialCoordinates()
-	        haversine_distance = haversine(initialCoords.get_latitude(), initialCoords.get_longitude(), current_coordinates[0].get_latitude(), current_coordinates[0].get_longitude())
-	        updated_drone_location = ConverterDataUpdate(haversine_distance, current_coordinates[0].get_heading(), current_coordinates[0].get_altitude())
-	        obstacle_map.updateMainDroneMass(updated_drone_location)
-
-	        index += 1
-	        sleep(0.5)
+			index += 1
+			sleep(0.5)
