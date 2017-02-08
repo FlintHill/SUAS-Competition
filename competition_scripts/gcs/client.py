@@ -68,7 +68,7 @@ def send_course(input_pipe):
 			data = input_pipe.recv()
 
 			print("Sending telem to send_course socket: " + str(data))
-			send_data(sock, data)
+			send_data(sock, data.encode())
 		else:
 			pass
 
@@ -144,7 +144,7 @@ if __name__ == '__main__':
 			obstacle_map = ClientConverter(current_coordinates[0])
 			is_obstacle_map_initialized = True
 		elif is_obstacle_map_initialized:
-			if index == 100:
+			if index == 50:
 				print("Sending initial coordinates from main...")
 				initial_coordinates = obstacle_map.getInitialCoordinates()
 				guided_waypoint_output.send("lat " + str(initial_coordinates.get_latitude()) + " ")

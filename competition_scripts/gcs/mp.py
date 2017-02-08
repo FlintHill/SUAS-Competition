@@ -8,6 +8,7 @@ import clr
 clr.AddReference("MissionPlanner.Utilities")
 
 receive_address = 'localhost'
+receive_port_min = 10001
 server_address = ('localhost', 10000)
 
 def send_data(connection, data):
@@ -71,9 +72,7 @@ def timing(rate):
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 sock.connect(server_address)
-
-port_min = 10001
-for port in range(port_min, port_min + 10):
+for port in range(receive_port_min, receive_port_min + 10):
 	try:
 		receive_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 		receive_socket.bind((receive_address, port))
@@ -117,6 +116,8 @@ while True:
 				"alt" : -1.0
 			}
 
+			print("Completed movement, switched back into Auto")
+
 		try:
 			data = receive_connection.recv(64).decode("utf-8")
 
@@ -125,7 +126,7 @@ while True:
 				if previous_message:
 					data_coords[previous_message] = float(messages[index])
 					previous_message = None
-				elif messages[index] in curr_coords:
+				elif messages[index] in data_coords:
 					previous_message = messages[index]
 
 			if data_coords["lat"] != -1.0 and data_coords["lng"] != -1.0 and data_coords["alt"] != -1.0:
