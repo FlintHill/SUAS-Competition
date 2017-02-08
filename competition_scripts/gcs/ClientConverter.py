@@ -21,6 +21,8 @@ class ClientConverter(object):
         self.initMainDroneMass()
 
 
+    '''hi vale'''
+
     def getInitialCoordinates(self):
         return self.initialCoordinates
 
