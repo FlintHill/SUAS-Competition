@@ -1,5 +1,6 @@
 from time import time
 from time import sleep
+from math import radians, cos, sin, asin, sqrt
 import socket
 import sys
 import MissionPlanner
@@ -10,7 +11,49 @@ receive_address = 'localhost'
 server_address = ('localhost', 10000)
 
 def send_data(connection, data):
+	"""
+	Send data through a socket
+
+	:param connection: The socket to send data through
+	:param data: The data to send over the socket
+	"""
 	connection.sendall(data)
+
+def haversine(lon1, lat1, lon2, lat2):
+    """
+    Calculate the great circle distance between two points
+    on the earth (specified in decimal degrees)
+    """
+    # convert decimal degrees to radians
+    lon1, lat1, lon2, lat2 = map(radians, [lon1, lat1, lon2, lat2])
+
+    # haversine formula
+    dlon = lon2 - lon1
+    dlat = lat2 - lat1
+    a = sin(dlat/2)**2 + cos(lat1) * cos(lat2) * sin(dlon/2)**2
+    c = 2 * asin(sqrt(a))
+    r = 6371 # Radius of earth in kilometers. Use 3956 for miles
+    return c * r
+
+def has_reached_waypoint(coords1, coords2, maximum_distance=5.0):
+	"""
+	A simple script to determine if the difference between two sets of
+		coordinates and see if the difference is less than a maximum
+		distance
+
+	:param coords1: The first location which takes the form
+		[lat, lng, alt]
+	:param coords2: The second location which takes the form
+		[lat, lng, alt]
+	;param maximum_distance: The maximum distance beteween the two locations
+	"""
+	diff = haversine(coords1[1], coords1[0], coords2[1], coords2[0])
+	alt_diff = coords2[2] - coords1[2]
+
+	if diff < maximum_distance and alt_diff < maximum_distance:
+		return True
+
+	return False
 
 def timing(rate):
 	"""
@@ -44,13 +87,19 @@ for port in range(port_min, port_min + 10):
 	except:
 		print("Could not create socket on port " + str(port))
 
-curr_coords = {
+data_coords = {
 	"lat" : -1.0,
 	"lng" : -1.0,
 	"alt" : -1.0
 }
-
+new_wp_coords = {
+	"lat" : -1.0,
+	"lng" : -1.0,
+	"alt" : -1.0
+}
+current_flight_mode = "Auto"
 previous_message = None
+
 while True:
 	for _ in timing(rate=2):
 		send_data(sock, "lat " + str(cs.lat) + " ")
@@ -58,29 +107,46 @@ while True:
 		send_data(sock, "alt " + str(cs.alt) + " ")
 		send_data(sock, "heading " + str(cs.groundcourse) + " ")
 
+		if new_wp_coords["lat"] != -1.0 and new_wp_coords["lng"] != -1.0 and new_wp_coords["alt"] != -1.0 and has_reached_waypoint([new_wp_coords["lat"], new_wp_coords["lng"], new_wp_coords["alt"]], [cs.lat, cs.lng, cs.alt]):
+			Script.ChangeMode("Auto")
+			current_flight_mode = "Auto"
+
+			new_wp_coords = {
+				"lat" : -1.0,
+				"lng" : -1.0,
+				"alt" : -1.0
+			}
+
 		try:
 			data = receive_connection.recv(64).decode("utf-8")
 
 			messages = data.split(" ")
 			for index in range(len(messages) - 1):
 				if previous_message:
-					curr_coords[previous_message] = float(messages[index])
+					data_coords[previous_message] = float(messages[index])
 					previous_message = None
 				elif messages[index] in curr_coords:
 					previous_message = messages[index]
 
-			if curr_coords["lat"] != -1.0 and curr_coords["lng"] != -1.0 and curr_coords["alt"] != -1.0:
+			if data_coords["lat"] != -1.0 and data_coords["lng"] != -1.0 and data_coords["alt"] != -1.0:
 				print("Avoiding an object...")
 
-				Script.ChangeMode("Guided")
-				new_waypoint = MissionPlanner.Utilities.Locationwp()
-				MissionPlanner.Utilities.Locationwp.lat.SetValue(new_waypoint, float(curr_coords["lat"]))
-				MissionPlanner.Utilities.Locationwp.lng.SetValue(new_waypoint, float(curr_coords["lng"]))
-				MissionPlanner.Utilities.Locationwp.alt.SetValue(new_waypoint, float(curr_coords["alt"]))
-				MAV.setGuidedModeWP(new_waypoint)
-				#Script.ChangeMode("Auto")
+				if "Auto" in current_flight_mode:
+					Script.ChangeMode("Guided")
+					currrent_flight_mode = "Guided"
 
-				curr_coords = {
+				new_waypoint = MissionPlanner.Utilities.Locationwp()
+				MissionPlanner.Utilities.Locationwp.lat.SetValue(new_waypoint, float(data_coords["lat"]))
+				MissionPlanner.Utilities.Locationwp.lng.SetValue(new_waypoint, float(data_coords["lng"]))
+				MissionPlanner.Utilities.Locationwp.alt.SetValue(new_waypoint, float(data_coords["alt"]))
+				MAV.setGuidedModeWP(new_waypoint)
+
+				new_wp_coords = {
+					"lat" : data_coords["lat"],
+					"lng" : data_coords["lng"],
+					"alt" : data_coords["alt"]
+				}
+				data_coords = {
 					"lat" : -1.0,
 					"lng" : -1.0,
 					"alt" : -1.0

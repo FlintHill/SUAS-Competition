@@ -152,7 +152,7 @@ if __name__ == '__main__':
 				guided_waypoint_output.send("alt " + str(initial_coordinates.get_altitude()) + " ")
 
 			initialCoords = obstacle_map.getInitialCoordinates()
-			haversine_distance = haversine(initialCoords.get_latitude(), initialCoords.get_longitude(), current_coordinates[0].get_latitude(), current_coordinates[0].get_longitude())
+			haversine_distance = haversine(initialCoords.get_longitude(), initialCoords.get_latitude(), current_coordinates[0].get_longitude(), current_coordinates[0].get_latitude())
 			updated_drone_location = ConverterDataUpdate(haversine_distance, current_coordinates[0].get_heading(), current_coordinates[0].get_altitude())
 			obstacle_map.updateMainDroneMass(updated_drone_location)
 
