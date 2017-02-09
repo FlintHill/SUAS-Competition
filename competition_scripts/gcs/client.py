@@ -2,6 +2,9 @@ import socket
 import multiprocessing
 import sys
 import json
+import os
+import logging
+import logging.handlers
 from time import sleep
 from static_math import haversine, bearing
 from current_coordinates import CurrentCoordinates
@@ -14,34 +17,107 @@ from message import Message
 INTEROP_CLIENT_ADDRESS = ('localhost', 9000)
 server_address = 'localhost'
 waypoint_JSON_file_path = "./data/demo_waypoints.mission"
+log_file = "./data/log.log"
+
+logging.basicConfig(format="%(asctime)s %(name)s [%(levelname)s] %(message)s",
+	filename=log_file, filemode='w',
+	level=logging.INFO)
+
+class QueueHandler(logging.Handler):
+    """
+    This is a logging handler which sends events to a multiprocessing queue.
+
+    The plan is to add it to Python 3.2, but this can be copy pasted into
+    user code for use with earlier Python versions.
+    """
+
+    def __init__(self, queue):
+        """
+        Initialise an instance, using the passed queue.
+        """
+        logging.Handler.__init__(self)
+        self.queue = queue
+
+    def emit(self, record):
+        """
+        Emit a record.
+
+        Writes the LogRecord to the queue.
+        """
+        try:
+            ei = record.exc_info
+            if ei:
+                dummy = self.format(record) # just to get traceback text into record.exc_text
+                record.exc_info = None  # not needed any more
+            self.queue.put_nowait(record)
+        except (KeyboardInterrupt, SystemExit):
+            raise
+        except:
+            self.handleError(record)
+
+def logger_listener_configurer():
+    root = logging.getLogger()
+    h = logging.handlers.RotatingFileHandler(log_file, 'w')
+    f = logging.Formatter('%(asctime)s %(name)s [%(levelname)s] %(message)s')
+    h.setFormatter(f)
+    root.addHandler(h)
+
+def logger_worker_configurer(queue):
+    h = QueueHandler(queue)  # Just the one handler needed
+    root = logging.getLogger()
+    root.addHandler(h)
+    # send all messages, for demo; no other level or filter logic applied.
+    root.setLevel(logging.INFO)
+
+def listener_process(queue, configurer):
+    configurer()
+    while True:
+        try:
+            record = queue.get()
+            if record is None:  # We send this as a sentinel to tell the listener to quit.
+                break
+            logger = logging.getLogger(record.name)
+            logger.handle(record)  # No level or filter logic applied - just do it!
+        except Exception:
+            import sys, traceback
+            print('Whoops! Problem:')
+            traceback.print_exc(file=sys.stderr)
 
 def send_data(connection, data):
 	connection.sendall(data)
 
-def obj_receive(object_array):
+def obj_receive(logger_queue, configurer, object_array):
 	"""
 	Receive obstacles from the interoperability server
 
 	:param object_array: The multiprocessing list to use to store obstacles
 		from interop server
 	"""
+	configurer(logger_queue)
+	name = multiprocessing.current_process().name
+	logger = logging.getLogger(name)
+
 	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	sock.bind(INTEROP_CLIENT_ADDRESS)
 	sock.listen(1)
-	print("Waiting for a connection to INTEROP_CLIENT...")
+	logger.info("Waiting for a connection to INTEROP_CLIENT...")
 	connection, client_address = sock.accept()
-	print("Connected to INTEROP_CLIENT")
+	logger.info("Connected to INTEROP_CLIENT")
 
 	while True:
 		sleep(0.5)
 
-def send_course(input_pipe):
+def send_course(logger_queue, configurer, input_pipe):
 	"""
 	Send course to mission planner instance
 
 	:param output_pipe: The data to send to the mission planner instances
 		goes through this pipe
 	"""
+	configurer(logger_queue)
+	name = multiprocessing.current_process().name
+	logger = logging.getLogger(name)
+
 	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	is_connected = False
 	port = 10010
@@ -50,44 +126,48 @@ def send_course(input_pipe):
 
 	while not is_connected:
 		try:
-			print("Connecting to send_course socket on port " + str(port) + "...")
+			logger.info("Connecting to send_course socket on port " + str(port) + "...")
 			sock.connect((server_address, port))
 
 			is_connected = True
 		except:
-			print("Socket for send_course is not open...")
+			logger.info("Socket for send_course is not open...")
 			sleep(0.1)
 
 			port -= 1
 			if port < 10000:
 				port = 10010
-	print("Connected to send_course socket")
+	logger.info("Connected to send_course socket")
 
 	while True:
 		if input_pipe.poll():
 			data = input_pipe.recv()
 
-			print("Sending telem to send_course socket: " + str(data))
+			logger.info("Sending telem to send_course socket: " + str(data))
 			send_data(sock, data.encode())
 		else:
 			pass
 
 		sleep(0.05)
 
-def receive_telem(current_coordinates_array):
+def receive_telem(logger_queue, configurer, current_coordinates_array):
 	"""
 	Receive telemetry from the local mission planner instance
 
 	:param current_coordinates_array: The multiprocessing list to use to
 		store received telem data from mission planner
 	"""
+	configurer(logger_queue)
+	name = multiprocessing.current_process().name
+	logger = logging.getLogger(name)
+
 	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	server_address = ('localhost', 10000)
 	sock.bind(server_address)
 	sock.listen(1)
-	print("Waiting for a connection to MP...")
+	logger.info("Waiting for a connection to MP...")
 	connection, client_address = sock.accept()
-	print("Connected to MP")
+	logger.info("Connected to MP")
 
 	while True:
 		curr_coords = {
@@ -109,10 +189,14 @@ def receive_telem(current_coordinates_array):
 				elif messages[index] in curr_coords:
 					previous_message = messages[index]
 
-		print(curr_coords)
+		logger.info(str(curr_coords))
 		current_coordinates_array[0] = CurrentCoordinates(curr_coords["lat"], curr_coords["lng"], curr_coords["alt"], curr_coords["heading"])
 
 if __name__ == '__main__':
+	logger_queue = multiprocessing.Queue(-1)
+	logger_listener_process = multiprocessing.Process(target=listener_process, args=(logger_queue, logger_listener_configurer))
+	logger_listener_process.start()
+
 	manager = multiprocessing.Manager()
 
 	current_coordinates = manager.list()
@@ -121,13 +205,13 @@ if __name__ == '__main__':
 
 	guided_waypoint_input, guided_waypoint_output = multiprocessing.Pipe()
 
-	telem_process = multiprocessing.Process(target=receive_telem, args=(current_coordinates,))
+	telem_process = multiprocessing.Process(target=receive_telem, args=(logger_queue, logger_worker_configurer, current_coordinates,))
 	telem_process.start()
 
-	obj_process = multiprocessing.Process(target=obj_receive, args=(current_obstacles,))
+	obj_process = multiprocessing.Process(target=obj_receive, args=(logger_queue, logger_worker_configurer, current_obstacles,))
 	obj_process.start()
 
-	send_course_process = multiprocessing.Process(target=send_course, args=(guided_waypoint_input,))
+	send_course_process = multiprocessing.Process(target=send_course, args=(logger_queue, logger_worker_configurer, guided_waypoint_input,))
 	send_course_process.start()
 
 	obstacle_map = ClientConverter(current_coordinates[0])
