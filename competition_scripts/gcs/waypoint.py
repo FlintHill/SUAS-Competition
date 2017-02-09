@@ -1,4 +1,7 @@
-class Waypoint:
+from ObjAvoid import MultiDimPoint
+import static_math
+from math import sin, cos
+class Waypoint(gps_coordinates):
     """
     Wrapper class for transporting waypoints between the main client
     script and the converter class
@@ -12,10 +15,13 @@ class Waypoint:
         :param lng: The longtitude of the waypoint
         :param alt: The altitude of the waypoint
         """
-        self.lat = lat
-        self.lng = lng
-        self.alt = alt
-
+        gps_coordinates.__init__(lat, lng, alt)
+        
+        
+    
+    
+    
+    '''
     def get_latitude(self):
         """
         Returns the latitude of the waypoint
@@ -33,3 +39,10 @@ class Waypoint:
         Returns the altitude of the waypoint
         """
         return self.alt
+    '''
+        
+    '''not sure if origin GPS is in lon, lat, or lat, lon'''
+    def convertForClient(self, originGPS):
+        haversineDistance = static_math.haversine(originGPS, self)
+        bearing = static_math.bearing(originGPS, self)
+        dx = haversineDistance * cos(bearing)

@@ -1,3 +1,5 @@
+import gps_coordinates
+
 class CurrentCoordinates:
     """
     Wrapper class for the drone's current coordinates
@@ -40,3 +42,6 @@ class CurrentCoordinates:
         Return heading
         """
         return self.heading
+    
+    def toGPS(self):
+        return gps_coordinates(self.latitude, self.longitude, self.altitude)

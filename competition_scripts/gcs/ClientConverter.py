@@ -20,8 +20,7 @@ class ClientConverter(object):
         self.initialCoordinates = initialCoordinatesIn
         self.initMainDroneMass()
 
-
-    '''hi vale'''
+    
 
     def getInitialCoordinates(self):
         return self.initialCoordinates
@@ -30,6 +29,9 @@ class ClientConverter(object):
     def initMainDroneMass(self):
         self.mainDroneMass = DroneMass(self.massHolder, MultiDimPoint([0,0,self.initialCoordinates.get_altitude()]), DroneMass.DEFAULT_DRONE_MASS)
 
+
+    def setWaypoints(self, waypointsIn):
+        
 
     '''takes an converter_data_update object that wraps altitude, haversine distance, and heading from the current position
     to the position the drone needs to travel.

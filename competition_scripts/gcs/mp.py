@@ -19,7 +19,25 @@ def send_data(connection, data):
 	:param data: The data to send over the socket
 	"""
 	connection.sendall(data)
+	
+def haversine(gps1, gps2):
+    """
+    Calculate the great circle distance between two points
+    on the earth (specified in decimal degrees)
+    """
+    # convert decimal degrees to radians
+    lon1, lat1, lon2, lat2 = map(radians, [gps1.get_longitude(), gps1.get_latitude(), gps2.get_longitude(), gps2.get_latitude()])
 
+    # haversine formula
+    dlon = gps2.get_longitude() - gps1.get_longitude()
+    dlat = gps2.get_latitude() - gps1.get_latitude()
+    a = sin(dlat/2)**2 + cos(lat1) * cos(lat2) * sin(dlon/2)**2
+    c = 2 * asin(sqrt(a))
+    r = 6371 # Radius of earth in kilometers. Use 3956 for miles
+    return c * r
+	
+'''
+old haversine, kept here just in case
 def haversine(lon1, lat1, lon2, lat2):
     """
     Calculate the great circle distance between two points
@@ -35,7 +53,7 @@ def haversine(lon1, lat1, lon2, lat2):
     c = 2 * asin(sqrt(a))
     r = 6371 # Radius of earth in kilometers. Use 3956 for miles
     return c * r
-
+'''
 def has_reached_waypoint(coords1, coords2, maximum_distance=5.0):
 	"""
 	A simple script to determine if the difference between two sets of

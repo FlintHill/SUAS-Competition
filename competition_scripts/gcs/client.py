@@ -214,7 +214,7 @@ if __name__ == '__main__':
 	send_course_process = multiprocessing.Process(target=send_course, args=(logger_queue, logger_worker_configurer, guided_waypoint_input,))
 	send_course_process.start()
 
-	obstacle_map = ClientConverter(current_coordinates[0])
+	obstacle_map = ClientConverter(current_coordinates[0].asGPS())
 	is_obstacle_map_initialized = False
 
 	waypoints = json.load(open(waypoint_JSON_file_path, 'r'))["items"]
@@ -236,7 +236,7 @@ if __name__ == '__main__':
 				guided_waypoint_output.send("alt " + str(initial_coordinates.get_altitude()) + " ")
 
 			initialCoords = obstacle_map.getInitialCoordinates()
-			haversine_distance = haversine(initialCoords.get_longitude(), initialCoords.get_latitude(), current_coordinates[0].get_longitude(), current_coordinates[0].get_latitude())
+			haversine_distance = haversine(initialCoords, current_coordinates[0].asGPS())
 			updated_drone_location = ConverterDataUpdate(haversine_distance, current_coordinates[0].get_heading(), current_coordinates[0].get_altitude())
 			obstacle_map.updateMainDroneMass(updated_drone_location)
 
