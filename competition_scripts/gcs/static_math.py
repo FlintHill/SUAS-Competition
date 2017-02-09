@@ -18,7 +18,4 @@ def haversine(gps1, gps2):
 
 def bearing(gps1, gps2):
     bearing = atan2(sin(gps2.get_longitude()-gps1.get_longitude())*cos(gps2.get_longitude()), cos(gps1.get_latitude())*sin(lat2)-sin(gps1.get_latitude())*cos(gps2.get_latitude())*cos(gps2.get_longitude()-gps1.get_longitude()))
-    #bearing = degrees(bearing)
-    #bearing = (bearing + 360) % 360
-
     return bearing

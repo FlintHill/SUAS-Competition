@@ -190,6 +190,7 @@ def receive_telem(logger_queue, configurer, current_coordinates_array):
 					previous_message = messages[index]
 
 		logger.info(str(curr_coords))
+		curr_coords["heading"] /= (2 * math.pi)
 		current_coordinates_array[0] = CurrentCoordinates(curr_coords["lat"], curr_coords["lng"], curr_coords["alt"], curr_coords["heading"])
 
 if __name__ == '__main__':
@@ -214,7 +215,7 @@ if __name__ == '__main__':
 	send_course_process = multiprocessing.Process(target=send_course, args=(logger_queue, logger_worker_configurer, guided_waypoint_input,))
 	send_course_process.start()
 
-	obstacle_map = ClientConverter(current_coordinates[0].asGPS())
+	obstacle_map = ClientConverter(current_coordinates[0].as_gps())
 	is_obstacle_map_initialized = False
 
 	waypoints = json.load(open(waypoint_JSON_file_path, 'r'))["items"]
@@ -236,7 +237,7 @@ if __name__ == '__main__':
 				guided_waypoint_output.send("alt " + str(initial_coordinates.get_altitude()) + " ")
 
 			initialCoords = obstacle_map.getInitialCoordinates()
-			haversine_distance = haversine(initialCoords, current_coordinates[0].asGPS())
+			haversine_distance = haversine(initialCoords, current_coordinates[0].as_gps())
 			updated_drone_location = ConverterDataUpdate(haversine_distance, current_coordinates[0].get_heading(), current_coordinates[0].get_altitude())
 			obstacle_map.updateMainDroneMass(updated_drone_location)
 

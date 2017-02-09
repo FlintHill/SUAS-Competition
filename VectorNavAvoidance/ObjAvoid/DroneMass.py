@@ -11,8 +11,7 @@ class DroneMass(Mass):
     def __init__(self, boundMassHolder, pointIn, massIn):
         Mass.__init__(self, boundMassHolder, pointIn, massIn)
         self.velocityVector = Vector.createEmptyVectorWithDim(len(self.getPoint()))
-        randNavPoints = TestFunctions.getRandomPointsInBounds(2, 25, [(-350, 350), (-350, 350)])
-        self.navVectorMaker = NavVectorMaker(self, randNavPoints)
+        self.navVectorMaker = NavVectorMaker(self, [])
         self.speed = 500
     '''currently masses can't have any forces of their own. set netVector to the force of the mass
     if I ever do ad it instead of (0,0,0)'''

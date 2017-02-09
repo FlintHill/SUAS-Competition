@@ -5,6 +5,7 @@ Created on Jan 27, 2017
 '''
 from ObjAvoid import MassHolder
 from ObjAvoid import DroneMass
+from ObjAboid import Mass
 from ObjAvoid import MultiDimPoint
 from current_coordinates import CurrentCoordinates
 from math import sin, cos
@@ -29,8 +30,10 @@ class ClientConverter(object):
     def initMainDroneMass(self):
         self.mainDroneMass = DroneMass(self.massHolder, MultiDimPoint([0,0,self.initialCoordinates.get_altitude()]), DroneMass.DEFAULT_DRONE_MASS)
 
-
+    '''pass waypoint list from here. Shouldn't need to be updated afterward.'''
     def setWaypoints(self, waypointsIn):
+        for i in range(0, len(waypointsIn)):
+            self.mainDroneMass.getVectorNavMaker().add_waypoint(waypointsIn[i])
         
 
     '''takes an converter_data_update object that wraps altitude, haversine distance, and heading from the current position

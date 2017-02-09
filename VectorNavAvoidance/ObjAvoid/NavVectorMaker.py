@@ -12,7 +12,9 @@ class NavVectorMaker:
         self.travelPoints = travelPointsIn
         self.travelIndex = 0
         
-        
+    def add_waypoint(self, waypointIn):
+        self.travelPoints.append(waypointIn)    
+    
     def setVelocityVectorToNextTravelPoint(self, speed):
         unitVector = self.droneMass.getPoint().getUnitVectorToPoint(self.travelPoints[self.travelIndex])
         velocityVector = unitVector * speed

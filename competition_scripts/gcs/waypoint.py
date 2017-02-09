@@ -1,6 +1,7 @@
 from ObjAvoid import MultiDimPoint
 import static_math
 from math import sin, cos
+
 class Waypoint(gps_coordinates):
     """
     Wrapper class for transporting waypoints between the main client
@@ -42,7 +43,9 @@ class Waypoint(gps_coordinates):
     '''
         
     '''not sure if origin GPS is in lon, lat, or lat, lon'''
-    def convertForClient(self, originGPS):
+    def convert_to_point(self, originGPS):
         haversineDistance = static_math.haversine(originGPS, self)
         bearing = static_math.bearing(originGPS, self)
         dx = haversineDistance * cos(bearing)
+        dy = haversineDistance * sin(bearing)
+        return MultiDimPoint([dx,dy,self.get_altitude())

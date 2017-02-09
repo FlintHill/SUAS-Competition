@@ -43,5 +43,5 @@ class CurrentCoordinates:
         """
         return self.heading
     
-    def toGPS(self):
+    def as_gps(self):
         return gps_coordinates(self.latitude, self.longitude, self.altitude)
