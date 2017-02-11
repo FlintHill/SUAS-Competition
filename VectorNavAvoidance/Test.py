@@ -30,3 +30,6 @@ class Test:
     def draw(self, win):
         self.massHolder.tick()
         self.massHolder.draw(win)
+
+if __name__ == '__main__':
+    my_test = Test()
