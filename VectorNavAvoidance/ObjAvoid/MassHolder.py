@@ -26,13 +26,6 @@ class MassHolder:
     def appendDroneMass(self, droneMassIn):
         self.droneMasses.append(droneMassIn)
 
-    def getDroneForceVectors(self):
-        droneForceVectors = []
-        for i in range(0, len(self.droneMasses)):
-            droneForceVectors.append(self.droneMasses[i].getNetForceVector())
-
-        return droneForceVectors
-
     def tick(self):
         for i in range(0, len(self.droneMasses)):
             for j in range(0, len(self)):
