@@ -26,15 +26,22 @@ class DroneMass(Mass):
 
     def applyMotions(self):
         self.navVectorMaker.setVelocityVectorToNextTravelPoint(self.speed)
-        self.applyForce(self.getNetForceVector())
-        self.applyVelocity()
-
+        #self.applyForce(self.getNetForceVector())
+        self.applyVelocity(self.getNetForceVector())
+    '''
     def applyForce(self, force):
         #(1/2) at^2
         self.point += (force*(1.0/float(self.mass)))*(Window.REFRESH_TIME**2)*0.5
-
-    def applyVelocity(self):
-        self.point += self.velocityVector*Window.REFRESH_TIME
+    '''
+    def getPushVelocityVector(self, forceVector):
+        pushVelocity = ((forceVector/float(self.mass))*Window.REFRESH_TIME)*0.5
+        return pushVelocity
+        
+    def getNetVelocityUnitVector(self, forceVector):
+        return (self.velocityVector + self.getPushVelocityVector(forceVector)).getUnitVector()
+    
+    def applyVelocity(self, forceVector):
+        self.point += self.getNetVelocityUnitVector(forceVector) * self.speed * Window.REFRESH_TIME
 
     def draw(self, win):
         self.point.draw(win, "red")

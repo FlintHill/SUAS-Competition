@@ -29,11 +29,7 @@ class MassHolder:
     def tick(self):
         for index in range(0, len(self.droneMasses)):
             self.droneMasses[index].applyMotions()
-
-    def tickMasses(self):
-        for i in range(0, len(self)):
-            self[i].move2DRandomWithMagnitude(40)
-
+    
     def drawStationaryObjects(self, win):
         for i in range(0, len(self)):
             self[i].draw(win)

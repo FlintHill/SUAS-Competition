@@ -13,6 +13,7 @@ class Test:
         self.droneMass = DroneMass(self.massHolder, MultiDimPoint([0,0]), 1, [])
         self.massHolder.appendDroneMass(self.droneMass)
         self.addRandomMasses(10)
+        self.window = Window(self.massHolder, (1440,900))
 
     def addRandomMasses(self, numMasses):
         #randomPointMaker = RandomPointMaker(2, ((-700, 700), (-500, 500)))
