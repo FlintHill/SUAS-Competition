@@ -19,13 +19,13 @@ struct stat st = {0};
 struct imageSaveThreadData {
   Mat img;
   string imageSavePath;
-}
+};
 
 int cropCount = 0;
 stringstream ss;
 RNG rng(12345);
-string cropsDirectoryPath = "/media/SSD/crops/"
-string fullImagesDirectoryPath = "/media/SSD/full_images/"
+string cropsDirectoryPath = "/media/SSD/crops/";
+string fullImagesDirectoryPath = "/media/SSD/full_images/";
 
 void identifyTargets(Mat img, int thresh, int minSize, int maxSize);
 void saveFullImage(void *threadData);
@@ -70,13 +70,13 @@ int main(int argc, char** argv){
   int ppi = atoi( argv[1] );
 
   // Make the crops directory if it does not exist
-  if (stat(cropsDirectoryPath, &st) == -1) {
-    mkdir(cropsDirectoryPath, 0777);
+  if (stat(cropsDirectoryPath.c_str(), &st) == -1) {
+    mkdir(cropsDirectoryPath.c_str(), 0777);
   }
 
   // Make the full images directory if it does not exist
-  if (stat(fullImagesDirectoryPath, &st) == -1) {
-    mkdir(fullImagesDirectoryPath, 0777);
+  if (stat(fullImagesDirectoryPath.c_str(), &st) == -1) {
+    mkdir(fullImagesDirectoryPath.c_str(), 0777);
   }
 
   int index = 0;
