@@ -34,12 +34,12 @@ class DroneMass(Mass):
         self.point += (force*(1.0/float(self.mass)))*(Window.REFRESH_TIME**2)*0.5
     '''
     def getPushVelocityVector(self, forceVector):
-        pushVelocity = ((forceVector/float(self.mass))*Window.REFRESH_TIME)*0.5
+        pushVelocity = (forceVector*(1.0/float(self.mass))*Window.REFRESH_TIME)*0.5
         return pushVelocity
-        
+
     def getNetVelocityUnitVector(self, forceVector):
         return (self.velocityVector + self.getPushVelocityVector(forceVector)).getUnitVector()
-    
+
     def applyVelocity(self, forceVector):
         self.point += self.getNetVelocityUnitVector(forceVector) * self.speed * Window.REFRESH_TIME
         print("velocity applied. New point: " + str(self.point))

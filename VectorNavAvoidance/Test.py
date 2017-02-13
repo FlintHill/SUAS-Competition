@@ -10,9 +10,9 @@ class Test:
 
     def __init__(self):
         self.massHolder = MassHolder()
-        self.droneMass = DroneMass(self.massHolder, MultiDimPoint([0,0]), 1, [MultiDimPoint([100, 100])])
+        self.droneMass = DroneMass(self.massHolder, MultiDimPoint([0,0]), 1, [MultiDimPoint([200, 200]), MultiDimPoint([400, -200])])
         self.massHolder.appendDroneMass(self.droneMass)
-        self.addRandomMasses(10)
+        self.addRandomMasses(40)
         self.window = Window(self.massHolder, (1440,900))
 
     def addRandomMasses(self, numMasses):

@@ -26,6 +26,7 @@ class Window:
     def drawLoop(self):
         self.drawable.drawStationaryObjects(self)
         while(True):
+            self.drawable.tick()
             self.drawable.draw(self)
             sleep(Window.REFRESH_TIME)
             #coverRect = Rectangle(Point(0, 0), Point(self.dim[0], self.dim[1]))
