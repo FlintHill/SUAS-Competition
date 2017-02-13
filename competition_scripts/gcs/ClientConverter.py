@@ -5,7 +5,7 @@ Created on Jan 27, 2017
 '''
 from ObjAvoid import MassHolder
 from ObjAvoid import DroneMass
-from ObjAboid import Mass
+from ObjAvoid import Mass
 from ObjAvoid import MultiDimPoint
 from current_coordinates import CurrentCoordinates
 from math import sin, cos
@@ -21,7 +21,7 @@ class ClientConverter(object):
         self.initialCoordinates = initialCoordinatesIn
         self.initMainDroneMass()
 
-    
+
 
     def getInitialCoordinates(self):
         return self.initialCoordinates
@@ -34,11 +34,11 @@ class ClientConverter(object):
     def setWaypoints(self, waypointsIn):
         for i in range(0, len(waypointsIn)):
             self.mainDroneMass.getVectorNavMaker().add_waypoint(waypointsIn[i])
-        
+
 
     '''takes an converter_data_update object that wraps altitude, haversine distance, and heading from the current position
     to the position the drone needs to travel.
-    
+
     '''
     def updateMainDroneMass(self, updateData):
         dy = updateData.get_haversine_distance() * sin(updateData.get_heading())#where DY is change in y from initial GPS point

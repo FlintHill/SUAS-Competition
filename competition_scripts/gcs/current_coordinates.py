@@ -1,4 +1,4 @@
-import gps_coordinates
+from gps_coordinates import GPSCoordinates
 
 class CurrentCoordinates:
     """
@@ -42,6 +42,6 @@ class CurrentCoordinates:
         Return heading
         """
         return self.heading
-    
+
     def as_gps(self):
-        return gps_coordinates(self.latitude, self.longitude, self.altitude)
+        return GPSCoordinates(self.latitude, self.longitude, self.altitude)

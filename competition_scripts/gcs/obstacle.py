@@ -27,8 +27,8 @@ class Obstacle:
         dx = self.dist * cos(heading)
         dy = self.dist * sin(heading)
         self.point = MultiDimPoint([dx,dy,self.alt])
-        
-    
+
+
     def get_distance(self):
         """
         Return the distance
@@ -58,28 +58,26 @@ class Obstacle:
         Return the obstacle's type
         """
         return self.type
-    
+
     def get_point(self):
         '''
         Returns the XYZ Point of the obstacle's location relative to the origin
         '''
         return self.point
-    
+
     def to_safety_radius_mass(self):
         if self.type == "stationary":
-            
+            pass
         else:
-            
+            pass
+
     def getSafetyRadius(self):
         '''returns safety radius calculated based on the radius of the obstacle as wel as whether
         it is moving or not'''
         if self.type == "stationary":
             return self.radius * obstacle.SAFETY_RADIUS
         else:
-            '''this is temporary until we get a better calculation for 
+            '''this is temporary until we get a better calculation for
             getting a safety radius for a moving obstacle'''
             movingConstant = 2
             return self.radius * movingConstant
-            
-    
-    
