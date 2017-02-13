@@ -26,9 +26,24 @@ class DroneMass(Mass):
 
     def applyMotions(self):
         self.navVectorMaker.setVelocityVectorToNextTravelPoint(self.speed)
+        self.point = self.getPointAfterVelocityApplied(self.getNetVelocityVector())
         #self.applyForce(self.getNetForceVector())
-        self.applyVelocity(self.getNetVelocityUnitVector(self.getNetForceVector()))
+        #self.applyVelocity(self.getNetVelocityUnitVector(self.getNetForceVector()))
+        
+    def getPointAfterForceApplied(self, point, forceVector):
+        return point + (forceVector * (1.0/float(self.mass))) * (Window.REFRESH_TIME**2) * 0.5
     
+    def getPointAfterVelocityApplied(self, point, velocityVector): 
+        return point + (velocityVector * Window.REFRESH_TIME)
+    
+    def getNetVelocityVector(self):
+        netForce = self.getNetForceVector()
+        newPoint = self.getPointAfterForceApplied(self.point, netForce)
+        newPoint = self.getPointAfterVelocityApplied(newPoint, self.getVelocityVector())
+        unitNetVelocityVector = self.point.getUnitVectorToPoint(newPoint)
+        return unitNetVelocityVector * self.speed
+    
+    '''
     def getNetVelocityUnitVector(self, forceVector):
         newPoint = self.getVelocityDirectionPoint(forceVector)
         return self.point.getUnitVectorToPoint(newPoint)
@@ -40,7 +55,7 @@ class DroneMass(Mass):
     
     def getPositionAfterForce(self, point, forceVector):
         return point + (forceVector*(1.0/float(self.mass)))*(Window.REFRESH_TIME**2)*0.5
-    
+    '''
     '''
     def applyForce(self, force):
         #(1/2) at^2
