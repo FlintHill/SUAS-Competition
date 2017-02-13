@@ -10,7 +10,7 @@ class Test:
 
     def __init__(self):
         self.massHolder = MassHolder()
-        self.droneMass = DroneMass(self.massHolder, TestFunctions.getRandomPointsInBounds(2, 20, ((-700, 700), (-500,500))))#MultiDimPoint([0,0]), 1, [MultiDimPoint([200, 200]), MultiDimPoint([400, -200])])
+        self.droneMass = DroneMass(self.massHolder, MultiDimPoint([0,0]), 1, TestFunctions.getRandomPointsInBounds(2, 20, ((-700, 700), (-500,500))))#MultiDimPoint([0,0]), 1, [MultiDimPoint([200, 200]), MultiDimPoint([400, -200])])
         self.massHolder.appendDroneMass(self.droneMass)
         self.addRandomMasses(40)
         self.window = Window(self.massHolder, (1440,900))
