@@ -17,6 +17,8 @@ class Mass(object):
         self.drawCircle.setFill("red")
 
     def getForceVectorToMass(self, massTwo):
+        self.updateMass(massTwo)
+
         magForce = self.getMagnitudeOfForceToMass(massTwo)
         forceUnitVector = self.getVectorToMass(massTwo).getUnitVector()
         return forceUnitVector * magForce
@@ -34,6 +36,9 @@ class Mass(object):
         moveVector = Vector([xComp, yComp])
         self.point = self.point + moveVector
         self.drawCircle.move(xComp, -yComp)
+
+    def updateMass(self, massTwo):
+        pass
 
     def getMass(self):
         return self.mass

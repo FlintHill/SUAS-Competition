@@ -18,7 +18,6 @@ class Test:
     def addRandomMasses(self, numMasses):
         randPoints = TestFunctions.getRandomPointsInBounds(2, numMasses, ((-700, 700), (-500, 500)))
         for i in range(0, len(randPoints)):
-            #self.massHolder.appendMass(Mass(self.massHolder, randPoints[i], 500))
             self.massHolder.appendMass(SafetyRadiusMass(self.massHolder, randPoints[i], 500, 20, Window.REFRESH_TIME))
 
     def drawStationaryObjects(self, win):

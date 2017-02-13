@@ -32,16 +32,13 @@ class SafetyRadiusMass(Mass):
         projVector = gravityUnitVector.getProjectionOntoSelf(velocityVector)
         #print(str(projVector))
         magProj = projVector.getMagnitude()
+        print(self.safetyRadius)
         massObject =(2*magProj*self.safetyRadius**2)/(MassHolder.GRAVITY_CONSTANT * self.timeIncrement)
         return massObject
 
-    def updateForce(self, droneMass):
+    def updateMass(self, droneMass):
         self.setMass(self.getRequiredMassToBalanceMotion(droneMass))
-
 
     def draw(self, win):
         self.radiusCircle.draw(win.getGraphWin())
-        #c = Circle(Point(int(self.point[0] + win.getCenterPoint()[0]), int(win.getCenterPoint()[1] - self.point[1])), self.safetyRadius)#subtracted so reversed y axis graphics work.
-        #c.setFill("blue")
-        #c.draw(win.getGraphWin())
         super(SafetyRadiusMass, self).draw(win)
