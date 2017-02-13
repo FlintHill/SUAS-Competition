@@ -42,7 +42,7 @@ class DroneMass(Mass):
     
     def applyVelocity(self, forceVector):
         self.point += self.getNetVelocityUnitVector(forceVector) * self.speed * Window.REFRESH_TIME
-        print("velocity applied. New point " + str(self.))
+        print("velocity applied. New point: " + str(self.point))
 
     def draw(self, win):
         self.point.draw(win, "red")
