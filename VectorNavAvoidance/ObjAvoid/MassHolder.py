@@ -27,10 +27,8 @@ class MassHolder:
         self.droneMasses.append(droneMassIn)
 
     def tick(self):
-        if self.tickCount > 20:
-            self.tickMasses()
-            self.tickCount = 0
-        self.tickCount += 1
+        for index in range(0, len(self.droneMasses)):
+            self.droneMasses[index].applyMotions()
 
     def tickMasses(self):
         for i in range(0, len(self)):

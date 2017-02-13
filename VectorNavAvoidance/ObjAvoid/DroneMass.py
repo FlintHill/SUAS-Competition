@@ -8,13 +8,14 @@ from ObjAvoid import *
 class DroneMass(Mass):
     DEFAULT_DRONE_MASS = 1
 
-    def __init__(self, boundMassHolder, pointIn, massIn):
+    def __init__(self, boundMassHolder, pointIn, massIn, waypoints):
         Mass.__init__(self, boundMassHolder, pointIn, massIn)
         self.velocityVector = Vector.createEmptyVectorWithDim(len(self.getPoint()))
-        self.navVectorMaker = NavVectorMaker(self, [])
+        self.navVectorMaker = NavVectorMaker(self, waypoints)
         self.speed = 500
+
     '''currently masses can't have any forces of their own. set netVector to the force of the mass
-    if I ever do ad it instead of (0,0,0)'''
+    if I ever do add it instead of (0,0,0)'''
     def getNetForceVector(self):
         netVector = Vector.createEmptyVectorWithDim(len(self.getPoint()))#Vector([0,0,0])
         for i in range(0, len(self.boundMassHolder)):
@@ -33,15 +34,10 @@ class DroneMass(Mass):
         self.point += (force*(1.0/float(self.mass)))*(Window.REFRESH_TIME**2)*0.5
 
     def applyVelocity(self):
-        #print("Velocity Vector: " + str(self.velocityVector))
         self.point += self.velocityVector*Window.REFRESH_TIME
 
     def draw(self, win):
         self.point.draw(win, "red")
-        #self.navVectorMaker.draw(win)
-        #c = Circle(Point(int(self.point[0] + win.getCenterPoint()[0]), int(win.getCenterPoint()[1] - self.point[1])), 2)#subtracted so reversed y axis graphics work.
-        #c.setFill("red")
-        #c.draw(win.getGraphWin())
 
     def getNavVectorMaker(self):
         return self.navVectorMaker

@@ -12,8 +12,9 @@ from ObjAvoid import DroneMass
 from time import sleep
 from ObjAvoid import RandomPointMaker
 
+waypoints = [MultiDimPoint([10, 10]), MultiDimPoint([15, 15])]
 massHolder = MassHolder()
-droneMass = DroneMass(massHolder, MultiDimPoint([0,0]), 1)
+droneMass = DroneMass(massHolder, MultiDimPoint([0,0]), 1, waypoints)
 massHolder.appendDroneMass(droneMass)
 
 randomPointMaker = RandomPointMaker(2, ((-700, 700), (-500, 500)))
