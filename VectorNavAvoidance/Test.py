@@ -16,11 +16,6 @@ class Test:
         self.window = Window(self.massHolder, (1440,900))
 
     def addRandomMasses(self, numMasses):
-        #randomPointMaker = RandomPointMaker(2, ((-700, 700), (-500, 500)))
-        '''for i in range(0, numMasses):
-            randPoint = randomPointMaker.createRandomPoint()
-            mass = SafetyRadiusMass(self.massHolder, randPoint, 500, 10, Window.REFRESH_TIME)
-            self.massHolder.appendMass(mass)'''
         randPoints = TestFunctions.getRandomPointsInBounds(2, numMasses, ((-700, 700), (-500, 500)))
         for i in range(0, len(randPoints)):
             #self.massHolder.appendMass(Mass(self.massHolder, randPoints[i], 500))

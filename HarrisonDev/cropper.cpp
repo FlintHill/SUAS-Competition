@@ -94,7 +94,7 @@ int main(int argc, char** argv){
 
     // convert to rgb
     Image rgbImage;
-    rawImage.Convert( FlyCapture2::PIXEL_FORMAT_RGB12, &rgbImage );
+    rawImage.Convert( FlyCapture2::PIXEL_FORMAT_RGB16, &rgbImage );
 
     // convert to OpenCV Mat
     unsigned int rowBytes = (double)rgbImage.GetReceivedDataSize()/(double)rgbImage.GetRows();
@@ -104,7 +104,7 @@ int main(int argc, char** argv){
 
     index++;
     string frameNumber = static_cast<ostringstream*>( &(ostringstream() << index) )->str();
-    string imgName = imageSaveDirectory + frameNumber + ".PNG";
+    string imgName = fullImagesDirectoryPath + frameNumber + ".PNG";
     struct imageSaveThreadData imageSaveData;
     imageSaveData.img = image.clone();
     imageSaveData.imageSavePath = imgName;
