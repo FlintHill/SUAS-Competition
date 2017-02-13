@@ -72,3 +72,6 @@ class MultiDimPoint:
         for i in range(0, len(self)):
             strOut += ", " + str(self[i])
         return strOut
+    
+    def clone(self):
+        return MultiDimPoint(self.coords)
