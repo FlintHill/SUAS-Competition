@@ -1,10 +1,15 @@
 import os
 
-RAW_IMG_DIR_LOCATION = "/media/sda1/"
+CROPS_DIR_LOCATION = "/media/SSD/crops/"
+
+def load_images_from_dir(dir):
+    """
+    Load all images in a directory and their associated information files
+    """
+    pass
 
 if __name__ == '__main__':
     while True:
-        pass
         # load Harrison's images
 
         # send them to Peter's image processing script

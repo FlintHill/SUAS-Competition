@@ -1,19 +1,34 @@
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
 #include "FlyCapture2.h"
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
+#include <pthread.h>
+
+#define IMG_CAPTURE_RATE 2.0;
 
 using namespace cv;
 using namespace std;
 using namespace FlyCapture2;
 
+struct stat st = {0};
+struct imageSaveThreadData {
+  Mat img;
+  string imageSavePath;
+}
+
 int cropCount = 0;
 stringstream ss;
 RNG rng(12345);
+string cropsDirectoryPath = "/media/SSD/crops/"
+string fullImagesDirectoryPath = "/media/SSD/full_images/"
 
-void findInterestingImage(Mat img, int thresh, int minSize, int maxSize);
+void identifyTargets(Mat img, int thresh, int minSize, int maxSize);
+void saveFullImage(void *threadData);
 
 int main(int argc, char** argv){
   Error error;
@@ -53,39 +68,58 @@ int main(int argc, char** argv){
 
   //pixels per inch
   int ppi = atoi( argv[1] );
-  //number of images
-  int noi = atoi( argv[2] );
 
-  for (int i = 1; i < (noi+1); i++) {
-    ss << i;
-    string imgNumb = ss.str();
-    string imgName = "./" + imgNumb + ".JPG";
-    ss.str("");
+  // Make the crops directory if it does not exist
+  if (stat(cropsDirectoryPath, &st) == -1) {
+    mkdir(cropsDirectoryPath, 0777);
+  }
+
+  // Make the full images directory if it does not exist
+  if (stat(fullImagesDirectoryPath, &st) == -1) {
+    mkdir(fullImagesDirectoryPath, 0777);
+  }
+
+  int index = 0;
+  while (1) {
+    sleep(1.0 / IMG_CAPTURE_RATE);
 
     // Get the image
-		Image rawImage;
-		Error error = camera.RetrieveBuffer( &rawImage );
-		if ( error != PGRERROR_OK )
-		{
-			std::cout << "capture error" << std::endl;
-			continue;
-		}
+    Image rawImage;
+    Error error = camera.RetrieveBuffer( &rawImage );
+    if ( error != PGRERROR_OK )
+    {
+      std::cout << "capture error" << std::endl;
+      continue;
+    }
 
-		// convert to rgb
-	  Image rgbImage;
+    // convert to rgb
+    Image rgbImage;
     rawImage.Convert( FlyCapture2::PIXEL_FORMAT_RGB12, &rgbImage );
 
-		// convert to OpenCV Mat
-		unsigned int rowBytes = (double)rgbImage.GetReceivedDataSize()/(double)rgbImage.GetRows();
-		cv::Mat image = cv::Mat(rgbImage.GetRows(), rgbImage.GetCols(), CV_8UC3, rgbImage.GetData(),rowBytes);
+    // convert to OpenCV Mat
+    unsigned int rowBytes = (double)rgbImage.GetReceivedDataSize()/(double)rgbImage.GetRows();
+    cv::Mat image = cv::Mat(rgbImage.GetRows(), rgbImage.GetCols(), CV_8UC3, rgbImage.GetData(),rowBytes);
 
-    findInterestingImage(image, 85, (12 * ppi), (72 * ppi));
+    identifyTargets(image, 85, (12 * ppi), (72 * ppi));
+
+    index++;
+    string frameNumber = static_cast<ostringstream*>( &(ostringstream() << index) )->str();
+    string imgName = imageSaveDirectory + frameNumber + ".PNG";
+    struct imageSaveThreadData imageSaveData;
+    imageSaveData.img = image.clone();
+    imageSaveData.imageSavePath = imgName;
+
+    pthread_t imageSaveThreadID;
+    pthread_attr_t attr;
+    pthread_attr_init(&attr);
+    pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
+    pthread_create(&imageSaveThreadID, &attr, saveFullImage, (void *)&imageSaveData);
   }
 
   return(0);
 }
 
-void findInterestingImage(Mat img, int thresh, int minSize, int maxSize){
+void identifyTargets(Mat img, int thresh, int minSize, int maxSize){
 
   Mat img_gray; Mat img_canny; Mat img_drawn; Mat img_cropped;
   vector<vector<Point> >contours;
@@ -120,19 +154,6 @@ void findInterestingImage(Mat img, int thresh, int minSize, int maxSize){
 
   for(int i = 0; i < contours.size(); i++){
     if(hierarchy[i][2] > 0){
-
-      /*
-      Scalar color = Scalar(rng.uniform(0, 255), rng.uniform(0, 255),
-          rng.uniform(0, 255));
-      drawContours(drawing, contours_poly, i, color, 1, 8,
-          vector<Vec4i>(), 0, Point());
-      rectangle(drawing, boundRect[i].tl(), boundRect[i].br(),
-          color, 2, 8, 0);
-
-      int h = boundRect[i].br().y - boundRect[i].tl().y;
-      int w = boundRect[i].br().x - boundRect[i].tl().x;
-      */
-
       int tiltH = static_cast<int>(minRect[i].size.width);
       int tiltW = static_cast<int>(minRect[i].size.height);
 
@@ -140,7 +161,7 @@ void findInterestingImage(Mat img, int thresh, int minSize, int maxSize){
         img_cropped = Mat(img, boundRect[i]);
         ss << cropCount;
         string cropNumber = ss.str();
-        string name = "./crops/crop" + cropNumber + ".jpg";
+        string name = cropsDirectoryPath + cropNumber + ".PNG";
         ss.str("");
 
         imwrite(name, img_cropped);
@@ -149,4 +170,13 @@ void findInterestingImage(Mat img, int thresh, int minSize, int maxSize){
     }
   }
   printf("image completed. Crops so far is %i\n\n", cropCount);
+}
+
+void saveFullImage(void *threadData) {
+  struct imageSaveThreadData *imgData;
+  imgData = (imageSaveThreadData *) threadData;
+
+  imwrite(imgData->imageSavePath, imgData->img);
+
+  pthread_exit(NULL);
 }

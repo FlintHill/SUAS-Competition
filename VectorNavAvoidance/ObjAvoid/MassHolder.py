@@ -12,7 +12,6 @@ class MassHolder:
     def __init__(self):
         self.masses = []
         self.droneMasses = []
-        self.tickCount = 0
 
     def __getitem__(self, index):
         return self.masses[index]
@@ -37,12 +36,6 @@ class MassHolder:
             self.droneMasses[i].getNavVectorMaker().draw(win)
 
     def draw(self, win):
-        '''for i in range(0, len(self)):
-            self[i].draw(win)'''
-
-        #middlePoint = MultiDimPoint([700,-500])
-        '''for i in range(0, len(self)):
-            self[i].draw(win)'''
         for i in range(0, len(self.droneMasses)):
             self.droneMasses[i].draw(win)
 
