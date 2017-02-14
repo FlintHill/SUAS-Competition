@@ -28,7 +28,7 @@ string cropsDirectoryPath = "/media/SSD/crops/";
 string fullImagesDirectoryPath = "/media/SSD/full_images/";
 
 void identifyTargets(Mat img, int thresh, int minSize, int maxSize);
-void saveFullImage(void *threadData);
+void *saveFullImage(void *threadData);
 
 int main(int argc, char** argv){
   Error error;
@@ -104,7 +104,7 @@ int main(int argc, char** argv){
 
     index++;
     string frameNumber = static_cast<ostringstream*>( &(ostringstream() << index) )->str();
-    string imgName = fullImagesDirectoryPath + frameNumber + ".PNG";
+    string imgName = fullImagesDirectoryPath + frameNumber + ".jpg";
     struct imageSaveThreadData imageSaveData;
     imageSaveData.img = image.clone();
     imageSaveData.imageSavePath = imgName;
@@ -161,7 +161,7 @@ void identifyTargets(Mat img, int thresh, int minSize, int maxSize){
         img_cropped = Mat(img, boundRect[i]);
         ss << cropCount;
         string cropNumber = ss.str();
-        string name = cropsDirectoryPath + cropNumber + ".PNG";
+        string name = cropsDirectoryPath + cropNumber + ".jpg";
         ss.str("");
 
         imwrite(name, img_cropped);
@@ -172,11 +172,11 @@ void identifyTargets(Mat img, int thresh, int minSize, int maxSize){
   printf("image completed. Crops so far is %i\n\n", cropCount);
 }
 
-void saveFullImage(void *threadData) {
+void *saveFullImage(void *threadData) {
   struct imageSaveThreadData *imgData;
-  imgData = (imageSaveThreadData *) threadData;
+  //imgData = (imageSaveThreadData *) threadData;
 
-  imwrite(imgData->imageSavePath, imgData->img);
+  //imwrite(imgData->imageSavePath, imgData->img);
 
   pthread_exit(NULL);
 }
