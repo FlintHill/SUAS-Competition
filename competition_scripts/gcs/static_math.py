@@ -24,14 +24,15 @@ def inverse_haversine(gps1, diff, bearing):
 
     :param gps1: The first GPS coordinate
     :type gps1: GPSCoordinates
-    :param diff: The difference in the [dY, dX, alt]
+    :param diff: The difference in the [dX, dY, alt]
     :param bearing: The bearing between the two points
     """
     alt = gps1.get_altitude() + diff[2]
 
-    diff_magnitude = float((diff[0]**2 + diff[1]**2)**0.5)
-    lat = gps1.get_latitude() + cos(diff_magnitude) / 107.82605
-    lon = gps1.get_longitude() + (diff_magnitude * sin(bearing) / (cos(degrees(lat)) * 111.32154))
+    diff_magnitude = float((diff[1]**2 + diff[0]**2)**0.5)
+    lat = gps1.get_latitude() + (diff_magnitude * cos(bearing) / 111.2)
+    lon = gps1.get_longitude()
+    lon += ((diff_magnitude * sin(bearing) / (cos(lat) * 111.321)) + (diff_magnitude * sin(bearing)  (cos(gps1.get_latitude()) * 111.321))) / 2.0
 
     return GPSCoordinates(lat, lon, alt)
 

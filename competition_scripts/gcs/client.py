@@ -12,6 +12,7 @@ from ClientConverter import ClientConverter
 from obstacle import Obstacle
 from waypoint import Waypoint
 from message import Message
+from ObjAvoid import *
 
 INTEROP_CLIENT_ADDRESS = ('localhost', 9000)
 TK1_ADDRESS = ('IP', 9001)
@@ -162,7 +163,7 @@ if __name__ == '__main__':
 	send_course_process = multiprocessing.Process(target=send_course, args=(logger_queue, logger_worker_configurer, guided_waypoint_input,))
 	send_course_process.start()
 
-	obstacle_map = ClientConverter(current_coordinates[0].as_gps())
+	obstacle_map = ClientConverter(current_coordinates[0].as_gps(), [])
 	is_obstacle_map_initialized = False
 
 	waypoints = json.load(open(waypoint_JSON_file_path, 'r'))["items"]
@@ -172,7 +173,8 @@ if __name__ == '__main__':
 
 	while True:
 		if not is_obstacle_map_initialized and current_coordinates[0].get_latitude() != 0.0:
-			obstacle_map = ClientConverter(current_coordinates[0])
+			obstacle_map = ClientConverter(current_coordinates[0].as_gps())
+			obstacle_map.setWaypoints(waypoints_list)
 			is_obstacle_map_initialized = True
 		elif is_obstacle_map_initialized:
 			initialCoords = obstacle_map.getInitialCoordinates()

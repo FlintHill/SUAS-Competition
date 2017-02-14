@@ -19,7 +19,6 @@ class Waypoint(GPSCoordinates):
         """
         super(GPSCoordinates, self).__init__(lat, lng, alt)
 
-    '''not sure if origin GPS is in lon, lat, or lat, lon'''
     def convert_to_point(self, originGPS):
         haversineDistance = static_math.haversine(originGPS, self)
         bearing = static_math.bearing(originGPS, self)
