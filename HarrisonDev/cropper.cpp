@@ -14,10 +14,6 @@ using namespace std;
 using namespace FlyCapture2;
 
 struct stat st = {0};
-struct imageSaveThreadData {
-  cv::Mat img;
-  string imageSavePath;
-};
 
 int cropCount = 0;
 stringstream ss;
@@ -26,7 +22,6 @@ string cropsDirectoryPath = "/media/SSD/crops/";
 string fullImagesDirectoryPath = "/media/SSD/full_images/";
 
 void identifyTargets(Mat img, int thresh, int minSize, int maxSize);
-void *saveFullImage(void *threadData);
 
 int main(int argc, char** argv){
   Error error;
@@ -101,15 +96,8 @@ int main(int argc, char** argv){
     index++;
     string frameNumber = static_cast<ostringstream*>( &(ostringstream() << index) )->str();
     string imgName = fullImagesDirectoryPath + frameNumber + ".PNG";
-    struct imageSaveThreadData imageSaveData;
-    imageSaveData.img = (cv::Mat)image.clone();
-    imageSaveData.imageSavePath = imgName;
 
-    pthread_t imageSaveThreadID;
-    pthread_attr_t attr;
-    pthread_attr_init(&attr);
-    pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
-    pthread_create(&imageSaveThreadID, &attr, saveFullImage, (void *)&imageSaveData);
+    imwrite(imgName, image);
   }
 
   return(0);
@@ -166,13 +154,4 @@ void identifyTargets(Mat img, int thresh, int minSize, int maxSize){
     }
   }
   printf("image completed. Crops so far is %i\n\n", cropCount);
-}
-
-void *saveFullImage(void *threadData) {
-  struct imageSaveThreadData *imgData;
-  imgData = (imageSaveThreadData *) threadData;
-
-  imwrite(imgData->imageSavePath, imgData->img);
-
-  pthread_exit(NULL);
 }
