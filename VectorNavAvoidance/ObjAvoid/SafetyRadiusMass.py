@@ -26,13 +26,9 @@ class SafetyRadiusMass(Mass):
 
     def getRequiredMassToBalanceMotion(self, droneMass):
         gravityUnitVector = self.getVectorToMass(droneMass).getUnitVector()
-        #print(gravityUnitVector)
-        #print("velocity vector: " + str(droneMass.getVelocityVector()))
         velocityVector = droneMass.getVelocityVector()
         projVector = gravityUnitVector.getProjectionOntoSelf(velocityVector)
-        #print(str(projVector))
         magProj = projVector.getMagnitude()
-        print(self.safetyRadius)
         massObject =(2*magProj*self.safetyRadius**2)/(MassHolder.GRAVITY_CONSTANT * self.timeIncrement)
         return massObject
 
