@@ -170,23 +170,20 @@ if __name__ == '__main__':
 	for json_waypoint in waypoints:
 		waypoints_list.append(Waypoint(json_waypoint["coordinate"][0], json_waypoint["coordinate"][1], json_waypoint["coordinate"][2]))
 
-	index = 0
 	while True:
 		if not is_obstacle_map_initialized and current_coordinates[0].get_latitude() != 0.0:
 			obstacle_map = ClientConverter(current_coordinates[0])
 			is_obstacle_map_initialized = True
 		elif is_obstacle_map_initialized:
-			if index == 50:
-				log("root", "Sending initial coordinates from main...")
-				initial_coordinates = obstacle_map.getInitialCoordinates()
-				guided_waypoint_output.send("lat " + str(initial_coordinates.get_latitude()) + " ")
-				guided_waypoint_output.send("lng " + str(initial_coordinates.get_longitude()) + " ")
-				guided_waypoint_output.send("alt " + str(initial_coordinates.get_altitude()) + " ")
-
 			initialCoords = obstacle_map.getInitialCoordinates()
 			haversine_distance = haversine(initialCoords, current_coordinates[0].as_gps())
 			updated_drone_location = ConverterDataUpdate(haversine_distance, current_coordinates[0].get_heading(), current_coordinates[0].get_altitude())
-			obstacle_map.updateMainDroneMass(updated_drone_location)
+			obj_avoid_coordinates = obstacle_map.updateMainDroneMass(updated_drone_location)
 
-			index += 1
+			if obj_avoid_coordinates:
+				log("root", "Sending avoid coordinates...")
+				guided_waypoint_output.send("lat " + str(obj_avoid_coordinates.get_latitude()) + " ")
+				guided_waypoint_output.send("lng " + str(obj_avoid_coordinates.get_longitude()) + " ")
+				guided_waypoint_output.send("alt " + str(obj_avoid_coordinates.get_altitude()) + " ")
+
 			sleep(0.5)

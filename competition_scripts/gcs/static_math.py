@@ -1,4 +1,5 @@
-from math import radians, cos, sin, asin, sqrt
+from math import radians, cos, sin, asin, sqrt, acos
+from gps_coordinates import GPSCoordinates
 
 def haversine(gps1, gps2):
     """
@@ -15,6 +16,24 @@ def haversine(gps1, gps2):
     c = 2 * asin(sqrt(a))
     r = 6371 # Radius of earth in kilometers. Use 3956 for miles
     return c * r
+
+def inverse_haversine(gps1, diff, bearing):
+    """
+    Calculate a second GPS point through using a single GPS point and a
+    different in XY units
+
+    :param gps1: The first GPS coordinate
+    :type gps1: GPSCoordinates
+    :param diff: The difference in the [dY, dX, alt]
+    :param bearing: The bearing between the two points
+    """
+    alt = gps1.get_altitude() + diff[2]
+
+    diff_magnitude = float((diff[0]**2 + diff[1]**2)**0.5)
+    lat = gps1.get_latitude() + cos(diff_magnitude) / 107.82605
+    lon = gps1.get_longitude() + (diff_magnitude * sin(bearing) / (cos(degrees(lat)) * 111.32154))
+
+    return GPSCoordinates(lat, lon, alt)
 
 def bearing(gps1, gps2):
     bearing = atan2(sin(gps2.get_longitude()-gps1.get_longitude())*cos(gps2.get_longitude()), cos(gps1.get_latitude())*sin(lat2)-sin(gps1.get_latitude())*cos(gps2.get_latitude())*cos(gps2.get_longitude()-gps1.get_longitude()))

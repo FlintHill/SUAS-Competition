@@ -8,7 +8,8 @@ from ObjAvoid import DroneMass
 from ObjAvoid import Mass
 from ObjAvoid import MultiDimPoint
 from current_coordinates import CurrentCoordinates
-from math import sin, cos
+from math import sin, cos, atan
+from static_math import *
 
 class ClientConverter(object):
 
@@ -21,11 +22,8 @@ class ClientConverter(object):
         self.initialCoordinates = initialCoordinatesIn
         self.initMainDroneMass()
 
-
-
     def getInitialCoordinates(self):
         return self.initialCoordinates
-
 
     def initMainDroneMass(self):
         self.mainDroneMass = DroneMass(self.massHolder, MultiDimPoint([0,0,self.initialCoordinates.get_altitude()]), DroneMass.DEFAULT_DRONE_MASS)
@@ -35,10 +33,8 @@ class ClientConverter(object):
         for i in range(0, len(waypointsIn)):
             self.mainDroneMass.getVectorNavMaker().add_waypoint(waypointsIn[i])
 
-
     '''takes an converter_data_update object that wraps altitude, haversine distance, and heading from the current position
     to the position the drone needs to travel.
-
     '''
     def updateMainDroneMass(self, updateData):
         dy = updateData.get_haversine_distance() * sin(updateData.get_heading())#where DY is change in y from initial GPS point
@@ -46,6 +42,14 @@ class ClientConverter(object):
         newDronePoint =  MultiDimPoint([dy, dx, updateData.get_altitude()])
         self.mainDroneMass.setPoint(newDronePoint)
 
+        if self.mainDroneMass.getNetForceVector().getMagnitude() > 0:
+            self.mainDroneMass.applyMotions()
+            appliedPoint = self.mainDroneMass.getPoint()
+            bearing = atan(appliedPoint[0] / appliedPoint[1])
+
+            return inverse_haversine(self.getInitialCoordinates(), [appliedPoint[0], appliedPoint[1], updateData.get_altitude()], bearing)
+
+        return None
 
     '''reminder not to switch to guided mode unless there are nearby obstacles nearby. Search all the masses
     in massHolder to see if any are close enough that they should be avoided'''

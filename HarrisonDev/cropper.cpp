@@ -9,15 +9,13 @@
 #include <stdlib.h>
 #include <pthread.h>
 
-#define IMG_CAPTURE_RATE 2.0;
-
 using namespace cv;
 using namespace std;
 using namespace FlyCapture2;
 
 struct stat st = {0};
 struct imageSaveThreadData {
-  Mat img;
+  cv::Mat img;
   string imageSavePath;
 };
 
@@ -81,8 +79,6 @@ int main(int argc, char** argv){
 
   int index = 0;
   while (1) {
-    sleep(1.0 / IMG_CAPTURE_RATE);
-
     // Get the image
     Image rawImage;
     Error error = camera.RetrieveBuffer( &rawImage );
@@ -104,9 +100,9 @@ int main(int argc, char** argv){
 
     index++;
     string frameNumber = static_cast<ostringstream*>( &(ostringstream() << index) )->str();
-    string imgName = fullImagesDirectoryPath + frameNumber + ".jpg";
+    string imgName = fullImagesDirectoryPath + frameNumber + ".PNG";
     struct imageSaveThreadData imageSaveData;
-    imageSaveData.img = image.clone();
+    imageSaveData.img = (cv::Mat)image.clone();
     imageSaveData.imageSavePath = imgName;
 
     pthread_t imageSaveThreadID;
@@ -161,7 +157,7 @@ void identifyTargets(Mat img, int thresh, int minSize, int maxSize){
         img_cropped = Mat(img, boundRect[i]);
         ss << cropCount;
         string cropNumber = ss.str();
-        string name = cropsDirectoryPath + cropNumber + ".jpg";
+        string name = cropsDirectoryPath + cropNumber + ".PNG";
         ss.str("");
 
         imwrite(name, img_cropped);
@@ -174,9 +170,9 @@ void identifyTargets(Mat img, int thresh, int minSize, int maxSize){
 
 void *saveFullImage(void *threadData) {
   struct imageSaveThreadData *imgData;
-  //imgData = (imageSaveThreadData *) threadData;
+  imgData = (imageSaveThreadData *) threadData;
 
-  //imwrite(imgData->imageSavePath, imgData->img);
+  imwrite(imgData->imageSavePath, imgData->img);
 
   pthread_exit(NULL);
 }
