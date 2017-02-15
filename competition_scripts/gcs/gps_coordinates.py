@@ -1,4 +1,8 @@
+from abc import ABCMeta
+
 class GPSCoordinates:
+
+    __metaclass__ = ABCMeta
 
     def __init__(self, lat, lon, alt):
         self.lat = lat

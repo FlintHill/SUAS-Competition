@@ -17,7 +17,7 @@ class Waypoint(GPSCoordinates):
         :param lng: The longtitude of the waypoint
         :param alt: The altitude of the waypoint
         """
-        super(GPSCoordinates, self).__init__(lat, lng, alt)
+        super(Waypoint, self).__init__(lat, lng, alt)
 
     def convert_to_point(self, originGPS):
         haversineDistance = static_math.haversine(originGPS, self)

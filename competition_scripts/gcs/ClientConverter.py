@@ -26,7 +26,7 @@ class ClientConverter(object):
         return self.initialCoordinates
 
     def initMainDroneMass(self):
-        self.mainDroneMass = DroneMass(self.massHolder, MultiDimPoint([0,0,self.initialCoordinates.get_altitude()]), DroneMass.DEFAULT_DRONE_MASS)
+        self.mainDroneMass = DroneMass(self.massHolder, MultiDimPoint([0,0,self.initialCoordinates.get_altitude()]), DroneMass.DEFAULT_DRONE_MASS, [])
 
     '''pass waypoint list from here. Shouldn't need to be updated afterward.'''
     def setWaypoints(self, waypointsIn):
