@@ -20,25 +20,89 @@ from root.nested.Drawer import Drawer
 from root.nested.Point import Point
 from root.nested.FontFitter import FontFitter
 from root.nested.HoughLine import HoughLine
+from root.nested.SWT import SWT
+from root.nested.PictureMatrix import PictureMatrix
+from root.nested.CovarianceMatrix import CovarianceMatrix
+from root.nested.Stat import Stat
+from root.nested.PolarSideCounter import PolarSideCounter
 startTime = timeit.default_timer()
+    
+
+shapeImg = Image.open("/Users/phusisian/Desktop/Senior year/SUAS/Object images/squaretest.jpg")
+shapeImg = shapeImg.resize((shapeImg.size[0]/4, shapeImg.size[1]/4))
+#shapeImg = shapeImg.rotate(-10)
+shapeImage = shapeImg.load()
+shapeImg = GrayScale.getGrayScaledImage(shapeImg, shapeImage)
+shapeImg = GaussianBlur.getGaussianFilteredImg(shapeImg, shapeImage, 5, 2)
+shapeImage = shapeImg.load()
+shapeImg.show()
+shapeSobel = SobelEdge(shapeImg, shapeImage)
+
+shapeCannyImg = CannyEdge.getCannyEdgeImage(shapeSobel, 40, 10)
+shapeCannyImg = shapeCannyImg.rotate(0, expand=True)
+shapeCannyImg.show()
+
+polarSideCounter = PolarSideCounter(shapeCannyImg, shapeCannyImg.load())
+
+'''
 
 FONT_STRING = "Amble-Regular.ttf"
+oFrame = LetterFrame("G", FONT_STRING, 100)
+oFrame.getLetterImg().show()
+oFrame.getSobelEdge().getSobelEdgeImg().show()
+oFrame.getCannyImg().show()
+swt = SWT(oFrame.getSobelEdge(), oFrame.getCannyImg(), oFrame.getCannyImg().load())
+swtimg = swt.getFrameImg((0,0,255))
+swtimg.show()
 
-'''pentagonImg = Image.open("/Users/phusisian/Desktop/Senior year/SUAS/Object Images/hexagontest.jpg")
-pentagonImage = pentagonImg.load()
+oMatrix = PictureMatrix(swtimg, swtimg.load())
+covarMatrix = oMatrix#CovarianceMatrix(oMatrix)
+eigenvectors = Stat.get2dEigenvectors(covarMatrix)
+center = (oFrame.getCannyImg().size[0]/2, oFrame.getCannyImg().size[1]/2)
+print("Eigenvectors: " + str(eigenvectors))
+for i in range(0, len(eigenvectors)):
+    eigenvectors[i] *= 10
+    eigenvectors[i].draw2D(oFrame.getCannyImg(), oFrame.getCannyImg().load(), (int(covarMatrix.getMeans()[0] + center[0]), int(covarMatrix.getMeans()[1] + center[1])),(255,0,0))
+oFrame.getCannyImg().show()
 
-pentagonImg = GrayScale.getGrayScaledImage(pentagonImg, pentagonImage)
-pentaSobel = SobelEdge(pentagonImg, pentagonImage)
-pentaCanny = CannyEdge.getCannyEdgeImage(pentaSobel, 40, 10)
-pentaLine = HoughLine(pentaCanny, pentaCanny.load())
-pentaLine.drawLinesOverThreshold(pentaCanny, pentaCanny.load(), 55, (255,0,0)).show()'''
+
+penImg = Image.open("/Users/phusisian/Desktop/Senior year/SUAS/Object images/Pen.jpg")
+penImage = penImg.load()
+penImg = GaussianBlur.getGaussianFilteredImg(penImg, penImage, 5, 7)
+penImage = penImg.load()
+penSobel = SobelEdge(penImg, penImage)
+penCannyImg = CannyEdge.getCannyEdgeImage(penSobel, 16, 8)
+penCannyImg.show()
+penMatrix = PictureMatrix(penCannyImg, penCannyImg.load())
+penCovariance = CovarianceMatrix(penMatrix)
+penEigenvectors = Stat.get2dEigenvectors(penCovariance)
+print("Eigenvectors: " + str(penEigenvectors))
+center = (penCannyImg.size[0]/2, penCannyImg.size[1]/2)
+for i in range(0, len(penEigenvectors)):
+    penEigenvectors[i] *= 100
+    penEigenvectors[i].draw2D(penCannyImg, penCannyImg.load(), (int(penCovariance.getMeans()[0] + center[0]), int(penCovariance.getMeans()[1] + center[1])), (255,0,0))
+
+penCannyImg.show()
 
 
-#print(pentaLine)
-#pentaLine.drawLinesOverThreshold(pentaCanny, pentaCanny.load(), 200)#drawHighestWeightPosition(pentaCanny, pentaCanny.load())
-#pentaCanny.show()
-#HarrisCorner.getCorners(pentaCanny, pentaCanny.load(), pentaSobel, 3, 5, 10000)
-#pentaCanny.show()
+
+
+
+
+'''
+'''reminder to threshold canny'''
+
+
+
+
+
+
+
+
+
+
+
+'''
 
 imageFinder = ImageFinder("/Users/phusisian/Desktop/Senior year/SUAS/Generated Targets", ".png")
 imageFinder.waitUntilImagePresent()
@@ -77,4 +141,4 @@ for i in range(0, len(frames)):
     print("Letter: " + checkLetter + " Answer: " + answerLetter + " Correct? " + str(checkLetter == answerLetter))
 
 print("Accuracy: " + str(float(numCorrect/26.0)*100) + "%")
-print("time taken: " + str(timeit.default_timer() - startTime))
+print("time taken: " + str(timeit.default_timer() - startTime))'''

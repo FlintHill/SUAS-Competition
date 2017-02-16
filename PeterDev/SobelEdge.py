@@ -15,10 +15,21 @@ class SobelEdge:
         self.image = imageIn
         self.img = imgIn
         self.setImageGradients()
+        self.initMagGradients()
         self.setSobelEdgeImg() 
         self.setAngles()
 
         
+    def initMagGradients(self):
+        self.magGradients = [[0 for i in range(0, len(self.gradients[0][0]))] for j in range(0, len(self.gradients[0]))]
+        for x in range(0, len(self.magGradients)):
+            for y in range(0, len(self.magGradients[0])):
+                self.magGradients[x][y] = math.sqrt( self.gradients[0][x][y]**2 + self.gradients[1][x][y]**2 ) 
+      
+    
+    def getMagGradients(self):
+        return self.magGradients
+      
     def setImageGradients(self):
         gradients = numpy.zeros( (2, self.img.size[0], self.img.size[1]) )#[0 for i in range(0, len(sobelKernel))][0 for j in range(0, img.size[0])][0 for k in range(0, img.size[1])]
         
@@ -37,7 +48,7 @@ class SobelEdge:
         
         for x in range(0, outputImage.size[0]):
             for y in range(0, outputImage.size[1]):
-                magColor = int(math.sqrt( (self.gradients[0][x][y])**2 + (self.gradients[1][x][y])**2 ))
+                magColor = int(self.magGradients[x][y])
                 image[x,y] = (magColor, magColor, magColor)
         
         self.sobelEdgeImg = outputImage

@@ -32,9 +32,13 @@ class LetterFrame:
         cropLayer.cropLayerToBounds()
         self.letterImg = cropLayer.getColorImg()
         self.letterImage = cropLayer.getColorImage()#may not be necessary to update letterImage, might update on crop
+        self.letterImg = self.letterImg.rotate(0, Image.BICUBIC)
+        self.letterImage = self.letterImg.load()
         self.sobelEdge = SobelEdge(self.letterImg, self.letterImage)
         #self.angleFitter = AngleFitter(self.sobelEdge)
-        self.cannyImg = CannyEdge.getCannyEdgeImage(self.sobelEdge, 40, 20)
+        self.cannyImg = CannyEdge.getCannyEdgeImageText(self.sobelEdge, 40, 20)#(self.sobelEdge, 40, 20)
+        #self.cannyImg = self.cannyImg.rotate(30)
+        #self.cannyImage = self.cannyImg.load()
         self.corners = HarrisCorner.getCorners(self.letterImg, self.letterImage, self.sobelEdge, LetterFrame.HARRIS_KERNELSIZE, LetterFrame.HARRIS_STDDEV, LetterFrame.HARRIS_THRESHOLD)
         self.houghCircles = HoughCircles(self.cannyImg, self.cannyImg.load(), LetterFrame.RADIUS_BOUNDS)
         self.circles = self.houghCircles.getCirclesOverThreshold(LetterFrame.CIRCLE_THRESHOLD)
@@ -95,9 +99,10 @@ class LetterFrame:
     def setLetterImg(self):
         self.letterImg = Image.new("RGB", (self.size*3,self.size*3))
         draw = ImageDraw.Draw(self.letterImg)
-        draw.fontmode = "0" #one sets to not antialias. If camera antialiases, set to zero.
+        draw.fontmode = "1" #one sets to not antialias. If camera antialiases, set to zero.
         draw.text((1,1), self.letter, (255,255,255), font = self.font)
         self.letterImage = self.letterImg.load()
-        #self.letterImg = GaussianBlur.getGaussianFilteredImage(self.letterImg, self.letterImage, 3)
+        self.letterImg = GaussianBlur.getGaussianFilteredImg(self.letterImg, self.letterImage, 5, 2)
+        self.letterImage = self.letterImg.load()
     
         
