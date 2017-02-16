@@ -3,10 +3,7 @@ Created on Jan 27, 2017
 
 @author: phusisian
 '''
-from ObjAvoid import MassHolder
-from ObjAvoid import DroneMass
-from ObjAvoid import Mass
-from ObjAvoid import MultiDimPoint
+from ObjAvoid import *
 from current_coordinates import CurrentCoordinates
 from math import sin, cos, atan2
 from static_math import *
@@ -21,6 +18,8 @@ class ClientConverter(object):
         self.massHolder = MassHolder()
         self.initialCoordinates = initialCoordinatesIn
         self.initMainDroneMass()
+        self.addRandomMasses(40)
+        self.window = Window(self.massHolder, (1440,900))
 
     def getInitialCoordinates(self):
         return self.initialCoordinates
@@ -37,6 +36,11 @@ class ClientConverter(object):
         for i in range(0, len(convertedWaypointsIn)):
             self.mainDroneMass.getVectorNavMaker().add_waypoint(convertedWaypointsIn[i])
 
+    def addRandomMasses(self, numMasses):
+        randPoints = TestFunctions.getRandomPointsInBounds(2, numMasses, ((-700, 700), (-500, 500)))
+        for i in range(0, len(randPoints)):
+            self.massHolder.appendMass(SafetyRadiusMass(self.massHolder, randPoints[i], 500, 20, Window.REFRESH_TIME))
+
     '''takes an converter_data_update object that wraps altitude, haversine distance, and heading from the current position
     to the position the drone needs to travel.
     '''
@@ -45,6 +49,7 @@ class ClientConverter(object):
         dx = updateData.get_haversine_distance() * cos(updateData.get_heading())#where DX is change in x from initial GPS point
         newDronePoint =  MultiDimPoint([dx, dy, updateData.get_altitude()])
         self.mainDroneMass.setPoint(newDronePoint)
+        self.window.drawSingle()
 
         if self.mainDroneMass.getNetForceVector().getMagnitude() > 0:
             self.mainDroneMass.applyMotions()
@@ -54,6 +59,3 @@ class ClientConverter(object):
             return inverse_haversine(self.getInitialCoordinates(), [appliedPoint[0], appliedPoint[1], updateData.get_altitude()], bearing)
 
         return None
-
-    '''reminder not to switch to guided mode unless there are nearby obstacles nearby. Search all the masses
-    in massHolder to see if any are close enough that they should be avoided'''

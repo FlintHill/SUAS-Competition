@@ -15,13 +15,18 @@ class Window:
         self.drawable = drawable
         self.graphWin = GraphWin("Masses", self.dim[0], self.dim[1])
         #self.centerPoint = (720, 510)
-        self.drawLoop()
+        #self.drawLoop()
 
     def getGraphWin(self):
         return self.graphWin
 
     def getCenterPoint(self):
         return self.centerPoint
+
+    def drawSingle(self):
+        self.drawable.drawStationaryObjects(self)
+        self.drawable.tick()
+        self.drawable.draw(self)
 
     def drawLoop(self):
         self.drawable.drawStationaryObjects(self)
