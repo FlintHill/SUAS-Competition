@@ -14,8 +14,6 @@ def get_canny_img(sobel_edge, thresholds):
             if pixel_is_max_across_edge(sobel_edge, (x,y), sobel_edge.get_gradient_mags()[x][y], sobel_edge.get_gradient_angles()[x][y]) and sobel_edge.get_gradient_mags()[x][y] > thresholds[0]:
                 out_image[x,y] = 255
     return basic_threshold_img(out_img, out_image, sobel_edge.get_gradient_mags(), thresholds[1])
-    #out_img.show()
-    #return out_img
 
 
 def pixel_is_max_across_edge(sobel_edge, pixel, pixel_mag, angle):
@@ -50,7 +48,7 @@ def basic_threshold_img(img, image, mag_gradients, lower_threshold):
     image_copy = img_copy.load()
     for x in range(1, img_copy.size[0] - 1):
         for y in range(1, img_copy.size[1] - 1):
-            if image_copy[x,y] != 255 and mag_gradients[x][y] >= lower_threshold and pixel_surrounded_by_edges(image, (x,y), 3, 2):
+            if image_copy[x,y] != 255 and mag_gradients[x][y] >= lower_threshold and pixel_surrounded_by_edges(image, (x,y), 2, 2):
                 image_copy[x,y] = THRESHOLD_COLOR
     return  img_copy
 

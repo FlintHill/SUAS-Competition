@@ -7,7 +7,15 @@ def convolute(img_in, kernel):
         for y in range((len(kernel[0])-1)/2, img.size[1] - (len(kernel[0])-1)/2):
             image[x,y] = int(get_kernel_sum_of_pixel((x,y), image_original, kernel))
     return img
-            
+
+def convolute_array(img_in, kernel):
+    image_original = img_in.load()
+    arr = [[0 for j in range(0, img_in.size[1])] for i in range(0, img_in.size[0])]
+    for x in range((len(kernel) - 1)/2, len(arr) - (len(kernel)-1)/2):
+        for y in range((len(kernel[0])-1)/2, len(arr[0]) - (len(kernel[0])-1)/2):
+            arr[x][y] = int(get_kernel_sum_of_pixel((x,y), image_original, kernel))
+    return arr
+     
 def get_kernel_sum_of_pixel(pixel, image, kernel):
     sum = 0
     gap_num = (len(kernel)-1)/2

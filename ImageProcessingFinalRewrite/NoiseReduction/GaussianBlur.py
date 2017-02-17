@@ -22,7 +22,6 @@ def get_gaussian_kernel(kernel_size, std_dev):
         kernel_x += 1
     
     sum = numpy.sum(numpy.array(kernel))
-    print(sum)
     for x in range(0, len(kernel)):
         for y in range(0, len(kernel[0])):
             kernel[x][y] /= sum
