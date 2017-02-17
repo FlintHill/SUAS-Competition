@@ -18,8 +18,7 @@ class ClientConverter(object):
         self.massHolder = MassHolder()
         self.initialCoordinates = initialCoordinatesIn
         self.initMainDroneMass()
-        self.addRandomMasses(40)
-        self.window = Window(self.massHolder, (1440,900))
+        self.addRandomMasses(10)
 
     def getInitialCoordinates(self):
         return self.initialCoordinates
@@ -37,7 +36,7 @@ class ClientConverter(object):
             self.mainDroneMass.getNavVectorMaker().add_waypoint(convertedWaypointsIn[i])
 
     def addRandomMasses(self, numMasses):
-        randPoints = TestFunctions.getRandomPointsInBounds(2, numMasses, ((-700, 700), (-500, 500)))
+        randPoints = TestFunctions.getRandomPointsInBoundsDrone(2, numMasses, 75, ((-700, 700), (-500, 500)))
         for i in range(0, len(randPoints)):
             self.massHolder.appendMass(SafetyRadiusMass(self.massHolder, randPoints[i], 500, 20, Window.REFRESH_TIME))
 
@@ -49,7 +48,8 @@ class ClientConverter(object):
         dx = updateData.get_haversine_distance() * cos(updateData.get_heading())#where DX is change in x from initial GPS point
         newDronePoint =  MultiDimPoint([dx, dy, updateData.get_altitude()])
         self.mainDroneMass.setPoint(newDronePoint)
-        self.massHolder.draw(self.window)
+        print(self.massHolder)
+        print(self.mainDroneMass)
 
         if self.mainDroneMass.getNetForceVector().getMagnitude() > 0:
             self.mainDroneMass.applyMotions()
