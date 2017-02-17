@@ -34,7 +34,7 @@ class ClientConverter(object):
             convertedWaypointsIn.append(waypoint.convert_to_point(self.getInitialCoordinates()))
 
         for i in range(0, len(convertedWaypointsIn)):
-            self.mainDroneMass.getVectorNavMaker().add_waypoint(convertedWaypointsIn[i])
+            self.mainDroneMass.getNavVectorMaker().add_waypoint(convertedWaypointsIn[i])
 
     def addRandomMasses(self, numMasses):
         randPoints = TestFunctions.getRandomPointsInBounds(2, numMasses, ((-700, 700), (-500, 500)))
@@ -49,7 +49,7 @@ class ClientConverter(object):
         dx = updateData.get_haversine_distance() * cos(updateData.get_heading())#where DX is change in x from initial GPS point
         newDronePoint =  MultiDimPoint([dx, dy, updateData.get_altitude()])
         self.mainDroneMass.setPoint(newDronePoint)
-        self.window.drawSingle()
+        self.massHolder.draw(self.window)
 
         if self.mainDroneMass.getNetForceVector().getMagnitude() > 0:
             self.mainDroneMass.applyMotions()

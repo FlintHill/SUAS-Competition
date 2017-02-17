@@ -1,4 +1,4 @@
-from math import radians, cos, sin, asin, sqrt, acos
+from math import radians, cos, sin, asin, sqrt, acos, atan2
 from gps_coordinates import GPSCoordinates
 
 def haversine(gps1, gps2):
@@ -37,5 +37,5 @@ def inverse_haversine(gps1, diff, bearing):
     return GPSCoordinates(lat, lon, alt)
 
 def bearing(gps1, gps2):
-    bearing = atan2(sin(gps2.get_longitude()-gps1.get_longitude())*cos(gps2.get_longitude()), cos(gps1.get_latitude())*sin(lat2)-sin(gps1.get_latitude())*cos(gps2.get_latitude())*cos(gps2.get_longitude()-gps1.get_longitude()))
+    bearing = atan2(sin(gps2.get_longitude()-gps1.get_longitude())*cos(gps2.get_longitude()), cos(gps1.get_latitude())*sin(gps2.get_longitude())-sin(gps1.get_latitude())*cos(gps2.get_latitude())*cos(gps2.get_longitude()-gps1.get_longitude()))
     return bearing
