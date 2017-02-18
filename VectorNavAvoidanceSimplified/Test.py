@@ -1,31 +1,37 @@
 '''
-Created on Jan 10, 2017
+Created on Feb 18, 2017
 
-@author: phusisian
+@author: vtolpegin
 '''
 import random
-from ObjAvoid import *
+import numpy as np
+from ObjAvoidSimplified import *
 
 class Test:
 
     def __init__(self):
-        self.massHolder = MassHolder()
-        self.droneMass = DroneMass(self.massHolder, MultiDimPoint([0,0]), 1, TestFunctions.getRandomPointsInBounds(2, 20, ((-700, 700), (-500,500))))#MultiDimPoint([0,0]), 1, [MultiDimPoint([200, 200]), MultiDimPoint([400, -200])])
-        self.massHolder.appendDroneMass(self.droneMass)
-        self.addRandomMasses(40)
-        self.window = Window(self.massHolder, (1440,900))
+        mass_holder = MassHolder()
+        drone_mass_holder = DroneMassHolder(DroneMass(np.array([0,0]), 10))
+        random_masses = generate_random_masses(40)
+        for random_mass in random_masses:
+            mass_holder.append_mass(random_mass)
 
-    def addRandomMasses(self, numMasses):
-        randPoints = TestFunctions.getRandomPointsInBounds(2, numMasses, ((-700, 700), (-500, 500)))
-        for i in range(0, len(randPoints)):
-            self.massHolder.appendMass(SafetyRadiusMass(self.massHolder, randPoints[i], 500, 20, Window.REFRESH_TIME))
+        self.map = Map(mass_holder, drone_mass_holder)
 
-    def drawStationaryObjects(self, win):
-        self.massHolder.drawStationaryObjects(win)
+    def generate_random_masses(self, number_masses):
+        masses = []
+        random_masses = get_random_points_in_bounds(2, number_masses, ((-50, 50), (-50,50)))
+        for i in range(0, len(random_masses)):
+            masses.append(SafetyRadiusMass(random_masses[i], 500, 20))
 
-    def draw(self, win):
-        self.massHolder.tick()
-        self.massHolder.draw(win)
+        return masses
+
+    def run_test(self):
+        while True:
+            self.map.avoid_obstacles()
+
+            print(self.map)
 
 if __name__ == '__main__':
     my_test = Test()
+    my_test.run_test()

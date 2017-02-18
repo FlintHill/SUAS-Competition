@@ -4,13 +4,14 @@ Created on Feb 17, 2017
 @author: vtolpegin
 '''
 from ObjAvoidSimplified import *
+import numpy as np
 
 class DroneMass(Mass):
 
     DEFAULT_DRONE_MASS = 1
 
     def __init__(self, mass, waypoints):
-        super(DroneMass, self).__init__([0,0], mass)
+        super(DroneMass, self).__init__(np.array([0,0]), mass)
 
         self.force_vector = Vector.createEmptyVectorWithDim(len(self.getPoint()))
         self.waypoint_holder = WaypointHolder(waypoints)

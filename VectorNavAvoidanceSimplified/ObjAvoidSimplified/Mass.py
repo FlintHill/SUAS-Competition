@@ -29,5 +29,5 @@ class Mass(object):
         self.point = new_point
 
     def __repr__(self):
-        returnString = "Mass at: " + str(self.point)
-        return returnString
+        return_string = "Mass at: " + str(self.point)
+        return return_string

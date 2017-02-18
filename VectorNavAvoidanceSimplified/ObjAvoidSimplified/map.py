@@ -5,15 +5,15 @@ class Map(object):
     Wrapper class for a map where obstacles are placed
     """
 
-    def __init__(self, masses, drone_mass):
+    def __init__(self, mass_holder, drone_mass_holder):
         """
         Initialize
 
-        :param masses: The masses to initialize the map with
-        :param drone_mass: The drone mass for the map
+        :param mass_holder: The masse holder to initialize the map with
+        :param drone_mass_holder: The drone mass holder for the map
         """
-        self.mass_holder = MassHolder(masses)
-        self.drone_mass_holder = drone_mass
+        self.mass_holder = mass_holder
+        self.drone_mass_holder = drone_mass_holder
 
     def append_mass(self, mass):
         """
@@ -44,3 +44,9 @@ class Map(object):
         """
         self.drone_mass_holder.set_drone_position(new_drone_location)
         self.mass_holder.update_obstacle_mass(self.drone_mass_holder.get_drone_mass())
+
+    def __repr__(self):
+        representation = str(self.mass_holder) + "\n"
+        representation += str(self.drone_mass_holder) + "\n"
+
+        return representation
