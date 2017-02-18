@@ -21,7 +21,13 @@ class ColorLayer:
             for y in range(0, self.layer_img.size[1]):
                 if self.layer_image[x,y] != 255 and color_layer_in.get_layer_image()[x,y] == 255:
                     self.layer_image[x,y] = 255
-    
+                    
+    def get_layer_filled_with_layer(self, color_layer_in):
+        layer_clone = self.clone()
+        layer_clone.fill_with_color_layer(color_layer_in)
+        return layer_clone
+        
+        
     def init_bounds(self):
         self.bounds = Crop.get_bw_img_bounds(self.layer_img, self.layer_image)    
     
@@ -34,5 +40,17 @@ class ColorLayer:
     def get_layer_img(self):
         return self.layer_img
     
+    def set_layer_img(self, img_in):
+        self.layer_img = img_in
+        self.layer_image = self.layer_img.load()
+        self.init_bounds()
+        #needs to recalculate area!
+    
     def get_layer_image(self):
         return self.layer_image
+    
+    def clone(self):
+        clone_layer = ColorLayer(self.color, self.layer_img.size)
+        clone_layer.set_layer_img(self.layer_img.copy())
+        #clone_layer.get_layer_img().show()
+        return clone_layer

@@ -2,7 +2,7 @@ from Color.ColorLayers import ColorLayers
 from Color.ColorLayer import ColorLayer
 import Color.ColorMath as ColorMath
 import Array.ArrayHelper as ArrayHelper
-from Stat.KMeans import KMeans
+from ImgStat.KMeans import KMeans
 import time
 
 class ColorSplitter:
@@ -34,7 +34,7 @@ class ColorSplitter:
                 self.color_layers[color_index].paint_pixel((x,y))    
     
     def sort_by_area(self):
-        self.color_layers = sorted(self.color_layers, key=lambda layer: layer.get_area())
+        self.color_layers.set_color_layers( sorted(self.color_layers, key=lambda layer: layer.get_area()))
         
     '''sorting by area is a simple (not sure if always effective, needs testing) way to layer the image from
     front to back, allowing you to fill holes of layers beneath other layers'''

@@ -33,16 +33,14 @@ class PolarSideCounter:
         for x in range(0, self.canny_img.size[0]):
             for y in range(0, self.canny_img.size[1]):
                 if self.canny_image[x,y] == 255:
-                    
-                    #vectorFromCenter = Vector([x - self.origin[0], y - self.origin[1]])
                     pix_vector = numpy.array([x,y])
                     vector_from_origin = numpy.subtract(pix_vector, self.numpy_origin)
                     self.plot.append(RadiusAngle(numpy.linalg.norm(vector_from_origin), self.get_raycast_angle(vector_from_origin)))
         self.plot = sorted(self.plot, key = lambda angle: angle.get_angle())
-        #self.plot = numpy.asarray(self.plot, dtype=RadiusAngle)
     
     def get_raycast_angle(self, vector_from_origin):
-        angle = atan2(vector_from_origin[1], vector_from_origin[0])
+        '''y must be negative because of the flipped y axis'''
+        angle = atan2(-vector_from_origin[1], vector_from_origin[0])
         if angle < 0:
             angle += 2*pi
         return angle
@@ -59,8 +57,7 @@ class PolarSideCounter:
         
         for i in range(0, len(begin_last_slice)):
             self.plot.append(begin_last_slice[i])
-        
-        
+            
     def set_mean(self):
         self.mean = 0
         for i in range(0, len(self.plot)):
@@ -126,6 +123,9 @@ class RadiusAngle:
         self.radius = radiusIn
         self.angle = angleIn
         
+    def get_unit_vector(self):
+        return numpy.array([cos(self.angle), sin(self.angle)])
+      
     def get_radius(self):
         return self.radius
     
@@ -141,7 +141,7 @@ class RadiusAngle:
     def draw_dot(self, img, image, center, color):
         dx = int(self.radius * cos(self.angle))
         dy = int(self.radius * sin(self.angle))
-        rect = Rectangle(center[0]+dx - 4, center[1] + dy - 4, 8, 8)
+        rect = Rectangle(center[0]+dx - 4, center[1] - dy - 4, 8, 8)
         rect.fill(img, image, color)
         #Drawer.fillRect(img, image, rect, (0,255,0))
         #image[center[0]+dx, center[1]-dy] = (0,255,0)
