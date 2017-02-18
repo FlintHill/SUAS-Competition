@@ -1,9 +1,8 @@
 '''
-Created on Jan 23, 2017
+Created on Feb 18, 2017
 
-@author: phusisian
+@author: vtolpegin
 '''
-from ObjAvoidSimplified import MultiDimPoint
 
 class WaypointHolder(object):
 
