@@ -1,3 +1,4 @@
+from .constants import Constants
 from .graphics import *
 from .window import Window
 from .random_point_maker import *

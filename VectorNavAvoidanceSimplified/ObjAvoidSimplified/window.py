@@ -9,7 +9,6 @@ from time import sleep
 class Window:
     CENTERPOINT = (720, 510)
 
-    REFRESH_TIME = .01
     def __init__(self, drawable, dim):
         self.dim = dim
         self.drawable = drawable
@@ -27,4 +26,4 @@ class Window:
         while(True):
             self.drawable.avoid_obstacles()
             self.drawable.draw(self)
-            sleep(Window.REFRESH_TIME)
+            sleep(0.01)

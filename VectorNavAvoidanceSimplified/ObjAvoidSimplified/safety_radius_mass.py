@@ -22,7 +22,7 @@ class SafetyRadiusMass(Mass):
         velocity_vector = drone_mass.get_velocity_vector()
         projection_vector = VectorMath.get_vector_projection(grav_unit_vector, velocity_vector)
         projection_magnitude = VectorMath.get_vector_magnitude(projection_vector)
-        mass = (2 * projection_magnitude * self.safety_radius**2) / 100.0
+        mass = (projection_magnitude * self.safety_radius**2) / (Constants.GRAVITATIONAL_CONSTANT * Constants.REFRESH_RATE)
 
         return mass
 

@@ -13,7 +13,7 @@ class DroneMass(Mass):
 
         self.velocity_vector = np.zeros(len(self.get_point()))
         self.waypoint_holder = WaypointHolder(waypoints)
-        self.speed = 500
+        self.speed = Constants.DRONE_SPEED
 
     def add_waypoint(self, waypoint):
         self.waypoint_holder.add_waypoint(waypoint)
@@ -25,13 +25,13 @@ class DroneMass(Mass):
         self.set_point(self.get_point_after_velocity_applied(self.get_point(), net_velocity_vector))
 
     def get_point_after_velocity_applied(self, point, velocityVector):
-        return point + (velocityVector * 0.01)
+        return point + (velocityVector * Constants.REFRESH_RATE)
 
     def get_net_velocity_vector(self, mass_holder):
         self.velocity_vector = self.speed * VectorMath.get_unit_vector(self.get_point(), self.waypoint_holder.get_current_waypoint())
 
         net_force_vector = self.get_net_force_vector(mass_holder)
-        new_point = self.get_point() + ((net_force_vector / float(self.mass)) * 0.01**2)
+        new_point = self.get_point() + ((net_force_vector / float(self.mass)) * Constants.REFRESH_RATE**2)
         new_point = self.get_point_after_velocity_applied(new_point, self.velocity_vector)
 
         new_position_unit_vector = VectorMath.get_unit_vector(self.get_point(), new_point)
@@ -44,7 +44,7 @@ class DroneMass(Mass):
     def get_net_force_vector(self, mass_holder):
         net_force = np.zeros(len(self.get_point()))
         for mass_index in range(len(mass_holder)):
-            force = VectorMath.get_force(self, mass_holder[mass_index], 5000)
+            force = VectorMath.get_force(self, mass_holder[mass_index], Constants.GRAVITATIONAL_CONSTANT)
             unit_vector = -1.0 * VectorMath.get_unit_vector(self.get_point(), mass_holder[mass_index].get_point())
 
             net_force += force * unit_vector
@@ -58,7 +58,7 @@ class DroneMass(Mass):
         self.velocity_vector = vector
 
     def draw(self, win):
-        c = Circle(Point(int(self.point[0] + Window.CENTERPOINT[0]), int(Window.CENTERPOINT[1] - self.point[1])), 3)
+        c = Circle(Point(int(self.get_point()[0] + Window.CENTERPOINT[0]), int(Window.CENTERPOINT[1] - self.get_point()[1])), 3)
         c.setFill("red")
         c.draw(win.getGraphWin())
 

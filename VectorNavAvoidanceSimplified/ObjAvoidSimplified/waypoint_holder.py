@@ -7,8 +7,6 @@ from ObjAvoidSimplified import *
 
 class WaypointHolder(object):
 
-    MIN_DISTANCE_TO_TARGET = 5
-
     def __init__(self, waypoints):
         self.waypoints = waypoints
         self.waypoint_index = 0
@@ -35,7 +33,7 @@ class WaypointHolder(object):
         """
         reached_waypoint = False
         if self.waypoint_index < len(self.waypoints):
-            reached_waypoint = VectorMath.get_magnitude(drone_point, self.waypoints[self.waypoint_index]) < WaypointHolder.MIN_DISTANCE_TO_TARGET
+            reached_waypoint = VectorMath.get_magnitude(drone_point, self.waypoints[self.waypoint_index]) < Constants.MAX_DISTANCE_TO_TARGET
 
             if reached_waypoint and self.waypoint_index + 1 < len(self.waypoints):
                 self.waypoint_index += 1
