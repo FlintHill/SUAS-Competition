@@ -1,4 +1,5 @@
 from .random_point_maker import *
+from .vector_math import *
 from .mass_holder import MassHolder
 from .drone_mass_holder import DroneMassHolder
 from .mass import Mass

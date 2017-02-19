@@ -12,7 +12,7 @@ class Test:
     def __init__(self):
         mass_holder = MassHolder()
         drone_mass_holder = DroneMassHolder(DroneMass(np.array([0,0]), 10))
-        random_masses = generate_random_masses(40)
+        random_masses = generate_random_masses(5)
         for random_mass in random_masses:
             mass_holder.append_mass(random_mass)
 
