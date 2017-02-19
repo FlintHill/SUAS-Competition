@@ -32,3 +32,6 @@ class WaypointHolder(object):
                 self.waypoint_index += 1
 
         return reached_waypoint
+
+    def __len__(self):
+        return len(self.waypoints)

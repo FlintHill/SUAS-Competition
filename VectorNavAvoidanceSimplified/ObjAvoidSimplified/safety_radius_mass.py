@@ -16,6 +16,7 @@ class SafetyRadiusMass(Mass):
 
     def get_required_mass_to_balance_motion(self, drone_mass):
         # TODO: Do the math to figure out what the mass needs to be
+        return self.get_mass()
 
     def update_mass(self, drone_mass):
         self.set_mass(self.get_required_mass_to_balance_motion(drone_mass))

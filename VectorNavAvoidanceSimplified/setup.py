@@ -12,8 +12,8 @@ setup(
 
     url = 'https://github.com/FlintHill/SUAS-Competition',
 
-    author = 'Peter Hussisian',
-    author_email = 'phussisian@flinthill.org',
+    author = 'Vale Tolpegin',
+    author_email = 'vtolpegin@flinthill.org',
 
     license = 'MIT',
 

@@ -3,7 +3,7 @@ Created on Feb 17, 2017
 
 @author: vtolpegin
 '''
-from ObjAvoidSimplfied import *
+from ObjAvoidSimplified import *
 import random
 import math
 
