@@ -1,3 +1,5 @@
+from .graphics import *
+from .window import Window
 from .random_point_maker import *
 from .vector_math import *
 from .mass_holder import MassHolder

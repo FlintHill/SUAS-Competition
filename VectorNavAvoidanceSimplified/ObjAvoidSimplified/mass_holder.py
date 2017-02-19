@@ -31,8 +31,12 @@ class MassHolder(object):
 
         :param drone_mass: The drone mass to base the updates off of
         """
-        for index in range(self):
+        for index in range(len(self)):
             self[index].update_mass(drone_mass)
+
+    def draw(self, win):
+        for i in range(0, len(self)):
+            self[i].draw(win)
 
     def __getitem__(self, index):
         return self.masses[index]

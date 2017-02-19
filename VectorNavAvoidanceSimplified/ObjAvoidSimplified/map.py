@@ -27,8 +27,8 @@ class Map(object):
         """
         Run the map once to avoid obstacles
         """
-        # TODO: Run the program once, applying all motions
-        return None
+        self.drone_mass.apply_motions(self.mass_holder)
+        self.mass_holder.update_obstacle_mass(self.drone_mass)
 
     def add_waypoint(self, waypoint):
         """
@@ -59,6 +59,13 @@ class Map(object):
 
     def get_drone_mass(self):
         return self.drone_mass
+
+    def drawStationaryObjects(self, win):
+        self.mass_holder.draw(win)
+        self.drone_mass.get_waypoint_holder().draw(win)
+
+    def draw(self, win):
+        self.drone_mass.draw(win)
 
     def __repr__(self):
         representation = str(self.mass_holder) + "\n"

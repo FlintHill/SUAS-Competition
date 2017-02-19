@@ -13,6 +13,9 @@ class Mass(object):
         self.point = starting_point
         self.mass = mass
 
+        self.drawCircle = Circle(Point(int(self.point[0] + Window.CENTERPOINT[0]), int(Window.CENTERPOINT[1] - self.point[1])), 5)
+        self.drawCircle.setFill("red")
+
     def update_mass(self, drone_mass):
         pass
 
@@ -27,6 +30,9 @@ class Mass(object):
 
     def set_point(self, new_point):
         self.point = new_point
+
+    def draw(self, win):
+        self.drawCircle.draw(win.getGraphWin())
 
     def __repr__(self):
         return_string = "Mass at: " + str(self.point)
