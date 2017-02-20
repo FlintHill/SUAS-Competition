@@ -17,8 +17,8 @@ class VectorMath(object):
         if len(point_one) != len(point_two):
             raise ValueError("Point dimension mismatch")
 
-        diff = np.absolute(np.subtract(point_one, point_two))**2
-        dist = np.sum(diff)**0.5
+        diff = np.subtract(point_one, point_two)
+        dist = np.linalg.norm(diff)
 
         return dist
 
@@ -48,7 +48,7 @@ class VectorMath(object):
         """
         Returns the magnitude of the vector
         """
-        return np.sum(vector**2)**0.5
+        return np.linalg.norm(vector)
 
     @staticmethod
     def get_vector_projection(vector_one, vector_two):
