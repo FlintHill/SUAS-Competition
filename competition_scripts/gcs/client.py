@@ -175,13 +175,13 @@ if __name__ == '__main__':
 	while True:
 		if not is_obstacle_map_initialized and current_coordinates[0].get_latitude() != 0.0:
 			obstacle_map = ClientConverter(current_coordinates[0].as_gps())
-			obstacle_map.setWaypoints(waypoints_list)
+			obstacle_map.set_waypoints(np.array(waypoints_list))
 			is_obstacle_map_initialized = True
 		elif is_obstacle_map_initialized:
-			initialCoords = obstacle_map.getInitialCoordinates()
+			initialCoords = obstacle_map.get_initial_coordinates()
 			haversine_distance = haversine(initialCoords, current_coordinates[0].as_gps())
 			updated_drone_location = ConverterDataUpdate(haversine_distance, current_coordinates[0].get_heading(), current_coordinates[0].get_altitude())
-			obj_avoid_coordinates = obstacle_map.updateMainDroneMass(updated_drone_location)
+			obj_avoid_coordinates = obstacle_map.update_drone_mass_position(updated_drone_location)
 
 			if obj_avoid_coordinates:
 				log("root", "Sending avoid coordinates...")

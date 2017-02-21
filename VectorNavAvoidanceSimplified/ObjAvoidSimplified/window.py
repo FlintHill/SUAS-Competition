@@ -3,7 +3,7 @@ Created on Jan 10, 2017
 
 @author: phusisian
 '''
-from ObjAvoid import *
+from ObjAvoidSimplified import *
 from time import sleep
 
 class Window:

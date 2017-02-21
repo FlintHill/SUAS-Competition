@@ -44,6 +44,15 @@ class VectorMath(object):
         return unit_vector
 
     @staticmethod
+    def get_single_unit_vector(point_one):
+        """
+        Returns the unit vector of a vector
+        """
+        unit_vector = point_one / VectorMath.get_vector_magnitude(point_one)
+
+        return unit_vector
+
+    @staticmethod
     def get_vector_magnitude(vector):
         """
         Returns the magnitude of the vector

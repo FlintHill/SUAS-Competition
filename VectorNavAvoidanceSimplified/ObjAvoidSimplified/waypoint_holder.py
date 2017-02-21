@@ -27,7 +27,7 @@ class WaypointHolder(object):
 
     def reached_current_waypoint(self, drone_point):
         """
-        Return True of the drone mass has has reached the current waypoint
+        Return True if the drone mass has reached the current waypoint
 
         :param drone_point: The drone's current position
         """
@@ -39,6 +39,21 @@ class WaypointHolder(object):
                 self.waypoint_index += 1
 
         return reached_waypoint
+
+    def reached_any_waypoint(self, drone_point, distance_to_target):
+        """
+        Return True if the drone mass has reached any waypoint
+
+        :param drone_point: The drone's current position
+        :param distance_to_target: Max distance to target
+        """
+        for waypoint in self:
+            reached_waypoint = VectorMath.get_magnitude(drone_point, waypoint) < distance_to_target
+
+            if reached_waypoint:
+                return True
+
+        return False
 
     def draw(self, win):
         for i in range(0, len(self)):

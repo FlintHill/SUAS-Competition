@@ -1,4 +1,5 @@
 from ObjAvoidSimplified import *
+import numpy as np
 
 class Map(object):
     """
@@ -27,8 +28,10 @@ class Map(object):
         """
         Run the map once to avoid obstacles
         """
-        self.drone_mass.apply_motions(self.mass_holder)
+        direction_change = self.drone_mass.apply_motions(self.mass_holder)
         self.mass_holder.update_obstacle_mass(self.drone_mass)
+
+        return direction_change
 
     def add_waypoint(self, waypoint):
         """
@@ -38,7 +41,7 @@ class Map(object):
         """
         self.drone_mass.add_waypoint(waypoint)
 
-    def update_drone_location(self, new_drone_location):
+    def set_drone_location(self, new_drone_location):
         """
         Set the drone's location in the map & update the masses of all of the
         obstacles

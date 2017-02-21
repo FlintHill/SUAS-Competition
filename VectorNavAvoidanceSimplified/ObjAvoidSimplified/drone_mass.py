@@ -5,6 +5,7 @@ Created on Feb 17, 2017
 '''
 from ObjAvoidSimplified import *
 import numpy as np
+import math
 
 class DroneMass(Mass):
 
@@ -24,6 +25,8 @@ class DroneMass(Mass):
         net_velocity_vector = self.get_net_velocity_vector(mass_holder)
         self.set_point(self.get_point_after_velocity_applied(self.get_point(), net_velocity_vector))
 
+        return self.determine_direction_change_after_motions()
+
     def get_point_after_velocity_applied(self, point, velocityVector):
         return point + (velocityVector * Constants.REFRESH_RATE)
 
@@ -41,6 +44,9 @@ class DroneMass(Mass):
     def get_waypoint_holder(self):
         return self.waypoint_holder
 
+    def get_current_waypoint(self):
+        return self.waypoint_holder.get_current_waypoint()
+
     def get_net_force_vector(self, mass_holder):
         net_force = np.zeros(len(self.get_point()))
         for mass_index in range(len(mass_holder)):
@@ -56,6 +62,18 @@ class DroneMass(Mass):
 
     def set_velocity_vector(self, vector):
         self.velocity_vector = vector
+
+    def determine_direction_change_after_motions(self):
+        velocity_unit_vector = VectorMath.get_single_unit_vector(self.get_velocity_vector())
+        waypoint_unit_vector = VectorMath.get_unit_vector(self.get_point(), self.get_current_waypoint())
+        maximum_difference = math.pi / 60
+
+        diff = np.absolute(np.subtract(velocity_unit_vector, waypoint_unit_vector)) * 10
+        if not self.waypoint_holder.reached_any_waypoint(self.get_point(), 50):
+            if np.any(np.greater(diff, np.array(maximum_difference))):
+                return True
+
+        return False
 
     def draw(self, win):
         c = Circle(Point(int(self.get_point()[0] + Window.CENTERPOINT[0]), int(Window.CENTERPOINT[1] - self.get_point()[1])), 3)
