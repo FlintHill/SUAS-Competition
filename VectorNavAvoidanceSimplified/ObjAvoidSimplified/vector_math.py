@@ -61,7 +61,19 @@ class VectorMath(object):
 
     @staticmethod
     def get_vector_projection(vector_one, vector_two):
+        """
+        Returns the vector projection between two vectors
+        """
         dot_prod = np.dot(vector_one, vector_two)
         mag = VectorMath.get_vector_magnitude(vector_one)
 
         return vector_one * (dot_prod/(mag**2))
+
+    @staticmethod
+    def get_angle_between_unit_vectors(vector_one, vector_two):
+        """
+        Returns angle between two unit vectors
+        """
+        dot_prod = np.dot(vector_one, vector_two)
+
+        return math.acos(dot_prod)

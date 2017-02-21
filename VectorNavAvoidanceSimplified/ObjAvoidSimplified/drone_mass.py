@@ -16,6 +16,9 @@ class DroneMass(Mass):
         self.waypoint_holder = WaypointHolder(waypoints)
         self.speed = Constants.DRONE_SPEED
 
+        self.guided_angle_threshold = math.pi / 1500.0
+        self.color = "red"
+
     def add_waypoint(self, waypoint):
         self.waypoint_holder.add_waypoint(waypoint)
 
@@ -66,18 +69,19 @@ class DroneMass(Mass):
     def determine_direction_change_after_motions(self):
         velocity_unit_vector = VectorMath.get_single_unit_vector(self.get_velocity_vector())
         waypoint_unit_vector = VectorMath.get_unit_vector(self.get_point(), self.get_current_waypoint())
-        maximum_difference = math.pi / 60
+        angle = abs(VectorMath.get_angle_between_unit_vectors(velocity_unit_vector, waypoint_unit_vector))
 
-        diff = np.absolute(np.subtract(velocity_unit_vector, waypoint_unit_vector)) * 10
         if not self.waypoint_holder.reached_any_waypoint(self.get_point(), 50):
-            if np.any(np.greater(diff, np.array(maximum_difference))):
+            if angle > self.guided_angle_threshold:
+                self.color = "orange"
                 return True
 
+        self.color = "red"
         return False
 
     def draw(self, win):
         c = Circle(Point(int(self.get_point()[0] + Window.CENTERPOINT[0]), int(Window.CENTERPOINT[1] - self.get_point()[1])), 3)
-        c.setFill("red")
+        c.setFill(self.color)
         c.draw(win.getGraphWin())
 
     def __repr__(self):
