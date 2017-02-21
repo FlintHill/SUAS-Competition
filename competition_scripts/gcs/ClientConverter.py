@@ -41,7 +41,7 @@ class ClientConverter(object):
         for i in range(0, len(random_masses)):
             masses.append(SafetyRadiusMass(random_masses[i], 500, 20))
 
-        return masses
+        return np.array(masses)
 
     '''takes an converter_data_update object that wraps altitude, haversine distance, and heading from the current position
     to the position the drone needs to travel'''

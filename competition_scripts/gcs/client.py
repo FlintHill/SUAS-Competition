@@ -4,6 +4,7 @@ import sys
 import json
 import os
 import math
+import numpy as np
 from logger import *
 from time import sleep
 from static_math import haversine, bearing

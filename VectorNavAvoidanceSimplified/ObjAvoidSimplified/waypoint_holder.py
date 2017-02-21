@@ -12,7 +12,7 @@ class WaypointHolder(object):
         self.waypoint_index = 0
 
     def add_waypoint(self, waypoint):
-        self.waypoints.append(waypoint)
+        self.waypoints = np.concatenate(self.waypoints, waypoint)
 
     def get_current_waypoint(self):
         return self.waypoints[self.waypoint_index]
