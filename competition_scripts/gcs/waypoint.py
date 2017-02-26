@@ -1,4 +1,3 @@
-from ObjAvoid import MultiDimPoint
 from gps_coordinates import GPSCoordinates
 import static_math
 from math import sin, cos
@@ -24,4 +23,4 @@ class Waypoint(GPSCoordinates):
         bearing = static_math.bearing(originGPS, self)
         dx = haversineDistance * cos(bearing)
         dy = haversineDistance * sin(bearing)
-        return MultiDimPoint([dx,dy,self.get_altitude()])
+        return [dx,dy,self.get_altitude()]

@@ -17,7 +17,7 @@ class ClientConverter(object):
     to be funneled them fairly simply'''
     def __init__(self, initial_coordinates):
         mass_holder = MassHolder([])
-        drone_mass = DroneMass(10, get_random_points_in_bounds(2, 10, ((-500,500), (-200,200))))
+        drone_mass = DroneMass(10, np.array([[0, 0]]))
         random_masses = self.generate_random_masses(50)
         for random_mass in random_masses:
             mass_holder.append_mass(random_mass)
@@ -31,8 +31,9 @@ class ClientConverter(object):
     '''pass waypoint list from here. Shouldn't need to be updated afterward.'''
     def set_waypoints(self, new_waypoints):
         for waypoint in new_waypoints:
-            converted_waypoint = waypoint.convert_to_point(self.get_initial_coordinates())
+            converted_waypoint = np.array([waypoint.convert_to_point(self.get_initial_coordinates())[:-1]])
 
+            print(converted_waypoint)
             self.map.add_waypoint(converted_waypoint)
 
     def generate_random_masses(self, number_masses):
@@ -48,16 +49,16 @@ class ClientConverter(object):
     def update_drone_mass_position(self, update_data):
         dy = update_data.get_haversine_distance() * sin(update_data.get_heading())
         dx = update_data.get_haversine_distance() * cos(update_data.get_heading())
-        new_drone_location =  np.array([dx, dy, update_data.get_altitude()])
+        new_drone_location =  np.array([dx, dy])#, update_data.get_altitude()])
         self.map.set_drone_location(new_drone_location)
-        did_avoid_obstacles = self.mainDroneMass.applyMotions()
+        did_avoid_obstacles = self.map.avoid_obstacles()
 
-        print(self.map)
+        print(self.map.get_drone_mass())
 
         if did_avoid_obstacles:
             appliedPoint = self.map.get_drone_location()
             bearing = atan2(appliedPoint[1] / appliedPoint[0])
 
-            return inverse_haversine(self.get_initial_coordinates(), [appliedPoint[0], appliedPoint[1], updateData.get_altitude()], bearing)
+            return inverse_haversine(self.get_initial_coordinates(), [appliedPoint[0], appliedPoint[1], update_data.get_altitude()], bearing)
 
         return None

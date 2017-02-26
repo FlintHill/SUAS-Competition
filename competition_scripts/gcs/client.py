@@ -35,7 +35,7 @@ def obj_receive(logger_queue, configurer, object_array):
 	name = multiprocessing.current_process().name
 
 	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-	sock.bind(TK1_ADDRESS)
+	sock.bind(INTEROP_CLIENT_ADDRESS)
 	sock.listen(1)
 	log(name, "Waiting for a connection to the INTEROP_CLIENT...")
 	connection, client_address = sock.accept()
@@ -91,10 +91,10 @@ def receive_targets(logger_queue, configurer, received_targets_array):
 	Receive the targets from the TK1
 	"""
 	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-	sock.bind(INTEROP_CLIENT_ADDRESS)
-	sock.listen(1)
+	#sock.bind(TK1_ADDRESS)
+	#sock.listen(1)
 	log(name, "Waiting for a connection to the TK1...")
-	connection, client_address = sock.accept()
+	#connection, client_address = sock.accept()
 	log(name, "Connected to TK1")
 
 	while True:
@@ -176,7 +176,7 @@ if __name__ == '__main__':
 	while True:
 		if not is_obstacle_map_initialized and current_coordinates[0].get_latitude() != 0.0:
 			obstacle_map = ClientConverter(current_coordinates[0].as_gps())
-			obstacle_map.set_waypoints(np.array(waypoints_list))
+			obstacle_map.set_waypoints(waypoints_list)
 			is_obstacle_map_initialized = True
 		elif is_obstacle_map_initialized:
 			initialCoords = obstacle_map.get_initial_coordinates()
