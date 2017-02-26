@@ -14,7 +14,7 @@ class WaypointHolder(object):
     def add_waypoint(self, waypoint):
         self.waypoints = np.vstack([self.waypoints, waypoint])
 
-        if self.waypoints.shape()[0] == 2:
+        if self.waypoints.shape[0] == 2:
             self.waypoints = np.delete(self.waypoints, (0), axis=0)
 
     def get_current_waypoint(self):
