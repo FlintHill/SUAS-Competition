@@ -189,6 +189,5 @@ if __name__ == '__main__':
 			guided_waypoint_output.send("lat " + str(obj_avoid_coordinates.get_latitude()) + " ")
 			guided_waypoint_output.send("lng " + str(obj_avoid_coordinates.get_longitude()) + " ")
 			guided_waypoint_output.send("alt " + str(obj_avoid_coordinates.get_altitude()) + " ")
-			sleep(1)
 
-		sleep(0.5)
+		sleep(1)

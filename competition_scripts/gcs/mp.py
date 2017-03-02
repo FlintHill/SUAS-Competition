@@ -36,7 +36,7 @@ def haversine(lon1, lat1, lon2, lat2):
     r = 6371 # Radius of earth in kilometers. Use 3956 for miles
     return c * r
 
-def has_reached_waypoint(coords1, coords2, maximum_distance=5.0):
+def has_reached_waypoint(coords1, coords2, maximum_distance=4.0):
 	"""
 	A simple script to determine if the difference between two sets of
 		coordinates and see if the difference is less than a maximum
@@ -91,7 +91,7 @@ data_coords = {
 	"lng" : -1.0,
 	"alt" : -1.0
 }
-new_wp_coords = {
+guided_coords = {
 	"lat" : -1.0,
 	"lng" : -1.0,
 	"alt" : -1.0
@@ -106,11 +106,11 @@ while True:
 		send_data(sock, "alt " + str(cs.alt) + " ")
 		send_data(sock, "heading " + str(cs.groundcourse) + " ")
 
-		if new_wp_coords["lat"] != -1.0 and new_wp_coords["lng"] != -1.0 and new_wp_coords["alt"] != -1.0 and has_reached_waypoint([new_wp_coords["lat"], new_wp_coords["lng"], new_wp_coords["alt"]], [cs.lat, cs.lng, cs.alt]):
+		if guided_coords["lat"] != -1.0 and guided_coords["lng"] != -1.0 and guided_coords["alt"] != -1.0 and has_reached_waypoint([guided_coords["lat"], guided_coords["lng"], guided_coords["alt"]], [cs.lat, cs.lng, cs.alt]):
 			Script.ChangeMode("Auto")
 			current_flight_mode = "Auto"
 
-			new_wp_coords = {
+			guided_coords = {
 				"lat" : -1.0,
 				"lng" : -1.0,
 				"alt" : -1.0
@@ -142,7 +142,7 @@ while True:
 				MissionPlanner.Utilities.Locationwp.alt.SetValue(new_waypoint, float(data_coords["alt"]))
 				MAV.setGuidedModeWP(new_waypoint)
 
-				new_wp_coords = {
+				guided_coords = {
 					"lat" : data_coords["lat"],
 					"lng" : data_coords["lng"],
 					"alt" : data_coords["alt"]

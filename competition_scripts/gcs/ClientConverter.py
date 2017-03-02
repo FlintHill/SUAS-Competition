@@ -61,6 +61,8 @@ class ClientConverter(object):
 
         print("Before did_avoid_obstacles: " + str(self.map.get_drone_mass()))
         did_avoid_obstacles = self.map.avoid_obstacles()
+        for i in range(3):
+            self.map.avoid_obstacles()
         print("After did_avoid_obstacles: " + str(self.map.get_drone_mass()))
 
         if did_avoid_obstacles:

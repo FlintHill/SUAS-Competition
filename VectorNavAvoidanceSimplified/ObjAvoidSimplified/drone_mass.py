@@ -36,7 +36,7 @@ class DroneMass(Mass):
         self.velocity_vector = self.speed * VectorMath.get_unit_vector(self.get_point(), self.waypoint_holder.get_current_waypoint())
 
         net_force_vector = self.get_net_force_vector(mass_holder)
-        new_point = self.get_point() + ((net_force_vector / float(self.mass)) * Constants.REFRESH_RATE**2 * 100)
+        new_point = self.get_point() + ((net_force_vector / float(self.mass)) * Constants.REFRESH_RATE**2 / 2)
         new_point = self.get_point_after_velocity_applied(new_point, self.velocity_vector)
 
         new_position_unit_vector = VectorMath.get_unit_vector(self.get_point(), new_point)
@@ -75,7 +75,7 @@ class DroneMass(Mass):
 
         if not self.waypoint_holder.reached_any_waypoint(self.get_point(), 50):
             print("angle: " + str(angle))
-            if angle > 0.0005:#0:#angle > math.pi / 100:
+            if angle > 0.0005:
                 self.color = "orange"
                 return True
 
@@ -94,6 +94,6 @@ class DroneMass(Mass):
         c.draw(win.getGraphWin())
 
     def __repr__(self):
-        returnString = "Drone Mass "
+        returnString = "Drone "
         returnString += Mass.__repr__(self)
         return returnString
