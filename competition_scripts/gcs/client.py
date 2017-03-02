@@ -18,7 +18,7 @@ from ObjAvoid import *
 
 INTEROP_CLIENT_ADDRESS = ('localhost', 9000)
 TK1_ADDRESS = ('IP', 9001)
-send_course_max_port = 10010
+send_course_max_port = 10020
 server_address = 'localhost'
 waypoint_JSON_file_path = "./data/demo_waypoints.mission"
 
@@ -172,7 +172,7 @@ if __name__ == '__main__':
 		if json_waypoint["coordinate"][0] != 0.0:
 			waypoints_list.append(Waypoint(json_waypoint["coordinate"][0], json_waypoint["coordinate"][1], json_waypoint["coordinate"][2]))
 
-	while current_coordinates[0].get_latitude() != 0.0:
+	while current_coordinates[0].get_latitude() == 0.0:
 		sleep(0.05)
 
 	obstacle_map = ClientConverter(current_coordinates[0].as_gps())
@@ -184,10 +184,11 @@ if __name__ == '__main__':
 		updated_drone_location = ConverterDataUpdate(haversine_distance, current_coordinates[0].get_heading(), current_coordinates[0].get_altitude())
 		obj_avoid_coordinates = obstacle_map.update_drone_mass_position(updated_drone_location)
 
-		if obj_avoid_coordinates:
+		if obj_avoid_coordinates and current_coordinates[0].get_altitude() > 7:
 			log("root", "Sending avoid coordinates...")
 			guided_waypoint_output.send("lat " + str(obj_avoid_coordinates.get_latitude()) + " ")
 			guided_waypoint_output.send("lng " + str(obj_avoid_coordinates.get_longitude()) + " ")
 			guided_waypoint_output.send("alt " + str(obj_avoid_coordinates.get_altitude()) + " ")
+			sleep(1)
 
 		sleep(0.5)

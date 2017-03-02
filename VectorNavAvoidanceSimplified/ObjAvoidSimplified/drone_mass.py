@@ -16,7 +16,6 @@ class DroneMass(Mass):
         self.waypoint_holder = WaypointHolder(waypoints)
         self.speed = Constants.DRONE_SPEED
 
-        self.guided_angle_threshold = math.pi / 1500.0
         self.color = "red"
 
     def add_waypoint(self, waypoint):
@@ -37,7 +36,7 @@ class DroneMass(Mass):
         self.velocity_vector = self.speed * VectorMath.get_unit_vector(self.get_point(), self.waypoint_holder.get_current_waypoint())
 
         net_force_vector = self.get_net_force_vector(mass_holder)
-        new_point = self.get_point() + ((net_force_vector / float(self.mass)) * Constants.REFRESH_RATE**2)
+        new_point = self.get_point() + ((net_force_vector / float(self.mass)) * Constants.REFRESH_RATE**2 * 100)
         new_point = self.get_point_after_velocity_applied(new_point, self.velocity_vector)
 
         new_position_unit_vector = VectorMath.get_unit_vector(self.get_point(), new_point)
@@ -57,6 +56,7 @@ class DroneMass(Mass):
             unit_vector = -1.0 * VectorMath.get_unit_vector(self.get_point(), mass_holder[mass_index].get_point())
 
             net_force += force * unit_vector
+            print("net_force: " + str(net_force))
 
         return net_force
 
@@ -69,16 +69,24 @@ class DroneMass(Mass):
     def determine_direction_change_after_motions(self):
         velocity_unit_vector = VectorMath.get_single_unit_vector(self.get_velocity_vector())
         waypoint_unit_vector = VectorMath.get_unit_vector(self.get_point(), self.get_current_waypoint())
-        angle = abs(VectorMath.get_angle_between_unit_vectors(velocity_unit_vector, waypoint_unit_vector))
+        print("velocity_vector: " + str(self.get_velocity_vector()))
+        print("waypoint_unit_vector: " + str(waypoint_unit_vector))
+        angle = abs(self.bearing(velocity_unit_vector) - self.bearing(waypoint_unit_vector))
 
         if not self.waypoint_holder.reached_any_waypoint(self.get_point(), 50):
-            print(1.0 - angle)
-            if (1.0 - angle) > self.guided_angle_threshold:
+            print("angle: " + str(angle))
+            if angle > 0.0005:#0:#angle > math.pi / 100:
                 self.color = "orange"
                 return True
 
         self.color = "red"
         return False
+
+    def bearing(self, point):
+        """
+        Calculates the bearing of a point
+        """
+        return math.atan2(point[0], point[1])
 
     def draw(self, win):
         c = Circle(Point(int(self.get_point()[0] + Window.CENTERPOINT[0]), int(Window.CENTERPOINT[1] - self.get_point()[1])), 3)

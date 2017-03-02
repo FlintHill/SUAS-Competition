@@ -8,7 +8,7 @@ import clr
 clr.AddReference("MissionPlanner.Utilities")
 
 receive_address = 'localhost'
-receive_port_min = 10001
+receive_port_min = 10010
 server_address = ('localhost', 10000)
 
 def send_data(connection, data):

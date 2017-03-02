@@ -17,7 +17,7 @@ class ClientConverter(object):
     to be funneled them fairly simply'''
     def __init__(self, initial_coordinates):
         mass_holder = MassHolder([])
-        drone_mass = DroneMass(10, np.array([[0, 0]]))
+        drone_mass = DroneMass(1, np.array([[0, 0]]))
         random_masses = self.generate_random_masses(10)
         for random_mass in random_masses:
             mass_holder.append_mass(random_mass)
@@ -38,11 +38,11 @@ class ClientConverter(object):
 
     def generate_random_masses(self, number_masses):
         masses = []
-        random_masses = get_random_points_in_bounds(2, number_masses, ((-25,25), (-25,25)))
+        random_masses = get_random_points_in_bounds(2, number_masses, ((-100,400), (-150,300)))
         for i in range(0, len(random_masses)):
             masses.append(SafetyRadiusMass(random_masses[i], 500, 5))
 
-        return np.array(masses)
+        return np.array([SafetyRadiusMass((100, 9), 500, 10)])#np.array(masses)
 
     def get_map(self):
         return self.map
