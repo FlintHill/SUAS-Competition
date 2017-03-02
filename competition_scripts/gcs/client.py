@@ -18,6 +18,7 @@ from ObjAvoid import *
 
 INTEROP_CLIENT_ADDRESS = ('localhost', 9000)
 TK1_ADDRESS = ('IP', 9001)
+send_course_max_port = 10010
 server_address = 'localhost'
 waypoint_JSON_file_path = "./data/demo_waypoints.mission"
 
@@ -56,7 +57,7 @@ def send_course(logger_queue, configurer, input_pipe):
 
 	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	is_connected = False
-	port = 10010
+	port = send_course_max_port
 
 	sleep(10)
 
@@ -71,8 +72,8 @@ def send_course(logger_queue, configurer, input_pipe):
 			sleep(0.1)
 
 			port -= 1
-			if port < 10000:
-				port = 10010
+			if port < send_course_max_port - 10:
+				port = send_course_max_port
 	log(name, "Connected to send_course socket")
 
 	while True:
@@ -165,29 +166,28 @@ if __name__ == '__main__':
 	send_course_process = multiprocessing.Process(target=send_course, args=(logger_queue, logger_worker_configurer, guided_waypoint_input,))
 	send_course_process.start()
 
-	obstacle_map = ClientConverter(current_coordinates[0].as_gps())
-	is_obstacle_map_initialized = False
-
 	waypoints = json.load(open(waypoint_JSON_file_path, 'r'))["items"]
 	waypoints_list = []
 	for json_waypoint in waypoints:
-		waypoints_list.append(Waypoint(json_waypoint["coordinate"][0], json_waypoint["coordinate"][1], json_waypoint["coordinate"][2]))
+		if json_waypoint["coordinate"][0] != 0.0:
+			waypoints_list.append(Waypoint(json_waypoint["coordinate"][0], json_waypoint["coordinate"][1], json_waypoint["coordinate"][2]))
+
+	while current_coordinates[0].get_latitude() != 0.0:
+		sleep(0.05)
+
+	obstacle_map = ClientConverter(current_coordinates[0].as_gps())
+	obstacle_map.set_waypoints(waypoints_list)
 
 	while True:
-		if not is_obstacle_map_initialized and current_coordinates[0].get_latitude() != 0.0:
-			obstacle_map = ClientConverter(current_coordinates[0].as_gps())
-			obstacle_map.set_waypoints(waypoints_list)
-			is_obstacle_map_initialized = True
-		elif is_obstacle_map_initialized:
-			initialCoords = obstacle_map.get_initial_coordinates()
-			haversine_distance = haversine(initialCoords, current_coordinates[0].as_gps())
-			updated_drone_location = ConverterDataUpdate(haversine_distance, current_coordinates[0].get_heading(), current_coordinates[0].get_altitude())
-			obj_avoid_coordinates = obstacle_map.update_drone_mass_position(updated_drone_location)
+		initialCoords = obstacle_map.get_initial_coordinates()
+		haversine_distance = haversine(initialCoords, current_coordinates[0].as_gps())
+		updated_drone_location = ConverterDataUpdate(haversine_distance, current_coordinates[0].get_heading(), current_coordinates[0].get_altitude())
+		obj_avoid_coordinates = obstacle_map.update_drone_mass_position(updated_drone_location)
 
-			if obj_avoid_coordinates:
-				log("root", "Sending avoid coordinates...")
-				guided_waypoint_output.send("lat " + str(obj_avoid_coordinates.get_latitude()) + " ")
-				guided_waypoint_output.send("lng " + str(obj_avoid_coordinates.get_longitude()) + " ")
-				guided_waypoint_output.send("alt " + str(obj_avoid_coordinates.get_altitude()) + " ")
+		if obj_avoid_coordinates:
+			log("root", "Sending avoid coordinates...")
+			guided_waypoint_output.send("lat " + str(obj_avoid_coordinates.get_latitude()) + " ")
+			guided_waypoint_output.send("lng " + str(obj_avoid_coordinates.get_longitude()) + " ")
+			guided_waypoint_output.send("alt " + str(obj_avoid_coordinates.get_altitude()) + " ")
 
-			sleep(0.5)
+		sleep(0.5)

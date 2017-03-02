@@ -18,7 +18,7 @@ class ClientConverter(object):
     def __init__(self, initial_coordinates):
         mass_holder = MassHolder([])
         drone_mass = DroneMass(10, np.array([[0, 0]]))
-        random_masses = self.generate_random_masses(50)
+        random_masses = self.generate_random_masses(10)
         for random_mass in random_masses:
             mass_holder.append_mass(random_mass)
         self.map = Map(mass_holder, drone_mass)
@@ -38,26 +38,34 @@ class ClientConverter(object):
 
     def generate_random_masses(self, number_masses):
         masses = []
-        random_masses = get_random_points_in_bounds(2, number_masses, ((-720,720), (-450,450)))
+        random_masses = get_random_points_in_bounds(2, number_masses, ((-25,25), (-25,25)))
         for i in range(0, len(random_masses)):
-            masses.append(SafetyRadiusMass(random_masses[i], 500, 20))
+            masses.append(SafetyRadiusMass(random_masses[i], 500, 5))
 
         return np.array(masses)
 
-    '''takes an converter_data_update object that wraps altitude, haversine distance, and heading from the current position
-    to the position the drone needs to travel'''
+    def get_map(self):
+        return self.map
+
     def update_drone_mass_position(self, update_data):
         dy = update_data.get_haversine_distance() * sin(update_data.get_heading())
         dx = update_data.get_haversine_distance() * cos(update_data.get_heading())
         new_drone_location =  np.array([dx, dy])#, update_data.get_altitude()])
         self.map.set_drone_location(new_drone_location)
-        did_avoid_obstacles = self.map.avoid_obstacles()
 
-        print(self.map.get_drone_mass())
+        for obstacle in self.map.get_mass_holder():
+            dist = VectorMath.get_magnitude(obstacle.get_point(), self.map.get_drone_mass().get_point())
+
+            if dist < 10:
+                print(obstacle)
+
+        print("Before did_avoid_obstacles: " + str(self.map.get_drone_mass()))
+        did_avoid_obstacles = self.map.avoid_obstacles()
+        print("After did_avoid_obstacles: " + str(self.map.get_drone_mass()))
 
         if did_avoid_obstacles:
             appliedPoint = self.map.get_drone_location()
-            bearing = atan2(appliedPoint[1] / appliedPoint[0])
+            bearing = atan2(appliedPoint[0], appliedPoint[1])
 
             return inverse_haversine(self.get_initial_coordinates(), [appliedPoint[0], appliedPoint[1], update_data.get_altitude()], bearing)
 

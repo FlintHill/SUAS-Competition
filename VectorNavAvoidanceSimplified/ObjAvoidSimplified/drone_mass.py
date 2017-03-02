@@ -72,7 +72,8 @@ class DroneMass(Mass):
         angle = abs(VectorMath.get_angle_between_unit_vectors(velocity_unit_vector, waypoint_unit_vector))
 
         if not self.waypoint_holder.reached_any_waypoint(self.get_point(), 50):
-            if angle > self.guided_angle_threshold:
+            print(1.0 - angle)
+            if (1.0 - angle) > self.guided_angle_threshold:
                 self.color = "orange"
                 return True
 

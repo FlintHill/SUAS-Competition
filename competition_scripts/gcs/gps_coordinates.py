@@ -1,4 +1,5 @@
 from abc import ABCMeta
+import math
 
 class GPSCoordinates:
 
@@ -15,5 +16,11 @@ class GPSCoordinates:
     def get_longitude(self):
         return self.lon
 
+    def get_longitude_radians(self):
+        return math.radians(self.lon)
+
     def get_latitude(self):
         return self.lat
+
+    def get_latitude_radians(self):
+        return math.radians(self.lat)

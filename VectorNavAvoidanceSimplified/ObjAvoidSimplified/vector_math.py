@@ -75,5 +75,8 @@ class VectorMath(object):
         Returns angle between two unit vectors
         """
         dot_prod = np.dot(vector_one, vector_two)
+        print(dot_prod)
+        print("vector_one: " + str(vector_one))
+        print("vector_two: " + str(vector_two))
 
         return math.acos(dot_prod)
