@@ -18,6 +18,8 @@ class DroneMass(Mass):
 
         self.color = "red"
 
+        self.guided_distance_threshold = 4
+
     def add_waypoint(self, waypoint):
         self.waypoint_holder.add_waypoint(waypoint)
 
@@ -27,7 +29,7 @@ class DroneMass(Mass):
         net_velocity_vector = self.get_net_velocity_vector(mass_holder)
         self.set_point(self.get_point_after_velocity_applied(self.get_point(), net_velocity_vector))
 
-        return self.determine_direction_change_after_motions()
+        return self.determine_change_after_motions(mass_holder)
 
     def get_point_after_velocity_applied(self, point, velocityVector):
         return point + (velocityVector * Constants.REFRESH_RATE)
@@ -66,27 +68,17 @@ class DroneMass(Mass):
     def set_velocity_vector(self, vector):
         self.velocity_vector = vector
 
-    def determine_direction_change_after_motions(self):
-        velocity_unit_vector = VectorMath.get_single_unit_vector(self.get_velocity_vector())
-        waypoint_unit_vector = VectorMath.get_unit_vector(self.get_point(), self.get_current_waypoint())
-        print("velocity_vector: " + str(self.get_velocity_vector()))
-        print("waypoint_unit_vector: " + str(waypoint_unit_vector))
-        angle = abs(self.bearing(velocity_unit_vector) - self.bearing(waypoint_unit_vector))
+    def determine_change_after_motions(self, mass_holder):
+        for obstacle in mass_holder:
+            distance = ((self.get_point()[0] - obstacle.get_point()[0])**2 + (self.get_point()[1] - obstacle.get_point()[1])**2)**0.5
+            print("obstacle_dist: " + str(distance))
 
-        if not self.waypoint_holder.reached_any_waypoint(self.get_point(), 50):
-            print("angle: " + str(angle))
-            if angle > 0.0005:
+            if distance / obstacle.get_safety_radius() < self.guided_distance_threshold:
                 self.color = "orange"
                 return True
 
         self.color = "red"
         return False
-
-    def bearing(self, point):
-        """
-        Calculates the bearing of a point
-        """
-        return math.atan2(point[0], point[1])
 
     def draw(self, win):
         c = Circle(Point(int(self.get_point()[0] + Window.CENTERPOINT[0]), int(Window.CENTERPOINT[1] - self.get_point()[1])), 3)

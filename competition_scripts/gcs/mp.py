@@ -1,6 +1,7 @@
 from time import time
 from time import sleep
-from math import radians, cos, sin, asin, sqrt
+from math import radians, cos, sin, asin, sqrt, pi
+from datetime import datetime
 import socket
 import sys
 import MissionPlanner
@@ -22,21 +23,17 @@ def send_data(connection, data):
 
 def haversine(lon1, lat1, lon2, lat2):
     """
-    Calculate the great circle distance between two points
+    Calculates the great circle distance between two points
     on the earth (specified in decimal degrees)
     """
-    # convert decimal degrees to radians
-    lon1, lat1, lon2, lat2 = map(radians, [lon1, lat1, lon2, lat2])
+    dy = (lat2 - lat1) * 69.172 * 1609.34
+    dx = (lon2 - lon1) * 69.172 * cos((lat1 + lat2) * pi / 360.0) * 1609.34
 
-    # haversine formula
-    dlon = lon2 - lon1
-    dlat = lat2 - lat1
-    a = sin(dlat/2)**2 + cos(lat1) * cos(lat2) * sin(dlon/2)**2
-    c = 2 * asin(sqrt(a))
-    r = 6371 # Radius of earth in kilometers. Use 3956 for miles
-    return c * r
+    dist = (dy**2 + dx**2)**0.5 * 0.999
 
-def has_reached_waypoint(coords1, coords2, maximum_distance=4.0):
+    return dist
+
+def has_reached_waypoint(coords1, coords2, maximum_distance=5.0):
 	"""
 	A simple script to determine if the difference between two sets of
 		coordinates and see if the difference is less than a maximum
@@ -49,7 +46,12 @@ def has_reached_waypoint(coords1, coords2, maximum_distance=4.0):
 	;param maximum_distance: The maximum distance beteween the two locations
 	"""
 	diff = haversine(coords1[1], coords1[0], coords2[1], coords2[0])
-	alt_diff = coords2[2] - coords1[2]
+	alt_diff = abs(coords2[2] - coords1[2])
+
+	print("diff: " + str(diff))
+	print("alt_diff: " + str(alt_diff))
+	print("coords1[2]: " + str(coords1[2]))
+	print("coords2[2]: " + str(coords2[2]))
 
 	if diff < maximum_distance and alt_diff < maximum_distance:
 		return True
@@ -98,6 +100,7 @@ guided_coords = {
 }
 current_flight_mode = "Auto"
 previous_message = None
+time_since_switch = datetime.now()
 
 while True:
 	for _ in timing(rate=2):
@@ -106,7 +109,7 @@ while True:
 		send_data(sock, "alt " + str(cs.alt) + " ")
 		send_data(sock, "heading " + str(cs.groundcourse) + " ")
 
-		if guided_coords["lat"] != -1.0 and guided_coords["lng"] != -1.0 and guided_coords["alt"] != -1.0 and has_reached_waypoint([guided_coords["lat"], guided_coords["lng"], guided_coords["alt"]], [cs.lat, cs.lng, cs.alt]):
+		if guided_coords["lat"] != -1.0 and guided_coords["lng"] != -1.0 and guided_coords["alt"] != -1.0 and (has_reached_waypoint([guided_coords["lat"], guided_coords["lng"], guided_coords["alt"]], [cs.lat, cs.lng, cs.alt]) or (datetime.now() - time_since_switch).seconds > 5):
 			Script.ChangeMode("Auto")
 			current_flight_mode = "Auto"
 
@@ -131,6 +134,7 @@ while True:
 
 			if data_coords["lat"] != -1.0 and data_coords["lng"] != -1.0 and data_coords["alt"] != -1.0:
 				print("Avoiding an object...")
+				time_since_switch = datetime.now()
 
 				if "Auto" in current_flight_mode:
 					Script.ChangeMode("Guided")
@@ -139,7 +143,7 @@ while True:
 				new_waypoint = MissionPlanner.Utilities.Locationwp()
 				MissionPlanner.Utilities.Locationwp.lat.SetValue(new_waypoint, float(data_coords["lat"]))
 				MissionPlanner.Utilities.Locationwp.lng.SetValue(new_waypoint, float(data_coords["lng"]))
-				MissionPlanner.Utilities.Locationwp.alt.SetValue(new_waypoint, float(data_coords["alt"]))
+				MissionPlanner.Utilities.Locationwp.alt.SetValue(new_waypoint, float(data_coords["alt"] / 3.28084))
 				MAV.setGuidedModeWP(new_waypoint)
 
 				guided_coords = {

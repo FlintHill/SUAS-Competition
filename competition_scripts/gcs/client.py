@@ -188,6 +188,6 @@ if __name__ == '__main__':
 			log("root", "Sending avoid coordinates...")
 			guided_waypoint_output.send("lat " + str(obj_avoid_coordinates.get_latitude()) + " ")
 			guided_waypoint_output.send("lng " + str(obj_avoid_coordinates.get_longitude()) + " ")
-			guided_waypoint_output.send("alt " + str(obj_avoid_coordinates.get_altitude()) + " ")
+			guided_waypoint_output.send("alt " + str(current_coordinates[0].get_altitude()) + " ")
 
 		sleep(1)
