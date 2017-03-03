@@ -6,7 +6,10 @@ import os
 import math
 import numpy as np
 from logger import *
+from datetime import datetime
 from time import sleep
+from interop_client import InteropClientConverter
+from obstacle_container import ObstacleContainer
 from static_math import haversine, bearing
 from current_coordinates import CurrentCoordinates
 from converter_data_update import ConverterDataUpdate
@@ -22,28 +25,13 @@ send_course_max_port = 10020
 server_address = 'localhost'
 waypoint_JSON_file_path = "./data/demo_waypoints.mission"
 
+INTEROP_URL = "http://10.10.130.2:8000"
+INTEROP_USERNAME = "Flint"
+INTEROP_PASSWORD = "2429875295"
+MSL = 22
+
 def send_data(connection, data):
 	connection.sendall(data)
-
-def obj_receive(logger_queue, configurer, object_array):
-	"""
-	Receive obstacles from the interoperability server
-
-	:param object_array: The multiprocessing list to use to store obstacles
-		from interop server
-	"""
-	configurer(logger_queue)
-	name = multiprocessing.current_process().name
-
-	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-	sock.bind(INTEROP_CLIENT_ADDRESS)
-	sock.listen(1)
-	log(name, "Waiting for a connection to the INTEROP_CLIENT...")
-	connection, client_address = sock.accept()
-	log(name, "Connected to the INTEROP_CLIENT")
-
-	while True:
-		sleep(0.5)
 
 def send_course(logger_queue, configurer, input_pipe):
 	"""
@@ -145,6 +133,8 @@ def receive_telem(logger_queue, configurer, receive_telem_array):
 		receive_telem_array[0] = CurrentCoordinates(curr_coords["lat"], curr_coords["lng"], curr_coords["alt"], curr_coords["heading"])
 
 if __name__ == '__main__':
+	interop_server_client = InteropClientConverter(MSL, INTEROP_URL, INTEROP_USERNAME, INTEROP_PASSWORD)
+
 	logger_queue = multiprocessing.Queue(-1)
 	logger_listener_process = multiprocessing.Process(target=listener_process, args=(logger_queue, logger_listener_configurer))
 	logger_listener_process.start()
@@ -154,14 +144,12 @@ if __name__ == '__main__':
 	current_coordinates = manager.list()
 	current_coordinates.extend([CurrentCoordinates(0.0, 0.0, 0.0, 0.0)])
 	current_obstacles = manager.list()
+	current_obstacles.extend([ObstacleContainer([], [])])
 
 	guided_waypoint_input, guided_waypoint_output = multiprocessing.Pipe()
 
 	telem_process = multiprocessing.Process(target=receive_telem, args=(logger_queue, logger_worker_configurer, current_coordinates,))
 	telem_process.start()
-
-	obj_process = multiprocessing.Process(target=obj_receive, args=(logger_queue, logger_worker_configurer, current_obstacles,))
-	obj_process.start()
 
 	send_course_process = multiprocessing.Process(target=send_course, args=(logger_queue, logger_worker_configurer, guided_waypoint_input,))
 	send_course_process.start()
@@ -179,6 +167,10 @@ if __name__ == '__main__':
 	obstacle_map.set_waypoints(waypoints_list)
 
 	while True:
+		start_time = datetime.now()
+		interop_server_client.post_telemetry(CurrentCoordinates(1.0, 1.0, 1.0, 180))
+		obstacles = ObstacleContainer(interop_server_client.get_obstacles())
+
 		initialCoords = obstacle_map.get_initial_coordinates()
 		haversine_distance = haversine(initialCoords, current_coordinates[0].as_gps())
 		updated_drone_location = ConverterDataUpdate(haversine_distance, current_coordinates[0].get_heading(), current_coordinates[0].get_altitude())
@@ -190,4 +182,6 @@ if __name__ == '__main__':
 			guided_waypoint_output.send("lng " + str(obj_avoid_coordinates.get_longitude()) + " ")
 			guided_waypoint_output.send("alt " + str(current_coordinates[0].get_altitude()) + " ")
 
-		sleep(1)
+		time_to_execute = (datetime.now() - start_time).seconds
+		print("time_to_execute: " + str(time_to_execute))
+		sleep(1 - time_to_execute)
