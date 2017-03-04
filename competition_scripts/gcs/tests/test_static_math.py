@@ -1,6 +1,3 @@
-#import sys
-#import os
-#sys.path.append(os.path.dirname(os.getcwd()))
 from static_math import *
 from gps_coordinates import GPSCoordinates
 import unittest
