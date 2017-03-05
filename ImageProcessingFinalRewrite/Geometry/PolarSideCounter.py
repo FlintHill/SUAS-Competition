@@ -8,6 +8,7 @@ import EdgeProcessing.CannyEdge as CannyEdge
 
 class PolarSideCounter:
     
+    THETA_STEP = pi/256.0
     def __init__(self, canny_img_in, canny_image_in):
         self.canny_img = canny_img_in
         self.canny_image = canny_image_in
@@ -19,9 +20,10 @@ class PolarSideCounter:
         '''not sure if it is good to set under mean to mean, because there may be a shape that does have
         legitimate maximums that are smaller than the mean'''
         #self.setUnderMeanToMean()
-        self.smooth_plot(6, 6)
+        self.smooth_plot(6, 3)
         
         self.init_maximums()
+        self.init_minimums()
 
     
     def set_origin(self):
@@ -30,6 +32,13 @@ class PolarSideCounter:
     
     def init_plot(self):
         self.plot = []
+        '''theta = 0
+        while theta < 2*pi:
+            radius = self.get_radius_of_raycast(theta)
+            if radius != None:
+                self.plot.append(RadiusAngle(radius, theta))
+            theta += PolarSideCounter.THETA_STEP'''
+        
         for x in range(0, self.canny_img.size[0]):
             for y in range(0, self.canny_img.size[1]):
                 if self.canny_image[x,y] == 255:
@@ -37,6 +46,18 @@ class PolarSideCounter:
                     vector_from_origin = numpy.subtract(pix_vector, self.numpy_origin)
                     self.plot.append(RadiusAngle(numpy.linalg.norm(vector_from_origin), self.get_raycast_angle(vector_from_origin)))
         self.plot = sorted(self.plot, key = lambda angle: angle.get_angle())
+    
+    def get_radius_of_raycast(self, theta):
+        dxdy = numpy.array([cos(theta), sin(theta)])
+        xy = numpy.add(self.numpy_origin, dxdy)
+        
+        
+        while xy[0] > 0 and xy[0] < self.canny_img.size[0] and xy[1] > 0 and xy[1] < self.canny_img.size[1]:
+            if self.canny_image[int(xy[0]), int(xy[1])] != 0:
+                return numpy.linalg.norm(numpy.subtract(xy, self.numpy_origin))
+            xy = numpy.add(xy, dxdy)
+        return None
+            
     
     def get_raycast_angle(self, vector_from_origin):
         '''y must be negative because of the flipped y axis'''
@@ -47,6 +68,9 @@ class PolarSideCounter:
     
     def get_maximums(self):
         return self.maximums 
+    
+    def get_minimums(self):
+        return self.minimums
     
     def append_window_to_plot(self):
         end_first_slice = self.plot[len(self.plot) - (self.max_window-1)/2 : len(self.plot)]
@@ -90,6 +114,11 @@ class PolarSideCounter:
             if self.get_if_is_max_across_num(i, self.max_window):
                 self.maximums.append(self.plot[i])
     
+    def init_minimums(self):
+        self.minimums = []
+        for i in range((self.max_window-1)/2, len(self.plot) - (self.max_window-1)/2):
+            if self.get_if_is_min_across_num(i, self.max_window):
+                self.minimums.append(self.plot[i])
     
     def get_if_is_max_across_num(self, index, num):
         index_count = index - (num-1)/2
@@ -109,6 +138,26 @@ class PolarSideCounter:
                 index_count -= len(self.plot)
         if not (self.plot[index].get_radius() > self.plot[index-1].get_radius() and self.plot[index].get_radius() > self.plot[index + 1].get_radius()):
             return False
+        return True  
+    
+    def get_if_is_min_across_num(self, index, num):
+        index_count = index - (num-1)/2
+        while index_count < index - 1:
+            if not(self.plot[index_count].get_radius() > self.plot[index_count + 1].get_radius()):
+                return False
+            index_count += 1
+            if index_count >= len(self.plot):
+                index_count -= len(self.plot)
+        index_count = index
+        
+        while index_count < index + (num-1)/2:
+            if not(self.plot[index_count].get_radius() < self.plot[index_count + 1].get_radius()):
+                return False
+            index_count += 1
+            if index_count >= len(self.plot):
+                index_count -= len(self.plot)
+        if not (self.plot[index].get_radius() < self.plot[index-1].get_radius() and self.plot[index].get_radius() < self.plot[index + 1].get_radius()):
+            return False
         return True    
         
     def get_maximums_drawn_to_img(self):
@@ -117,6 +166,16 @@ class PolarSideCounter:
         for r_angle in self.maximums:
             r_angle.draw_dot(img, image, self.origin, 255)
         return img
+    
+    def get_minimums_drawn_to_img(self):
+        img = self.canny_img.copy()
+        image = img.load()
+        for r_angle in self.minimums:
+            r_angle.draw_dot(img, image, self.origin, 255)
+        return img
+    
+    def get_origin(self):
+        return self.origin
         
 class RadiusAngle:
     def __init__(self, radiusIn, angleIn):
@@ -145,6 +204,11 @@ class RadiusAngle:
         rect.fill(img, image, color)
         #Drawer.fillRect(img, image, rect, (0,255,0))
         #image[center[0]+dx, center[1]-dy] = (0,255,0)
+    
+    def get_pixel(self, center):
+        dx = int(self.radius * cos(self.angle))
+        dy = int(self.radius * sin(self.angle))
+        return (center[0] + dx, center[1] - dy)
     
     def __repr__(self):
         return "Angle: " + str(self.angle) + " Radius: " + str(self.radius)

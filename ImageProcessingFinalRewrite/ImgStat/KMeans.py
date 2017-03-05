@@ -24,6 +24,16 @@ class KMeans:
                 vectors.append(image[x,y])
         return KMeans(vectors, num_clusters_in, times_to_run_in, step_count)
 
+    @classmethod
+    def init_with_numpy(cls, numpy_data, num_clusters_in, times_to_run_in, step=1):
+        data = []
+        for i in range(0, numpy_data.shape[0]):
+            data.append(tuple(numpy_data[i]))
+        return KMeans(data, num_clusters_in, times_to_run_in, step)
+
+    def get_clusters(self):
+        return self.clusters
+
     def get_cluster_origins(self):
         origins = []
         for i in range(0, len(self.clusters)):
@@ -38,9 +48,13 @@ class KMeans:
 
 class Clusters:
     
-    def __init__(self, data_in, num_clusters_in):
+    def __init__(self, data_in, clusters_in):
         self.data = data_in
-        self.clusters = [Cluster(Random.get_random_value_from_list(data_in)) for i in range(0, num_clusters_in)]
+        if type(clusters_in) is int:
+            self.clusters = [Cluster(Random.get_random_value_from_list(data_in)) for i in range(0, clusters_in)]
+        else:
+            self.clusters = clusters_in
+    
     
     def cycle(self, step, step_count):
         self.fit_data_to_clusters(step, step_count)
@@ -51,6 +65,7 @@ class Clusters:
     def fit_data_to_clusters(self, step, step_count):
         for i in range(step_count, len(self.data), step):
             self.get_closest_cluster_to_vector(self.data[i]).append_vector(self.data[i])
+            
     
     def get_closest_cluster_to_vector(self, vector):
         sort_by_dist = sorted(self.clusters, key=lambda cluster : cluster.dist_to_origin(vector))
@@ -77,7 +92,10 @@ class Clusters:
     
     def __getitem__(self, index):
         return self.clusters[index]   
-            
+    
+    def __delitem__(self, index):
+        del self.clusters[index]        
+    
     def __repr__(self):
         out_str = ""
         for i in range(0, len(self.clusters)):
@@ -105,6 +123,7 @@ class Cluster:
                 sum += self.vectors[j][i]
             if(len(self.vectors) != 0):
                 sums[i] = sum/float(len(self.vectors))
+            
         return tuple(sums)
     
     def dist_to_origin(self, vector):
@@ -116,6 +135,12 @@ class Cluster:
     
     def get_origin(self):
         return self.origin
+    
+    def __len__(self):
+        return len(self.vectors)
+    
+    def __getitem__(self, index):
+        return self.vectors[index]
     
     def __repr__(self):
         return str(self.origin)

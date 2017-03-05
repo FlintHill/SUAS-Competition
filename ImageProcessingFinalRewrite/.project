@@ -3,6 +3,7 @@
 	<name>SUASImageProcessingFinal</name>
 	<comment></comment>
 	<projects>
+		<project>EigenFitTwo</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

@@ -1,5 +1,5 @@
-from Stat.EigenImageProjector import EigenImageProjector
-from FileLoading.DataLoader import DataLoader
+#from Stat.EigenImageProjector import EigenImageProjector
+#from FileLoading.DataLoader import DataLoader
 from PIL import Image
 import NoiseReduction.GaussianBlur as GaussianBlur
 from EdgeProcessing.SobelEdge import SobelEdge
@@ -8,11 +8,18 @@ from ImgStat.KMeans import KMeans
 import Color.ColorMath as ColorMath
 from Color.ColorSplitter import ColorSplitter
 from General.Target import Target
+from DataMine.KNearestNeighbors import KNearestNeighbors
+#from FileLoading.Categorizer import Categorizer
+from Character.SWT import SWT
+from PIL import ImageOps
+import timeit
+from DataMine.ZScore import ZScore
+import EdgeProcessing.HarrisCorner as HarrisCorner
+import Color.TargetColorReader as TargetColorReader
+from Testing.SyntheticTester import SyntheticTester
 
-shape_img = Image.open("/Users/phusisian/Desktop/Senior year/SUAS/Object images/400 crop triangle 6480x4320.jpg")
-target = Target(shape_img, shape_img.load())
 
-shape_img = shape_img.resize((50, 67))
-data_path = "/Users/phusisian/Desktop/Senior year/SUAS/PCATesting/ManavImgs/Data"
-data_loader = DataLoader(data_path, 40)
-shape_eigen = EigenImageProjector(data_loader, shape_img.convert('L'))
+tester = SyntheticTester("/Users/phusisian/Desktop/Senior year/SUAS/Generated Targets BlockText/Images", "/Users/phusisian/Desktop/Senior year/SUAS/Generated Targets BlockText/Answers", 1, ".png")
+print("final score: " + str(tester.get_score_vals()))
+print("num crashed: " + str(tester.get_num_crashes()))
+

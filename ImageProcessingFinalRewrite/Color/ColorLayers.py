@@ -16,7 +16,14 @@ class ColorLayers:
     
     def set_color_layers(self, layers_in):
         self.color_layers = layers_in
+    '''
+    def __delitem__(self, index):
+        del self.color_layers[index]
+    '''
     
+    def remove(self, obj):
+        self.color_layers.remove(obj)
+        
     def clone(self):
         clone_color_layers = ColorLayers()
         for i in range(0, len(self)):

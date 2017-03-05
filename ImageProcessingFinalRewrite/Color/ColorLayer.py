@@ -1,5 +1,6 @@
 from PIL import Image
 import ImageOperation.Crop as Crop
+import numpy
 
 class ColorLayer:
     
@@ -19,7 +20,7 @@ class ColorLayer:
     def fill_with_color_layer(self, color_layer_in):
         for x in range(0, self.layer_img.size[0]):
             for y in range(0, self.layer_img.size[1]):
-                if self.layer_image[x,y] != 255 and color_layer_in.get_layer_image()[x,y] == 255:
+                if color_layer_in.get_layer_image()[x,y] != 0:
                     self.layer_image[x,y] = 255
                     
     def get_layer_filled_with_layer(self, color_layer_in):
@@ -31,11 +32,17 @@ class ColorLayer:
     def init_bounds(self):
         self.bounds = Crop.get_bw_img_bounds(self.layer_img, self.layer_image)    
     
+    def get_bounds(self):
+        return self.bounds
+
     def get_area(self):
         return self.area
     
     def get_color(self):
         return self.color
+    
+    def set_color(self, color):
+        self.color = color
     
     def get_layer_img(self):
         return self.layer_img
@@ -44,13 +51,32 @@ class ColorLayer:
         self.layer_img = img_in
         self.layer_image = self.layer_img.load()
         self.init_bounds()
+        self.init_area()
+        
+    def init_area(self):
+        self.area = 0
+        for x in range(0, self.layer_img.size[0]):
+            for y in range(0, self.layer_img.size[1]):
+                if self.layer_image[x,y] != 0:
+                    self.area += 1
         #needs to recalculate area!
     
     def get_layer_image(self):
         return self.layer_image
     
+    def get_avg_dist_from_center(self):
+        sum_num = 0
+        num_counted = 0
+        center = numpy.array([self.layer_img.size[0]/2, self.layer_img.size[1]/2])
+        for x in range(0, self.layer_img.size[0]):
+            for y in range(0, self.layer_img.size[1]):
+                if self.layer_image[x,y] != 0:
+                    pixel = numpy.array([x-center[0], y - center[1]])
+                    sum_num += numpy.linalg.norm(pixel)
+                    num_counted += 1
+        return sum_num/float(num_counted)
+    
     def clone(self):
         clone_layer = ColorLayer(self.color, self.layer_img.size)
         clone_layer.set_layer_img(self.layer_img.copy())
-        #clone_layer.get_layer_img().show()
         return clone_layer

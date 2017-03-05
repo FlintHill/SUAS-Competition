@@ -39,10 +39,23 @@ class SobelEdge:
         for x in range(0, len(self.gradient_x)):
             for y in range(0, len(self.gradient_x[0])):
                 self.gradient_angles[x][y] = atan2(self.gradient_y[x][y], self.gradient_x[x][y])
-                
+    
+    def get_img_gradient_under_threshold(self, threshold):
+        out_img = Image.new("L", self.gradient_mag_img.size, 0)
+        out_image = out_img.load()
+        for x in range(0, self.gradient_mags.shape[0]):
+            for y in range(0, self.gradient_mags.shape[1]):
+                if self.gradient_mags[x][y] <= threshold:
+                    out_image[x,y] = 255
+        return out_img
+              
     def get_gradient_mags(self):
         return self.gradient_mags
     def get_gradient_angles(self):
         return self.gradient_angles
     def get_gradient_mag_img(self):
         return self.gradient_mag_img
+    def get_x_gradient(self):
+        return self.gradient_x
+    def get_y_gradient(self):
+        return self.gradient_y

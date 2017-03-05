@@ -1,7 +1,12 @@
 from Geometry.Rectangle import Rectangle
 
-def get_bw_img_cropped_to_bounds(img, image):
-    return get_img_cropped_to_bounds(img, get_bw_img_bounds(img, image))
+def get_bw_img_cropped_to_bounds(img, image, margin = 0):
+    bounds = get_bw_img_bounds(img, image)
+    bounds.set_x(bounds.get_x() - margin)
+    bounds.set_y(bounds.get_y() - margin)
+    bounds.set_width(bounds.get_width() + margin * 2)
+    bounds.set_height(bounds.get_height() + margin * 2)
+    return get_img_cropped_to_bounds(img, bounds)
 
 def get_bw_img_bounds(img, image):
     left_x = img.size[0]
@@ -23,5 +28,5 @@ def get_bw_img_bounds(img, image):
     
 def get_img_cropped_to_bounds(img, rect):
     return img.crop((rect.get_x(), rect.get_y(), rect.get_x() + rect.get_width(), rect.get_y() + rect.get_height()))
-    
+
     
