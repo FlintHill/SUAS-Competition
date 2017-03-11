@@ -77,7 +77,6 @@ class SyntheticTester:
                     self.score_vals[0] += 1
                 elif self.get_if_letter_is_bidirectional(str(scores[3])):
                     flipped_angle = self.get_compass_angle_180_degrees_away(str(target_answers[0]))
-                    '''print("angle in: " + str(scores[0]) + ", flipped angle: " + str(flipped_angle))'''
                     if str(flipped_angle) == str(scores[0]):
                         self.score_vals[0] += 1
                 print("answer key: " + str(scores))

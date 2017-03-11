@@ -47,7 +47,6 @@ class Target:
         self.init_edge_imgs()
         self.init_color_splitter_and_layers()
         
-        #letter_and_shape_canny_img = self.get_shape_and_letter_canny_img()
         self.init_letter_pca()
         
         
@@ -135,10 +134,9 @@ class Target:
     def init_target_colors(self):
         self.TARGET_SHAPE_COLOR = TargetColorReader.get_closest_target_color(self.shape_layer.get_color())
         letter_mask_img = Mask.get_bmp_masked_img(self.letter_layer.get_layer_img(), self.letter_layer.get_layer_img().load(), self.target_img, self.target_image)
-        bw_letter_mask_img = letter_mask_img.convert('L')
         mean_color = ImageMath.get_mean_color_excluding_transparent(letter_mask_img, letter_mask_img.load())
-        self.TARGET_CHARACTER_COLOR = TargetColorReader.get_closest_target_color(mean_color)
-        self.TARGET_CHARACTER_COLOR = TargetColorReader.get_closest_target_color(self.letter_layer.get_color())
+        self.TARGET_CHARACTER_COLOR = TargetColorReader.get_closest_target_color(mean_color)#TargetColorReader.get_closest_HSL_target_color(mean_color)#
+        self.TARGET_CHARACTER_COLOR = TargetColorReader.get_closest_target_color(self.letter_layer.get_color())#TargetColorReader.get_closest_HSL_target_color(self.letter_layer.get_color())#
 
     def init_shape_type(self):
         shape_img = self.shape_layer.get_layer_img().copy()

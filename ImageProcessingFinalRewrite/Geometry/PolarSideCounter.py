@@ -3,7 +3,7 @@ from math import sin, cos, atan2, pi
 from Geometry.Rectangle import Rectangle
 import ImageOperation.ImageMath as ImageMath
 import EdgeProcessing.CannyEdge as CannyEdge
-
+import matplotlib.pyplot as pyplot
 
 
 class PolarSideCounter:
@@ -20,7 +20,7 @@ class PolarSideCounter:
         '''not sure if it is good to set under mean to mean, because there may be a shape that does have
         legitimate maximums that are smaller than the mean'''
         #self.setUnderMeanToMean()
-        self.smooth_plot(6, 3)
+        self.smooth_plot(6, 5)#num iterations used to be 3, found the output was kind of noisy
         
         self.init_maximums()
         self.init_minimums()
@@ -46,6 +46,8 @@ class PolarSideCounter:
                     vector_from_origin = numpy.subtract(pix_vector, self.numpy_origin)
                     self.plot.append(RadiusAngle(numpy.linalg.norm(vector_from_origin), self.get_raycast_angle(vector_from_origin)))
         self.plot = sorted(self.plot, key = lambda angle: angle.get_angle())
+        
+        
     
     def get_radius_of_raycast(self, theta):
         dxdy = numpy.array([cos(theta), sin(theta)])
@@ -97,6 +99,13 @@ class PolarSideCounter:
         for i in range(0, numTimes):
             for j in range((window-1)/2, len(self.plot) - window/2):
                 self.plot[j].set_radius(self.get_mean_in_window(j, window))
+        '''radiuses = []
+        thetas = []
+        for i in range(3, len(self.plot)-4):
+            radiuses.append(self.plot[i].get_radius())
+            thetas.append(self.plot[i].get_angle())
+        pyplot.plot(thetas, radiuses)
+        pyplot.show()'''
                 
     def get_mean_in_window(self, index, window):
         sum = 0
@@ -209,6 +218,11 @@ class RadiusAngle:
         dx = int(self.radius * cos(self.angle))
         dy = int(self.radius * sin(self.angle))
         return (center[0] + dx, center[1] - dy)
+    
+    def __getitem__(self, index):
+        if index == 0:
+            return self.radius
+        return self.angle
     
     def __repr__(self):
         return "Angle: " + str(self.angle) + " Radius: " + str(self.radius)
