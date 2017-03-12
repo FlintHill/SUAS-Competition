@@ -8,6 +8,7 @@ from ObjAvoidSimplified import *
 from current_coordinates import CurrentCoordinates
 from math import sin, cos, atan2
 from static_math import *
+import numpy as np
 
 class ClientConverter(object):
 
@@ -16,11 +17,8 @@ class ClientConverter(object):
     currently updates the position of the drone mass, but is set up to update other masses as well if it were
     to be funneled them fairly simply'''
     def __init__(self, initial_coordinates):
-        mass_holder = MassHolder([])
+        mass_holder = MassHolder(np.array([]))
         drone_mass = DroneMass(1, np.array([[0, 0]]))
-        random_masses = self.generate_random_masses(10)
-        for random_mass in random_masses:
-            mass_holder.append_mass(random_mass)
         self.map = Map(mass_holder, drone_mass)
 
         self.initial_coordinates = initial_coordinates
@@ -36,13 +34,16 @@ class ClientConverter(object):
             print(converted_waypoint)
             self.map.add_waypoint(converted_waypoint)
 
-    def generate_random_masses(self, number_masses):
-        masses = []
-        random_masses = get_random_points_in_bounds(2, number_masses, ((-100,400), (-150,300)))
-        for i in range(0, len(random_masses)):
-            masses.append(SafetyRadiusMass(random_masses[i], 500, 5))
+    def add_obstacle(self, obstacle):
+        initial_coordinates = self.get_initial_coordinates()
+        haversine_dist = haversine(initial_coordinates, GPSCoordinates(obstacle.latitude, obstacle.longitude, initial_coordinates.get_altitude()))
+        obstacle_bearing = bearing(initial_coordinates, GPSCoordinates(obstacle.latitude, obstacle.longitude, initial_coordinates.get_altitude()))
 
-        return np.array([SafetyRadiusMass((100, 9), 50, 5)])#np.array(masses)
+        dx = haversine_dist * cos(obstacle_bearing)
+        dy = haversine_dist * sin(obstacle_bearing)
+        new_mass_obstacle = np.array([SafetyRadiusMass((dx, dy), 50, 5)])
+
+        self.map.append_mass(new_mass_obstacle)
 
     def get_map(self):
         return self.map

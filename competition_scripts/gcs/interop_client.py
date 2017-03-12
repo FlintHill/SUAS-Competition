@@ -1,5 +1,7 @@
-from interop import AsyncClient
+from __future__ import print_function
+from interop import Client
 from interop import Telemetry
+from time import sleep
 
 class InteropClientConverter:
 
@@ -9,9 +11,7 @@ class InteropClientConverter:
         self.username = username
         self.password = password
 
-        print("BEFORE CLIENT()")
-        self.client = AsyncClient(url, username, password)
-        print("AFTER CLIENT()")
+        self.client = Client(url, username, password)
 
     def post_telemetry(self, telemetry):
         """
@@ -30,4 +30,14 @@ class InteropClientConverter:
 
         Returned in the format: [StationaryObstacle], [MovingObstacle]
         """
-        return client.get_obstacles()
+        stationary_obstacles, moving_obstacles = self.client.get_obstacles()
+
+        return stationary_obstacles, moving_obstacles
+
+if __name__ == "__main__":
+    test_client = InteropClientConverter(22, "http://10.10.130.2:8000", "Flint", "2429875295")
+
+    while True:
+        test_client.get_obstacles()
+
+        sleep(0.5)

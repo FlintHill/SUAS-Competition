@@ -9,7 +9,6 @@ from logger import *
 from datetime import datetime
 from time import sleep
 from interop_client import InteropClientConverter
-from obstacle_container import ObstacleContainer
 from static_math import haversine, bearing
 from current_coordinates import CurrentCoordinates
 from converter_data_update import ConverterDataUpdate
@@ -168,8 +167,11 @@ if __name__ == '__main__':
 
 	while True:
 		start_time = datetime.now()
-		interop_server_client.post_telemetry(CurrentCoordinates(1.0, 1.0, 1.0, 180))
-		obstacles = ObstacleContainer(interop_server_client.get_obstacles())
+		interop_server_client.post_telemetry(current_coordinates[0])
+		stationary_obstacles, moving_obstacles = interop_server_client.get_obstacles()
+		obstacle_map.reset_obstacles()
+		for stationary_obstacle in stationary_obstacles:
+			obstacle_map.add_obstacle(stationary_obstacle)
 
 		initialCoords = obstacle_map.get_initial_coordinates()
 		haversine_distance = haversine(initialCoords, current_coordinates[0].as_gps())
@@ -182,6 +184,6 @@ if __name__ == '__main__':
 			guided_waypoint_output.send("lng " + str(obj_avoid_coordinates.get_longitude()) + " ")
 			guided_waypoint_output.send("alt " + str(current_coordinates[0].get_altitude()) + " ")
 
-		time_to_execute = (datetime.now() - start_time).seconds
+		time_to_execute = (datetime.now() - start_time).total_seconds()
 		print("time_to_execute: " + str(time_to_execute))
 		sleep(1 - time_to_execute)

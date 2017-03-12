@@ -3,6 +3,7 @@ Created on Feb 17, 2017
 
 @author: vtolpegin
 '''
+import numpy as np
 
 class MassHolder(object):
 
@@ -22,7 +23,10 @@ class MassHolder(object):
 
         :param mass: The mass to append to the mass holder
         """
-        self.masses.append(mass)
+        if self.masses.size == 0:
+            self.masses = mass
+        else:
+            self.masses = np.vstack([self.masses, mass])
 
     def update_obstacle_mass(self, drone_mass):
         """
@@ -39,7 +43,7 @@ class MassHolder(object):
             self[i].draw(win)
 
     def __getitem__(self, index):
-        return self.masses[index]
+        return self.masses[index][0]
 
     def __len__(self):
         return len(self.masses)
