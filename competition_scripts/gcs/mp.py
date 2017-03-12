@@ -7,6 +7,8 @@ import sys
 import MissionPlanner
 import clr
 clr.AddReference("MissionPlanner.Utilities")
+#sys.path.append(r"C:\Python27\Lib")
+#import xmlrpclib
 
 receive_address = 'localhost'
 receive_port_min = 10010
