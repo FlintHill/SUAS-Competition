@@ -52,6 +52,6 @@ class VectorMath(object):
         Returns the vector projection between two vectors
         """
         dot_prod = np.dot(vector_one, vector_two)
-        mag = VectorMath.get_vector_magnitude(vector_one)
+        mag = VectorMath.get_vector_magnitude(vector_two)
 
-        return vector_one * (dot_prod / (mag**2))
+        return vector_two * (dot_prod / (mag**2))

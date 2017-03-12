@@ -1,3 +1,5 @@
+import numpy as np
+
 class WaypointHolder(object):
 
     def __init__(self, waypoints):
@@ -5,10 +7,10 @@ class WaypointHolder(object):
         self.waypoint_index = 0
 
     def add_waypoint(self, waypoint):
-        self.waypoints = np.vstack([self.waypoints, waypoint])
-
-        if self.waypoints.shape[0] == 2:
-            self.waypoints = np.delete(self.waypoints, (0), axis=0)
+        if self.waypoints.size == 0:
+            self.waypoints = np.array([waypoint])
+        else:
+            self.waypoints = np.vstack([self.waypoints, waypoint])
 
     def get_current_waypoint(self):
         return self.waypoints[self.waypoint_index]

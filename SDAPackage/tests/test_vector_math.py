@@ -50,5 +50,10 @@ class VectorMathTestCase(unittest.TestCase):
         """
         Test the algorithm for vector projection
         """
-        # TODO
-        pass
+        vector_one = np.array([5, 5])
+        vector_two = np.array([0, 10])
+
+        projection_vector = VectorMath.get_vector_projection(vector_one, vector_two)
+        correct_projection_vector = np.array([0, 5])
+
+        self.assertEqual(correct_projection_vector.all(), projection_vector.all())
