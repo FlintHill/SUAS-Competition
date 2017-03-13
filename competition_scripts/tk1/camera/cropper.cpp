@@ -108,18 +108,15 @@ void identifyTargets(Mat img, int thresh, int minSize, int maxSize){
   Mat img_gray; Mat img_canny; Mat img_drawn; Mat img_cropped;
   vector<vector<Point> >contours;
   vector<Vec4i>hierarchy;
-
   printf("variables setup properly\n");
 
   cvtColor(img, img_gray, CV_BGR2GRAY);
   blur(img_gray, img_gray, Size(3,3));
   Canny(img_gray, img_canny, thresh, thresh*2, 3);
-
   printf("canny completed\n");
 
   findContours(img_canny, contours, hierarchy, CV_RETR_TREE,
       CV_CHAIN_APPROX_SIMPLE, Point(0,0));
-
   printf("contours found\n");
 
   vector<vector<Point> >contours_poly(contours.size());
@@ -131,27 +128,108 @@ void identifyTargets(Mat img, int thresh, int minSize, int maxSize){
     boundRect[i] = boundingRect( Mat(contours_poly[i]) );
     minRect[i] = minAreaRect( Mat(contours_poly[i]) );
   }
-
   printf("bounding Rects found\n");
 
   Mat drawing = Mat::zeros(img_canny.size(), CV_8UC3);
 
   for(int i = 0; i < contours.size(); i++){
+    int currentContour = i;
     if(hierarchy[i][2] > 0){
+
+      Mat bigMask = Mat(img.rows, img.cols, CV_8U);
+      drawContours(bigMask, contours_poly, i, 255, CV_FILLED, 8,
+          vector<Vec4i>(), 0, Point());
+
+      int maxX = img.cols;
+      int maxY = img.rows;
+
+      int xRangeStart = boundRect[i].tl().x - 5;
+      int yRangeStart = boundRect[i].tl().y - 5;
+      int xRangeEnd = boundRect[i].br().x + 5;
+      int yRangeEnd = boundRect[i].br().y + 5;
+
+      Range yRange = Range(yRangeStart, yRangeEnd);
+      Range xRange = Range(xRangeStart, xRangeEnd);
+
       int tiltH = static_cast<int>(minRect[i].size.width);
       int tiltW = static_cast<int>(minRect[i].size.height);
 
-      if ((tiltW >= minSize && tiltW <= maxSize) && (tiltH >= minSize && tiltH <= maxSize)){
-        img_cropped = Mat(img, boundRect[i]);
-        ss << cropCount;
-        string cropNumber = ss.str();
-        string name = cropsDirectoryPath + cropNumber + ".PNG";
-        ss.str("");
+      if ((tiltW >= minSize && tiltW <= maxSize) &&
+        (tiltH >= minSize && tiltH <= maxSize)){
+        if ((xRangeStart > 0) && (yRangeStart > 0) &&
+          (xRangeEnd < maxX) && (yRangeEnd < maxY)){
 
-        imwrite(name, img_cropped);
-        cropCount++;
+          //img_cropped = Mat(img, boundRect[i]);
+          //printf("yRange: %i\n", yRange.size());
+          //printf("xRange: %i\n", xRange.size());
+
+          img_cropped = Mat(img, yRange, xRange);
+
+          //now that we have img_cropped
+
+          Mat insideMask;
+          insideMask = Mat(bigMask, yRange, xRange);
+
+          Mat outsideMask;
+          outsideMask = insideMask.clone();
+          bitwise_not(insideMask, outsideMask);
+
+          //convert the image to the L*a*b* colorspace
+          Mat Lab_img = img_cropped.clone();
+          cvtColor(img_cropped, Lab_img, CV_BGR2Lab);
+
+          //Now that the image is in the lab colorspace, we can easily
+          //measure the distance between the inside color and the outside
+
+          vector<Mat> channels;
+          split(img_cropped,channels);
+
+          Scalar internalAverage = mean(Lab_img, insideMask);
+          Scalar externalAverage = mean(Lab_img, outsideMask);
+
+          double iL = internalAverage[0];
+          double iA = internalAverage[1];
+          double iB = internalAverage[2];
+
+          double eL = externalAverage[0];
+          double eA = externalAverage[1];
+          double eB = externalAverage[2];
+
+          double Ldiff = iL - eL;
+          double Adiff = iA - eA;
+          double Bdiff = iB - eB;
+
+          double deltaE = sqrt((Ldiff*Ldiff) + (Adiff*Adiff) + (Bdiff*Bdiff));
+
+          if (deltaE > 55) {
+            //time to do analysis between the inside and out of the crop
+
+            Mat contourAnalysisCrop;
+            img_cropped.copyTo(contourAnalysisCrop, insideMask);
+
+            Scalar cornerPixel = contourAnalysisCrop.at<uchar>(0,0);
+
+            double L = cornerPixel[0];
+            double A = cornerPixel[1];
+            double B = cornerPixel[2];
+
+            printf("\nL:%f A:%f B:%f\n", L, A, B);
+
+            ss << cropCount;
+            string cropNumber = ss.str();
+            string orginal = "./crops/" + cropNumber + "original.jpg";
+            string cropVersion = "./crops/" + cropNumber + "crop.jpg";
+            string cropName = cropsDirectoryPath + cropNumber + ".PNG";
+            ss.str("");
+            printf("saved %s\n", orginal.c_str());
+            printf("DeltaE of crop is %f\n\n", deltaE);
+
+            imwrite(cropName, contourAnalysisCrop);
+            cropCount++;
+          }
+        }
       }
     }
   }
-  printf("image completed. Crops so far is %i\n\n", cropCount);
+  printf("image completed. Crops so far is %i\n\n\n\n", cropCount);
 }
