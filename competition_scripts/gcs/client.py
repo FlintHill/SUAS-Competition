@@ -12,7 +12,7 @@ from interop_client import InteropClientConverter
 from static_math import haversine, bearing
 from current_coordinates import CurrentCoordinates
 from converter_data_update import ConverterDataUpdate
-from ClientConverter import ClientConverter
+from updated_client_converter import ClientConverter
 from obstacle import Obstacle
 from waypoint import Waypoint
 from message import Message
