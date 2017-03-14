@@ -25,7 +25,7 @@ def point_in_polygon(polygon, point):
     for corner in polygon:
         pass
 
-def inverse_haversine(gps1, diff, bearing):
+def inverse_haversine(gps1, dist, alt_diff, bearing):
     """
     Calculate a second GPS point through using a single GPS point and a
     different in XY units
@@ -35,14 +35,11 @@ def inverse_haversine(gps1, diff, bearing):
     :param diff: The difference in the [dX, dY, alt]
     :param bearing: The bearing between the two points
     """
-    diff[0] = (diff[0] / 1609.34) * 1.6
-    diff[1] = (diff[1] / 1609.34) * 1.6
-    alt = gps1.get_altitude() + diff[2]
+    alt = gps1.get_altitude() + alt_diff
 
-    diff_magnitude = float((diff[1]**2 + diff[0]**2)**0.5)
-    lat = gps1.get_latitude() + (diff_magnitude * cos(bearing) / 111.2)
-    lon = gps1.get_longitude()
-    lon += ((diff_magnitude * sin(bearing) / (cos(math.radians(lat)) * 111.321)) + (diff_magnitude * sin(bearing) / (cos(gps1.get_latitude_radians()) * 111.321))) / 2.0
+    diff_magnitude = dist / 1000.1
+    lat = gps1.get_latitude() + (diff_magnitude * cos(bearing) / 111.195)
+    lon = gps1.get_longitude() + ((diff_magnitude * sin(bearing)) / (cos(math.radians((lat + gps1.get_latitude()) / 2.0)) * 111.191))
 
     return GPSCoordinates(lat, lon, alt)
 

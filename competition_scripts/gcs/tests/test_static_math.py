@@ -24,9 +24,8 @@ class StaticMathTestCase(unittest.TestCase):
         actual_gps_2 = GPSCoordinates(38.8739395, -77.3245697, 100)
         dist = haversine(gps_1, actual_gps_2)
         diff_bearing = bearing(gps_1, actual_gps_2)
-        diff = [cos(diff_bearing) * dist, sin(diff_bearing) * dist, 0]
 
-        inverse_haversine_gps = inverse_haversine(gps_1, diff, diff_bearing)
+        inverse_haversine_gps = inverse_haversine(gps_1, dist, 0, diff_bearing)
 
-        self.assertTrue(abs(inverse_haversine_gps.get_latitude() - actual_gps_2.get_latitude()) < 0.01)
-        self.assertTrue(abs(inverse_haversine_gps.get_longitude() - actual_gps_2.get_longitude()) < 0.01)
+        self.assertTrue(abs(inverse_haversine_gps.get_latitude() - actual_gps_2.get_latitude()) < 0.000001)
+        self.assertTrue(abs(inverse_haversine_gps.get_longitude() - actual_gps_2.get_longitude()) < 0.000001)
