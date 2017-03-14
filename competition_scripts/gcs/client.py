@@ -1,8 +1,6 @@
 import socket
 import multiprocessing
-import sys
 import json
-import os
 import math
 import numpy as np
 from logger import *
@@ -13,9 +11,7 @@ from static_math import haversine, bearing
 from current_coordinates import CurrentCoordinates
 from converter_data_update import ConverterDataUpdate
 from updated_client_converter import ClientConverter
-from obstacle import Obstacle
 from waypoint import Waypoint
-from message import Message
 from SDA import *
 
 INTEROP_CLIENT_ADDRESS = ('localhost', 9000)
@@ -128,7 +124,7 @@ def receive_telem(logger_queue, configurer, receive_telem_array):
 					previous_message = messages[index]
 
 		log(name, str(curr_coords))
-		curr_coords["heading"] /= (2 * math.pi)
+		curr_coords["heading"] *= math.pi / 180.0
 		receive_telem_array[0] = CurrentCoordinates(curr_coords["lat"], curr_coords["lng"], curr_coords["alt"], curr_coords["heading"])
 
 if __name__ == '__main__':
@@ -183,5 +179,4 @@ if __name__ == '__main__':
 			guided_waypoint_output.send("alt " + str(current_coordinates[0].get_altitude()) + " ")
 
 		time_to_execute = (datetime.now() - start_time).total_seconds()
-		print("time_to_execute: " + str(time_to_execute))
 		sleep(1 - time_to_execute)
