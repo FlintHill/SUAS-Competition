@@ -67,11 +67,16 @@ class ClientConverter(object):
             print("Magnitude of previous and current tangent vectors: " + str(VectorMath.get_magnitude(self.previous_min_tangent_point, min_tangent_point)))
             if VectorMath.get_magnitude(self.previous_min_tangent_point, min_tangent_point) > self.minimum_change_in_guided_point:
                 bearing = atan2(min_tangent_point[0], min_tangent_point[1])
-                self.previous_min_tangent_point = min_tangent_point
 
-                return inverse_haversine(self.get_initial_coordinates(), float((min_tangent_point[0]**2.0 + min_tangent_point[1]**2)**0.5), 0, bearing)
+                return inverse_haversine(self.get_initial_coordinates(), float((min_tangent_point[0]**2.0 + min_tangent_point[1]**2)**0.5), 0, bearing + update_data.get_heading()), min_tangent_point
 
-        return None
+        return None, None
+
+    def set_guided_waypoint(self, guided_waypoint):
+        """
+        Set the previous guided waypoint to the passed waypoint
+        """
+        self.previous_min_tangent_point = guided_waypoint
 
     def get_obstacle_map(self):
         return self.obstacle_map

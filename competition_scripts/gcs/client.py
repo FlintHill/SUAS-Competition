@@ -16,7 +16,7 @@ from SDA import *
 
 INTEROP_CLIENT_ADDRESS = ('localhost', 9000)
 TK1_ADDRESS = ('IP', 9001)
-send_course_max_port = 10009
+send_course_max_port = 10019
 server_address = 'localhost'
 waypoint_JSON_file_path = "./data/demo_waypoints.mission"
 
@@ -170,13 +170,15 @@ if __name__ == '__main__':
 		initialCoords = obstacle_map.get_initial_coordinates()
 		haversine_distance = haversine(initialCoords, current_coordinates[0].as_gps())
 		updated_drone_location = ConverterDataUpdate(haversine_distance, current_coordinates[0].get_heading(), current_coordinates[0].get_altitude())
-		obj_avoid_coordinates = obstacle_map.update_drone_mass_position(updated_drone_location)
+		obj_avoid_coordinates, map_point = obstacle_map.update_drone_mass_position(updated_drone_location)
 
-		if obj_avoid_coordinates and current_coordinates[0].get_altitude() > 7:
+		if obj_avoid_coordinates and current_coordinates[0].get_altitude() > 60:
 			log("root", "Sending avoid coordinates...")
 			guided_waypoint_output.send("lat " + str(obj_avoid_coordinates.get_latitude()) + " ")
 			guided_waypoint_output.send("lng " + str(obj_avoid_coordinates.get_longitude()) + " ")
 			guided_waypoint_output.send("alt " + str(current_coordinates[0].get_altitude()) + " ")
+
+			obstacle_map.set_guided_waypoint(map_point)
 
 		time_to_execute = (datetime.now() - start_time).total_seconds()
 		sleep(1 - time_to_execute)

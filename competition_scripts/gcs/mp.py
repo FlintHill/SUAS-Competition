@@ -7,11 +7,9 @@ import sys
 import MissionPlanner
 import clr
 clr.AddReference("MissionPlanner.Utilities")
-#sys.path.append(r"C:\Python27\Lib")
-#import xmlrpclib
 
 receive_address = 'localhost'
-receive_port_min = 10000
+receive_port_min = 10010
 server_address = ('localhost', 10000)
 
 def send_data(connection, data):
@@ -102,7 +100,6 @@ guided_coords = {
 }
 current_flight_mode = "Auto"
 previous_message = None
-time_since_switch = datetime.now()
 
 while True:
 	for _ in timing(rate=2):
@@ -111,7 +108,7 @@ while True:
 		send_data(sock, "alt " + str(cs.alt) + " ")
 		send_data(sock, "heading " + str(cs.groundcourse) + " ")
 
-		if guided_coords["lat"] != -1.0 and guided_coords["lng"] != -1.0 and guided_coords["alt"] != -1.0 and (has_reached_waypoint([guided_coords["lat"], guided_coords["lng"], guided_coords["alt"]], [cs.lat, cs.lng, cs.alt]) or (datetime.now() - time_since_switch).seconds > 5):
+		if guided_coords["lat"] != -1.0 and guided_coords["lng"] != -1.0 and guided_coords["alt"] != -1.0 and (has_reached_waypoint([guided_coords["lat"], guided_coords["lng"], guided_coords["alt"]], [cs.lat, cs.lng, cs.alt])):
 			Script.ChangeMode("Auto")
 			current_flight_mode = "Auto"
 
@@ -136,7 +133,6 @@ while True:
 
 			if data_coords["lat"] != -1.0 and data_coords["lng"] != -1.0 and data_coords["alt"] != -1.0:
 				print("Avoiding an object...")
-				time_since_switch = datetime.now()
 
 				if "Auto" in current_flight_mode:
 					Script.ChangeMode("Guided")
