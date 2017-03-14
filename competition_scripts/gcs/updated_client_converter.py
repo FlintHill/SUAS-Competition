@@ -62,7 +62,7 @@ class ClientConverter(object):
                 bearing = atan2(min_tangent_point[0], min_tangent_point[1])
                 self.previous_min_tangent_point = min_tangent_point
 
-                return inverse_haversine(self.get_initial_coordinates(), [min_tangent_point[0], min_tangent_point[1], update_data.get_altitude()], bearing)
+                return inverse_haversine(self.get_initial_coordinates(), float((min_tangent_point[0]**2.0 + min_tangent_point[1]**2)**0.5), 0, bearing)
 
         return None
 
