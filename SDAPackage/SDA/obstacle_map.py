@@ -72,32 +72,48 @@ class ObstacleMap(object):
             projection_vector_from_obstacle_magnitude = VectorMath.get_vector_magnitude(projection_vector_from_obstacle)
 
             if projection_vector_from_obstacle_magnitude < obstacle.get_radius():
-                # Uncomment for DEBUGGING ONLY
-                #print("Waypoint Vector: " + str(waypoint_vector))
-                #print("Obstacle Vector: " + str(obstacle_vector))
-                #print("Projection Vector: " + str(projection_vector))
-                #print("Projection Vector From Obstacle: " + str(projection_vector_from_obstacle))
-                #print("Projection Vector From Obstacle Magnitude: " + str(projection_vector_from_obstacle_magnitude))
-                #print("Obstacle Safety Radius: " + str(obstacle.get_safety_radius()))
+                if self.is_obstacle_in_path_of_drone(obstacle_vector, waypoint_vector):
+                    # Uncomment for DEBUGGING ONLY
+                    #print("Waypoint Vector: " + str(waypoint_vector))
+                    #print("Obstacle Vector: " + str(obstacle_vector))
+                    #print("Projection Vector: " + str(projection_vector))
+                    #print("Projection Vector From Obstacle: " + str(projection_vector_from_obstacle))
+                    #print("Projection Vector From Obstacle Magnitude: " + str(projection_vector_from_obstacle_magnitude))
+                    #print("Obstacle Safety Radius: " + str(obstacle.get_safety_radius()))
 
-                angle = atan2(-1.0 * waypoint_vector[0], waypoint_vector[1])
+                    angle = atan2(-1.0 * waypoint_vector[0], waypoint_vector[1])
 
-                perp_point_x = obstacle.get_safety_radius() * cos(angle)
-                perp_point_y = obstacle.get_safety_radius() * sin(angle)
-                tangent_point_one = np.array([obstacle.get_point()[0] + perp_point_x, obstacle.get_point()[1] + perp_point_y])
+                    perp_point_x = obstacle.get_safety_radius() * cos(angle)
+                    perp_point_y = obstacle.get_safety_radius() * sin(angle)
+                    tangent_point_one = np.array([obstacle.get_point()[0] + perp_point_x, obstacle.get_point()[1] + perp_point_y])
 
-                angle += pi % (2 * pi)
-                perp_point_x = obstacle.get_safety_radius() * cos(angle)
-                perp_point_y = obstacle.get_safety_radius() * sin(angle)
-                tangent_point_two = np.array([obstacle.get_point()[0] + perp_point_x, obstacle.get_point()[1] + perp_point_y])
+                    angle += pi % (2 * pi)
+                    perp_point_x = obstacle.get_safety_radius() * cos(angle)
+                    perp_point_y = obstacle.get_safety_radius() * sin(angle)
+                    tangent_point_two = np.array([obstacle.get_point()[0] + perp_point_x, obstacle.get_point()[1] + perp_point_y])
 
-                # Uncomment for DEBUGGING ONLY
-                #print("Tangent Point One: " + str(tangent_point_one))
-                #print("Tangent Point Two: " + str(tangent_point_two))
+                    # Uncomment for DEBUGGING ONLY
+                    #print("Tangent Point One: " + str(tangent_point_one))
+                    #print("Tangent Point Two: " + str(tangent_point_two))
 
-                return True, np.array([tangent_point_one, tangent_point_two])
+                    return True, np.array([tangent_point_one, tangent_point_two])
 
         return False, None
+
+    def is_obstacle_in_path_of_drone(self, obstacle_vector, waypoint_vector):
+        """
+        Looks at the signs of the components of the vectors to determine if the
+        direction of the obstacle is in the same direction as the waypoint
+        (quadrants)
+        """
+        obstacle_list = obstacle_vector.tolist()
+        waypoint_list = waypoint_vector.tolist()
+
+        for index in range(len(obstacle_list)):
+            if all(item > 0 for item in [-1.0 * obstacle_list[index], waypoint_vector[index]]) or all(item < 0 for item in [-1.0 * obstacle_list[index], waypoint_vector[index]]):
+                return False
+
+        return True
 
     def get_min_tangent_point(self, points):
         """

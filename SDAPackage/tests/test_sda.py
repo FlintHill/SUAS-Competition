@@ -88,6 +88,21 @@ class SDATestCase(unittest.TestCase):
         self.assertEqual(avoid_coords[0].all(), np.array([7.5, 12.5]).all())
         self.assertEqual(avoid_coords[0].all(), np.array([12.5, 7.5]).all())
 
+        # Fourth intersection test
+        self.obstacle_map.reset_obstacles()
+        self.obstacle_map.reset_waypoints()
+        obstacle_in_path = StationaryObstacle(np.array([5, 5]), 0)
+        waypoint = np.array([20, 20])
+
+        self.obstacle_map.set_drone_position(np.array([15, 15]))
+        self.obstacle_map.add_obstacle(obstacle_in_path)
+        self.obstacle_map.add_waypoint(waypoint)
+
+        obstacle_in_path_boolean, avoid_coords = self.obstacle_map.is_obstacle_in_path()
+
+        self.assertEqual(obstacle_in_path_boolean, False)
+        self.assertEqual(avoid_coords, None)
+
     def test_get_min_path(self):
         """
         Test ObstacleMap's get_min_path method

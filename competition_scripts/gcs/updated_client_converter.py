@@ -17,7 +17,7 @@ class ClientConverter(object):
         self.previous_min_tangent_point = np.array([0, 0])
         self.minimum_change_in_guided_point = 1
 
-        self.obstacle_map.add_obstacle(StationaryObstacle(np.array([100, 10]), 5));
+        self.obstacle_map.add_obstacle(StationaryObstacle(np.array([100.0, -8.0]), 5));
 
     def get_initial_coordinates(self):
         return self.initial_coordinates
@@ -57,13 +57,14 @@ class ClientConverter(object):
         print("New Drone Location: " + str(new_drone_location))
 
         obstacle_in_path_boolean, avoid_coords = self.obstacle_map.is_obstacle_in_path()
-        print("Is an obstacle in the path? :" + str(obstacle_in_path_boolean))
+        print("Is an obstacle in the path? : " + str(obstacle_in_path_boolean))
 
         if obstacle_in_path_boolean:
             print("New avoid coords: " + str(avoid_coords))
             min_tangent_point = self.obstacle_map.get_min_tangent_point(avoid_coords)
             print("Min avoid coords: " + str(min_tangent_point))
 
+            print("Magnitude of previous and current tangent vectors: " + str(VectorMath.get_magnitude(self.previous_min_tangent_point, min_tangent_point)))
             if VectorMath.get_magnitude(self.previous_min_tangent_point, min_tangent_point) > self.minimum_change_in_guided_point:
                 bearing = atan2(min_tangent_point[0], min_tangent_point[1])
                 self.previous_min_tangent_point = min_tangent_point
