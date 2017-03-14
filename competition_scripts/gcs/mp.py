@@ -11,7 +11,7 @@ clr.AddReference("MissionPlanner.Utilities")
 #import xmlrpclib
 
 receive_address = 'localhost'
-receive_port_min = 10010
+receive_port_min = 10000
 server_address = ('localhost', 10000)
 
 def send_data(connection, data):

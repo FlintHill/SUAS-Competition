@@ -4,3 +4,5 @@ class Constants(object):
     """
 
     STATIONARY_OBSTACLE_SAFETY_RADIUS = 5
+
+    MAX_DISTANCE_TO_TARGET = 5

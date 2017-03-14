@@ -16,11 +16,11 @@ from updated_client_converter import ClientConverter
 from obstacle import Obstacle
 from waypoint import Waypoint
 from message import Message
-from ObjAvoid import *
+from SDA import *
 
 INTEROP_CLIENT_ADDRESS = ('localhost', 9000)
 TK1_ADDRESS = ('IP', 9001)
-send_course_max_port = 10020
+send_course_max_port = 10009
 server_address = 'localhost'
 waypoint_JSON_file_path = "./data/demo_waypoints.mission"
 
@@ -132,7 +132,7 @@ def receive_telem(logger_queue, configurer, receive_telem_array):
 		receive_telem_array[0] = CurrentCoordinates(curr_coords["lat"], curr_coords["lng"], curr_coords["alt"], curr_coords["heading"])
 
 if __name__ == '__main__':
-	interop_server_client = InteropClientConverter(MSL, INTEROP_URL, INTEROP_USERNAME, INTEROP_PASSWORD)
+	#interop_server_client = InteropClientConverter(MSL, INTEROP_URL, INTEROP_USERNAME, INTEROP_PASSWORD)
 
 	logger_queue = multiprocessing.Queue(-1)
 	logger_listener_process = multiprocessing.Process(target=listener_process, args=(logger_queue, logger_listener_configurer))
@@ -142,8 +142,6 @@ if __name__ == '__main__':
 
 	current_coordinates = manager.list()
 	current_coordinates.extend([CurrentCoordinates(0.0, 0.0, 0.0, 0.0)])
-	current_obstacles = manager.list()
-	current_obstacles.extend([ObstacleContainer([], [])])
 
 	guided_waypoint_input, guided_waypoint_output = multiprocessing.Pipe()
 
@@ -167,11 +165,11 @@ if __name__ == '__main__':
 
 	while True:
 		start_time = datetime.now()
-		interop_server_client.post_telemetry(current_coordinates[0])
-		stationary_obstacles, moving_obstacles = interop_server_client.get_obstacles()
-		obstacle_map.reset_obstacles()
-		for stationary_obstacle in stationary_obstacles:
-			obstacle_map.add_obstacle(stationary_obstacle)
+		#interop_server_client.post_telemetry(current_coordinates[0])
+		#stationary_obstacles, moving_obstacles = interop_server_client.get_obstacles()
+		#obstacle_map.reset_obstacles()
+		#for stationary_obstacle in stationary_obstacles:
+		#	obstacle_map.add_obstacle(stationary_obstacle)
 
 		initialCoords = obstacle_map.get_initial_coordinates()
 		haversine_distance = haversine(initialCoords, current_coordinates[0].as_gps())

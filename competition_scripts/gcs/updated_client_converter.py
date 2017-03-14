@@ -14,8 +14,10 @@ class ClientConverter(object):
         self.obstacle_map = ObstacleMap()
 
         self.initial_coordinates = initial_coordinates
-        self.previous_min_tangent_point = None
+        self.previous_min_tangent_point = np.array([0, 0])
         self.minimum_change_in_guided_point = 1
+
+        self.obstacle_map.add_obstacle(StationaryObstacle(np.array([100, 10]), 5));
 
     def get_initial_coordinates(self):
         return self.initial_coordinates
@@ -24,7 +26,7 @@ class ClientConverter(object):
         for waypoint in new_waypoints:
             converted_waypoint = np.array(waypoint.convert_to_point(self.get_initial_coordinates())[:-1])
 
-            self.map.add_waypoint(converted_waypoint)
+            self.obstacle_map.add_waypoint(converted_waypoint)
 
     def add_obstacle(self, obstacle):
         """
@@ -53,13 +55,14 @@ class ClientConverter(object):
         self.obstacle_map.set_drone_position(new_drone_location)
 
         obstacle_in_path_boolean, avoid_coords = self.obstacle_map.is_obstacle_in_path()
-        min_tangent_point = self.obstacle_map.get_min_tangent_point(avoid_coords)
+        if obstacle_in_path_boolean:
+            min_tangent_point = self.obstacle_map.get_min_tangent_point(avoid_coords)
 
-        if obstacle_in_path_boolean and VectorMath.get_magnitude(self.previous_min_tangent_point, min_tangent_point) > self.minimum_change_in_guided_point:
-            bearing = atan2(min_tangent_point[0], min_tangent_point[1])
-            self.previous_min_tangent_point = min_tangent_point
+            if VectorMath.get_magnitude(self.previous_min_tangent_point, min_tangent_point) > self.minimum_change_in_guided_point:
+                bearing = atan2(min_tangent_point[0], min_tangent_point[1])
+                self.previous_min_tangent_point = min_tangent_point
 
-            return inverse_haversine(self.get_initial_coordinates(), [min_tangent_point[0], min_tangent_point[1], update_data.get_altitude()], bearing)
+                return inverse_haversine(self.get_initial_coordinates(), [min_tangent_point[0], min_tangent_point[1], update_data.get_altitude()], bearing)
 
         return None
 
