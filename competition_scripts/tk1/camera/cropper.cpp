@@ -3,11 +3,13 @@
 #include "FlyCapture2.h"
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <json/writer.h>
 #include <unistd.h>
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
+#include <ctime>
 
 using namespace cv;
 using namespace std;
@@ -148,6 +150,9 @@ void identifyTargets(Mat img, int thresh, int minSize, int maxSize){
       int xRangeEnd = boundRect[i].br().x + 5;
       int yRangeEnd = boundRect[i].br().y + 5;
 
+      int xMidPoint = static_cast<float>(xRangeStart + yRangeStart) / 2;
+      int yMidPoint = static_cast<float>(yRangeStart + yRangeEnd) / 2;
+
       Range yRange = Range(yRangeStart, yRangeEnd);
       Range xRange = Range(xRangeStart, xRangeEnd);
 
@@ -217,12 +222,27 @@ void identifyTargets(Mat img, int thresh, int minSize, int maxSize){
 
             ss << cropCount;
             string cropNumber = ss.str();
-            string orginal = "./crops/" + cropNumber + "original.jpg";
-            string cropVersion = "./crops/" + cropNumber + "crop.jpg";
             string cropName = cropsDirectoryPath + cropNumber + ".PNG";
+            string cropDataName = cropsDirectoryPath + cropNumber + ".txt";
             ss.str("");
             printf("saved %s\n", orginal.c_str());
             printf("DeltaE of crop is %f\n\n", deltaE);
+
+            time_t currentTime = time(0);
+            struct tm * currentLocalTime = localtime(&currentTime);
+
+            Json::Value cropData;
+            cropData["center_location"]["x"] = xMidPoint;
+            cropData["center_location"]["y"] = yMidPoint;
+            cropData["time"]["hours"] = currentLocalTime->tm_hour;
+            cropData["time"]["minutes"] = currentLocalTime->tm_min;
+            cropData["time"]["seconds"] = currentLocalTime->tm_sec;
+
+            std::ofstream cropDataFile;
+            cropDataFile.open(cropDataName);
+            Json::StyledWriter styledWriter;
+            cropDataFile << styledWriter.write(cropData);
+            cropDataFile.close();
 
             imwrite(cropName, contourAnalysisCrop);
             cropCount++;
