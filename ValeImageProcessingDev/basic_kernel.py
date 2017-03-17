@@ -1,6 +1,7 @@
 from PIL import Image
 import itertools
 from math import pi, exp
+import numpy as np
 
 def get_gaussian_kernel(kernel_size, sd):
     """
@@ -22,68 +23,48 @@ def get_gaussian_kernel(kernel_size, sd):
 
     return kernel
 
-def gaussian_blur(img, kernel):
+def get_mean_blur_kernel(kernel_size):
     """
-    Gaussian Blur an image
+    Create a mean blur kernel given a size
+    """
+    kernel = [[1 for j in range(kernel_size)] for i in range(kernel_size)]
+
+    return kernel
+
+def convolute(img, kernel):
+    """
+    Apply a blur to an image
     """
     kernel_sum = sum(itertools.chain.from_iterable(kernel))
+    kernel_size = len(kernel) // 2
 
     img_map = img.load()
     blurred_img = img.copy()
 
     calc_index = 0
-    total_calcs = (img.size[0] - 2) * (img.size[1] - 2)
-    for y_index in range(2, img.size[0] - 2):
-        for x_index in range(2, img.size[1] - 2):
+    total_calcs = (img.size[0] - (2 * kernel_size)) * (img.size[1] - (2 * kernel_size))
+    for y_index in range(kernel_size, img.size[0] - kernel_size):
+        for x_index in range(kernel_size, img.size[1] - kernel_size):
             calc_index += 1
             print("Percent Complete: " + str(100 * float(calc_index) / float(total_calcs)))
 
-            component_sum = [0,0,0]
+            component_sum = np.zeros(3)
             for outer_index in range(len(kernel)):
-                for inner_index in range(len(kernel[0])):
-                    component_sum[0] += img_map[y_index - 2 + inner_index, x_index - 2 + outer_index][0]
-                    component_sum[1] += img_map[y_index - 2 + inner_index, x_index - 2 + outer_index][1]
-                    component_sum[2] += img_map[y_index - 2 + inner_index, x_index - 2 + outer_index][2]
-            component_sum[0] = int(component_sum[0] / kernel_sum)
-            component_sum[1] = int(component_sum[1] / kernel_sum)
-            component_sum[2] = int(component_sum[2] / kernel_sum)
+                for inner_index in range(len(kernel)):
+                    component_sum += np.array(img_map[y_index + inner_index - kernel_size, x_index + outer_index - kernel_size][:3])
 
-            blurred_img.putpixel([y_index, x_index], tuple(component_sum))
+            component_sum = component_sum // kernel_sum
+            component_sum_list = component_sum.tolist()
+            for index in range(len(component_sum_list)):
+                component_sum_list[index] = int(component_sum_list[index])
 
-    return blurred_img
-
-def mean_blur(img):
-    """
-    Mean blur an image
-    """
-    kernel = [[1,1,1],[1,1,1],[1,1,1]]
-    kernel_sum = sum(itertools.chain.from_iterable(kernel))
-
-    img_map = img.load()
-    blurred_img = img.copy()
-
-    calc_index = 0
-    total_calcs = (img.size[0] - 2) * (img.size[1] - 2)
-    for y_index in range(1, img.size[0] - 1):
-        for x_index in range(1, img.size[1] - 1):
-            calc_index += 1
-            print("Percent Complete: " + str(100 * float(calc_index) / float(total_calcs)))
-
-            component_sum = [0,0,0]
-            for outer_index in range(len(kernel)):
-                for inner_index in range(len(kernel[0])):
-                    component_sum[0] += img_map[y_index - 1 + inner_index, x_index - 1 + outer_index][0]
-                    component_sum[1] += img_map[y_index - 1 + inner_index, x_index - 1 + outer_index][1]
-                    component_sum[2] += img_map[y_index - 1 + inner_index, x_index - 1 + outer_index][2]
-            component_sum[0] = int(component_sum[0] / kernel_sum)
-            component_sum[1] = int(component_sum[1] / kernel_sum)
-            component_sum[2] = int(component_sum[2] / kernel_sum)
-
-            blurred_img.putpixel([y_index, x_index], tuple(component_sum))
+            blurred_img.putpixel([y_index, x_index], tuple(component_sum_list))
 
     return blurred_img
 
 im = Image.open("data/test.png")
 #im.show()
-gaussian_blur(im, get_gaussian_kernel(5, 6)).show()
+#apply_blur(im, get_gaussian_kernel(3,3)).show()
+convolute(im, get_mean_blur_kernel(2)).show()
+#gaussian_blur(im, get_gaussian_kernel(5, 6)).show()
 #mean_blur(im).show()
