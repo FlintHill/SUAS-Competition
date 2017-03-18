@@ -1,6 +1,6 @@
 from SDA import *
 from current_coordinates import CurrentCoordinates
-from math import sin, cos, atan2
+from math import sin, cos, atan2, pi
 from static_math import *
 import numpy as np
 
@@ -68,7 +68,7 @@ class ClientConverter(object):
             if VectorMath.get_magnitude(self.previous_min_tangent_point, min_tangent_point) > self.minimum_change_in_guided_point:
                 bearing = atan2(min_tangent_point[0], min_tangent_point[1])
 
-                return inverse_haversine(self.get_initial_coordinates(), float((min_tangent_point[0]**2.0 + min_tangent_point[1]**2)**0.5), 0, bearing + update_data.get_heading()), min_tangent_point
+                return inverse_haversine(self.get_initial_coordinates(), float((min_tangent_point[0]**2.0 + min_tangent_point[1]**2)**0.5), 0, bearing - (pi / 2.0), min_tangent_point
 
         return None, None
 
