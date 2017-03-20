@@ -11,6 +11,12 @@ from DataMine.ZScore import ZScore
 #from FileLoading.NamedProjectionsLoader import NamedProjectionsLoader
 from DataMine.NNearestSum import NNearestSum
 import EigenFit.Load.NumpyLoader as NumpyLoader
+import timeit
+from EigenFit.DataMine.NNetCategorizer import NNetCategorizer
+from NNet.Main.Layers import Layers
+import NNet.Function.Cost as Cost
+import NNet.Function.Sigmoid as Sigmoid
+
 class SyntheticTester:
     def __init__(self, img_path_in, data_path_in, scale, extension):
         self.img_path = img_path_in
@@ -18,17 +24,20 @@ class SyntheticTester:
         self.extension = extension
         
         print("categorizer initialization started")
-        base_path = "/Users/phusisian/Desktop/Senior year/SUAS/Competition Files/NEWLETTERPCA"
+        base_path = "/Users/phusisian/Desktop/Senior year/SUAS/Competition Files/NEWLETTERPCA"# WITH ROTATIONS"
         eigenvectors = NumpyLoader.load_numpy_arr(base_path + "/Data/Eigenvectors/eigenvectors 0.npy")
         projections_path = base_path + "/Data/Projections"
         mean = NumpyLoader.load_numpy_arr(base_path + "/Data/Mean/mean_img 0.npy")
-        self.letter_categorizer = Categorizer(eigenvectors, mean, projections_path, KMeansCompare, 20)
-        '''num_dim = 100
-        data_loader = DataLoader("/Users/phusisian/Desktop/Senior year/SUAS/PCATesting/NEWLETTERPCA/Data/", num_dim)
-        named_projections_loader = NamedProjectionsLoader("/Users/phusisian/Desktop/Senior year/SUAS/PCATesting/SUASLetterImgs/ALLSETSORTEDCORRECTLY/Projections", num_dim)
+        num_dim = 20
+        nnet = Layers.init_from_files("/Users/phusisian/Desktop/Senior year/SUAS/NNet Files/Letter Weights 10 With Flipped Output", Sigmoid, [num_dim, 100, 27], Cost)
+        #self.letter_categorizer = NNetCategorizer(nnet, eigenvectors, mean, num_dim)
+        self.letter_categorizer = Categorizer(eigenvectors, mean, projections_path, KMeansCompare, 25)
+        #num_dim = 100
+        #data_loader = DataLoader("/Users/phusisian/Desktop/Senior year/SUAS/PCATesting/NEWLETTERPCA/Data/", num_dim)
+       # named_projections_loader = NamedProjectionsLoader("/Users/phusisian/Desktop/Senior year/SUAS/PCATesting/SUASLetterImgs/ALLSETSORTEDCORRECTLY/Projections", num_dim)
         
-        self.letter_categorizer = CategorizerTwo(data_loader, named_projections_loader.get_named_projections(), KMeansCompare)
-        #self.letter_categorizer = Categorizer("/Users/phusisian/Desktop/Senior year/SUAS/PCATesting/SUASLetterImgs/DataSortedAndRotated", 25, KMeansCompare)'''
+        #self.letter_categorizer = CategorizerTwo(data_loader, named_projections_loader.get_named_projections(), KMeansCompare)
+        #self.letter_categorizer = Categorizer(eigenvectors, mean, "/Users/phusisian/Desktop/Senior year/SUAS/PCATesting/SUASLetterImgs/DataSortedAndRotated", num_dim, KMeansCompare)
         print("categorizer initialization finished.")
         self.init_img_files()
         self.init_data_files()
@@ -63,6 +72,7 @@ class SyntheticTester:
         self.num_crashes = 0
         for i in range(0, len(self.img_files)):
             try:
+                start_time = timeit.default_timer()
                 shape_img = Image.open(self.img_path + "/" + str(self.img_files[i]))#Image.open(self.img_path + "/Generated Target " + str(i) + extension)
                 
                 end_num = self.get_file_name_end_num(self.img_files[i])
@@ -85,6 +95,7 @@ class SyntheticTester:
                     if str(target_answers[answer_index]) == str(scores[answer_index]):
                         self.score_vals[answer_index] += 1
                 print("current score vals: " + str(self.score_vals) + ", num images run: " + str(i+1))
+                print("time taken: " + str(timeit.default_timer() - start_time) + " seconds")
             except:
                 self.num_crashes += 1
                 print("done messt up")

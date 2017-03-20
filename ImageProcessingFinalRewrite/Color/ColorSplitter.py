@@ -20,6 +20,7 @@ class ColorSplitter:
         kmeans_colors = kmeans.get_cluster_origins_int()
         kmeans_img = ColorMath.get_img_rounded_to_colors(img_in, image_in, kmeans_colors)
         kmeans_image = kmeans_img.load()
+        kmeans_img.show()
         return ColorSplitter(kmeans_img, kmeans_image)
         
     def init_color_layers(self):

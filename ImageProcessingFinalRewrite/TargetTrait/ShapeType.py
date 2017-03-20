@@ -11,6 +11,7 @@ from ImgStat.SimplePCA import SimplePCA
 from math import pi, sqrt
 class ShapeType:
     
+    CIRCLE_SCORE_THRESHOLD = 0.75
     BLUR_KERNEL_SIZE = 3
     BLUR_STD_DEV = 2
     CANNY_SHAPE_THRESHOLDS = (10, 20)
@@ -20,7 +21,7 @@ class ShapeType:
     MIN_CORNER_CLUSTER = 1
     PENTAGON_STAR_CLUSTER_THRESHOLD = 8
     OCTAGON_CROSS_CLUSTER_THRESHOLD = 10
-    SQUARE_RECTANGLE_EIGEN_RATIO_THRESHOLD = 1.2
+    SQUARE_RECTANGLE_EIGEN_RATIO_THRESHOLD = 1.1
     HOUGH_CIRCUMFERENCE_THRESHOLD_MULTIPLIER = .8
     
     
@@ -47,10 +48,10 @@ class ShapeType:
     
     def init_shape_type(self):
         
-        '''self.hough_circle = HoughCircle(self.canny_img, self.canny_image, self.get_hough_circle_range())
+        #self.hough_circle = HoughCircle(self.canny_img, self.canny_image, self.get_hough_circle_range())
         
-        highest_vote_and_radius = self.hough_circle.get_highest_vote_and_radius()'''
-        if (False):#self.hough_vote_is_circle(highest_vote_and_radius):
+        #highest_vote_and_radius = self.hough_circle.get_highest_vote_and_radius()
+        if self.polar_side_counter.get_circle_score() >= ShapeType.CIRCLE_SCORE_THRESHOLD:#self.hough_vote_is_circle(highest_vote_and_radius):
             self.shape_type = "Circle"
             '''quartercircle removed for now until I can figure out why it was getting falsely picked so often
             to make sure that the shape identification is working properly otherwise'''
@@ -79,7 +80,7 @@ class ShapeType:
                     self.shape_type = "Cross"
             else: 
                 eigenvalues = self.get_shape_pca().get_eigenvalues()
-                eigen_ratio = eigenvalues[0]/eigenvalues[1]
+                eigen_ratio = sqrt(eigenvalues[0])/sqrt(eigenvalues[1])
                 
                 if eigen_ratio > ShapeType.SQUARE_RECTANGLE_EIGEN_RATIO_THRESHOLD or 1.0/eigen_ratio > ShapeType.SQUARE_RECTANGLE_EIGEN_RATIO_THRESHOLD:
                     self.shape_type = "Rectangle"

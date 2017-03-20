@@ -1,5 +1,5 @@
 #from Stat.EigenImageProjector import EigenImageProjector
-#from FileLoading.DataLoader import DataLoader
+#from FileLoading.DataLoader import DataLoader     
 from PIL import Image
 import NoiseReduction.GaussianBlur as GaussianBlur
 from EdgeProcessing.SobelEdge import SobelEdge
@@ -19,7 +19,9 @@ import Color.TargetColorReader as TargetColorReader
 from Testing.SyntheticTester import SyntheticTester
 
 
-tester = SyntheticTester("/Users/phusisian/Desktop/Senior year/SUAS/Generated Targets BlockText/Images", "/Users/phusisian/Desktop/Senior year/SUAS/Generated Targets BlockText/Answers", 1, ".png")
+start_time = timeit.default_timer()
+tester = SyntheticTester("/Users/phusisian/Desktop/Senior year/SUAS/Generated Targets Amble/Images", "/Users/phusisian/Desktop/Senior year/SUAS/Generated Targets Amble/Answers", 1, ".png")
 print("final score: " + str(tester.get_score_vals()))
 print("num crashed: " + str(tester.get_num_crashes()))
+print("time elapsed: " + str(timeit.default_timer() - start_time))
 

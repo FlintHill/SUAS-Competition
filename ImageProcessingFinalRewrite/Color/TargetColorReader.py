@@ -12,11 +12,11 @@ def get_closest_target_color(color):
     return named_target_colors[target_colors.index(closest_color)][0]
     
 def get_closest_HSL_target_color(color):
-    hsl_color = colorsys.rgb_to_hls(float(color[0])/255.0, float(color[1])/255.0, float(color[2])/255.0)
+    hsl_color = colorsys.rgb_to_hls(float(color[0])/255.0, float(color[1])/255.0, LIGHTNESS_WEIGHT * float(color[2])/255.0)
     hsl_color = (hsl_color[0], hsl_color[1], hsl_color[2])
     hsl_colors = []
     for i in range(0, len(target_colors)):
-        iter_hsl_color = colorsys.rgb_to_hls(float(target_colors[i][0])/255.0, float(target_colors[i][1])/255.0, float(target_colors[i][2])/255.0)
+        iter_hsl_color = colorsys.rgb_to_hls(float(target_colors[i][0])/255.0, float(target_colors[i][1])/255.0, LIGHTNESS_WEIGHT * float(target_colors[i][2])/255.0)
         hsl_colors.append((iter_hsl_color[0], iter_hsl_color[1], iter_hsl_color[2]))
         
         

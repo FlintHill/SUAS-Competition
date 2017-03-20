@@ -9,6 +9,7 @@ import matplotlib.pyplot as pyplot
 class PolarSideCounter:
     
     THETA_STEP = pi/256.0
+    CIRCLE_DERIV_RANGE = (0.96, 1.04)
     def __init__(self, canny_img_in, canny_image_in):
         self.canny_img = canny_img_in
         self.canny_image = canny_image_in
@@ -21,6 +22,9 @@ class PolarSideCounter:
         legitimate maximums that are smaller than the mean'''
         #self.setUnderMeanToMean()
         self.smooth_plot(6, 5)#num iterations used to be 3, found the output was kind of noisy
+        
+        self.set_mean_radius()
+        self.set_circle_score()
         
         self.init_maximums()
         self.init_minimums()
@@ -44,7 +48,7 @@ class PolarSideCounter:
                 if self.canny_image[x,y] == 255:
                     pix_vector = numpy.array([x,y])
                     vector_from_origin = numpy.subtract(pix_vector, self.numpy_origin)
-                    self.plot.append(RadiusAngle(numpy.linalg.norm(vector_from_origin), self.get_raycast_angle(vector_from_origin)))
+                    self.plot.append(RadiusAngle(numpy.linalg.norm(vector_from_origin), self.get_raycast_angle(vector_from_origin), vector_from_origin))
         self.plot = sorted(self.plot, key = lambda angle: angle.get_angle())
         
         
@@ -169,6 +173,49 @@ class PolarSideCounter:
             return False
         return True    
         
+    def set_mean_radius(self):
+        self.mean_radius = 0
+        for i in range((self.max_window-1)/2, len(self.plot) - (self.max_window-1)/2):
+            self.mean_radius += self.plot[i].get_radius()
+        self.mean_radius = self.mean_radius / float(len(self.plot))
+    
+    def set_circle_score(self):
+        '''this needs to be optimized because pulling the vector is something that could be set
+        in initializing the plot rather than having to recalculate'''
+        x_deriv = numpy.zeros((len(self.plot)))
+        y_deriv = numpy.zeros((len(self.plot)))
+        for i in range(1, x_deriv.shape[0]):
+            prev_vector = self.plot[i-1].get_vector()
+            vector = self.plot[i].get_vector()
+            d_theta = self.plot[i].get_angle() - self.plot[i-1].get_angle()
+            if d_theta != 0:
+                x_deriv[i] = (vector[0] - prev_vector[0])/d_theta
+                y_deriv[i] = (vector[1] - prev_vector[1])/d_theta
+            elif i != 0:
+                x_deriv[i] = x_deriv[i-1]
+                y_deriv[i] = y_deriv[i-1]
+            
+        #x_deriv = numpy.gradient(x_deriv)/self.mean_radius
+        #y_deriv = numpy.gradient(y_deriv)/self.mean_radius
+        x_deriv = x_deriv/self.mean_radius
+        y_deriv = y_deriv/self.mean_radius
+        
+        
+        
+        mag_derivs = numpy.sqrt(numpy.add(numpy.square(x_deriv), numpy.square(y_deriv)))
+        
+        num_matches = 0
+        for i in range(0, mag_derivs.shape[0]):
+            if mag_derivs[i] >= PolarSideCounter.CIRCLE_DERIV_RANGE[0] and mag_derivs[i] <= PolarSideCounter.CIRCLE_DERIV_RANGE[1]:
+                num_matches += 1
+        self.circle_score = float(num_matches)/float(mag_derivs.shape[0])
+        #self.circle_score = .5
+    
+    def get_circle_score(self):
+        print("has circle score of: " + str(self.circle_score))
+        return self.circle_score
+    
+    
     def get_maximums_drawn_to_img(self):
         img = self.canny_img.copy()
         image = img.load()
@@ -187,17 +234,24 @@ class PolarSideCounter:
         return self.origin
         
 class RadiusAngle:
-    def __init__(self, radiusIn, angleIn):
+    def __init__(self, radiusIn, angleIn, vector):
         self.radius = radiusIn
         self.angle = angleIn
+        self.vector = vector
         
     def get_unit_vector(self):
         return numpy.array([cos(self.angle), sin(self.angle)])
-      
+    
+    def get_vector(self):
+        return self.vector
+        #return numpy.array([self.radius * cos(self.angle), self.radius * sin(self.angle)])
+    
     def get_radius(self):
         return self.radius
     
     def set_radius(self, r):
+        radius_ratio = r/self.radius
+        self.vector = self.vector * radius_ratio
         self.radius = r
     
     def get_angle(self):

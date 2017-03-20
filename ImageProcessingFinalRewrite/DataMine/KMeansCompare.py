@@ -3,7 +3,7 @@ import numpy
 import ImgVector.VectorMath as VectorMath
 
 class KMeansCompare:
-    CLUSTERS_PER_LETTER = 6
+    CLUSTERS_PER_LETTER = 8
     TIMES_TO_RUN = 30
     def __init__(self, name_in, projections_in):
         self.name = name_in

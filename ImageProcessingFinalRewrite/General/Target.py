@@ -23,6 +23,14 @@ from DataMine.NNearestSum import NNearestSum
 from EigenFit.DataMine.Categorizer import Categorizer
 from DataMine.KMeansCompare import KMeansCompare
 from PIL import ImageOps
+import EigenFit.Load.NumpyLoader as NumpyLoader
+import timeit
+from EigenFit.DataMine.NNetCategorizer import NNetCategorizer
+from NNet.Main.Layers import Layers
+import NNet.Function.Cost as Cost
+import NNet.Function.Sigmoid as Sigmoid
+import EigenFit.Vector.EigenProjector as EigenProjector
+import EigenFit.Vector.VectorMath as VectorMath
 import numpy
 
 class Target:
@@ -33,12 +41,12 @@ class Target:
     BLUR_SHAPE_STD_DEV = 2
     CANNY_SHAPE_THRESHOLDS = (20, 40)
     CANNY_TOTAL_THRESHOLDS = (20, 40)
-    BLUR_TOTAL_KERNELSIZE = 5
-    BLUR_TOTAL_STD_DEV = 5
+    #BLUR_TOTAL_KERNELSIZE = 5
+    #BLUR_TOTAL_STD_DEV = 5
     PCA_LETTER_DIM = (40,40)
     LETTER_RESIZE_HEIGHT = int(PCA_LETTER_DIM[1]*0.81666666666667)
-    KMEANS_RUN_TIMES = 40
-    KMEANS_STEP = 2
+    KMEANS_RUN_TIMES = 20
+    KMEANS_STEP = 1
     
     def __init__(self, img_in, image_in, categorizer_in):
         self.letter_categorizer = categorizer_in
@@ -58,15 +66,17 @@ class Target:
         self.run_possible_imgs_through_letter_recognition()
       
     def init_edge_imgs(self):
-        bw_target_img = self.target_img.copy().convert('L')
-        gaussian_img = GaussianBlur.get_gaussian_filtered_bw_img(bw_target_img, bw_target_img.load(), Target.BLUR_TOTAL_KERNELSIZE, Target.BLUR_TOTAL_STD_DEV)
+        self.blurred_color_target_img = GaussianBlur.get_gaussian_filtered_color_img(self.target_img, self.target_image, Target.COLOR_BLUR_KERNELSIZE, Target.COLOR_BLUR_STD_DEV)
+        
+        #bw_target_img = self.target_img.copy().convert('L')
+        gaussian_img = self.blurred_color_target_img.convert('L')
         target_sobel_edge = SobelEdge(gaussian_img)
         self.gradient_threshold_img = target_sobel_edge.get_img_gradient_under_threshold(Target.GRADIENT_THRESHOLD)
         self.target_canny_img = CannyEdge.get_canny_img(target_sobel_edge, Target.CANNY_TOTAL_THRESHOLDS)
     
     def init_color_splitter_and_layers(self):
-        blurred_target_img = GaussianBlur.get_gaussian_filtered_color_img(self.target_img, self.target_image, Target.COLOR_BLUR_KERNELSIZE, Target.COLOR_BLUR_STD_DEV)
-        self.color_splitter = ColorSplitter.init_with_kmeans(blurred_target_img, blurred_target_img.load(), 3, Target.KMEANS_RUN_TIMES, Target.KMEANS_STEP)
+        
+        self.color_splitter = ColorSplitter.init_with_kmeans(self.blurred_color_target_img, self.blurred_color_target_img.load(), 3, Target.KMEANS_RUN_TIMES, Target.KMEANS_STEP)
         background_layer = self.color_splitter.get_layers_sorted_by_avg_dist_to_center()[len(self.color_splitter.get_color_layers())-1]
         self.unfilled_background_layer = background_layer.clone()
         self.color_splitter.get_color_layers().remove(background_layer)
@@ -173,9 +183,43 @@ class Target:
         best_fit_character = ""
         best_fit_score = -1
         best_fit_direction = ""
+        
+        '''
+        scores = self.letter_categorizer.get_algorithm_return_largest_to_small(ImageOps.invert(self.possible_imgs[0][0]))
+        print("scores: " + str(scores))
+        self.TARGET_CHARACTER = scores[0][0]
+        if round(scores[0][2]) == 0:
+            self.TARGET_COMPASS_ORIENTATION= self.possible_imgs[0][1]#scores[0][2]
+            self.possible_imgs[0][0].show()
+        else:
+            self.TARGET_COMPASS_ORIENTATION = self.possible_imgs[1][1]#scores[1][2]
+            self.possible_imgs[1][0].show()
+        '''
+        
+        '''need to add a cornercase when the letter orientation eigenvalues have a small ratio. 
+        All that would have to be done is to run each set of 2 through the NN and determine the 
+        strongest score'''
+        
+        '''orientation_num_dim = 10
+        orientation_nnet = Layers.init_from_files("/Users/phusisian/Desktop/Senior year/SUAS/NNet Files/Orientation Weights 3", Sigmoid, [orientation_num_dim, 100, 2], Cost)
+        base_path = "/Users/phusisian/Desktop/Senior year/SUAS/Competition Files/NEWLETTERPCA WITH ROTATIONS"
+        eigenvectors = NumpyLoader.load_numpy_arr(base_path + "/Data/Eigenvectors/eigenvectors 0.npy")[0:orientation_num_dim]
+        mean = NumpyLoader.load_numpy_arr(base_path + "/Data/Mean/mean_img 0.npy")
+        img_vector = VectorMath.gray_img_to_vector(ImageOps.invert(self.possible_imgs[0][0]))
+        projection_weights = EigenProjector.get_projection_weights(img_vector, eigenvectors, mean)
+        orientation_result = orientation_nnet.get_result(projection_weights)
+        print("orientation nnet result: " + str(orientation_result))
+        if orientation_result[0] > orientation_result[1]:
+            self.TARGET_COMPASS_ORIENTATION= self.possible_imgs[0][1]#scores[0][2]
+            self.possible_imgs[0][0].show()
+        else:
+            self.TARGET_COMPASS_ORIENTATION = self.possible_imgs[1][1]#scores[1][2]
+            self.possible_imgs[1][0].show()
+        '''
+        
         for i in range(0, len(self.possible_imgs)):
             iter_scores = self.letter_categorizer.get_algorithm_return_smallest_to_large(ImageOps.invert(self.possible_imgs[i][0]), None)
-            print("iter scores: " + str(iter_scores[:][0]))
+            print("iter scores: " + str(iter_scores))#str(iter_scores[:][0]))
             iter_letter = iter_scores[0][0]
             iter_score = iter_scores[0][1]
             if iter_score < best_fit_score or best_fit_score < 0:
@@ -185,7 +229,7 @@ class Target:
         
         self.TARGET_COMPASS_ORIENTATION = best_fit_direction
         self.TARGET_CHARACTER = best_fit_character
-    
+        
     def __repr__(self):
         out = ("orientation: " + str(self.TARGET_COMPASS_ORIENTATION) + "\n"
                + "shape: " + str(self.TARGET_SHAPE) + "\n"
