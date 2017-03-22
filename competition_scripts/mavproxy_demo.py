@@ -53,7 +53,10 @@ if __name__ == '__main__':
     vehicle = connect(connection_string, wait_ready=True)
     vehicle.wait_ready('autopilot_version')
 
-    while True:
-        print_vehicle_state(vehicle)
+    try:
+        while True:
+            print_vehicle_state(vehicle)
 
-        sleep(5)
+            sleep(5)
+    except:
+        vehicle.close()
