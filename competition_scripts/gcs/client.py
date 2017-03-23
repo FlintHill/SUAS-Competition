@@ -158,6 +158,7 @@ if __name__ == '__main__':
 
 	obstacle_map = ClientConverter(current_coordinates[0].as_gps())
 	obstacle_map.set_waypoints(waypoints_list)
+	obstacle_map.obstacle_map.add_obstacle(StationaryObstacle(np.array([215.0, -15.0]), 50))
 
 	while True:
 		start_time = datetime.now()
