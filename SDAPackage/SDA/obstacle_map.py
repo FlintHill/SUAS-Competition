@@ -83,13 +83,13 @@ class ObstacleMap(object):
 
                     angle = atan2(-1.0 * waypoint_vector[0], waypoint_vector[1])
 
-                    perp_point_x = obstacle.get_safety_radius() * cos(angle)
-                    perp_point_y = obstacle.get_safety_radius() * sin(angle)
+                    perp_point_x = obstacle.get_radius() * cos(angle)
+                    perp_point_y = obstacle.get_radius() * sin(angle)
                     tangent_point_one = np.array([obstacle.get_point()[0] + perp_point_x, obstacle.get_point()[1] + perp_point_y])
 
                     angle += pi % (2 * pi)
-                    perp_point_x = obstacle.get_safety_radius() * cos(angle)
-                    perp_point_y = obstacle.get_safety_radius() * sin(angle)
+                    perp_point_x = obstacle.get_radius() * cos(angle)
+                    perp_point_y = obstacle.get_radius() * sin(angle)
                     tangent_point_two = np.array([obstacle.get_point()[0] + perp_point_x, obstacle.get_point()[1] + perp_point_y])
 
                     # Uncomment for DEBUGGING ONLY
