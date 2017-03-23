@@ -36,7 +36,7 @@ class Drone(object):
         """
         self.waypoint_holder.add_waypoint(waypoint)
 
-    def reset_waypoint_holder(self):
+    def reset_waypoints(self):
         """
         Reset the waypoint holder
         """

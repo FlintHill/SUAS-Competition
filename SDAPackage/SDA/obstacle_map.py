@@ -54,7 +54,7 @@ class ObstacleMap(object):
         """
         Reset the waypoints
         """
-        self.drone.reset_waypoint_holder()
+        self.drone.reset_waypoints()
 
     def is_obstacle_in_path(self):
         """
