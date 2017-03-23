@@ -14,7 +14,7 @@ def get_gaussian_kernel(kernel_size, sd):
     kernel_midpoint = int((kernel_size - 1) / 2)
     for x in range(-kernel_midpoint, kernel_midpoint + 1):
         for y in range(-kernel_midpoint, kernel_midpoint + 1):
-            numerator = float(x**2 + y**2)
+            numerator = -1.0 * float(x**2 + y**2)
             denominator = 2.0 * sd
             kernel[kernel_x][kernel_y] = exp(numerator/denominator)
             kernel_y += 1
@@ -63,8 +63,5 @@ def convolute(img, kernel):
     return blurred_img
 
 im = Image.open("data/test.png")
-#im.show()
-#apply_blur(im, get_gaussian_kernel(3,3)).show()
-convolute(im, get_mean_blur_kernel(2)).show()
-#gaussian_blur(im, get_gaussian_kernel(5, 6)).show()
-#mean_blur(im).show()
+convolute(im, get_gaussian_kernel(3,3)).show()
+#convolute(im, get_mean_blur_kernel(2)).show()
