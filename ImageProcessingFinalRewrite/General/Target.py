@@ -32,42 +32,63 @@ import NNet.Function.Sigmoid as Sigmoid
 import EigenFit.Vector.EigenProjector as EigenProjector
 import EigenFit.Vector.VectorMath as VectorMath
 import numpy
+from math import sqrt
+import Color.ColorMath as ColorMath
+import matplotlib.pyplot as plot
 
 class Target:
     GRADIENT_THRESHOLD = 20
     COLOR_BLUR_KERNELSIZE = 3
-    COLOR_BLUR_STD_DEV = 5
+    COLOR_BLUR_STD_DEV = 1.0#2.0#5
     BLUR_SHAPE_KERNELSIZE = 3
-    BLUR_SHAPE_STD_DEV = 2
+    BLUR_SHAPE_STD_DEV = 2.0#2
     CANNY_SHAPE_THRESHOLDS = (20, 40)
     CANNY_TOTAL_THRESHOLDS = (20, 40)
     #BLUR_TOTAL_KERNELSIZE = 5
     #BLUR_TOTAL_STD_DEV = 5
     PCA_LETTER_DIM = (40,40)
     LETTER_RESIZE_HEIGHT = int(PCA_LETTER_DIM[1]*0.81666666666667)
-    KMEANS_RUN_TIMES = 20
+    KMEANS_RUN_TIMES = 15
     KMEANS_STEP = 1
     
     def __init__(self, img_in, image_in, categorizer_in):
+        total_time_start = timeit.default_timer()
         self.letter_categorizer = categorizer_in
         self.target_img = img_in
         self.target_image = image_in
+        start_time = timeit.default_timer()
         self.init_edge_imgs()
+        print("edge imgs init'd in: " + str(timeit.default_timer() - start_time))
+        start_time = timeit.default_timer()
         self.init_color_splitter_and_layers()
-        
+        color_splitter_time = timeit.default_timer() - start_time
+        print("color splitter init'd in: " + str(timeit.default_timer() - start_time))
+        start_time = timeit.default_timer()
         self.init_letter_pca()
-        
+        print("letter PCA init'd in : " + str(timeit.default_timer() - start_time))
         
         '''initializing target traits'''
+        
+        start_time = timeit.default_timer()
         self.init_target_colors()
+        print("target colors initialized in: " + str(timeit.default_timer() - start_time))
+        start_time = timeit.default_timer()
         self.init_shape_type()
+        print("shape type finished in: " + str(timeit.default_timer() - start_time))
+        start_time = timeit.default_timer()
         self.init_target_direction()
+        print("target direction finished in: " + str(timeit.default_timer() - start_time))
+        start_time = timeit.default_timer()
         self.init_letter_recognition_imgs()
+        print("letter recognition imgs init'd in :" + str(timeit.default_timer() - start_time))
+        start_time = timeit.default_timer()
         self.run_possible_imgs_through_letter_recognition()
+        print("letter recognition finished in: " + str(timeit.default_timer() - start_time))
+        print("% time spent on color splitter: " + str(100.0 * color_splitter_time/(timeit.default_timer() - total_time_start)) + "%")
       
     def init_edge_imgs(self):
         self.blurred_color_target_img = GaussianBlur.get_gaussian_filtered_color_img(self.target_img, self.target_image, Target.COLOR_BLUR_KERNELSIZE, Target.COLOR_BLUR_STD_DEV)
-        
+        #self.blurred_color_target_img.show()
         #bw_target_img = self.target_img.copy().convert('L')
         gaussian_img = self.blurred_color_target_img.convert('L')
         target_sobel_edge = SobelEdge(gaussian_img)
@@ -76,7 +97,35 @@ class Target:
     
     def init_color_splitter_and_layers(self):
         
-        self.color_splitter = ColorSplitter.init_with_kmeans(self.blurred_color_target_img, self.blurred_color_target_img.load(), 3, Target.KMEANS_RUN_TIMES, Target.KMEANS_STEP)
+        '''split_img = self.blurred_color_target_img.split()
+        red_split_v = numpy.ndarray.flatten(numpy.array(split_img[0].convert('L')))
+        green_split_v = numpy.ndarray.flatten(numpy.array(split_img[1].convert('L')))
+        blue_split_v = numpy.ndarray.flatten(numpy.array(split_img[2].convert('L')))
+        gray_img_v = numpy.ndarray.flatten(numpy.array(self.blurred_color_target_img.convert('L')))
+        red_distribution = numpy.zeros((255))
+        green_distribution = numpy.zeros((255))
+        blue_distribution = numpy.zeros((255))
+        gray_distribution = numpy.zeros((255))
+        for i in range(0, red_split_v.shape[0]):
+            red_distribution[red_split_v[i]] += 1
+            green_distribution[green_split_v[i]] += 1
+            blue_distribution[blue_split_v[i]] += 1
+            gray_distribution[gray_img_v[i]] += 1.0/float(gray_img_v.shape[0])
+        
+        self.blurred_color_target_img.convert('L').show()
+        plot.plot(gray_distribution)
+        plot.show() '''
+        
+        
+        
+        
+        resized_blurred_color_target_img = self.blurred_color_target_img.resize((50,50))#self.blurred_color_target_img.resize((int(self.blurred_color_target_img.size[0]*.4), int(self.blurred_color_target_img.size[1]*.4)))
+        resized_kmeans = KMeans.init_with_img(resized_blurred_color_target_img, resized_blurred_color_target_img.load(), 3, Target.KMEANS_RUN_TIMES, Target.KMEANS_STEP)
+        resized_kmeans_colors = resized_kmeans.get_cluster_origins_int()
+        kmeans_full_sized_target_img = ColorMath.get_img_rounded_to_colors(self.blurred_color_target_img, self.blurred_color_target_img.load(), resized_kmeans_colors)
+       
+        self.color_splitter = ColorSplitter(kmeans_full_sized_target_img, kmeans_full_sized_target_img.load())
+        #self.color_splitter = ColorSplitter.init_with_kmeans(self.blurred_color_target_img, self.blurred_color_target_img.load(), 3, Target.KMEANS_RUN_TIMES, Target.KMEANS_STEP)
         background_layer = self.color_splitter.get_layers_sorted_by_avg_dist_to_center()[len(self.color_splitter.get_color_layers())-1]
         self.unfilled_background_layer = background_layer.clone()
         self.color_splitter.get_color_layers().remove(background_layer)

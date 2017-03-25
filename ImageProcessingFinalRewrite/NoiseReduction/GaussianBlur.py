@@ -35,7 +35,7 @@ def get_gaussian_kernel(kernel_size, std_dev):
     kernel_margin = (kernel_size - 1)/2
     for x in range(-kernel_margin, kernel_margin + 1):
         for y in range(-kernel_margin, kernel_margin + 1):
-            numerator = float(x**2 + y**2)
+            numerator = -float(abs(x**2 + y**2))
             denominator = 2.0 * std_dev**2
             kernel[kernel_x][kernel_y] *= exp(numerator/denominator)
             kernel_y += 1

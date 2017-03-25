@@ -34,7 +34,7 @@ class SyntheticTester:
         self.letter_categorizer = Categorizer(eigenvectors, mean, projections_path, KMeansCompare, 25)
         #num_dim = 100
         #data_loader = DataLoader("/Users/phusisian/Desktop/Senior year/SUAS/PCATesting/NEWLETTERPCA/Data/", num_dim)
-       # named_projections_loader = NamedProjectionsLoader("/Users/phusisian/Desktop/Senior year/SUAS/PCATesting/SUASLetterImgs/ALLSETSORTEDCORRECTLY/Projections", num_dim)
+        #named_projections_loader = NamedProjectionsLoader("/Users/phusisian/Desktop/Senior year/SUAS/PCATesting/SUASLetterImgs/ALLSETSORTEDCORRECTLY/Projections", num_dim)
         
         #self.letter_categorizer = CategorizerTwo(data_loader, named_projections_loader.get_named_projections(), KMeansCompare)
         #self.letter_categorizer = Categorizer(eigenvectors, mean, "/Users/phusisian/Desktop/Senior year/SUAS/PCATesting/SUASLetterImgs/DataSortedAndRotated", num_dim, KMeansCompare)
@@ -89,6 +89,7 @@ class SyntheticTester:
                     flipped_angle = self.get_compass_angle_180_degrees_away(str(target_answers[0]))
                     if str(flipped_angle) == str(scores[0]):
                         self.score_vals[0] += 1
+                print("=============================================================")
                 print("answer key: " + str(scores))
                 print("target answers: " + str(target_answers))
                 for answer_index in range(1, scores.shape[0]):
@@ -96,6 +97,8 @@ class SyntheticTester:
                         self.score_vals[answer_index] += 1
                 print("current score vals: " + str(self.score_vals) + ", num images run: " + str(i+1))
                 print("time taken: " + str(timeit.default_timer() - start_time) + " seconds")
+                print("=============================================================")
+                print("------------------------------------------------------------")
             except:
                 self.num_crashes += 1
                 print("done messt up")
