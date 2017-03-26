@@ -1,9 +1,9 @@
 from dronekit import connect, VehicleMode
 from time import sleep
 
-CONNECTION_STRING = "127.0.0.1:14550"
+CONNECTION_STRING = "tcp:127.0.0.1:5760"
 
-def print_vehicle_state(self, vehicle):
+def print_vehicle_state(vehicle):
     # Get all vehicle attributes (state)
     print "\nGet all vehicle attribute values:"
     print " Autopilot Firmware version: %s" % vehicle.version
