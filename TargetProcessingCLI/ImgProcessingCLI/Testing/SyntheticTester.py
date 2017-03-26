@@ -5,9 +5,6 @@ from ImgProcessingCLI.General import Target
 from ImgProcessingCLI.DataMine import KMeansCompare
 from EigenFit import *
 import timeit
-from NNet.Main.Layers import Layers
-import NNet.Function.Cost as Cost
-import NNet.Function.Sigmoid as Sigmoid
 
 class SyntheticTester(object):
     def __init__(self, img_path_in, data_path_in, scale, extension):
@@ -21,7 +18,7 @@ class SyntheticTester(object):
         projections_path = base_path + "/Data/Projections"
         mean = NumpyLoader.load_numpy_arr(base_path + "/Data/Mean/mean_img 0.npy")
         num_dim = 20
-        nnet = Layers.init_from_files("/Users/phusisian/Desktop/Senior year/SUAS/NNet Files/Letter Weights 10 With Flipped Output", Sigmoid, [num_dim, 100, 27], Cost)
+        #nnet = Layers.init_from_files("/Users/phusisian/Desktop/Senior year/SUAS/NNet Files/Letter Weights 10 With Flipped Output", Sigmoid, [num_dim, 100, 27], Cost)
         self.letter_categorizer = Categorizer(eigenvectors, mean, projections_path, KMeansCompare, 25)
         print("categorizer initialization finished.")
         self.init_img_files()
