@@ -154,6 +154,12 @@ class ObstacleMap(object):
         """
         return self.obstacles
 
+    def has_uav_reached_current_waypoint(self):
+        """
+        Return True if the UAV has reached the current waypoint and false if not
+        """
+        return self.drone.has_reached_waypoint()
+
     def get_drone(self):
         """
         Return the drone

@@ -1,30 +1,23 @@
 from dronekit import connect, VehicleMode
 import socket
 import multiprocessing
-import math
-import numpy as np
 from logger import *
-from datetime import datetime
 from time import sleep
 from interop_client import InteropClientConverter
-from static_math import haversine, bearing
-from converter_data_update import ConverterDataUpdate
+from static_math import *
 from sda_converter import SDAConverter
-from waypoint import Waypoint
+from converter_functions import *
 from SDA import *
 
-INTEROP_CLIENT_ADDRESS = ('localhost', 9000)
 TK1_ADDRESS = ('IP', 9001)
-server_address = 'localhost'
-waypoint_JSON_file_path = "./data/demo_waypoints.mission"
 
-CONNECTION_STRING = "127.0.0.1:14550"
+UAV_CONNECTION_STRING = "127.0.0.1:14550"
 
 INTEROP_URL = "http://10.10.130.2:8000"
 INTEROP_USERNAME = "Flint"
 INTEROP_PASSWORD = "2429875295"
-MSL = 430
 
+MSL = 430
 MIN_REL_FLYING_ALT = 100
 MAX_REL_FLYING_ALT = 750
 
@@ -108,13 +101,13 @@ if __name__ == '__main__':
     logger_listener_configurer(configurer)
     name = multiprocessing.current_process().name
 
-    log(name, "Connecting to UAV on: %s" % CONNECTION_STRING)
-    vehicle = connect(connection_string, wait_ready=True)
+    log(name, "Connecting to UAV on: %s" % UAV_CONNECTION_STRING)
+    vehicle = connect(UAV_CONNECTION_STRING, wait_ready=True)
     vehicle.wait_ready('autopilot_version')
-    log(name, "Connected to UAV on: %s" % CONNECTION_STRING)
+    log(name, "Connected to UAV on: %s" % UAV_CONNECTION_STRING)
     log_vehicle_state(vehicle, name)
 
-	log(name, "Downloading waypoints from UAV on: %s" % CONNECTION_STRING)
+	log(name, "Downloading waypoints from UAV on: %s" % UAV_CONNECTION_STRING)
     waypoints = vehicle.commands
     waypoints.download()
     waypoints.wait_ready()
@@ -124,36 +117,28 @@ if __name__ == '__main__':
 	while not vehicle.is_armable:
         sleep(0.05)
     log(name, "Enabling SDA...")
-    obstacle_map = SDAConverter(vehicle.location.global_relative_frame)
-    obstacle_map.set_waypoints(waypoints)
+    sda_converter = SDAConverter(get_location(vehicle))
+    sda_converter.set_waypoints(waypoints)
 
     try:
     	while True:
-    		start_time = datetime.now()
-    		#interop_server_client.post_telemetry(current_coordinates[0])
+            current_location = get_location(vehicle)
+
+    		#interop_server_client.post_telemetry(current_location)
     		#stationary_obstacles, moving_obstacles = interop_server_client.get_obstacles()
     		#obstacle_map.reset_obstacles()
+            # TODO: Convert obstacles to Location objects
     		#for stationary_obstacle in stationary_obstacles:
     		#	obstacle_map.add_obstacle(stationary_obstacle)
 
-            # TODO: Check to see if reached waypoint (and only check if in guided mode)
-            if vehicle.mode.name == "GUIDED" and self.obstacle_map.get_curr_waypoint_distance():
-                pass
-            # TODO: Redo waypoints in SDA for this to work
+            if vehicle.mode.name == "GUIDED" and sda_converter.has_uav_reached_current_waypoint():
+                vehicle.mode = VehicleMode("AUTO")
 
-            # TODO: Convert obstacle_map to use new LocationGlobalRelative object
-            obstacle_map.update_uav_position(vehicle.location.global_relative_frame)
-            obstacle_map.set_uav_position(vehicle.location.global_relative_frame, vehicle.heading / (2.0 * pi))
-            obj_avoid_coordinates, map_point = obstacle_map.avoid_obstacles()
-            mav_format_avoid_coordinates = LocationGlobalRelative(obj_avoid_coordinates.get_latitude(), obj_avoid_coordinates.get_longitude(), vehicle.location.global_relative_frame.alt)
+            sda_converter.set_uav_position(current_location)
+            obj_avoid_coordinates = sda_converter.avoid_obstacles()
 
     		if obj_avoid_coordinates:
     			log("root", "Avoiding obstacles...")
-                vehicle.simple_goto(mav_format_avoid_coordinates)
-
-    			obstacle_map.set_guided_waypoint(map_point)
-
-    		time_to_execute = (datetime.now() - start_time).total_seconds()
-    		sleep(1.0 - time_to_execute)
+                vehicle.simple_goto(obj_avoid_coordinates)
     except:
         vehicle.close()

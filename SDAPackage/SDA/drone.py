@@ -42,6 +42,12 @@ class Drone(object):
         """
         self.waypoint_holder = WaypointHolder(np.array([]))
 
+    def has_reached_waypoint(self):
+        """
+        Return True if the drone has hit the current waypoint
+        """
+        return self.waypoint_holder.has_reached_waypoint(self.point)
+
     def get_point(self):
         """
         Return point

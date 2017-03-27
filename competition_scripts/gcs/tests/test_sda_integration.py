@@ -1,7 +1,7 @@
 from static_math import *
 from gps_coordinates import GPSCoordinates
 from SDA import *
-from updated_client_converter_test import ClientConverter
+from test_client_converter import ClientConverter
 from waypoint import Waypoint
 import unittest
 import numpy as np

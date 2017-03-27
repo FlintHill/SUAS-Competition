@@ -8,6 +8,8 @@ class ClientConverter(object):
     """
     Converts between geolocations and cartesian coordinates to use the SDA
     algorithm implemented
+
+    THIS VERSION IS TO BE USED ONLY FOR TESTING
     """
 
     def __init__(self, initial_coordinates):
@@ -53,13 +55,6 @@ class ClientConverter(object):
         """
         Run obstacle avoidance using the drone's new position
         """
-        """dy = update_data.get_haversine_distance() * sin(update_data.get_heading())
-        dx = update_data.get_haversine_distance() * cos(update_data.get_heading())
-        new_drone_location = np.array([dx, dy])#, update_data.get_altitude()])
-        self.obstacle_map.set_drone_position(new_drone_location)
-
-        print("New Drone Location: " + str(new_drone_location))"""
-
         obstacle_in_path_boolean, avoid_coords = self.obstacle_map.is_obstacle_in_path()
         print("Is an obstacle in the path? : " + str(obstacle_in_path_boolean))
 
