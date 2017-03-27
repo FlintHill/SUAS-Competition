@@ -1,3 +1,3 @@
-from Rectangle import Rectangle
-from HoughCircle import HoughCircle
-from PolarSideCounter import *
+from .Rectangle import Rectangle
+from .HoughCircle import HoughCircle
+from .PolarSideCounter import *

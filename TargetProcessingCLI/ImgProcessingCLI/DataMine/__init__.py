@@ -1,1 +1,1 @@
-from KMeansCompare import KMeansCompare
+from .KMeansCompare import KMeansCompare

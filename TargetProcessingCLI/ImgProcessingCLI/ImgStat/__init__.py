@@ -1,2 +1,2 @@
-from KMeans import *
-from SimplePCA import SimplePCA
+from .KMeans import *
+from .SimplePCA import SimplePCA

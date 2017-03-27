@@ -1,8 +1,7 @@
 import os
 import numpy
 from PIL import Image
-from ImgProcessingCLI.General import Target
-from ImgProcessingCLI.DataMine import KMeansCompare
+from ImgProcessingCLI import *
 from EigenFit import *
 import timeit
 
@@ -13,10 +12,10 @@ class SyntheticTester(object):
         self.extension = extension
 
         print("categorizer initialization started")
-        base_path = "/Users/phusisian/Desktop/Senior year/SUAS/Competition Files/NEWLETTERPCA"# WITH ROTATIONS"
-        eigenvectors = NumpyLoader.load_numpy_arr(base_path + "/Data/Eigenvectors/eigenvectors 0.npy")
+        base_path = "/Users/vtolpegin/Desktop/SUAS/NEWLETTERPCA"
+        eigenvectors = load_numpy_arr(base_path + "/Data/Eigenvectors/eigenvectors 0.npy")
         projections_path = base_path + "/Data/Projections"
-        mean = NumpyLoader.load_numpy_arr(base_path + "/Data/Mean/mean_img 0.npy")
+        mean = load_numpy_arr(base_path + "/Data/Mean/mean_img 0.npy")
         num_dim = 20
         #nnet = Layers.init_from_files("/Users/phusisian/Desktop/Senior year/SUAS/NNet Files/Letter Weights 10 With Flipped Output", Sigmoid, [num_dim, 100, 27], Cost)
         self.letter_categorizer = Categorizer(eigenvectors, mean, projections_path, KMeansCompare, 25)

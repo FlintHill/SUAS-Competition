@@ -1,1 +1,1 @@
-from ArrayHelper import search
+from .ArrayHelper import search

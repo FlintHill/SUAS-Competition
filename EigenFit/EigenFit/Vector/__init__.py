@@ -1,2 +1,2 @@
-from VectorMath import *
-from EigenProjector import *
+from .VectorMath import *
+from .EigenProjector import *

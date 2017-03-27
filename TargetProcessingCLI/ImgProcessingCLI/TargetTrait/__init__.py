@@ -1,2 +1,2 @@
-from ShapeType import ShapeType
-from TargetDirection import *
+from .ShapeType import ShapeType
+from .TargetDirection import *

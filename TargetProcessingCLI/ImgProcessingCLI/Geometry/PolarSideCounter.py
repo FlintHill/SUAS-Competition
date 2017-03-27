@@ -67,10 +67,10 @@ class PolarSideCounter(object):
         return self.minimums
 
     def append_window_to_plot(self):
-        end_first_slice = self.plot[len(self.plot) - (self.max_window-1)/2 : len(self.plot)]
-        begin_last_slice = self.plot[0: (self.max_window-1)/2]
+        end_first_slice = self.plot[len(self.plot) - int((self.max_window-1)/2) : len(self.plot)]
+        begin_last_slice = self.plot[0: int((self.max_window-1)/2)]
 
-        for i in range(0, (self.max_window-1)/2):
+        for i in range(0, int((self.max_window-1)/2)):
             self.plot.insert(i, end_first_slice[i])
 
         for i in range(0, len(begin_last_slice)):
@@ -89,14 +89,14 @@ class PolarSideCounter(object):
 
     def smooth_plot(self, window, numTimes):
         for i in range(0, numTimes):
-            for j in range((window-1)/2, len(self.plot) - window/2):
+            for j in range(int((window-1)/2), len(self.plot) - int(window/2)):
                 self.plot[j].set_radius(self.get_mean_in_window(j, window))
 
     def get_mean_in_window(self, index, window):
         sum = 0
         window_count = 0
         while window_count < window:
-            sum += self.plot[index - window/2 + window_count].get_radius()
+            sum += self.plot[index - int(window/2) + window_count].get_radius()
             window_count += 1
 
             #sum += self.plot[i].getRadius()
@@ -104,18 +104,18 @@ class PolarSideCounter(object):
 
     def init_maximums(self):
         self.maximums = []
-        for i in range((self.max_window-1)/2, len(self.plot) - (self.max_window-1)/2):
+        for i in range(int((self.max_window-1)/2), len(self.plot) - int((self.max_window-1)/2)):
             if self.get_if_is_max_across_num(i, self.max_window):
                 self.maximums.append(self.plot[i])
 
     def init_minimums(self):
         self.minimums = []
-        for i in range((self.max_window-1)/2, len(self.plot) - (self.max_window-1)/2):
+        for i in range(int((self.max_window-1)/2), len(self.plot) - int((self.max_window-1)/2)):
             if self.get_if_is_min_across_num(i, self.max_window):
                 self.minimums.append(self.plot[i])
 
     def get_if_is_max_across_num(self, index, num):
-        index_count = index - (num-1)/2
+        index_count = index - int((num-1)/2)
         while index_count < index - 1:
             if not(self.plot[index_count].get_radius() < self.plot[index_count + 1].get_radius()):
                 return False
@@ -124,7 +124,7 @@ class PolarSideCounter(object):
                 index_count -= len(self.plot)
         index_count = index
 
-        while index_count < index + (num-1)/2:
+        while index_count < index + int((num-1)/2):
             if not(self.plot[index_count].get_radius() > self.plot[index_count + 1].get_radius()):
                 return False
             index_count += 1
@@ -135,7 +135,7 @@ class PolarSideCounter(object):
         return True
 
     def get_if_is_min_across_num(self, index, num):
-        index_count = index - (num-1)/2
+        index_count = index - int((num-1)/2)
         while index_count < index - 1:
             if not(self.plot[index_count].get_radius() > self.plot[index_count + 1].get_radius()):
                 return False
@@ -144,7 +144,7 @@ class PolarSideCounter(object):
                 index_count -= len(self.plot)
         index_count = index
 
-        while index_count < index + (num-1)/2:
+        while index_count < index + int((num-1)/2):
             if not(self.plot[index_count].get_radius() < self.plot[index_count + 1].get_radius()):
                 return False
             index_count += 1
@@ -156,7 +156,7 @@ class PolarSideCounter(object):
 
     def set_mean_radius(self):
         self.mean_radius = 0
-        for i in range((self.max_window-1)/2, len(self.plot) - (self.max_window-1)/2):
+        for i in range(int((self.max_window-1)/2), len(self.plot) - int((self.max_window-1)/2)):
             self.mean_radius += self.plot[i].get_radius()
         self.mean_radius = self.mean_radius / float(len(self.plot))
 

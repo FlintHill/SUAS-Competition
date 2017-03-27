@@ -1,1 +1,1 @@
-from EigenMaker import EigenMaker
+from .EigenMaker import EigenMaker

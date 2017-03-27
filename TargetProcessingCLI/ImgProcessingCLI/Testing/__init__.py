@@ -1,1 +1,1 @@
-from SyntheticTester import SyntheticTester
+from .SyntheticTester import SyntheticTester

@@ -1,1 +1,1 @@
-from VectorMath import *
+from .VectorMath import *

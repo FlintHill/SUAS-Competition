@@ -1,1 +1,1 @@
-from SWT import *
+from .SWT import *

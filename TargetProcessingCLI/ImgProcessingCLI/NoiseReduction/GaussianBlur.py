@@ -32,7 +32,7 @@ def get_gaussian_kernel(kernel_size, std_dev):
     kernel = [[float(1.0/(2.0 * pi * std_dev**2)) for j in range(0, kernel_size)] for i in range(0, kernel_size)]
     kernel_x = 0
     kernel_y = 0
-    kernel_margin = (kernel_size - 1)/2
+    kernel_margin = int((kernel_size - 1)/2)
     for x in range(-kernel_margin, kernel_margin + 1):
         for y in range(-kernel_margin, kernel_margin + 1):
             numerator = -float(abs(x**2 + y**2))

@@ -54,8 +54,8 @@ def basic_threshold_img(img, image, mag_gradients, lower_threshold):
 def pixel_surrounded_by_edges(image, pixel, kernel_size, min_edges):
     edge_count = 0
     last_index = (-1,-1)
-    for i in range(pixel[0] - (kernel_size/2), pixel[0] + 1 + kernel_size/2):
-        for j in range(pixel[1] - (kernel_size/2), pixel[1] + 1 + kernel_size/2):
+    for i in range(pixel[0] - int(kernel_size/2), pixel[0] + 1 + int(kernel_size/2)):
+        for j in range(pixel[1] - int(kernel_size/2), pixel[1] + 1 + int(kernel_size/2)):
             if image[i,j] != 0:
                 if (abs(j - last_index[1]) + abs(i - last_index[0])) > 2:
                     edge_count += 1

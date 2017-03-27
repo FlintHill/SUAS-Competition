@@ -1,1 +1,1 @@
-from ImageOperations import *
+from .ImageOperations import *

@@ -1,1 +1,1 @@
-from GaussianBlur import *
+from .GaussianBlur import *

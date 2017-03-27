@@ -1,4 +1,6 @@
-from ImageProcessingCLI import *
+from ImgProcessingCLI import *
+from ImgProcessingCLI.ImageOperation import *
+#from ImgProcessingCLI.
 from PIL import ImageDraw
 from math import degrees
 from PIL import Image
@@ -93,6 +95,7 @@ class Target(object):
 
     def init_letter_pca(self):
         letter_canny_img = self.letter_layer.get_layer_img()#self.get_letter_canny_img()
+        letter_canny_img.show()
         self.letter_pca = SimplePCA.init_with_monochrome_img(letter_canny_img, letter_canny_img.load())#(self.letter_layer.get_layer_img(), self.letter_layer.get_layer_img().load())#
 
     def get_letter_canny_img(self):
@@ -168,7 +171,7 @@ class Target(object):
         resized_letter_img = get_bw_img_cropped_to_bounds(letter_img, letter_img.load(), margin = 1)
         resized_letter_img = scale_img_to_height(resized_letter_img, Target.LETTER_RESIZE_HEIGHT)
         base_img = Image.new('L', Target.PCA_LETTER_DIM, 0)
-        offset = ((Target.PCA_LETTER_DIM[0]/2) - (resized_letter_img.size[0]/2), (Target.PCA_LETTER_DIM[1]/2) - (resized_letter_img.size[1]/2))
+        offset = ((Target.PCA_LETTER_DIM[0]//2) - (resized_letter_img.size[0]//2), (Target.PCA_LETTER_DIM[1]//2) - (resized_letter_img.size[1]//2))
         paste_img_onto_img(resized_letter_img, base_img, offset)
         resized_letter_img = base_img
         return resized_letter_img
@@ -177,3 +180,31 @@ class Target(object):
         best_fit_character = ""
         best_fit_score = -1
         best_fit_direction = ""
+
+        '''need to add a cornercase when the letter orientation eigenvalues have a small ratio.
+        All that would have to be done is to run each set of 2 through the NN and determine the
+        strongest score'''
+
+        for i in range(0, len(self.possible_imgs)):
+            iter_scores = self.letter_categorizer.get_algorithm_return_smallest_to_large(ImageOps.invert(self.possible_imgs[i][0]), None)
+            print("iter scores: " + str(iter_scores))#str(iter_scores[:][0]))
+            iter_letter = iter_scores[0][0]
+            iter_score = iter_scores[0][1]
+            if iter_score < best_fit_score or best_fit_score < 0:
+                best_fit_score = iter_score
+                best_fit_character = iter_letter
+                best_fit_direction = self.possible_imgs[i][1]
+
+        self.TARGET_COMPASS_ORIENTATION = best_fit_direction
+        self.TARGET_CHARACTER = best_fit_character
+
+    def __repr__(self):
+        out = ("orientation: " + str(self.TARGET_COMPASS_ORIENTATION) + "\n"
+               + "shape: " + str(self.TARGET_SHAPE) + "\n"
+               + "background_color: " + str(self.TARGET_SHAPE_COLOR) + "\n"
+               + "alphanumeric: " + str(self.TARGET_CHARACTER) + "\n"
+               + "alphanumeric_color: " + str(self.TARGET_CHARACTER_COLOR) + "\n")
+        return out
+
+    def as_numpy(self):
+        return numpy.asarray((self.TARGET_COMPASS_ORIENTATION, self.TARGET_SHAPE, self.TARGET_SHAPE_COLOR, self.TARGET_CHARACTER, self.TARGET_CHARACTER_COLOR))
