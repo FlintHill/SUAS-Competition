@@ -1,14 +1,11 @@
-'''
-Created on Jan 1, 2017
-
-@author: phusisian
-'''
 import random
 import numpy
 from SyntheticDataset.image_operations import *
 from SyntheticDataset.color import *
 import string
 import math
+import multiprocessing
+import timeit
 import os
 
 class ImageGenerator(object):
@@ -21,23 +18,36 @@ class ImageGenerator(object):
     blurStdDev = 2
     grassBlurStdDev = 2
 
-    def __init__(self):
-        self.polyPics = []
-        self.grassLoader = ImageLoader("/Users/vtolpegin/github/SUAS-Competition/SyntheticDataset/Grass/")
+    def __init__(self, data_path, process_number=0):
+        ColorList()
 
-    def fillPolyPics(self, numPics):
-        for i in range(0, numPics):
-            print("Generating image...")
-            pic = self.grassLoader.getRandomImg().convert('RGBA')
-            pic = GaussianBlur.getGaussianFilteredImg(pic, pic.load(), 3, ImageGenerator.grassBlurStdDev)
-            pic = pic.convert('RGB')
-            print("Finished applying Gaussian blur")
-            fieldObject = self.getRandomlyGeneratedFieldObject(pic)
-            self.applyFieldObjectToImg(fieldObject, pic)
-            pic= ImageCropper.cropImgToRect(pic, fieldObject.getPolygon().getBoundsWithMargin(3)).convert('RGBA')
-            pic = GaussianBlur.getGaussianFilteredImg(pic, pic.load(), ImageGenerator.blurKernelSize, ImageGenerator.blurStdDev)
-            self.polyPics.append(PolyPic(pic, fieldObject))
-            print("Filled polypic number: " + str(i))
+        self.polyPics = []
+        self.data_path = data_path
+        self.process_number = process_number
+        self.grassLoader = ImageLoader(os.path.join(data_path, "grass"))
+        self.starting_index = 0
+
+    def fillPolyPics(self, numPics, starting_index):
+        self.starting_index = starting_index
+        for index in range(0, numPics + 1):
+            start = timeit.default_timer()
+
+            polygon_pic, field_object = self.generate_polygon()
+            self.polyPics.append(PolyPic(polygon_pic, field_object))
+
+            print("Finished generating image number", index, "in", (timeit.default_timer() - start), "seconds on process", self.process_number)
+
+    def generate_polygon(self):
+        """
+        Generate a target
+        """
+        pic = self.grassLoader.getRandomImg().convert('RGBA')
+        fieldObject = self.getRandomlyGeneratedFieldObject(pic)
+        self.applyFieldObjectToImg(fieldObject, pic)
+        pic = ImageCropper.cropImgToRect(pic, fieldObject.getPolygon().getBoundsWithMargin(3)).convert('RGBA')
+        pic = GaussianBlur.getGaussianFilteredImg(pic, pic.load(), ImageGenerator.blurKernelSize, ImageGenerator.blurStdDev)
+
+        return pic, fieldObject
 
     def showPolyPicImgs(self):
         for polyPic in self.polyPics:
@@ -48,26 +58,25 @@ class ImageGenerator(object):
             os.makedirs(path + "/Answers")
         if not os.path.exists(path+ "/Images"):
             os.makedirs(path + "/Images")
-        for i in range(0, len(self.polyPics)):
-            self.polyPics[i].getImg().save(path + "/Images/Generated Target " + str(i) + ".png")
+        for i in range(self.starting_index, len(self.polyPics) + self.starting_index):
+            self.polyPics[i - self.starting_index].getImg().save(path + "/Images/Generated Target " + str(i) + ".png")
             self.saveFieldObject(path, i)
             print("Saved polypic number: " + str(i))
 
     def saveFieldObject(self, path, index):
-        fieldObject = self.polyPics[index].getFieldObject()
+        fieldObject = self.polyPics[index - self.starting_index].getFieldObject()
         details = fieldObject.asNumpy()
         numpy.save(path + "/Answers/Target " + str(index), details)
 
     def getRandomlyGeneratedFieldObject(self, backgroundImg):
-        #backgroundImg = self.grassLoader.getRandomImg()
         shapeType = self.getRandomShapeType()
         bounds = self.getRandomBoundingBoxWithinImg(backgroundImg)
-        #rotation = self.getRandomCompassAngle()
         color = ColorList.getRandomColor()
         letter = self.getRandomLetter()
-        fieldObject = FieldObject(shapeType, bounds, self.getRandomTheta(), color, letter)
+
+        fieldObject = FieldObject(shapeType, bounds, self.getRandomTheta(), color, letter, self.data_path)
+
         return fieldObject
-        #fieldObject.fill(backgroundImg, backgroundImg.load())
 
     def getRandomTheta(self):
         rand_base_theta = random.randint(0,8)*(math.pi/4.0)

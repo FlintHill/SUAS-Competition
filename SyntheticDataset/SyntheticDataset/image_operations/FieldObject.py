@@ -19,7 +19,8 @@ class FieldObject(object):
     possibleShapes = ["Triangle", "Square", "Rectangle", "Pentagon", "Hexagon", "Heptagon", "Octagon", "Circle"]
 
     '''semicircles and quartercircles not working properly. (are rotated off the field)'''
-    def __init__(self, shapeTypeIn, boundingBoxIn, rotationIn, colorIn, letterIn):
+    def __init__(self, shapeTypeIn, boundingBoxIn, rotationIn, colorIn, letterIn, data_path):
+        self.data_path = data_path
         self.shapeType = shapeTypeIn
         self.bounds = boundingBoxIn
         self.midpoint = self.getMidpointFromBounds()
@@ -32,7 +33,9 @@ class FieldObject(object):
 
     def setObjectLetter(self, letter):
         randomHeight = int((FieldObject.lowerLetterRadiusBound + random.random()*(FieldObject.upperLetterRadiusBound - FieldObject.lowerLetterRadiusBound))*self.radius)
-        self.objectLetter = ObjectLetter(self, letter,"/Users/vtolpegin/github/SUAS-Competition/SyntheticDataset/fonts/Blockletter.otf", randomHeight)#eventually replace the letter size with a method that gets a random height within reasonable bounds
+
+        #eventually replace the letter size with a method that gets a random height within reasonable bounds
+        self.objectLetter = ObjectLetter(self, letter, os.path.join(self.data_path, "fonts/Blockletter.otf"), randomHeight)
 
     def __repr__(self):
         repString = "orientation: " + CompassAngler.getClosestCompassAngle(self.rotation) + "\n"
