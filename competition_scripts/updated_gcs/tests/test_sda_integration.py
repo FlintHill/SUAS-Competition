@@ -1,6 +1,6 @@
 from math_functions import *
 from SDA import *
-from test_client_converter import ClientConverter
+from sda_converter import SDAConverter
 from location_data import *
 import unittest
 import numpy as np
@@ -14,9 +14,9 @@ class SDAIntegrationTestCase(unittest.TestCase):
         self.setup_client_converter()
 
     def setup_client_converter(self):
-        self.initial_coordinates = GPSCoordinates(38.8703041, -77.3214035, 60.950000762939453)
+        self.initial_coordinates = Location(38.8703041, -77.3214035, 60.950000762939453)
 
-        self.client_converter = ClientConverter(self.initial_coordinates)
+        self.client_converter = SDAConverter(self.initial_coordinates)
 
     def test_get_initial_coordinates(self):
         """
@@ -32,7 +32,7 @@ class SDAIntegrationTestCase(unittest.TestCase):
         """
         Test the reset_obstacles() method
         """
-        new_obstacle = GPSCoordinates(38.8703041, -77.3214035, 60.950000762939453)
+        new_obstacle = Location(38.8703041, -77.3214035, 60.950000762939453)
         self.client_converter.add_obstacle(new_obstacle)
         obstacle_map = self.client_converter.get_obstacle_map()
 
@@ -47,7 +47,7 @@ class SDAIntegrationTestCase(unittest.TestCase):
         """
         Test the set_waypoints() method
         """
-        test_waypoint = Waypoint(38.8742103, -77.3217697, 91.44000244140625)
+        test_waypoint = Location(38.8742103, -77.3217697, 91.44000244140625)
         self.client_converter.set_waypoints([test_waypoint])
         obstacle_map = self.client_converter.get_obstacle_map()
         waypoint_holder = obstacle_map.drone.get_waypoint_holder()

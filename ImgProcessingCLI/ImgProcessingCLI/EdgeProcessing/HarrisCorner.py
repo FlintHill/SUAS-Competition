@@ -25,7 +25,7 @@ def draw_corners(corners, image, color):
 def get_corner_scores(sobel_edge, kernel):
     sobel_img = sobel_edge.get_gradient_mag_img()
     corner_scores = numpy.empty((sobel_img.size[0], sobel_img.size[1]))
-    init_offset = (len(kernel)-1)/2
+    init_offset = int((len(kernel)-1)/2)
     for x in range(init_offset, sobel_img.size[0] - init_offset):
         for y in range(init_offset, sobel_img.size[1] - init_offset):
             second_moment_matrix = get_second_moment_matrix(sobel_edge, (x,y), kernel)
@@ -35,7 +35,7 @@ def get_corner_scores(sobel_edge, kernel):
 def get_second_moment_matrix(sobel_edge, pixel, kernel):
     sum = numpy.array([0,0])
     kernel_size = len(kernel)
-    init_offset = (kernel_size-1)/2
+    init_offset = int((kernel_size-1)/2)
     kernel_x = 0
     kernel_y = 0
     for x in range(pixel[0]-init_offset, pixel[0]+init_offset + 1):

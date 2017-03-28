@@ -88,7 +88,7 @@ class SyntheticTester(object):
         print("answer key: " + str(scores))
         print("target answers: " + str(target_answers))
         for answer_index in range(1, scores.shape[0]):
-            if str(target_answers[answer_index].decode("utf-8")) == str(scores[answer_index]):
+            if str(target_answers[answer_index]) == str(scores[answer_index].decode("utf-8")):
                 self.score_vals[answer_index] += 1
         print("current score vals: " + str(self.score_vals) + ", num images run: " + str(index+1))
         print("time taken: " + str(timeit.default_timer() - start_time) + " seconds")
