@@ -11,7 +11,7 @@ class SDATestCase(unittest.TestCase):
         """
         Test ObstacleMap's add_obstacle() method
         """
-        new_obstacle = StationaryObstacle(np.array([0, 10]), 0)
+        new_obstacle = StationaryObstacle(np.array([0, 10]), 5)
 
         self.obstacle_map.add_obstacle(np.array([new_obstacle]))
 
@@ -21,7 +21,7 @@ class SDATestCase(unittest.TestCase):
         """
         Test ObstacleMap's reset_obstacles() method
         """
-        new_obstacle = StationaryObstacle(np.array([0, 10]), 0)
+        new_obstacle = StationaryObstacle(np.array([0, 10]), 5)
 
         self.obstacle_map.add_obstacle(np.array([new_obstacle]))
         self.obstacle_map.reset_obstacles()
@@ -46,24 +46,24 @@ class SDATestCase(unittest.TestCase):
         """
         # First intersection test
         self.obstacle_map.reset_obstacles()
-        obstacle_in_path = StationaryObstacle(np.array([10, 0]), 0)
-        waypoint = np.array([20, 0])
+        obstacle_in_path = StationaryObstacle(np.array([20, 0]), 5)
+        waypoint = np.array([40, 0])
 
         self.obstacle_map.add_obstacle(obstacle_in_path)
         self.obstacle_map.add_waypoint(waypoint)
 
         obstacle_in_path_boolean, avoid_coords = self.obstacle_map.is_obstacle_in_path()
         self.assertEqual(obstacle_in_path_boolean, True)
-        self.assertEqual(avoid_coords[0].all(), np.array([10, -5]).all())
-        self.assertEqual(avoid_coords[0].all(), np.array([10, 5]).all())
+        self.assertEqual(np.array_equal(avoid_coords[0], np.array([20, -20])), True)
+        self.assertEqual(np.array_equal(avoid_coords[1], np.array([20, 20])), True)
 
         # Second intersection test
         self.obstacle_map.reset_obstacles()
         self.obstacle_map.reset_waypoints()
-        obstacle_in_path = StationaryObstacle(np.array([10, 0]), 0)
-        waypoint = np.array([20, 5])
+        obstacle_in_path = StationaryObstacle(np.array([20, 20]), 5)
+        waypoint = np.array([0, 40])
 
-        self.obstacle_map.set_drone_position(np.array([0, 5]))
+        self.obstacle_map.set_drone_position(np.array([0, 0]))
         self.obstacle_map.add_obstacle(obstacle_in_path)
         self.obstacle_map.add_waypoint(waypoint)
 
@@ -75,8 +75,8 @@ class SDATestCase(unittest.TestCase):
         # Third intersection test
         self.obstacle_map.reset_obstacles()
         self.obstacle_map.reset_waypoints()
-        obstacle_in_path = StationaryObstacle(np.array([10, 10]), 0)
-        waypoint = np.array([20, 20])
+        obstacle_in_path = StationaryObstacle(np.array([30, 30]), 5)
+        waypoint = np.array([60, 60])
 
         self.obstacle_map.set_drone_position(np.array([0, 0]))
         self.obstacle_map.add_obstacle(obstacle_in_path)
@@ -85,16 +85,14 @@ class SDATestCase(unittest.TestCase):
         obstacle_in_path_boolean, avoid_coords = self.obstacle_map.is_obstacle_in_path()
 
         self.assertEqual(obstacle_in_path_boolean, True)
-        self.assertEqual(avoid_coords[0].all(), np.array([7.5, 12.5]).all())
-        self.assertEqual(avoid_coords[0].all(), np.array([12.5, 7.5]).all())
 
         # Fourth intersection test
         self.obstacle_map.reset_obstacles()
         self.obstacle_map.reset_waypoints()
-        obstacle_in_path = StationaryObstacle(np.array([5, 5]), 0)
-        waypoint = np.array([20, 20])
+        obstacle_in_path = StationaryObstacle(np.array([20, 20]), 5)
+        waypoint = np.array([60, 60])
 
-        self.obstacle_map.set_drone_position(np.array([15, 15]))
+        self.obstacle_map.set_drone_position(np.array([40, 40]))
         self.obstacle_map.add_obstacle(obstacle_in_path)
         self.obstacle_map.add_waypoint(waypoint)
 
@@ -110,17 +108,14 @@ class SDATestCase(unittest.TestCase):
         # Fourth intersection test
         self.obstacle_map.reset_obstacles()
         self.obstacle_map.reset_waypoints()
-        obstacle_in_path = StationaryObstacle(np.array([10, 0]), 0)
-        waypoint = np.array([20, 4.9])
+        obstacle_in_path = StationaryObstacle(np.array([20, 0]), 5)
+        waypoint = np.array([0, 20])
 
-        self.obstacle_map.set_drone_position(np.array([0, 5]))
+        self.obstacle_map.set_drone_position(np.array([0, 0]))
         self.obstacle_map.add_obstacle(obstacle_in_path)
         self.obstacle_map.add_waypoint(waypoint)
 
         obstacle_in_path_boolean, avoid_coords = self.obstacle_map.is_obstacle_in_path()
-        min_tangent_point = self.obstacle_map.get_min_tangent_point(avoid_coords)
+        #min_tangent_point = self.obstacle_map.get_min_tangent_point(avoid_coords)
 
-        self.assertEqual(obstacle_in_path_boolean, True)
-        self.assertEqual(avoid_coords[0].all(), np.array([9.97500031, -4.9999375]).all())
-        self.assertEqual(avoid_coords[0].all(), np.array([10.02499969, 4.9999375]).all())
-        self.assertEqual(min_tangent_point.all(), np.array([10.02499969, 4.9999375]).all())
+        self.assertEqual(obstacle_in_path_boolean, False)

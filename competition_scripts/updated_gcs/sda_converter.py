@@ -62,9 +62,12 @@ class SDAConverter(object):
 
         self.obstacle_map.set_drone_position(converted_uav_location)
 
-    def avoid_obstacles(self):
+    def avoid_obstacles(self, bearing):
         """
         Run obstacle avoidance using the drone's new position
+
+        :param uav_bearing: The bearing of the UAV (in radians)
+        :type uav_bearing: float
         """
         obstacle_in_path_boolean, avoid_coords = self.obstacle_map.is_obstacle_in_path()
 
@@ -74,7 +77,7 @@ class SDAConverter(object):
             if VectorMath.get_magnitude(self.previous_min_tangent_point, min_tangent_point) > self.minimum_change_in_guided_waypoint:
                 self.previous_min_tangent_point = min_tangent_point
 
-                return inverse_haversine(self.initial_coordinates, min_tangent_point).as_global_relative_frame()
+                return inverse_haversine(self.initial_coordinates, min_tangent_point, bearing).as_global_relative_frame()
 
         return None, None
 

@@ -13,7 +13,7 @@ def haversine(location1, location2, units="METRIC"):
     """
     dz = location2.get_alt() - location1.get_alt()
     dy = (location2.get_lat() - location1.get_lat()) * 69.172
-    dx = (location1.get_lon() - location2.get_lon()) * 69.172 * math.cos(math.radians(location1.get_lat() + location2.get_lat()))
+    dx = (location2.get_lon() - location1.get_lon()) * 69.172 * math.cos(math.radians(location1.get_lat() + location2.get_lat()) / 2)
 
     if "metric" in units.lower():
         dy *= 1609.34
@@ -37,7 +37,7 @@ def point_in_polygon(polygon, point):
     for corner in polygon:
         pass
 
-def inverse_haversine(location1, point):
+def inverse_haversine(location1, point, uav_bearing):
     """
     Calculate a second GPS point through using a single GPS point and a
     different in XY units
@@ -46,15 +46,15 @@ def inverse_haversine(location1, point):
     :type location1: Location
     :param point: The point in the map that the obstacle occupies
     :type point: Numpy Array
+    :param uav_bearing: The bearing of the UAV
+    :type bearing: float
     """
-    bearing = math.atan2(min_tangent_point[0], min_tangent_point[1])
     dist = float(point[0]**2 + point[1]**2)**0.5 / 1000.1
 
-    alt = location1.get_alt() + point[2]
-    lat = location1.get_lat() + (dist * math.cos(bearing) / 111.195)
-    lon = location1.get_lon() + ((dist * math.sin(bearing)) / (math.cos(math.radians((lat + location1.get_lat()) / 2.0)) * 111.191))
+    lat = location1.get_lat() + (dist * math.cos(uav_bearing) / 111.195)
+    lon = location1.get_lon() + ((dist * math.sin(uav_bearing)) / (math.cos(math.radians((lat + location1.get_lat()) / 2.0)) * 111.191))
 
-    return Location(lat, lon, alt)
+    return Location(lat, lon, point[2])
 
 def bearing(location1, location2):
     """
@@ -66,7 +66,7 @@ def bearing(location1, location2):
     :type location2: Location
     """
     lat1 = math.radians(location1.get_lat())
-    lat2 = mat.radians(location2.get_lat())
+    lat2 = math.radians(location2.get_lat())
     diffLong = math.radians(location2.get_lon() - location1.get_lat())
 
     x = math.sin(diffLong) * math.cos(lat2)

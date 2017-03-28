@@ -88,7 +88,7 @@ if __name__ == '__main__':
 
             sda_converter.set_uav_position(current_location)
 
-            obj_avoid_coordinates = sda_converter.avoid_obstacles()
+            obj_avoid_coordinates = sda_converter.avoid_obstacles(math.radians(current_location.heading) / 2)
     		if obj_avoid_coordinates:
     			log("root", "Avoiding obstacles...")
                 vehicle.simple_goto(obj_avoid_coordinates)
