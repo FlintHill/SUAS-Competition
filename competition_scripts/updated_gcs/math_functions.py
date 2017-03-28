@@ -5,6 +5,11 @@ def haversine(location1, location2, units="METRIC"):
     """
     Calculates the great circle distance between two points
     on the earth (specified in decimal degrees)
+
+    :param location1: The first GPS location
+    :type location1: Location
+    :param location2: The second GPS location
+    :type location2: Location
     """
     dz = location2.get_alt() - location1.get_alt()
     dy = (location2.get_lat() - location1.get_lat()) * 69.172
@@ -28,6 +33,7 @@ def point_in_polygon(polygon, point):
     :param polygon: A list of points that are the polygon corners
     :param point: The point to determine its location
     """
+    # TODO Fill in this method
     for corner in polygon:
         pass
 
@@ -53,6 +59,11 @@ def inverse_haversine(location1, point):
 def bearing(location1, location2):
     """
     Calculates the bearing between two points
+
+    :param location1: The first GPS location
+    :type location1: Location
+    :param location2: The second GPS location
+    :type location2: Location
     """
     lat1 = math.radians(location1.get_lat())
     lat2 = mat.radians(location2.get_lat())

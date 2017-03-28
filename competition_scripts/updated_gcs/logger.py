@@ -1,25 +1,76 @@
-from dronekit import connect, VehicleMode
-import socket
-import multiprocessing
-from logger import *
-from time import sleep
-from interop_client import InteropClientConverter
-from static_math import *
-from sda_converter import SDAConverter
-from converter_functions import *
-from SDA import *
+import logging
+import logging.handlers
 
-TK1_ADDRESS = ('IP', 9001)
+log_file = "./data/log.log"
 
-UAV_CONNECTION_STRING = "127.0.0.1:14550"
+logging.basicConfig(format="%(asctime)s %(name)s [%(levelname)s] %(message)s",
+	filename=log_file, filemode='w',
+	level=logging.INFO)
 
-INTEROP_URL = "http://10.10.130.2:8000"
-INTEROP_USERNAME = "Flint"
-INTEROP_PASSWORD = "2429875295"
+class QueueHandler(logging.Handler):
+    """
+    This is a logging handler which sends events to a multiprocessing queue.
 
-MSL = 430
-MIN_REL_FLYING_ALT = 100
-MAX_REL_FLYING_ALT = 750
+    The plan is to add it to Python 3.2, but this can be copy pasted into
+    user code for use with earlier Python versions.
+    """
+
+    def __init__(self, queue):
+        """
+        Initialise an instance, using the passed queue.
+        """
+        logging.Handler.__init__(self)
+        self.queue = queue
+
+    def emit(self, record):
+        """
+        Emit a record.
+
+        Writes the LogRecord to the queue.
+        """
+        try:
+            ei = record.exc_info
+            if ei:
+                dummy = self.format(record) # just to get traceback text into record.exc_text
+                record.exc_info = None  # not needed any more
+            self.queue.put_nowait(record)
+        except (KeyboardInterrupt, SystemExit):
+            raise
+        except:
+            self.handleError(record)
+
+def logger_listener_configurer():
+    root = logging.getLogger()
+    h = logging.handlers.RotatingFileHandler(log_file, 'w')
+    f = logging.Formatter('%(asctime)s %(name)s [%(levelname)s] %(message)s')
+    h.setFormatter(f)
+    root.addHandler(h)
+
+def logger_worker_configurer(queue):
+    h = QueueHandler(queue)  # Just the one handler needed
+    root = logging.getLogger()
+    root.addHandler(h)
+    # send all messages, for demo; no other level or filter logic applied.
+    root.setLevel(logging.INFO)
+
+def listener_process(queue, configurer):
+    configurer()
+    while True:
+        try:
+            record = queue.get()
+            if record is None:  # We send this as a sentinel to tell the listener to quit.
+                break
+            logger = logging.getLogger(record.name)
+            logger.handle(record)  # No level or filter logic applied - just do it!
+        except Exception:
+            import sys, traceback
+            print('Whoops! Problem:')
+            traceback.print_exc(file=sys.stderr)
+
+def log(name, message):
+    logger_instance = logging.getLogger(name)
+    logger_instance.info(message)
+    print(message)
 
 def log_vehicle_state(vehicle, logger_name):
     """
@@ -68,77 +119,3 @@ def log_vehicle_state(vehicle, logger_name):
     log(logger_name, " Airspeed: %s" % vehicle.airspeed)    # settable
     log(logger_name, " Mode: %s" % vehicle.mode.name)    # settable
     log(logger_name, " Armed: %s" % vehicle.armed)    # settable
-
-def target_listener(logger_queue, configurer, received_targets_array):
-	"""
-	Listen for targets sent from the TK1
-	"""
-    configurer(logger_queue)
-	name = multiprocessing.current_process().name
-
-	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-	#sock.bind(TK1_ADDRESS)
-	#sock.listen(1)
-	log(name, "Waiting for a connection to the TK1...")
-	#connection, client_address = sock.accept()
-	log(name, "Connected to TK1")
-
-	while True:
-		sleep(0.5)
-
-if __name__ == '__main__':
-	#interop_server_client = InteropClientConverter(MSL, INTEROP_URL, INTEROP_USERNAME, INTEROP_PASSWORD)
-
-	logger_queue = multiprocessing.Queue(-1)
-	logger_listener_process = multiprocessing.Process(target=listener_process, args=(logger_queue, logger_listener_configurer))
-	logger_listener_process.start()
-
-    manager = multiprocessing.Manager()
-    received_targets = manager.list()
-    # target_listener_process = multiprocessing.Process(target=target_listener, args=(logger_queue, logger_listener_configurer, received_targets))
-    # target_listener_process.start()
-
-    logger_listener_configurer(configurer)
-    name = multiprocessing.current_process().name
-
-    log(name, "Connecting to UAV on: %s" % UAV_CONNECTION_STRING)
-    vehicle = connect(UAV_CONNECTION_STRING, wait_ready=True)
-    vehicle.wait_ready('autopilot_version')
-    log(name, "Connected to UAV on: %s" % UAV_CONNECTION_STRING)
-    log_vehicle_state(vehicle, name)
-
-	log(name, "Downloading waypoints from UAV on: %s" % UAV_CONNECTION_STRING)
-    waypoints = vehicle.commands
-    waypoints.download()
-    waypoints.wait_ready()
-    log(name, "Waypoints successfully downloaded")
-
-    log(name, "Waiting for UAV to be armable")
-	while not vehicle.is_armable:
-        sleep(0.05)
-    log(name, "Enabling SDA...")
-    sda_converter = SDAConverter(get_location(vehicle))
-    sda_converter.set_waypoints(waypoints)
-
-    try:
-    	while True:
-            current_location = get_location(vehicle)
-
-    		#interop_server_client.post_telemetry(current_location)
-    		#stationary_obstacles, moving_obstacles = interop_server_client.get_obstacles()
-    		#obstacle_map.reset_obstacles()
-            # TODO: Convert obstacles to Location objects
-    		#for stationary_obstacle in stationary_obstacles:
-    		#	obstacle_map.add_obstacle(stationary_obstacle)
-
-            if vehicle.mode.name == "GUIDED" and sda_converter.has_uav_reached_current_waypoint():
-                vehicle.mode = VehicleMode("AUTO")
-
-            sda_converter.set_uav_position(current_location)
-            obj_avoid_coordinates = sda_converter.avoid_obstacles()
-
-    		if obj_avoid_coordinates:
-    			log("root", "Avoiding obstacles...")
-                vehicle.simple_goto(obj_avoid_coordinates)
-    except:
-        vehicle.close()

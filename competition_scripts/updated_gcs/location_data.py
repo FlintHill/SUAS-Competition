@@ -40,7 +40,7 @@ class Location(object):
         """
         return self.alt
 
-    def get_location_global_relative(self):
+    def as_global_relative_frame(self):
         """
         Get the LocationGlobalRelative form of this location
         """

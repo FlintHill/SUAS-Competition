@@ -5,10 +5,25 @@ import numpy
 def get_location(vehicle):
     """
     Convert the vehicle's current location to a Location object
+
+    :param vehicle: The vehicle to convert
     """
     latitude = vehicle.global_relative_frame.lat
     longitude = vehicle.global_relative_frame.lon
     altitude = vehicle.global_relative_frame.alt
+
+    return Location(latitude, longitude, altitude)
+
+def get_obstacle_location(obstacle):
+    """
+    Get an Obstacle's location
+
+    :param obstacle: The obstacle to convert
+    :type obstacle: StationaryObstacle or MovingObstacle
+    """
+    latitude = obstacle.latitude
+    longitude = obstacle.longitude
+    altitude = obstacle.altitude
 
     return Location(latitude, longitude, altitude)
 

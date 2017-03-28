@@ -20,7 +20,7 @@ class SDAConverter(object):
 
         self.initial_coordinates = initial_coordinates
         self.previous_min_tangent_point = numpy.array([0, 0])
-        self.minimum_change_in_guided_point = 3
+        self.minimum_change_in_guided_waypoint = 3
 
         # REMOVE THE BELOW LINE DURING ACTUAL FLIGHT
         self.obstacle_map.add_obstacle(StationaryObstacle(numpy.array([100.0, -8.0]), 5));
@@ -71,14 +71,14 @@ class SDAConverter(object):
         if obstacle_in_path_boolean:
             min_tangent_point = self.obstacle_map.get_min_tangent_point(avoid_coords)
 
-            if VectorMath.get_magnitude(self.previous_min_tangent_point, min_tangent_point) > self.minimum_change_in_guided_point:
+            if VectorMath.get_magnitude(self.previous_min_tangent_point, min_tangent_point) > self.minimum_change_in_guided_waypoint:
                 self.previous_min_tangent_point = min_tangent_point
 
-                return inverse_haversine(self.get_initial_coordinates(), min_tangent_point)
+                return inverse_haversine(self.initial_coordinates, min_tangent_point).as_global_relative_frame()
 
         return None, None
 
-    def has_uav_reached_current_waypoint(self):
+    def has_uav_reached_guided_waypoint(self):
         """
         Return True if the UAV has reached the current guided waypoint
         """
