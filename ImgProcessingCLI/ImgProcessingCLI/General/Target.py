@@ -1,6 +1,5 @@
 from ImgProcessingCLI import *
 from ImgProcessingCLI.ImageOperation import *
-#from ImgProcessingCLI.
 from PIL import ImageDraw
 from math import degrees
 from PIL import Image
