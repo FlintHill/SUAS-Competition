@@ -13,12 +13,8 @@ class FieldObject(object):
     grassColor = (1,142,14,0)
     lowerLetterRadiusBound = 0.55
     upperLetterRadiusBound = 1
-
-    #possibleShapes = ["triangle", "square", "rectangle", "pentagon", "hexagon", "heptagon", "octagon", "circle", "semicircle", "quartercircle"]
-    '''excluding some of the shapes it messes up on for now'''
     possibleShapes = ["Triangle", "Square", "Rectangle", "Pentagon", "Hexagon", "Heptagon", "Octagon", "Circle"]
 
-    '''semicircles and quartercircles not working properly. (are rotated off the field)'''
     def __init__(self, shapeTypeIn, boundingBoxIn, rotationIn, colorIn, letterIn, data_path):
         self.data_path = data_path
         self.shapeType = shapeTypeIn
@@ -105,6 +101,7 @@ class FieldObject(object):
         polyMidpoint = self.polygon.getMidpoint().toInt()
         translatePoint = letterMidpoint.getTranslatePoint(polyMidpoint).toInt()
         img.paste(self.objectLetter.getGradientLetterImg(), (translatePoint.getX(), translatePoint.getY()), self.objectLetter.getGradientLetterImg())
+        img.show()
         return None
 
     def getMidpointFromBounds(self):
@@ -129,20 +126,8 @@ class CompassAngler(object):
 
     @staticmethod
     def getClosestCompassAngle(angle):
-        sorted_angles = CompassAngler.getCompassAnglesSortedByProximityToAngle(angle)#sorted(AngleRounder.COMPASS_ANGLES, key = lambda compass_angle : abs(compass_angle[1]-angle)%(2.0*pi))
+        sorted_angles = CompassAngler.getCompassAnglesSortedByProximityToAngle(angle)
         return sorted_angles[0][0]
-    #compassAngles = [('E', 0), ('NE', math.pi/4.0), ('N', math.pi/2.0), ('NW', 3.0*math.pi/4.0), ('W', math.pi), ('SW', 5.0*math.pi/4.0), ('S', 3.0*math.pi/2.0), ('SE', 7.0*math.pi/4.0), ('N', 2.0*math.pi)]
-    '''doesn't correct for input angle to be in 0 to 2pi because I'd assume I'd only generate angles within those bounds'''
-    '''@staticmethod
-    def getClosestCompassAngle(angle):
-        leastDifferenceIndex = 0
-        leastDifference = abs(CompassAngler.compassAngles[0][1] - angle)
-        for i in range(0, len(CompassAngler.compassAngles)):
-            incDifference = abs(CompassAngler.compassAngles[i][1] - angle)%(math.pi*2.0)
-            if incDifference < leastDifference:
-                leastDifference = incDifference
-        return CompassAngler.compassAngles[leastDifferenceIndex][0]
-    '''
 
     @staticmethod
     def getCompassAnglesSortedByProximityToAngle(angle ):
