@@ -101,7 +101,6 @@ class FieldObject(object):
         polyMidpoint = self.polygon.getMidpoint().toInt()
         translatePoint = letterMidpoint.getTranslatePoint(polyMidpoint).toInt()
         img.paste(self.objectLetter.getGradientLetterImg(), (translatePoint.getX(), translatePoint.getY()), self.objectLetter.getGradientLetterImg())
-        img.show()
         return None
 
     def getMidpointFromBounds(self):
