@@ -23,7 +23,7 @@ class SDAConverter(object):
         self.minimum_change_in_guided_waypoint = 3
 
         # REMOVE THE BELOW LINE DURING ACTUAL FLIGHT
-        self.obstacle_map.add_obstacle(StationaryObstacle(numpy.array([100.0, -8.0]), 5));
+        #self.obstacle_map.add_obstacle(StationaryObstacle(numpy.array([100.0, -8.0]), 5));
 
     def set_waypoint(self, new_waypoint):
         """
@@ -47,9 +47,15 @@ class SDAConverter(object):
         :type obstacle: StationaryObstacle or MovingObstacle
         """
         converted_obstacle_location = convert_to_point(self.initial_coordinates, obstacle_location)
-        new_obstacle = np.array([StationaryObstacle(converted_obstacle_location, 5)])
+        new_obstacle = numpy.array([StationaryObstacle(converted_obstacle_location, 5)])
 
         self.obstacle_map.add_obstacle(obstacle)
+
+    def reset_obstacles(self):
+        """
+        Remove all obstacles currently on the obstacle map
+        """
+        self.obstacle_map.reset_obstacles()
 
     def set_uav_position(self, new_location):
         """

@@ -53,8 +53,12 @@ def inverse_haversine(location1, point, uav_bearing):
 
     lat = location1.get_lat() + (dist * math.cos(uav_bearing) / 111.195)
     lon = location1.get_lon() + ((dist * math.sin(uav_bearing)) / (math.cos(math.radians((lat + location1.get_lat()) / 2.0)) * 111.191))
+    try:
+        alt = point[2]
+    except:
+        alt = location1.get_alt()
 
-    return Location(lat, lon, point[2])
+    return Location(lat, lon, alt)
 
 def bearing(location1, location2):
     """

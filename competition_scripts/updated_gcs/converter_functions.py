@@ -1,5 +1,6 @@
 from location_data import Location
 from math_functions import *
+import math
 import numpy
 
 def get_location(vehicle):
@@ -40,7 +41,7 @@ def convert_to_point(initial_location, new_location):
     haversine_dist = haversine(initial_location, new_location)
     obstacle_bearing = bearing(initial_location, new_location)
 
-    dx = haversine_dist * cos(obstacle_bearing)
-    dy = haversine_dist * sin(obstacle_bearing)
+    dx = haversine_dist * math.cos(obstacle_bearing)
+    dy = haversine_dist * math.sin(obstacle_bearing)
 
     return numpy.array([dx, dy])
