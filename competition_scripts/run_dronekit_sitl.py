@@ -2,7 +2,7 @@ import dronekit_sitl
 from time import sleep
 
 if __name__ == '__main__':
-    sitl = dronekit_sitl.start_default()
+    sitl = dronekit_sitl.start_default(lat=38.8703041, lon=-77.3214035)
     print("Connection String:", sitl.connection_string())
 
     try:

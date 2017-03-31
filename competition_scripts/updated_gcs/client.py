@@ -10,7 +10,7 @@ from SDA import *
 
 TK1_ADDRESS = ('IP', 9001)
 
-UAV_CONNECTION_STRING = "127.0.0.1:14550"
+UAV_CONNECTION_STRING = "tcp:127.0.0.1:14551"
 
 INTEROP_URL = "http://10.10.130.2:8000"
 INTEROP_USERNAME = "Flint"
@@ -21,35 +21,35 @@ MIN_REL_FLYING_ALT = 100
 MAX_REL_FLYING_ALT = 750
 
 def target_listener(logger_queue, configurer, received_targets_array):
-	"""
-	Listen for targets sent from the TK1
-	"""
+    """
+    Listen for targets sent from the TK1
+    """
     configurer(logger_queue)
-	name = multiprocessing.current_process().name
+    name = multiprocessing.current_process().name
 
-	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-	#sock.bind(TK1_ADDRESS)
-	#sock.listen(1)
-	log(name, "Waiting for a connection to the TK1...")
-	#connection, client_address = sock.accept()
-	log(name, "Connected to TK1")
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    #sock.bind(TK1_ADDRESS)
+    #sock.listen(1)
+    log(name, "Waiting for a connection to the TK1...")
+    #connection, client_address = sock.accept()
+    log(name, "Connected to TK1")
 
-	while True:
-		sleep(0.5)
+    while True:
+        sleep(0.5)
 
 if __name__ == '__main__':
-	#interop_server_client = InteropClientConverter(MSL, INTEROP_URL, INTEROP_USERNAME, INTEROP_PASSWORD)
+    #interop_server_client = InteropClientConverter(MSL, INTEROP_URL, INTEROP_USERNAME, INTEROP_PASSWORD)
 
-	logger_queue = multiprocessing.Queue(-1)
-	logger_listener_process = multiprocessing.Process(target=listener_process, args=(logger_queue, logger_listener_configurer))
-	logger_listener_process.start()
+    logger_queue = multiprocessing.Queue(-1)
+    logger_listener_process = multiprocessing.Process(target=listener_process, args=(logger_queue, logger_listener_configurer))
+    logger_listener_process.start()
 
     manager = multiprocessing.Manager()
     received_targets = manager.list()
-    # target_listener_process = multiprocessing.Process(target=target_listener, args=(logger_queue, logger_listener_configurer, received_targets))
+    # target_listener_process = multiprocessing.Process(target=target_listener, args=(logger_queue, logger_worker_configurer, received_targets))
     # target_listener_process.start()
 
-    logger_listener_configurer(configurer)
+    logger_worker_configurer(logger_queue)
     name = multiprocessing.current_process().name
 
     log(name, "Connecting to UAV on: %s" % UAV_CONNECTION_STRING)
@@ -58,14 +58,16 @@ if __name__ == '__main__':
     log(name, "Connected to UAV on: %s" % UAV_CONNECTION_STRING)
     log_vehicle_state(vehicle, name)
 
-	log(name, "Downloading waypoints from UAV on: %s" % UAV_CONNECTION_STRING)
+    log(name, "Downloading waypoints from UAV on: %s" % UAV_CONNECTION_STRING)
     waypoints = vehicle.commands
     waypoints.download()
     waypoints.wait_ready()
     log(name, "Waypoints successfully downloaded")
+    print(waypoints)
+    exit()
 
     log(name, "Waiting for UAV to be armable")
-	while not vehicle.is_armable:
+    while not vehicle.is_armable:
         sleep(0.05)
     log(name, "Enabling SDA...")
     sda_converter = SDAConverter(get_location(vehicle))
@@ -89,8 +91,8 @@ if __name__ == '__main__':
             sda_converter.set_uav_position(current_location)
 
             obj_avoid_coordinates = sda_converter.avoid_obstacles(math.radians(current_location.heading) / 2)
-    		if obj_avoid_coordinates:
-    			log("root", "Avoiding obstacles...")
+            if obj_avoid_coordinates:
+                log("root", "Avoiding obstacles...")
                 vehicle.simple_goto(obj_avoid_coordinates)
     except:
         vehicle.close()
