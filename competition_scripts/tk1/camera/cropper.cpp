@@ -3,12 +3,11 @@
 #include "FlyCapture2.h"
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <json/writer.h>
 #include <unistd.h>
 #include <iostream>
+#include <fstream>
 #include <stdio.h>
 #include <stdlib.h>
-#include <pthread.h>
 #include <ctime>
 
 using namespace cv;
@@ -231,17 +230,13 @@ void identifyTargets(Mat img, int thresh, int minSize, int maxSize){
             time_t currentTime = time(0);
             struct tm * currentLocalTime = localtime(&currentTime);
 
-            Json::Value cropData;
-            cropData["center_location"]["x"] = xMidPoint;
-            cropData["center_location"]["y"] = yMidPoint;
-            cropData["time"]["hours"] = currentLocalTime->tm_hour;
-            cropData["time"]["minutes"] = currentLocalTime->tm_min;
-            cropData["time"]["seconds"] = currentLocalTime->tm_sec;
-
             std::ofstream cropDataFile;
             cropDataFile.open(cropDataName);
-            Json::StyledWriter styledWriter;
-            cropDataFile << styledWriter.write(cropData);
+            cropDataFile << "center_location_x:" + xMidPoint << endl;
+            cropDataFile << "center_location_y:" + yMidPoint << endl;
+            cropDataFile << "time_hours:" + currentLocalTime->tm_hour << endl;
+            cropDataFile << "time_minutes:" + currentLocalTime->tm_min << endl;
+            cropDataFile << "time_seconds:" + currentLocalTime->tm_sec << endl;
             cropDataFile.close();
 
             imwrite(cropName, contourAnalysisCrop);
