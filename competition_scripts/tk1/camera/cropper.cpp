@@ -23,6 +23,7 @@ string cropsDirectoryPath = "/media/SSD/crops/";
 string fullImagesDirectoryPath = "/media/SSD/full_images/";
 
 void identifyTargets(Mat img, int thresh, int minSize, int maxSize);
+string intToString(int a);
 
 int main(int argc, char** argv){
   Error error;
@@ -224,19 +225,18 @@ void identifyTargets(Mat img, int thresh, int minSize, int maxSize){
             string cropName = cropsDirectoryPath + cropNumber + ".PNG";
             string cropDataName = cropsDirectoryPath + cropNumber + ".txt";
             ss.str("");
-            printf("saved %s\n", orginal.c_str());
             printf("DeltaE of crop is %f\n\n", deltaE);
 
             time_t currentTime = time(0);
             struct tm * currentLocalTime = localtime(&currentTime);
 
-            std::ofstream cropDataFile;
+            ofstream cropDataFile;
             cropDataFile.open(cropDataName);
-            cropDataFile << "center_location_x:" + xMidPoint << endl;
-            cropDataFile << "center_location_y:" + yMidPoint << endl;
-            cropDataFile << "time_hours:" + currentLocalTime->tm_hour << endl;
-            cropDataFile << "time_minutes:" + currentLocalTime->tm_min << endl;
-            cropDataFile << "time_seconds:" + currentLocalTime->tm_sec << endl;
+            cropDataFile << "center_location_x:" + intToString(xMidPoint) << endl;
+            cropDataFile << "center_location_y:" + intToString(yMidPoint) << endl;
+            cropDataFile << "time_hours:" + intToString(currentLocalTime->tm_hour) << endl;
+            cropDataFile << "time_minutes:" + intToString(currentLocalTime->tm_min) << endl;
+            cropDataFile << "time_seconds:" + intToString(currentLocalTime->tm_sec) << endl;
             cropDataFile.close();
 
             imwrite(cropName, contourAnalysisCrop);
@@ -247,4 +247,10 @@ void identifyTargets(Mat img, int thresh, int minSize, int maxSize){
     }
   }
   printf("image completed. Crops so far is %i\n\n\n\n", cropCount);
+}
+
+string intToString(int a) {
+  ostringstream temp;
+  temp << a;
+  return temp.str();
 }
