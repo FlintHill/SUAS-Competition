@@ -1,3 +1,4 @@
+from .ColorVaryer import ColorVaryer
 from .ColorLayer import ColorLayer
 from .ColorLayers import ColorLayers
 from .ColorMath import *

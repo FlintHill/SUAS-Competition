@@ -23,3 +23,7 @@ def get_kernel_sum_of_pixel(pixel, image, kernel):
         for j in range(0, len(kernel[0])):
             sum += kernel[i][j] * image[pixel[0] + gap_num - i, pixel[1] + gap_num - j]
     return sum
+
+def crop_img_to_kernel_bounds(img, image, kernel_size):
+    out_img = img.crop((int((kernel_size-1)/2), int((kernel_size-1)/2), img.size[0] - int((kernel_size-1)/2), img.size[1] - int((kernel_size-1)/2)))
+    return out_img

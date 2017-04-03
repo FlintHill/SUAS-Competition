@@ -29,11 +29,14 @@ class Categorizer(object):
     def get_algorithm_return_smallest_to_large(self, compare_img, thresholds):
         img_projection = VectorMath.gray_img_to_vector(compare_img)
         projection_weights = EigenProjector.get_projection_weights(img_projection, self.eigenvectors, self.mean)
-        output = sorted(self.algorithm_instances, key = lambda algo_instance: algo_instance.get_fit_score(projection_weights))
+        output = sorted(self.algorithm_instances, key = lambda algo_instance: algo_instance.get_fit_score(projection_weights, thresholds))
         for i in range(0, len(output)):
             score = output[i].get_fit_score(projection_weights, thresholds)
             output[i] = (output[i], score)
         return output
+
+    def get_algorithm_return_largest_to_small(self, compare_img, thresholds):
+        return list(reversed(self.get_algorithm_return_smallest_to_large(compare_img, thresholds)))
 
     def init_algorithm_instances(self):
         self.algorithm_instances = []

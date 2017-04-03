@@ -8,6 +8,11 @@ import timeit
 import numpy
 from math import sqrt
 import matplotlib.pyplot as plot
+import ImgProcessingCLI.ImageOperation.Mask as Mask
+from ImgProcessingCLI.Color.ColorVaryer import ColorVaryer
+import ImgProcessingCLI.ImageOperation.ImageMath as ImageMath
+import ImgProcessingCLI.ImageOperation.Scale as Scale
+import ImgProcessingCLI.ImageSegmentation.LetterSegmenter as LetterSegmenter
 
 class Target(object):
     GRADIENT_THRESHOLD = 20
@@ -93,8 +98,7 @@ class Target(object):
         self.init_letter_layer()
 
     def init_letter_pca(self):
-        letter_canny_img = self.letter_layer.get_layer_img()#self.get_letter_canny_img()
-        letter_canny_img.show()
+        letter_canny_img = self.letter_layer.get_layer_img()
         self.letter_pca = SimplePCA.init_with_monochrome_img(letter_canny_img, letter_canny_img.load())#(self.letter_layer.get_layer_img(), self.letter_layer.get_layer_img().load())#
 
     def get_letter_canny_img(self):
@@ -141,11 +145,27 @@ class Target(object):
         self.letter_layer = background_and_letter_layer
 
     def init_target_colors(self):
-        self.TARGET_SHAPE_COLOR = get_closest_target_color(self.shape_layer.get_color())
+        #self.TARGET_SHAPE_COLOR = get_closest_target_color(self.shape_layer.get_color())
+        resized_target_img = Scale.get_img_scaled_to_one_bound(self.target_img, ColorVaryer.RESIZE_SIZE).convert('RGB')
+        self.color_varyer = ColorVaryer(resized_target_img, resized_target_img.load())
+        color_varyer_biggest_mask = self.color_varyer.get_biggest_component_mask().resize(self.target_img.size)
+        #color_varyer_biggest_mask.show()
+        self.target_color_masked = Mask.get_bmp_masked_img(color_varyer_biggest_mask, color_varyer_biggest_mask.load(), self.target_img.convert('RGBA'), self.target_img.convert('RGBA').load())
+        self.TARGET_SHAPE_COLOR = get_closest_target_color(ImageMath.get_mean_color_excluding_transparent(self.target_color_masked, self.target_color_masked.load()))
         letter_mask_img = get_bmp_masked_img(self.letter_layer.get_layer_img(), self.letter_layer.get_layer_img().load(), self.target_img, self.target_image)
         mean_color = get_mean_color_excluding_transparent(letter_mask_img, letter_mask_img.load())
-        self.TARGET_CHARACTER_COLOR = get_closest_target_color(mean_color)#TargetColorReader.get_closest_HSL_target_color(mean_color)#
-        self.TARGET_CHARACTER_COLOR = get_closest_target_color(self.letter_layer.get_color())#TargetColorReader.get_closest_HSL_target_color(self.letter_layer.get_color())#
+
+        shape_mask = self.color_varyer.get_shape_mask()
+        shape_mask = shape_mask.resize(self.target_img.size)
+        shape_mask_edges = Mask.get_mask_edges(shape_mask, shape_mask.load())
+
+        letter_segmented_mask = LetterSegmenter.get_segmented_letter_img(shape_mask_edges.size, shape_mask_edges.load(), self.target_canny_img.load())
+        letter_mask_applied = Mask.get_bmp_masked_img(letter_segmented_mask, letter_segmented_mask.load(), self.target_img, self.target_image)
+        #letter_mask_applied.show()
+
+        self.TARGET_CHARACTER_COLOR = get_closest_target_color(ImageMath.get_mean_color_excluding_transparent(letter_mask_applied, letter_mask_applied.load()))
+        #self.TARGET_CHARACTER_COLOR = get_closest_target_color(mean_color)#TargetColorReader.get_closest_HSL_target_color(mean_color)#
+        #self.TARGET_CHARACTER_COLOR = get_closest_target_color(self.letter_layer.get_color())#TargetColorReader.get_closest_HSL_target_color(self.letter_layer.get_color())#
 
     def init_shape_type(self):
         shape_img = self.shape_layer.get_layer_img().copy()

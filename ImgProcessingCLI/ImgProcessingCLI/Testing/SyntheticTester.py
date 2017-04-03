@@ -5,6 +5,10 @@ from ImgProcessingCLI import *
 from EigenFit import *
 import timeit
 
+from ImgProcessingCLI.DataMine.KNearestNeighbors import KNearestNeighbors
+
+from ImgProcessingCLI.General.TargetTwo import TargetTwo
+
 class SyntheticTester(object):
 
     def __init__(self, img_path_in, data_path_in, scale, extension):
@@ -18,12 +22,12 @@ class SyntheticTester(object):
         self.init_score_vals()
 
         print("categorizer initialization started")
-        base_path = "/Users/vtolpegin/Desktop/SUAS/NEWLETTERPCA"
+        base_path = "/Users/phusisian/Desktop/Senior year/SUAS/Competition Files/NEWLETTERPCA"
         eigenvectors = load_numpy_arr(base_path + "/Data/Eigenvectors/eigenvectors 0.npy")
         projections_path = base_path + "/Data/Projections"
         mean = load_numpy_arr(base_path + "/Data/Mean/mean_img 0.npy")
         num_dim = 20
-        self.letter_categorizer = Categorizer(eigenvectors, mean, projections_path, KMeansCompare, 25)
+        self.letter_categorizer = Categorizer(eigenvectors, mean, projections_path, KMeansCompare, num_dim)
         print("categorizer initialization finished.")
 
         self.test_set()
@@ -75,17 +79,20 @@ class SyntheticTester(object):
         scores = numpy.load(self.data_path + "/" + matching_data_file_name)
 
         shape_img = shape_img.resize((int(shape_img.size[0]*self.scale), int(shape_img.size[1]*self.scale)))
-        target = Target(shape_img, shape_img.load(), self.letter_categorizer)
+        target = TargetTwo(shape_img.convert('RGB'), shape_img.convert('RGB').load(), self.letter_categorizer)#Target(shape_img, shape_img.load(), self.letter_categorizer)
         target_answers = target.as_numpy()
-
+        str_scores = [scores[i].decode("utf-8") for i in range(0, len(scores))]
         if str(scores[0].decode("utf-8")) == str(target_answers[0]):
             self.score_vals[0] += 1
-        elif self.get_if_letter_is_bidirectional(str(scores[3])):
+        elif self.get_if_letter_is_bidirectional(str_scores[3]):
             flipped_angle = self.get_compass_angle_180_degrees_away(str(target_answers[0]))
-            if str(flipped_angle) == str(scores[0]):
+            if str(flipped_angle) == str_scores[0]:
                 self.score_vals[0] += 1
         print("=============================================================")
-        print("answer key: " + str(scores))
+
+
+
+        print("answer key: " + str(str_scores))
         print("target answers: " + str(target_answers))
         for answer_index in range(1, scores.shape[0]):
             if str(target_answers[answer_index]) == str(scores[answer_index].decode("utf-8")):

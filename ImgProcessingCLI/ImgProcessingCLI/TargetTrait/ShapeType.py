@@ -22,18 +22,19 @@ class ShapeType(object):
     HOUGH_CIRCUMFERENCE_THRESHOLD_MULTIPLIER = .8
 
 
-    def __init__(self, shape_img_in, simple_pca_in):
+    def __init__(self, shape_img_in, canny_img_in):
         self.shape_img = shape_img_in
         self.shape_image = self.shape_img.load()
         self.shape_img = get_gaussian_filtered_bw_img(self.shape_img, self.shape_image, ShapeType.BLUR_KERNEL_SIZE, ShapeType.BLUR_STD_DEV)
         self.shape_sobel = SobelEdge(self.shape_img)
-        self.canny_img = get_canny_img(self.shape_sobel, ShapeType.CANNY_SHAPE_THRESHOLDS)
+        self.canny_img = canny_img_in
         self.canny_image = self.canny_img.load()
+        #self.canny_img = get_canny_img(self.shape_sobel, ShapeType.CANNY_SHAPE_THRESHOLDS)
+        #self.canny_image = self.canny_img.load()
         self.init_shape_area()
         self.polar_side_counter = PolarSideCounter(self.canny_img, self.canny_image)
         self.num_polar_side_maximums = len(self.polar_side_counter.get_maximums())
         self.num_polar_side_minimums = len(self.polar_side_counter.get_minimums())
-        self.simple_pca = simple_pca_in
         self.init_shape_type()
 
     def init_shape_area(self):

@@ -191,7 +191,6 @@ class PolarSideCounter(object):
         #self.circle_score = .5
 
     def get_circle_score(self):
-        print("has circle score of: " + str(self.circle_score))
         return self.circle_score
 
     def get_maximums_drawn_to_img(self):
