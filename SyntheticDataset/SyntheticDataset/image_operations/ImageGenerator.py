@@ -7,6 +7,7 @@ import math
 import multiprocessing
 import timeit
 import os
+import json
 
 class ImageGenerator(object):
     minWidth = 75
@@ -22,20 +23,53 @@ class ImageGenerator(object):
         ColorList()
 
         self.polyPics = []
+        self.synthetic_images = []
         self.data_path = data_path
         self.process_number = process_number
         self.grassLoader = ImageLoader(os.path.join(data_path, "grass"))
         self.starting_index = 0
 
+    def generate_synthetic_images(self, num_pics, num_targets_per_pic, starting_index):
+        """
+        Generate synthetic images (contain multiple targets per image)
+
+        :param num_pics: The number of pictures to generate
+        :type num_pics: int
+        :param num_targets_per_pic: The number of targets to place on each picture
+        :type num_targets_per_pic: int
+        :param starting_index: The starting index of the pictures to generate.
+            This is required for when multiprocessing is used to generate images
+        :type starting_index: int
+        """
+        self.starting_index = starting_index
+        for index in range(0, num_pics):
+            start = timeit.default_timer()
+
+            synthetic_pic = self.generate_synthetic_image(num_targets_per_pic)
+            self.synthetic_images.append(synthetic_pic)
+
+            print("Finished generating synthetic image number", index, "in", (timeit.default_timer() - start), "seconds on process", self.process_number)
+
+    def generate_synthetic_image(self, num_targets):
+        """
+        Generates a single synthetic image
+
+        :param num_targets: The number of targets to place on this image
+        """
+        pic = self.grassLoader.getRandomImg().convert('RGBA')
+        synthetic_image = SyntheticImage(num_targets, pic, self.data_path)
+
+        return synthetic_image
+
     def fillPolyPics(self, numPics, starting_index):
         self.starting_index = starting_index
-        for index in range(0, numPics + 1):
+        for index in range(0, numPics):
             start = timeit.default_timer()
 
             polygon_pic, field_object = self.generate_polygon()
             self.polyPics.append(PolyPic(polygon_pic, field_object))
 
-            print("Finished generating image number", index, "in", (timeit.default_timer() - start), "seconds on process", self.process_number)
+            print("Finished generating polygon number", index, "in", (timeit.default_timer() - start), "seconds on process", self.process_number)
 
     def generate_polygon(self):
         """
@@ -53,6 +87,16 @@ class ImageGenerator(object):
         for polyPic in self.polyPics:
             polyPic.getImg().show()
 
+    def save_synthetic_images(self, path):
+        if not os.path.exists(path + "/Answers"):
+            os.makedirs(path + "/Answers")
+        if not os.path.exists(path+ "/Images"):
+            os.makedirs(path + "/Images")
+        for i in range(self.starting_index, len(self.synthetic_images) + self.starting_index):
+            self.synthetic_images[i - self.starting_index].get_synthetic_image().save(path + "/Images/Generated Target " + str(i) + ".png")
+            self.save_synthetic_image(path, i)
+            print("Saved synthetic image number: " + str(i))
+
     def savePolyPicImgs(self, path):
         if not os.path.exists(path + "/Answers"):
             os.makedirs(path + "/Answers")
@@ -62,6 +106,18 @@ class ImageGenerator(object):
             self.polyPics[i - self.starting_index].getImg().save(path + "/Images/Generated Target " + str(i) + ".png")
             self.saveFieldObject(path, i)
             print("Saved polypic number: " + str(i))
+
+    def save_synthetic_image(self, path, index):
+        """
+        Save a synthetic image
+
+        :param path: The path to save the synthetic image to
+        :type path: str
+        :param index: Image index in self.synthetic_images
+        :type index: int
+        """
+        with open(path + "/Answers/Target " + str(index) + ".json", 'w+') as outfile:
+            json.dump(self.synthetic_images[index - self.starting_index].asDict(), outfile, indent=4, sort_keys=True)
 
     def saveFieldObject(self, path, index):
         fieldObject = self.polyPics[index - self.starting_index].getFieldObject()
@@ -74,7 +130,7 @@ class ImageGenerator(object):
         color = ColorList.getRandomColor()
         letter = self.getRandomLetter()
 
-        fieldObject = FieldObject(shapeType, bounds, self.getRandomTheta(), color, letter, self.data_path)
+        fieldObject = Target(shapeType, bounds, self.getRandomTheta(), color, letter, self.data_path)
 
         return fieldObject
 
@@ -112,4 +168,4 @@ class ImageGenerator(object):
         #return Rectangle(200, 200, 100, 100)
 
     def getRandomShapeType(self):
-        return FieldObject.possibleShapes[int(random.random() * len(FieldObject.possibleShapes))]
+        return Target.possibleShapes[int(random.random() * len(Target.possibleShapes))]

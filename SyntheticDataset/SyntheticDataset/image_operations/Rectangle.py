@@ -43,5 +43,23 @@ class Rectangle(object):
                 if x < img.size[0] and x >= 0 and y < img.size[1] and y >= 0:
                     image[x,y] = color
 
+    def intersects(self, box):
+        """
+        Return True if the passed box intersects with this rectangle, False
+        otherwise
+
+        :param box: The box to compare intersection with
+        :type box: Rectangle
+        """
+        box_top_left = Point(box.getX(), box.getY())
+        box_bottom_left = Point(box.getX(), box.getY() + box.getHeight())
+        box_top_right = Point(box.getX() + box.getWidth(), box.getY())
+        box_bottom_right = Point(box.getX() + box.getWidth(), box.getY() + box.getHeight())
+
+        if self.contains(box_top_left) or self.contains(box_top_right) or self.contains(box_bottom_left) or self.contains(box_bottom_right):
+            return True
+
+        return False
+
     def contains(self, point):
         return (point.getX() >= self.x and point.getX() <= self.x + self.width and point.getY() >= self.y and point.getY() <= self.y+self.height)

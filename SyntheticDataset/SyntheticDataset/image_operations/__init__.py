@@ -10,5 +10,8 @@ from .ImageBounder import ImageBounder
 from .ImageCropper import ImageCropper
 from .GradientMaker import GrayGradientMaker
 from .GaussianBlur import GaussianBlur
-from .FieldObject import *
+from .compass_angler import CompassAngler
+from .letter import Letter
+from .target import Target
+from .synthetic_image import SyntheticImage
 from .ImageGenerator import ImageGenerator
