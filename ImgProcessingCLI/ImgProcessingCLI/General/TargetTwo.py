@@ -17,6 +17,17 @@ from ImgProcessingCLI.ImgStat.SimplePCA import SimplePCA
 import ImgProcessingCLI.ImageOperation.Crop as Crop
 import ImgProcessingCLI.ImageOperation.Paste as Paste
 import numpy
+import string
+from sklearn import ensemble
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.svm import LinearSVC
+from sklearn.naive_bayes import GaussianNB
+
+import random
+
+from EigenFit.DataMine import *
+from EigenFit.Load import *
+from EigenFit.Vector import *
 '''
 '''
 class TargetTwo(object):
@@ -27,12 +38,13 @@ class TargetTwo(object):
     KMEANS_SIDE_CONSTRAINT = 35
     PCA_LETTER_DIM = (40,40)
     LETTER_RESIZE_HEIGHT = int(PCA_LETTER_DIM[1]*0.81666666666667)
+    ORIENTATION_INDEXES = ["N", "NW", "W", "SW", "S", "SE", "E", "NE"]
 
-    def __init__(self, target_img_in, target_image_in, letter_categorizer_in):
+    def __init__(self, target_img_in, target_image_in, letter_categorizer_in, orientation_solver_in):
         self.target_img = target_img_in
         self.target_image = target_image_in
         self.letter_categorizer = letter_categorizer_in
-
+        self.orientation_solver = orientation_solver_in
         self.bw_target_img = self.target_img.convert('L')
         self.bw_target_image = self.bw_target_img.load()
 
@@ -44,8 +56,10 @@ class TargetTwo(object):
         self.init_target_shape_edges_img()
         self.init_shape_type()
         self.init_letter_pca()
-        self.init_possible_letter_orientation_imgs()
-        self.run_possible_letter_orientation_imgs_through_letter_recognition()
+        self.init_target_orientation()
+        self.init_letter()
+        #self.init_possible_letter_orientation_imgs()
+        #self.run_possible_letter_orientation_imgs_through_letter_recognition()
 
     def init_edge_imgs(self):
         self.gaussian_blurred_target_img = GaussianBlur.get_gaussian_filtered_bw_img(self.bw_target_img, self.bw_target_image, TargetTwo.TARGET_BW_BLUR_KERNEL_SIZE, TargetTwo.TARGET_BW_BLUR_STD_DEV)
@@ -77,7 +91,6 @@ class TargetTwo(object):
             self.letter_segment_mask = Image.new('L', self.target_img.size)
 
         self.letter_segment_mask = NeighborhoodReduction.get_img_with_pixels_to_neighborhood_mode(self.letter_segment_mask, self.letter_segment_mask.load(), 7)
-
 
         letter_color_img = Mask.get_bmp_masked_img(self.letter_segment_mask, self.letter_segment_mask.load(), self.target_img, self.target_image)
 
@@ -113,36 +126,65 @@ class TargetTwo(object):
         self.letter_pca = SimplePCA.init_with_monochrome_img(self.letter_segment_mask, self.letter_segment_mask.load())
 
     def get_letter_img_resized_to_PCA_dims(self, letter_img):
-        resized_letter_img = Crop.get_bw_img_cropped_to_bounds(letter_img, letter_img.load(), margin = 1)
+        out_img = Crop.get_bw_img_cropped_to_bounds(letter_img, letter_img.load())
+        out_img = out_img.resize(TargetTwo.PCA_LETTER_DIM)
+        return out_img
+
+        '''resized_letter_img = Crop.get_bw_img_cropped_to_bounds(letter_img, letter_img.load(), margin = 1)
         resized_letter_img = Scale.scale_img_to_height(resized_letter_img, TargetTwo.LETTER_RESIZE_HEIGHT)
         base_img = Image.new('L', TargetTwo.PCA_LETTER_DIM, 0)
-        offset = ((TargetTwo.PCA_LETTER_DIM[0]//2) - (resized_letter_img.size[0]//2), (TargetTwo.PCA_LETTER_DIM[1]//2) - (resized_letter_img.size[1]//2))
+        offset = ((TargetTwo.PCA_LETTER_DIM[0]//2) - (int(round(resized_letter_img.size[0]/2.0))), (TargetTwo.PCA_LETTER_DIM[1]//2) - (int(round(resized_letter_img.size[1]/2.0))))
         Paste.paste_img_onto_img(resized_letter_img, base_img, offset)
         resized_letter_img = base_img
-        return resized_letter_img
+        return resized_letter_img'''
 
+    def init_target_orientation(self):
+        orientation_num = self.orientation_solver.get_letter_img_orientation(self.get_letter_img_resized_to_PCA_dims(self.letter_segment_mask))
+        self.TARGET_COMPASS_ORIENTATION = TargetTwo.ORIENTATION_INDEXES[orientation_num]
+
+
+    def init_letter(self):
+        rotate_amount = -TargetTwo.ORIENTATION_INDEXES.index(self.TARGET_COMPASS_ORIENTATION)*45
+        letter_img = self.get_letter_img_resized_to_PCA_dims(self.letter_segment_mask.rotate(rotate_amount, expand = True))
+        scores = self.letter_categorizer.get_algorithm_return_smallest_to_large(letter_img, None)
+        print("score: " + str(scores[0:5]))
+        self.TARGET_CHARACTER = scores[0][0]
+
+    '''
     def init_possible_letter_orientation_imgs(self):
+        ''''''should not be resized before as when it is rotated the sizing will be off''''''
         letter_img_resized_to_pca_dims = self.get_letter_img_resized_to_PCA_dims(self.letter_segment_mask)
 
+
         self.target_direction = TargetDirection(self.letter_pca.get_eigenvectors(), self.letter_pca.get_eigenvalues(), self.shape_type.get_polar_side_counter())
-        '''where the first index is the img, the second the compass direction, the third the polar angle'''
+        ''''''where the first index is the img, the second the compass direction, the third the polar angle''''''
         self.possible_letter_orientation_imgs = self.target_direction.get_letter_imgs_rotated_to_possible_directions(letter_img_resized_to_pca_dims)
+
+
+
         for i in range(0, len(self.possible_letter_orientation_imgs)):
             self.possible_letter_orientation_imgs[i] = (self.possible_letter_orientation_imgs[i][0].resize(TargetTwo.PCA_LETTER_DIM), self.possible_letter_orientation_imgs[i][1], self.possible_letter_orientation_imgs[i][2])
 
 
+
     def run_possible_letter_orientation_imgs_through_letter_recognition(self):
+
+
         best_fit_character = ""
         best_fit_score = -1
         best_fit_direction = ""
 
-        '''need to add a cornercase when the letter orientation eigenvalues have a small ratio.
-        All that would have to be done is to run each set of 2 through the NN and determine the
-        strongest score'''
-
         for i in range(0, len(self.possible_letter_orientation_imgs)):
-            iter_scores = self.letter_categorizer.get_algorithm_return_smallest_to_large(ImageOps.invert(self.possible_letter_orientation_imgs[i][0]), None)
-            print("iter scores: " + str(iter_scores))
+            if i == 0:
+                img_vector = VectorMath.gray_img_to_vector(self.get_letter_img_resized_to_PCA_dims(self.letter_segment_mask))
+                projection_weights = EigenProjector.get_projection_weights(img_vector, self.letter_categorizer.get_eigenvectors(), self.letter_categorizer.get_mean())[0:20]
+                reconstruction_vector = EigenProjector.get_reconstruction_img_vector(projection_weights, self.letter_categorizer.get_eigenvectors()) + self.letter_categorizer.get_mean()
+                #VectorMath.img_vector_to_gray_img(img_vector, img_dimensions).show()
+                #VectorMath.img_vector_to_gray_img(reconstruction_vector, TargetTwo.PCA_LETTER_DIM).show()
+
+            iter_scores = self.letter_categorizer.get_algorithm_return_smallest_to_large(self.get_letter_img_resized_to_PCA_dims(self.letter_segment_mask), None)#self.letter_categorizer.get_algorithm_return_smallest_to_large((self.possible_letter_orientation_imgs[i][0]), None)
+
+            print("iter scores: " + str(iter_scores[0:4]))
             iter_letter = iter_scores[0][0]
 
             iter_score = iter_scores[0][1]
@@ -151,9 +193,11 @@ class TargetTwo(object):
                 best_fit_character = iter_letter
                 best_fit_direction = self.possible_letter_orientation_imgs[i][1]
 
-        self.TARGET_COMPASS_ORIENTATION = best_fit_direction
-        self.TARGET_CHARACTER = best_fit_character
 
+
+
+        self.TARGET_CHARACTER = best_fit_character#str(letters[prediction[0]])
+    '''
     def __repr__(self):
         out = ("orientation: " + str(self.TARGET_COMPASS_ORIENTATION) + "\n"
                + "shape: " + str(self.TARGET_SHAPE) + "\n"

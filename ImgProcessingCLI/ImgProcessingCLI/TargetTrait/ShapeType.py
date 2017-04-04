@@ -8,7 +8,7 @@ from math import pi, sqrt
 
 class ShapeType(object):
 
-    CIRCLE_SCORE_THRESHOLD = 0.75
+    CIRCLE_SCORE_THRESHOLD = 0.85#used to be .75 but there were many false positive circles
     BLUR_KERNEL_SIZE = 3
     BLUR_STD_DEV = 1.0#2
     CANNY_SHAPE_THRESHOLDS = (10, 20)

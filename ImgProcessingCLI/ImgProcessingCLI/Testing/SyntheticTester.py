@@ -5,9 +5,11 @@ from ImgProcessingCLI import *
 from EigenFit import *
 import timeit
 
-from ImgProcessingCLI.DataMine.KNearestNeighbors import KNearestNeighbors
 
+from ImgProcessingCLI.DataMine.KNearestNeighbors import KNearestNeighbors
+from ImgProcessingCLI.DataMine.ZScore import ZScore
 from ImgProcessingCLI.General.TargetTwo import TargetTwo
+from ImgProcessingCLI.DataMine.OrientationSolver import OrientationSolver
 
 class SyntheticTester(object):
 
@@ -22,14 +24,24 @@ class SyntheticTester(object):
         self.init_score_vals()
 
         print("categorizer initialization started")
-        base_path = "/Users/phusisian/Desktop/Senior year/SUAS/Competition Files/NEWLETTERPCA"
+        base_path = "/Users/phusisian/Desktop/Senior year/SUAS/Competition Files/NEWLETTERPCA FORCED WINDOW"
         eigenvectors = load_numpy_arr(base_path + "/Data/Eigenvectors/eigenvectors 0.npy")
         projections_path = base_path + "/Data/Projections"
         mean = load_numpy_arr(base_path + "/Data/Mean/mean_img 0.npy")
         num_dim = 20
-        self.letter_categorizer = Categorizer(eigenvectors, mean, projections_path, KMeansCompare, num_dim)
-        print("categorizer initialization finished.")
 
+        self.letter_categorizer = Categorizer(eigenvectors, mean, projections_path, KMeansCompare, num_dim)
+
+
+        orientation_path = "/Users/phusisian/Desktop/Senior year/SUAS/Competition Files/180 ORIENTATION PCA"
+        orientation_eigenvectors = load_numpy_arr(orientation_path + "/Data/Eigenvectors/eigenvectors 0.npy")
+        orientation_projections_path = orientation_path + "/Data/Projections"
+        orientation_mean = load_numpy_arr(orientation_path + "/Data/Mean/mean_img 0.npy")
+        orientation_num_dim = 20
+
+        self.orientation_solver = OrientationSolver(orientation_eigenvectors, orientation_mean, orientation_path, orientation_num_dim)
+
+        print("categorizer initialization finished.")
         self.test_set()
 
     def init_img_files(self):
@@ -64,6 +76,7 @@ class SyntheticTester(object):
                 self.num_crashes += 1
                 print("Crashed during test_set() on img", self.img_files[index])
 
+
     def run_img(self, index):
         """
         Process an image
@@ -79,11 +92,14 @@ class SyntheticTester(object):
         scores = numpy.load(self.data_path + "/" + matching_data_file_name)
 
         shape_img = shape_img.resize((int(shape_img.size[0]*self.scale), int(shape_img.size[1]*self.scale)))
-        target = TargetTwo(shape_img.convert('RGB'), shape_img.convert('RGB').load(), self.letter_categorizer)#Target(shape_img, shape_img.load(), self.letter_categorizer)
+        target = TargetTwo(shape_img.convert('RGB'), shape_img.convert('RGB').load(), self.letter_categorizer, self.orientation_solver)#Target(shape_img, shape_img.load(), self.letter_categorizer)
         target_answers = target.as_numpy()
         str_scores = [scores[i].decode("utf-8") for i in range(0, len(scores))]
+
+
         if str(scores[0].decode("utf-8")) == str(target_answers[0]):
             self.score_vals[0] += 1
+
         elif self.get_if_letter_is_bidirectional(str_scores[3]):
             flipped_angle = self.get_compass_angle_180_degrees_away(str(target_answers[0]))
             if str(flipped_angle) == str_scores[0]:

@@ -33,6 +33,7 @@ class Categorizer(object):
         for i in range(0, len(output)):
             score = output[i].get_fit_score(projection_weights, thresholds)
             output[i] = (output[i], score)
+
         return output
 
     def get_algorithm_return_largest_to_small(self, compare_img, thresholds):
@@ -46,3 +47,9 @@ class Categorizer(object):
 
     def get_named_projections(self):
         return self.named_projections
+
+    def get_mean(self):
+        return self.mean
+
+    def get_eigenvectors(self):
+        return self.eigenvectors
