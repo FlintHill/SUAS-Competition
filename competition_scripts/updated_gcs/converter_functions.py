@@ -9,9 +9,9 @@ def get_location(vehicle):
 
     :param vehicle: The vehicle to convert
     """
-    latitude = vehicle.global_relative_frame.lat
-    longitude = vehicle.global_relative_frame.lon
-    altitude = vehicle.global_relative_frame.alt
+    latitude = vehicle.location.global_relative_frame.lat
+    longitude = vehicle.location.global_relative_frame.lon
+    altitude = vehicle.location.global_relative_frame.alt
 
     return Location(latitude, longitude, altitude)
 
@@ -24,7 +24,7 @@ def get_obstacle_location(obstacle):
     """
     latitude = obstacle.latitude
     longitude = obstacle.longitude
-    altitude = obstacle.altitude
+    altitude = 0#obstacle.altitude
 
     return Location(latitude, longitude, altitude)
 

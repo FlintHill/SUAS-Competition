@@ -25,18 +25,6 @@ def haversine(location1, location2, units="METRIC"):
     dist = (dy**2 + dx**2 + dz**2)**0.5 * 0.999
     return dist
 
-def point_in_polygon(polygon, point):
-    """
-    Returns True if the point is in the polygon, and false if it is
-    outside of it.
-
-    :param polygon: A list of points that are the polygon corners
-    :param point: The point to determine its location
-    """
-    # TODO Fill in this method
-    for corner in polygon:
-        pass
-
 def inverse_haversine(location1, point, uav_bearing):
     """
     Calculate a second GPS point through using a single GPS point and a

@@ -47,9 +47,9 @@ class SDAConverter(object):
         :type obstacle: StationaryObstacle or MovingObstacle
         """
         converted_obstacle_location = convert_to_point(self.initial_coordinates, obstacle_location)
-        new_obstacle = numpy.array([StationaryObstacle(converted_obstacle_location, 5)])
+        new_obstacle = StationaryObstacle(converted_obstacle_location, 5)
 
-        self.obstacle_map.add_obstacle(obstacle)
+        self.obstacle_map.add_obstacle(new_obstacle)
 
     def reset_obstacles(self):
         """
@@ -67,6 +67,7 @@ class SDAConverter(object):
         converted_uav_location = convert_to_point(self.initial_coordinates, new_location)
 
         self.obstacle_map.set_drone_position(converted_uav_location)
+        print(converted_uav_location)
 
     def avoid_obstacles(self, bearing):
         """
@@ -85,7 +86,7 @@ class SDAConverter(object):
 
                 return inverse_haversine(self.initial_coordinates, min_tangent_point, bearing).as_global_relative_frame()
 
-        return None, None
+        return None
 
     def has_uav_reached_guided_waypoint(self):
         """

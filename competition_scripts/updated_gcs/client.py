@@ -10,7 +10,7 @@ from SDA import *
 
 TK1_ADDRESS = ('IP', 9001)
 
-UAV_CONNECTION_STRING = "tcp:127.0.0.1:14551"
+UAV_CONNECTION_STRING = "tcp:127.0.0.1:5760"
 
 INTEROP_URL = "http://10.10.130.2:8000"
 INTEROP_USERNAME = "Flint"
@@ -38,7 +38,7 @@ def target_listener(logger_queue, configurer, received_targets_array):
         sleep(0.5)
 
 if __name__ == '__main__':
-    #interop_server_client = InteropClientConverter(MSL, INTEROP_URL, INTEROP_USERNAME, INTEROP_PASSWORD)
+    interop_server_client = InteropClientConverter(MSL, INTEROP_URL, INTEROP_USERNAME, INTEROP_PASSWORD)
 
     logger_queue = multiprocessing.Queue(-1)
     logger_listener_process = multiprocessing.Process(target=listener_process, args=(logger_queue, logger_listener_configurer))
@@ -63,36 +63,36 @@ if __name__ == '__main__':
     waypoints.download()
     waypoints.wait_ready()
     log(name, "Waypoints successfully downloaded")
-    print(waypoints)
-    exit()
 
     log(name, "Waiting for UAV to be armable")
     while not vehicle.is_armable:
         sleep(0.05)
     log(name, "Enabling SDA...")
     sda_converter = SDAConverter(get_location(vehicle))
-    sda_converter.set_waypoints(waypoints)
+    sda_converter.set_waypoint(Location(38.8703041, -77.3214035, 100))#waypoints)
 
-    try:
-    	while True:
-            current_location = get_location(vehicle)
+    #try:
+    while True:
+        current_location = get_location(vehicle)
+        current_waypoint_number = vehicle.commands.next
 
-    		#interop_server_client.post_telemetry(current_location)
-    		#stationary_obstacles, moving_obstacles = interop_server_client.get_obstacles()
-    		#obstacle_map.reset_obstacles()
-    		#for stationary_obstacle in stationary_obstacles:
-    		#	obstacle_map.add_obstacle(get_obstacle_location(stationary_obstacle), stationary_obstacle)
-            #for moving_obstacle in moving_obstacles:
-            #   obstacle_map.add_obstacle(get_obstacle_location(moving_obstacle), moving_obstacle)
+        interop_server_client.post_telemetry(current_location)
+        stationary_obstacles, moving_obstacles = interop_server_client.get_obstacles()
+        sda_converter.reset_obstacles()
+        for stationary_obstacle in stationary_obstacles:
+            sda_converter.add_obstacle(get_obstacle_location(stationary_obstacle), stationary_obstacle)
+        for moving_obstacle in moving_obstacles:
+           sda_converter.add_obstacle(get_obstacle_location(moving_obstacle), moving_obstacle)
 
-            if vehicle.mode.name == "GUIDED" and sda_converter.has_uav_reached_guided_waypoint():
-                vehicle.mode = VehicleMode("AUTO")
+        if vehicle.mode.name == "GUIDED" and sda_converter.has_uav_reached_guided_waypoint():
+            vehicle.mode = VehicleMode("AUTO")
 
-            sda_converter.set_uav_position(current_location)
+        sda_converter.set_uav_position(current_location)
 
-            obj_avoid_coordinates = sda_converter.avoid_obstacles(math.radians(current_location.heading) / 2)
-            if obj_avoid_coordinates:
-                log("root", "Avoiding obstacles...")
-                vehicle.simple_goto(obj_avoid_coordinates)
-    except:
-        vehicle.close()
+        obj_avoid_coordinates = sda_converter.avoid_obstacles(math.radians(vehicle.heading) / 2)
+        print(current_location.get_altitude())
+        if obj_avoid_coordinates current_location.get_altitude() > 50:
+            log("root", "Avoiding obstacles...")
+            vehicle.simple_goto(obj_avoid_coordinates)
+    #except:
+    #    pass#vehicle.close()
