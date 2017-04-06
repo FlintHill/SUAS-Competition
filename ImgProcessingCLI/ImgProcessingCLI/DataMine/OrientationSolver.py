@@ -2,9 +2,15 @@ import EigenFit.Load.NumpyLoader as NumpyLoader
 import EigenFit.Vector.EigenProjector as EigenProjector
 import EigenFit.Vector.VectorMath as VectorMath
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn import ensemble
+from sklearn import tree
 
 class OrientationSolver(object):
-    NUM_NEIGHBORS = 8
+    '''78 is chosen due to bootstrapping, "setting k to the square root of the number of
+    instances," which is apparently a good baseline'''
+    '''or 28 is the correct number beecause there are 780 instances of each roatation and that is
+    it's square root'''
+    NUM_NEIGHBORS = 9
     def __init__(self, eigenvectors, mean, projections_path, num_dims):
         self.eigenvectors = eigenvectors
         self.mean = mean
@@ -18,8 +24,8 @@ class OrientationSolver(object):
         self.projections_targets = []
         for i in range(0, 8):
             projections = NumpyLoader.load_numpy_arr(self.projections_path + "/Data/Projections/" + str(i) + "/projection.npy")
-            print("path is: " + str(self.projections_path + "/Data/Projections/" + str(i) + "/projection.npy"))
-            print("projections is: " + str(projections))
+            #print("path is: " + str(self.projections_path + "/Data/Projections/" + str(i) + "/projection.npy"))
+            #print("projections is: " + str(projections))
             for j in range(0, projections.shape[0]):
                 self.projections_data.append(projections[j][0:self.num_dims])
                 self.projections_targets.append(i)

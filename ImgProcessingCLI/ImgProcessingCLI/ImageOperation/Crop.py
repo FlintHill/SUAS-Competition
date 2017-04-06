@@ -4,9 +4,11 @@ def get_bw_img_cropped_to_bounds(img, image, margin = 0):
     bounds = get_bw_img_bounds(img, image)
     bounds.set_x(bounds.get_x() - margin)
     bounds.set_y(bounds.get_y() - margin)
-    bounds.set_width(bounds.get_width() + margin * 2)
-    bounds.set_height(bounds.get_height() + margin * 2)
-    return get_img_cropped_to_bounds(img, bounds)
+    bounds.set_width(bounds.get_width() + 1 + margin * 2)
+    bounds.set_height(bounds.get_height() + 1 + margin * 2)
+    img_out = get_img_cropped_to_bounds(img, bounds)
+    image = img_out.load()
+    return img_out
 
 def get_bw_img_bounds(img, image):
     left_x = img.size[0]

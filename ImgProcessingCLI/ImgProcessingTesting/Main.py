@@ -19,75 +19,48 @@ import ImgProcessingCLI.ImageSegmentation.LetterSegmenter as LetterSegmenter
 from ImgProcessingCLI.General.TargetTwo import TargetTwo
 import timeit
 import random
+from ImgProcessingCLI.Optimization.LetterGenerator import LetterGenerator
+from ImgProcessingCLI.Optimization.Optimizer import Optimizer
 
 from sklearn.datasets import load_iris
 from sklearn import tree
+from sklearn.neighbors import KNeighborsClassifier
 from sklearn import ensemble
+from ImgProcessingCLI.Optimization.OrientationOptimizer import OrientationOptimizer
+from ImgProcessingCLI.DataMine.OrientationSolver import OrientationSolver
 
 '''
-base_path = "/Users/phusisian/Desktop/Senior year/SUAS/Competition Files/NEWLETTERPCA"
-eigenvectors = load_numpy_arr(base_path + "/Data/Eigenvectors/eigenvectors 0.npy")
-projections_path = base_path + "/Data/Projections"
-mean = load_numpy_arr(base_path + "/Data/Mean/mean_img 0.npy")
-num_dim = 20
-letter_categorizer = Categorizer(eigenvectors, mean, projections_path, KMeansCompare, num_dim)
-named_projections = letter_categorizer.get_named_projections()
-
-data = []
-targets = []
-for i in range(0, len(named_projections)):
-    projections = named_projections[i].get_projections()
-    for j in range(0, len(projections)):
-        data.append(projections[j])
-        targets.append(i)
-
-
-rand_training_data = []
-rand_training_targets = []
-rand_testing_data = []
-rand_testing_targets = []
-for i in range(0, len(data)):
-    if random.random() > 0.2:
-        rand_training_data.append(data[i])
-        rand_training_targets.append(targets[i])
-    else:
-        rand_testing_data.append(data[i])
-        rand_testing_targets.append(targets[i])
-
-classifier = ensemble.RandomForestClassifier()
-classifier = classifier.fit(rand_training_data, rand_training_targets)
-predictions = classifier.predict(rand_testing_data)
-
-num_right = 0
-for i in range(0, len(predictions)):
-    if predictions[i] == rand_testing_targets[i]:
-        num_right += 1
-
-print("percent right: " + str(float(num_right)/float(len(predictions))))
+set_gen = LetterGenerator("/Users/phusisian/Desktop/Senior year/SUAS/PCATesting/SUASLetterImgs/Imgs", ".png")
+#set_gen.generate_training_set("/Users/phusisian/Desktop/Senior year/SUAS/PCATesting/Generated Letter Sets/Generated Set 1/Training", 120)
+#set_gen.generate_orientation_test_set("/Users/phusisian/Desktop/Senior year/SUAS/Generated Targets/LetterSetOrientation", 5000)
+set_gen.generate_test_set("/Users/phusisian/Desktop/Senior year/SUAS/Generated Targets/LetterSet", 5000)
+'''
+'''
+base_path = "/Users/phusisian/Desktop/Senior year/SUAS/Competition Files/GENERATED FORCED WINDOW PCA"
+eigenvectors = NumpyLoader.load_numpy_arr(base_path + "/Data/Eigenvectors/eigenvectors 0.npy")
+mean_img_vector = NumpyLoader.load_numpy_arr(base_path + "/Data/Mean/mean_img 0.npy")
+optimizer = Optimizer(KNeighborsClassifier(n_neighbors = 5), base_path, "/Users/phusisian/Desktop/Senior year/SUAS/Generated Targets/LetterSet", 20, ".png")
+print("score: ", optimizer.get_test_score())
 '''
 
 '''
-base_dir = "/Users/phusisian/Desktop/Senior year/SUAS/Generated Targets/Generated Targets Amble/Images"
-img_files = os.listdir(base_dir)
-remove_names_without_extension(img_files, 'png')
-imgs = [Image.open(base_dir + "/" + img_files[i]).convert('RGB') for i in range(0, len(img_files))]
-base_path = "/Users/phusisian/Desktop/Senior year/SUAS/Competition Files/NEWLETTERPCA"
-eigenvectors = load_numpy_arr(base_path + "/Data/Eigenvectors/eigenvectors 0.npy")
-projections_path = base_path + "/Data/Projections"
-mean = load_numpy_arr(base_path + "/Data/Mean/mean_img 0.npy")
-num_dim = 20
-letter_categorizer = Categorizer(eigenvectors, mean, projections_path, KMeansCompare, 25)
-for i in range(0, len(imgs)):
-    start_time = timeit.default_timer()
-    target = TargetTwo(imgs[i], imgs[i].load(), letter_categorizer)
-    print(target)
-    print("Finished in: " + str(timeit.default_timer() - start_time))
-    print("-----------------------------------------------------")
+orientation_path = "/Users/phusisian/Desktop/Senior year/SUAS/Competition Files/GENERATED 180 ORIENTATION PCA"
+orientation_eigenvectors = load_numpy_arr(orientation_path + "/Data/Eigenvectors/eigenvectors 0.npy")
+orientation_projections_path = orientation_path + "/Data/Projections"
+orientation_mean = load_numpy_arr(orientation_path + "/Data/Mean/mean_img 0.npy")
+orientation_num_dim = 20
+orientation_solver = OrientationSolver(orientation_eigenvectors, orientation_mean, orientation_path, orientation_num_dim)
+orientation_optimizer = OrientationOptimizer(orientation_solver, "/Users/phusisian/Desktop/Senior year/SUAS/Generated Targets/LetterSetOrientation", ".png")
+print("score: ", orientation_optimizer.get_test_score())
 '''
+
 
 start_time = timeit.default_timer()
-base_path = "/Users/phusisian/Desktop/Senior year/SUAS/Generated Targets/Generated Targets BlockText"
+base_path = "/Users/phusisian/Desktop/Senior year/SUAS/Generated Targets/Generated Targets BlockText North Only"
 tester = SyntheticTester(base_path + "/Images", base_path + "/Answers", 1, ".png")
+score_vals = tester.get_score_vals()
+total_score = numpy.sum(numpy.asarray(score_vals))
 print("final score: " + str(tester.get_score_vals()))
+print("% correct: " + str(100.0 * total_score/(5.0 * 50.0)))
 print("num crashed: " + str(tester.get_num_crashes()))
 print("time elapsed: " + str(timeit.default_timer() - start_time))
