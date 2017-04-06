@@ -6,6 +6,8 @@ from time import sleep
 from interop_client import InteropClientConverter
 from sda_converter import SDAConverter
 from converter_functions import *
+from sda_viewer import SDAViewSocket
+from vehicle_state import VehicleState
 from SDA import *
 
 TK1_ADDRESS = ('IP', 9001)
@@ -19,6 +21,18 @@ INTEROP_PASSWORD = "2429875295"
 MSL = 430
 MIN_REL_FLYING_ALT = 100
 MAX_REL_FLYING_ALT = 750
+
+def sda_viewer_process(vehicle_state_data, obstacle_data):
+    """
+    Creates a process for the SDA viewer
+
+    :param vehicle_state_process: The vehicle's current state
+    :type vehicle_state_process: multiprocessing.Array
+    :param obstacle_data: The obstacles' data
+    :type obstacle_data: multiprocessing.Array
+    """
+    sda_viewer_server = SimpleWebSocketServer('', 8000, SDAViewSocket, vehicle_state_data, obstacle_data)
+    sda_viewer_server.serveforever()
 
 def target_listener(logger_queue, configurer, received_targets_array):
     """
@@ -49,6 +63,10 @@ if __name__ == '__main__':
     # target_listener_process = multiprocessing.Process(target=target_listener, args=(logger_queue, logger_worker_configurer, received_targets))
     # target_listener_process.start()
 
+    vehicle_state_data = manager.list()
+    obstacle_data = manager.list()
+    # sda_viewer_process = multiprocessing.Process(target=sda_viewer_process, args=(vehicle_state_data, obstacle_data))
+
     logger_worker_configurer(logger_queue)
     name = multiprocessing.current_process().name
 
@@ -68,6 +86,8 @@ if __name__ == '__main__':
     while not vehicle.is_armable:
         sleep(0.05)
     log(name, "Enabling SDA...")
+    vehicle_state_data.append(get_vehicle_state(vehicle))
+    obstacle_data.append([])
     sda_converter = SDAConverter(get_location(vehicle))
     sda_converter.set_waypoint(Location(38.8703041, -77.3214035, 100))#waypoints)
 
@@ -75,6 +95,7 @@ if __name__ == '__main__':
     while True:
         current_location = get_location(vehicle)
         current_waypoint_number = vehicle.commands.next
+        current_uav_waypoint = waypoints[current_waypoint_number]
 
         interop_server_client.post_telemetry(current_location)
         stationary_obstacles, moving_obstacles = interop_server_client.get_obstacles()
@@ -82,7 +103,10 @@ if __name__ == '__main__':
         for stationary_obstacle in stationary_obstacles:
             sda_converter.add_obstacle(get_obstacle_location(stationary_obstacle), stationary_obstacle)
         for moving_obstacle in moving_obstacles:
-           sda_converter.add_obstacle(get_obstacle_location(moving_obstacle), moving_obstacle)
+            sda_converter.add_obstacle(get_obstacle_location(moving_obstacle), moving_obstacle)
+
+        vehicle_state_data[0] = get_vehicle_state(vehicle)
+        obstacle_data[0] = [stationary_obstacles, moving_obstacles]
 
         if vehicle.mode.name == "GUIDED" and sda_converter.has_uav_reached_guided_waypoint():
             vehicle.mode = VehicleMode("AUTO")

@@ -87,7 +87,7 @@ int main(int argc, char** argv){
 
     // convert to rgb
     Image rgbImage;
-    rawImage.Convert( FlyCapture2::PIXEL_FORMAT_RGB16, &rgbImage );
+    rawImage.Convert( FlyCapture2::PIXEL_FORMAT_BGR, &rgbImage );
 
     // convert to OpenCV Mat
     unsigned int rowBytes = (double)rgbImage.GetReceivedDataSize()/(double)rgbImage.GetRows();
