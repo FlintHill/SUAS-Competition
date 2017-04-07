@@ -93,7 +93,7 @@ class ImageGenerator(object):
         if not os.path.exists(path+ "/Images"):
             os.makedirs(path + "/Images")
         for i in range(self.starting_index, len(self.synthetic_images) + self.starting_index):
-            self.synthetic_images[i - self.starting_index].get_synthetic_image().save(path + "/Images/Generated Target " + str(i) + ".png")
+            self.synthetic_images[i - self.starting_index].get_synthetic_image().save(path + "/Images/" + str(i) + ".png")
             self.save_synthetic_image(path, i)
             print("Saved synthetic image number: " + str(i))
 
@@ -103,7 +103,7 @@ class ImageGenerator(object):
         if not os.path.exists(path+ "/Images"):
             os.makedirs(path + "/Images")
         for i in range(self.starting_index, len(self.polyPics) + self.starting_index):
-            self.polyPics[i - self.starting_index].getImg().save(path + "/Images/Generated Target " + str(i) + ".png")
+            self.polyPics[i - self.starting_index].getImg().save(path + "/Images/" + str(i) + ".png")
             self.saveFieldObject(path, i)
             print("Saved polypic number: " + str(i))
 
@@ -122,7 +122,7 @@ class ImageGenerator(object):
     def saveFieldObject(self, path, index):
         fieldObject = self.polyPics[index - self.starting_index].getFieldObject()
         details = fieldObject.asNumpy()
-        numpy.save(path + "/Answers/Target " + str(index), details)
+        numpy.save(path + "/Answers/" + str(index), details)
 
     def getRandomlyGeneratedFieldObject(self, backgroundImg):
         shapeType = self.getRandomShapeType()
