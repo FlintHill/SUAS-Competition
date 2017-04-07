@@ -17,7 +17,7 @@ struct stat st = {0};
 int cropCount = 0;
 stringstream ss;
 RNG rng(12345);
-string dataDirectoryPath = "/full/images/absolute/path/";
+string dataDirectoryPath = "/data/directory/path/";
 int numImages = 10;
 
 void identifyTargets(Mat img, int imgNumb, int thresh, int minSize, int maxSize);
@@ -30,7 +30,7 @@ int main(int argc, char** argv){
   for (int i = 1; i < (numImages+1); i++){
       ss << i;
       string imgNumb = ss.str();
-      string imgName = dataDirectoryPath + imgNumb + ".png";
+      string imgName = dataDirectoryPath + "Generated_Targets/" + imgNumb + ".png";
       ss.str("");
 
       Mat source = imread(imgName, 1);
