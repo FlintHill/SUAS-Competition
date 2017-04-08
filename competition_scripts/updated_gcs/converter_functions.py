@@ -16,20 +16,23 @@ def get_location(vehicle):
 
     return Location(latitude, longitude, altitude)
 
-def get_vehicle_state(vehicle):
+def get_vehicle_state(vehicle, sda_converter):
     """
     Convert the vehicle's current position and information into a vehicle
     state object
 
     :param vehicle: The vehicle to convert
+    :param sda_converter: The sda converter
+    :type sda_converter: SDAConverter
     """
     latitude = vehicle.location.global_relative_frame.lat
     longitude = vehicle.location.global_relative_frame.lon
     altitude = vehicle.location.global_relative_frame.alt
     groundspeed = vehicle.groundspeed
-    heading_in_radians = vehicle.heading * math.pi / 180
+    velocity = vehicle.velocity
+    direction = vehicle.heading
 
-    return VehicleState(latitude, longitude, altitude, heading_in_radians, groundspeed)
+    return VehicleState(latitude, longitude, altitude, direction, groundspeed, velocity, sda_converter.is_obstacle_in_path())
 
 def get_obstacle_location(obstacle):
     """

@@ -94,3 +94,11 @@ class SDAConverter(object):
         """
         distance = VectorMath.get_magnitude(self.previous_min_tangent_point, self.obstacle_map.get_drone().get_point())
         return distance < Constants.MAX_DISTANCE_TO_TARGET
+
+    def is_obstacle_in_path(self):
+        """
+        Return whether obstacle is in path of UAV
+        """
+        obstacle_in_path_boolean, avoid_coords = self.obstacle_map.is_obstacle_in_path()
+
+        return obstacle_in_path_boolean

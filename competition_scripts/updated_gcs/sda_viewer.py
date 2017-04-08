@@ -1,7 +1,5 @@
 from SimpleWebSocketServer import SimpleWebSocketServer, WebSocket
-import random
 
-clients = []
 class SDAViewSocket(WebSocket):
 
     def __init__(self, p1, p2, p3, vehicle_state_data, obstacle_data):
@@ -16,9 +14,11 @@ class SDAViewSocket(WebSocket):
 
     def handleMessage(self):
       if self.connected:
-         data = '{"alt": ' + str(self.vehicle_state_data[0].get_location().get_alt())
+         data = '{"obstacle_present":' + self.vehicle_state_data[0].get_obstacle_in_path() +  ', '
+         data += '"alt": ' + str(self.vehicle_state_data[0].get_location().get_alt())
          data += ', "dir": ' + str(self.vehicle_state_data[0].get_direction())
          data += ', "speed": ' + str(self.vehicle_state_data[0].get_groundspeed())
+         data += ', "velocity": ' + str(self.vehicle_state_data[0].get_velocity())
          data += ', "lat": ' + str(self.vehicle_state_data[0].get_location().get_lat()) + ', "long": ' + str(self.vehicle_state_data[0].get_location().get_lon()) + "}"
 
          client.sendMessage(unicode(data))

@@ -12,7 +12,7 @@ from SDA import *
 
 TK1_ADDRESS = ('IP', 9001)
 
-UAV_CONNECTION_STRING = "tcp:127.0.0.1:5760"
+UAV_CONNECTION_STRING = "tcp:127.0.0.1:14551"
 
 INTEROP_URL = "http://10.10.130.2:8000"
 INTEROP_USERNAME = "Flint"
@@ -22,16 +22,14 @@ MSL = 430
 MIN_REL_FLYING_ALT = 100
 MAX_REL_FLYING_ALT = 750
 
-def sda_viewer_process(vehicle_state_data, obstacle_data):
+def sda_viewer_process(vehicle_state_data):
     """
     Creates a process for the SDA viewer
 
     :param vehicle_state_process: The vehicle's current state
     :type vehicle_state_process: multiprocessing.Array
-    :param obstacle_data: The obstacles' data
-    :type obstacle_data: multiprocessing.Array
     """
-    sda_viewer_server = SimpleWebSocketServer('', 8000, SDAViewSocket, vehicle_state_data, obstacle_data)
+    sda_viewer_server = SimpleWebSocketServer('', 8000, SDAViewSocket, vehicle_state_data)
     sda_viewer_server.serveforever()
 
 def target_listener(logger_queue, configurer, received_targets_array):
@@ -64,8 +62,8 @@ if __name__ == '__main__':
     # target_listener_process.start()
 
     vehicle_state_data = manager.list()
-    obstacle_data = manager.list()
-    # sda_viewer_process = multiprocessing.Process(target=sda_viewer_process, args=(vehicle_state_data, obstacle_data))
+    # sda_viewer_process = multiprocessing.Process(target=sda_viewer_process, args=(vehicle_state_data))
+    # sda_viewer_process.start()
 
     logger_worker_configurer(logger_queue)
     name = multiprocessing.current_process().name
@@ -76,26 +74,29 @@ if __name__ == '__main__':
     log(name, "Connected to UAV on: %s" % UAV_CONNECTION_STRING)
     log_vehicle_state(vehicle, name)
 
+    log(name, "Waiting for UAV to be armable")
+    log(name, "Waiting for UAV to load waypoints")
+    while len(vehicle.commands) < 1 and not vehicle.is_armable:
+        sleep(0.05)
+
     log(name, "Downloading waypoints from UAV on: %s" % UAV_CONNECTION_STRING)
     waypoints = vehicle.commands
     waypoints.download()
     waypoints.wait_ready()
     log(name, "Waypoints successfully downloaded")
 
-    log(name, "Waiting for UAV to be armable")
-    while not vehicle.is_armable:
-        sleep(0.05)
     log(name, "Enabling SDA...")
-    vehicle_state_data.append(get_vehicle_state(vehicle))
-    obstacle_data.append([])
     sda_converter = SDAConverter(get_location(vehicle))
-    sda_converter.set_waypoint(Location(38.8703041, -77.3214035, 100))#waypoints)
+    sda_converter.set_waypoint(Location(38.8703041, -77.3214035, 100))
+    #sda_converter.set_waypoint(Location(waypoints[0].x, waypoints[0].y, waypoints[0].z))
+    vehicle_state_data.append(get_vehicle_state(vehicle, sda_converter))
 
     #try:
     while True:
         current_location = get_location(vehicle)
         current_waypoint_number = vehicle.commands.next
         current_uav_waypoint = waypoints[current_waypoint_number]
+        sda_converter.set_waypoint(Location(current_uav_waypoint.x, current_uav_waypoint.y, current_uav_waypoint.z))
 
         interop_server_client.post_telemetry(current_location)
         stationary_obstacles, moving_obstacles = interop_server_client.get_obstacles()
@@ -105,8 +106,7 @@ if __name__ == '__main__':
         for moving_obstacle in moving_obstacles:
             sda_converter.add_obstacle(get_obstacle_location(moving_obstacle), moving_obstacle)
 
-        vehicle_state_data[0] = get_vehicle_state(vehicle)
-        obstacle_data[0] = [stationary_obstacles, moving_obstacles]
+        vehicle_state_data[0] = get_vehicle_state(vehicle, sda_converter)
 
         if vehicle.mode.name == "GUIDED" and sda_converter.has_uav_reached_guided_waypoint():
             vehicle.mode = VehicleMode("AUTO")
@@ -115,7 +115,7 @@ if __name__ == '__main__':
 
         obj_avoid_coordinates = sda_converter.avoid_obstacles(math.radians(vehicle.heading) / 2)
         print(current_location.get_altitude())
-        if obj_avoid_coordinates current_location.get_altitude() > 50:
+        if obj_avoid_coordinates:
             log("root", "Avoiding obstacles...")
             vehicle.simple_goto(obj_avoid_coordinates)
     #except:
