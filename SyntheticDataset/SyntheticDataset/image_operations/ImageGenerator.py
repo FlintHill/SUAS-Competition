@@ -56,7 +56,7 @@ class ImageGenerator(object):
 
         :param num_targets: The number of targets to place on this image
         """
-        pic = self.grassLoader.getRandomImg().convert('RGBA')
+        pic = self.grassLoader.getRandomImg().convert('RGB')
         synthetic_image = SyntheticImage(num_targets, pic, self.data_path)
 
         return synthetic_image
