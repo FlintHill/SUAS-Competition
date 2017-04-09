@@ -3,7 +3,7 @@ import json
 
 TESTED_CROPS_DATA_PATH = "/home/robotics/Desktop/SUAS-Competition/integration_testing/data/crops/"
 GENERATED_TARGETS_DATA_PATH = "/home/robotics/Desktop/SUAS-Competition/integration_testing/data/Generated_Targets/Answers"
-PIXEL_DISTANCE_THRESHOLD = 200
+PIXEL_DISTANCE_THRESHOLD = 30
 
 def load_json_file(path):
     with open(path) as data_file:
@@ -18,13 +18,14 @@ def load_crop_data(path):
     data = {}
 
     for data_file_path in os.listdir(path):
-        name = str(data_file_path[:data_file_path.find(".")])
-        data[name] = {}
-        with open(os.path.join(path, data_file_path)) as data_file:
-            lines = data_file.read().split()
-            for line in lines:
-                line_data = line.split(":")
-                data[name][str(line_data[0])] = float(line_data[1])
+        if ".txt" in data_file_path:
+            name = str(data_file_path[:data_file_path.find(".")])
+            data[name] = {}
+            with open(os.path.join(path, data_file_path)) as data_file:
+                lines = data_file.read().split()
+                for line in lines:
+                    line_data = line.split(":")
+                    data[name][str(line_data[0])] = float(line_data[1])
 
     return data
 
@@ -50,6 +51,7 @@ def is_array_in_array(inner_array, outer_array):
 if __name__ == '__main__':
     # Load all images in generated targets data path
     net_score = 0.0
+    false_positives = 0
     for dir_object in os.listdir(GENERATED_TARGETS_DATA_PATH):
         if ".json" in dir_object.lower():
             # Load correct image data
@@ -62,9 +64,12 @@ if __name__ == '__main__':
 
             # Score the parser
             image_score = 0.0
+            image_false_positives = 0
             image_score_info = []
             for crop in generated_crops_data:
                 print()
+                print("Crop:", crop)
+                false_positive = True
                 crop_center_point = [generated_crops_data[crop]["center_location_x"], generated_crops_data[crop]["center_location_y"]]
                 for generated_image_crop in generated_image_data:
                     center_point = generated_image_crop["midpoint"]
@@ -73,17 +78,25 @@ if __name__ == '__main__':
                     if get_magnitude_of_difference(center_point, crop_center_point) < PIXEL_DISTANCE_THRESHOLD:
                         if not is_array_in_array(center_point, image_score_info):
                             image_score_info.append(generated_image_crop["midpoint"])
-            image_score = len(image_score_info) / len(generated_crops_data)
-            net_score += image_score
+                            false_positive = False
 
-            #print(image_score)
-            #print(generated_image_data)
-            #print()
-            #print(generated_crops_data)
+                if false_positive:
+                    image_false_positives += 1
+
+            image_score = len(image_score_info) / len(generated_image_data)
+            net_score += image_score
+            false_positives += image_false_positives
+
+            print("===============================")
+            print("Image Number #" + str(dir_object[:dir_object.find(".")]))
+            print("Score:", image_score * 100, "%")
+            print("False Positives:", image_false_positives)
+            print("===============================")
             #exit(0)
 
     net_score = net_score / len(os.listdir(GENERATED_TARGETS_DATA_PATH))
 
     print("===============================")
     print("Score:", net_score * 100, "%")
+    print("False Positives:", false_positives)
     print("===============================")

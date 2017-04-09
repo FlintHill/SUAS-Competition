@@ -102,7 +102,7 @@ void identifyTargets(Mat img, string imgNumb, int thresh, int minSize, int maxSi
       int xRangeEnd = boundRect[i].br().x + 5;
       int yRangeEnd = boundRect[i].br().y + 5;
 
-      int xMidPoint = static_cast<float>(xRangeStart + yRangeStart) / 2;
+      int xMidPoint = static_cast<float>(xRangeStart + xRangeEnd) / 2;
       int yMidPoint = static_cast<float>(yRangeStart + yRangeEnd) / 2;
 
       Range yRange = Range(yRangeStart, yRangeEnd);
@@ -175,6 +175,7 @@ void identifyTargets(Mat img, string imgNumb, int thresh, int minSize, int maxSi
             ss << imageSpecificCropNumber;
             string cropNumber = ss.str();
             ss.str("");
+            string cropSaveName = imageDirectoryPath + cropNumber + ".png";
             string cropDataName = imageDirectoryPath + cropNumber + ".txt";
             printf("DeltaE of crop is %f\n", deltaE);
 
@@ -189,6 +190,8 @@ void identifyTargets(Mat img, string imgNumb, int thresh, int minSize, int maxSi
             cropDataFile << "time_minutes:" + intToString(currentLocalTime->tm_min) << endl;
             cropDataFile << "time_seconds:" + intToString(currentLocalTime->tm_sec) << endl;
             cropDataFile.close();
+
+            imwrite(cropSaveName, contourAnalysisCrop);
 
             cropCount++;
             imageSpecificCropNumber++;
