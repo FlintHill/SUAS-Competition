@@ -1,29 +1,89 @@
 import os
 import json
 
-TESTED_CROPS_DATA_PATH = "/Users/vtolpegin/github/SUAS-Competition/integration_testing/data/crops"
-GENERATED_TARGETS_DATA_PATH = "/Users/vtolpegin/github/SUAS-Competition/integration_testing/data/Generated_Targets"
+TESTED_CROPS_DATA_PATH = "/home/robotics/Desktop/SUAS-Competition/integration_testing/data/crops/"
+GENERATED_TARGETS_DATA_PATH = "/home/robotics/Desktop/SUAS-Competition/integration_testing/data/Generated_Targets/Answers"
+PIXEL_DISTANCE_THRESHOLD = 200
 
-def load_generated_target(path):
+def load_json_file(path):
     with open(path) as data_file:
         return json.load(data_file)
 
 def load_crop_data(path):
     """
-    Load a crop from a .txt file. This method will parse the file, and convert
-    the data into a dictionary format which is easy to compare with the generated
-    data
+    Load a set of crops from .txt files. This method will parse the files, and
+    convert the data into a dictionary format which is easy to compare with the
+    generated, known data
     """
-    pass
+    data = {}
+
+    for data_file_path in os.listdir(path):
+        name = str(data_file_path[:data_file_path.find(".")])
+        data[name] = {}
+        with open(os.path.join(path, data_file_path)) as data_file:
+            lines = data_file.read().split()
+            for line in lines:
+                line_data = line.split(":")
+                data[name][str(line_data[0])] = float(line_data[1])
+
+    return data
+
+def get_magnitude_of_difference(coord1, coord2):
+    """
+    Get the magnitude of the difference between two coordinates
+    """
+    diff_x = coord2[0] - coord1[0]
+    diff_y = coord2[1] - coord1[1]
+
+    return (diff_x**2 + diff_y**2)**0.5
+
+def is_array_in_array(inner_array, outer_array):
+    """
+    Determine whether an inner array is in an outer array
+    """
+    for outer_array_object in outer_array:
+        if inner_array[0] == outer_array_object[0] and inner_array[1] == outer_array_object[1]:
+            return True
+
+    return False
 
 if __name__ == '__main__':
     # Load all images in generated targets data path
+    net_score = 0.0
     for dir_object in os.listdir(GENERATED_TARGETS_DATA_PATH):
-        if dir_object.find(".") != -1 and ".png" in dir_object.lower():
-            generated_image_data = load_generated_target(os.path.join(GENERATED_TARGETS_DATA_PATH, dir_object))
+        if ".json" in dir_object.lower():
+            # Load correct image data
+            generated_image_data = load_json_file(os.path.join(GENERATED_TARGETS_DATA_PATH, dir_object))
+            dir_object = dir_object.split()[1]
             dir_object_crops = os.path.join(TESTED_CROPS_DATA_PATH, str(dir_object[:dir_object.find(".")]))
 
-            print(generated_image_data)
-            print(dir_object_crops)
+            # Load all generated crop data
+            generated_crops_data = load_crop_data(dir_object_crops)
 
-            # Load all generated crops
+            # Score the parser
+            image_score = 0.0
+            image_score_info = []
+            for crop in generated_crops_data:
+                print()
+                crop_center_point = [generated_crops_data[crop]["center_location_x"], generated_crops_data[crop]["center_location_y"]]
+                for generated_image_crop in generated_image_data:
+                    center_point = generated_image_crop["midpoint"]
+
+                    print(get_magnitude_of_difference(center_point, crop_center_point))
+                    if get_magnitude_of_difference(center_point, crop_center_point) < PIXEL_DISTANCE_THRESHOLD:
+                        if not is_array_in_array(center_point, image_score_info):
+                            image_score_info.append(generated_image_crop["midpoint"])
+            image_score = len(image_score_info) / len(generated_crops_data)
+            net_score += image_score
+
+            #print(image_score)
+            #print(generated_image_data)
+            #print()
+            #print(generated_crops_data)
+            #exit(0)
+
+    net_score = net_score / len(os.listdir(GENERATED_TARGETS_DATA_PATH))
+
+    print("===============================")
+    print("Score:", net_score * 100, "%")
+    print("===============================")

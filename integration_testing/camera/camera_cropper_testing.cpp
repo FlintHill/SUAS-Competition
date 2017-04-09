@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctime>
+#include <time.h>
 
 using namespace cv;
 using namespace std;
@@ -17,20 +18,22 @@ struct stat st = {0};
 int cropCount = 0;
 stringstream ss;
 RNG rng(12345);
-string dataDirectoryPath = "/data/directory/path/";
-int numImages = 10;
+string dataDirectoryPath = "/home/robotics/Desktop/SUAS-Competition/integration_testing/data/";
+int numImages = 143;
 
-void identifyTargets(Mat img, int imgNumb, int thresh, int minSize, int maxSize);
+void identifyTargets(Mat img, string imgNumb, int thresh, int minSize, int maxSize);
 string intToString(int a);
 
 int main(int argc, char** argv){
   //pixels per inch
   int ppi = atoi( argv[1] );
 
-  for (int i = 1; i < (numImages+1); i++){
+  time_t starttime;
+  time(&starttime);
+  for (int i = 0; i < (numImages+1); i++){
       ss << i;
       string imgNumb = ss.str();
-      string imgName = dataDirectoryPath + "Generated_Targets/" + imgNumb + ".png";
+      string imgName = dataDirectoryPath + "Generated_Targets/Images/" + imgNumb + ".png";
       ss.str("");
 
       Mat source = imread(imgName, 1);
@@ -38,15 +41,23 @@ int main(int argc, char** argv){
       identifyTargets(source, imgNumb, 85, (12 * ppi), (72 * ppi));
       ss.str("");
   }
+  time_t endtime;
+  time(&endtime);
+
+  cout << "======================================" << endl;
+  cout << "Start time: " << ctime(&starttime) << endl;
+  cout << "End time: " << ctime(&endtime) << endl;
+  cout << "======================================" << endl;
 
   return(0);
 }
 
-void identifyTargets(Mat img, int imgNumb, int thresh, int minSize, int maxSize){
+void identifyTargets(Mat img, string imgNumb, int thresh, int minSize, int maxSize){
   string imageDirectoryPath = dataDirectoryPath + "crops/" + imgNumb + "/";
   if (stat(imageDirectoryPath.c_str(), &st) == -1) {
     mkdir(imageDirectoryPath.c_str(), 0777);
   }
+  int imageSpecificCropNumber = 0;
 
   Mat img_gray; Mat img_canny; Mat img_drawn; Mat img_cropped;
   vector<vector<Point> >contours;
@@ -161,11 +172,17 @@ void identifyTargets(Mat img, int imgNumb, int thresh, int minSize, int maxSize)
 
             printf("\nL:%f A:%f B:%f\n", L, A, B);
 
+            ss << imageSpecificCropNumber;
+            string cropNumber = ss.str();
+            ss.str("");
             string cropDataName = imageDirectoryPath + cropNumber + ".txt";
-            printf("DeltaE of crop is %f\n\n", deltaE);
+            printf("DeltaE of crop is %f\n", deltaE);
+
+            time_t currentTime = time(0);
+            struct tm * currentLocalTime = localtime(&currentTime);
 
             ofstream cropDataFile;
-            cropDataFile.open(cropDataName);
+            cropDataFile.open(cropDataName.c_str());
             cropDataFile << "center_location_x:" + intToString(xMidPoint) << endl;
             cropDataFile << "center_location_y:" + intToString(yMidPoint) << endl;
             cropDataFile << "time_hours:" + intToString(currentLocalTime->tm_hour) << endl;
@@ -173,8 +190,8 @@ void identifyTargets(Mat img, int imgNumb, int thresh, int minSize, int maxSize)
             cropDataFile << "time_seconds:" + intToString(currentLocalTime->tm_sec) << endl;
             cropDataFile.close();
 
-            imwrite(cropName, contourAnalysisCrop);
             cropCount++;
+            imageSpecificCropNumber++;
           }
         }
       }
