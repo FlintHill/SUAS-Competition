@@ -1,6 +1,8 @@
 from dronekit import connect, VehicleMode
 import socket
 import multiprocessing
+import pickle
+import struct
 from logger import *
 from time import sleep
 from interop_client import InteropClientConverter
@@ -10,7 +12,7 @@ from sda_viewer import SDAViewSocket
 from vehicle_state import VehicleState
 from SDA import *
 
-TK1_ADDRESS = ('IP', 9001)
+TK1_ADDRESS = ('192.168.1.6', 9001)
 
 UAV_CONNECTION_STRING = "tcp:127.0.0.1:14551"
 
@@ -21,6 +23,20 @@ INTEROP_PASSWORD = "2429875295"
 MSL = 430
 MIN_REL_FLYING_ALT = 100
 MAX_REL_FLYING_ALT = 750
+
+def read_data(connection):
+    """
+    Read a data from a socket.
+
+    @returns the data received from the socket
+    """
+    raw_msglen = connection.recv(4)
+    msglen = struct.unpack('>I', raw_msglen)[0]
+
+    data = connection.recv(msglen)
+    data = pickle.loads(data)
+
+    return data
 
 def sda_viewer_process(vehicle_state_data):
     """
@@ -39,15 +55,15 @@ def target_listener(logger_queue, configurer, received_targets_array):
     configurer(logger_queue)
     name = multiprocessing.current_process().name
 
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    #sock.bind(TK1_ADDRESS)
-    #sock.listen(1)
-    log(name, "Waiting for a connection to the TK1...")
-    #connection, client_address = sock.accept()
+    tk1_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    log(name, "Waiting to connect to the TK1...")
+    tk1_socket.connect(TK1_ADDRESS)
     log(name, "Connected to TK1")
 
     while True:
-        sleep(0.5)
+        data = read_data(tk1_socket)
+
+        print(data)
 
 if __name__ == '__main__':
     interop_server_client = InteropClientConverter(MSL, INTEROP_URL, INTEROP_USERNAME, INTEROP_PASSWORD)
