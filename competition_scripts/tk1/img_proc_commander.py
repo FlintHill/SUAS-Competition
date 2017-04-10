@@ -8,20 +8,25 @@ CROPS_DIR_LOCATION = "/media/SSD/crops/"
 FULL_IMAGES_DIR_LOCATION = "/media/SSD/full_images/"
 PORT = 9001
 
-def load_images_from_dir(dir):
+def load_crops():
     """
-    Load all images in a directory and their associated information files
+    Load all crops & associated data
     """
-    images = []
+    crops = {}
 
-    files = [f for f in listdir(mypath) if isfile(os.join(mypath, f))]
+    files = [f for f in listdir(CROPS_DIR_LOCATION) if ".png" in f)]
     for file_name in files:
-        images.append(Image.open(file_name))
+        crop_number = file_name[ : file_name.find(".")]
+        crops[crop_number]["crop"] = Image.open(os.path.join(CROPS_DIR_LOCATION, file_name))
 
-    for file_name in files:
-        os.remove(file_name)
+        crop_data_file_name = os.path.join(CROPS_DIR_LOCATION, crop_number + ".txt")
+        with open(crop_data_file_name) as data_file:
+            lines = crop_data_file.read().split()
+            for line in lines:
+                line_data = line.split(":")
+                crops[crop_number]["info"][str(line_data[0])] = float(line_data[1])
 
-    return images
+    return crops
 
 def encode_data(data):
     """
@@ -49,18 +54,26 @@ if __name__ == '__main__':
     comm_socket = create_listen_socket(PORT, 1)
     connection, addr = comm_socket.accept()
 
+    completed_crops = []
+
     #try:
     while True:
         # load Harrison's images
-        crops = load_images_from_dir(CROPS_DIR_LOCATION)
+        crops = load_crops()
 
         # send them to Peter's image processing script
         # TODO : Add call to Peter's image processing script here
-        data = {}
-        data["target_attributes"] = {}
+        for crop in crops:
+            # We do not want to submit the same crop to the processor multiple
+            #   times...
+            if int(crop) not in completed_crops:
+                is_crop, generated_crop_data = RunPetersCode(crops[crop]["crop"])
 
-        # transmit the images and their information to the groundstation
-        connection.send(encode_data(task))
+                if is_crop:
+                    crops[crop]["target_attributes"] = generated_crop_data
+
+                    # transmit the images and their information to the groundstation
+                    connection.send(encode_data(crops[crop]))
 
     #except:
     #    comm_socket.close()
