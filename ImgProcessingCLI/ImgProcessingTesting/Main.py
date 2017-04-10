@@ -54,9 +54,9 @@ orientation_optimizer = OrientationOptimizer(orientation_solver, "/Users/phusisi
 print("score: ", orientation_optimizer.get_test_score())
 '''
 
-'''
+
 start_time = timeit.default_timer()
-base_path = "/Users/phusisian/Desktop/Senior year/SUAS/Generated Targets/Generated Targets Amble Big"
+base_path = "/Users/phusisian/Desktop/Senior year/SUAS/Generated Targets/BlockText 1000 Sets/Generated Targets BlockText 1000 C"
 tester = SyntheticTester(base_path + "/Images", base_path + "/Answers", 1, ".png")
 score_vals = tester.get_score_vals()
 total_score = numpy.sum(numpy.asarray(score_vals))
@@ -65,9 +65,9 @@ print("% correct: " + str(100.0 * total_score/(5.0 * 1000.0)))
 print("num crashed: " + str(tester.get_num_crashes()))
 print("time elapsed: " + str(timeit.default_timer() - start_time))
 print("wrong score info: \n" + str(tester.get_wrong_score_info()))
+
+
 '''
-
-
 img = Image.open("/Users/phusisian/Desktop/Senior year/SUAS/Object images test/300 crop 6480x4320.jpeg").convert('RGB')
 base_path = "/Users/phusisian/Desktop/Senior year/SUAS/Competition Files/GENERATED FORCED WINDOW PCA"
 eigenvectors = load_numpy_arr(base_path + "/Data/Eigenvectors/eigenvectors 0.npy")
@@ -87,3 +87,4 @@ orientation_num_dim = 50
 orientation_solver = OrientationSolver(orientation_eigenvectors, orientation_mean, orientation_path, orientation_num_dim)
 target = TargetTwo(img, img.load(), letter_categorizer, orientation_solver)
 print("target attributes: ", target)
+'''

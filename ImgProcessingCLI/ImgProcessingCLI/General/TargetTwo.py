@@ -53,34 +53,31 @@ class TargetTwo(object):
         self.bw_target_img = self.target_img.convert('L')
         self.bw_target_image = self.bw_target_img.load()
 
-        start_time = timeit.default_timer()
+        #start_time = timeit.default_timer()
         self.init_edge_imgs()
-        print("edge imgs init'd in: " + str(timeit.default_timer() - start_time))
-        start_time = timeit.default_timer()
+        #print("edge imgs init'd in: " + str(timeit.default_timer() - start_time))
+        #start_time = timeit.default_timer()
         self.init_color_varyer()
-        print("color varyer init'd in: " + str(timeit.default_timer() - start_time))
-        start_time = timeit.default_timer()
+        #print("color varyer init'd in: " + str(timeit.default_timer() - start_time))
+        #start_time = timeit.default_timer()
         self.init_shape_color()
-        print("shape color init'd in: " + str(timeit.default_timer() - start_time))
-        start_time = timeit.default_timer()
-        #self.init_letter_color()
-        #print("letter color init'd in: " + str(timeit.default_timer() - start_time))
-        start_time = timeit.default_timer()
+        #print("shape color init'd in: " + str(timeit.default_timer() - start_time))
+        #start_time = timeit.default_timer()
         self.init_target_shape_img()
-        print("target shape img init'd in: " + str(timeit.default_timer() - start_time))
+        #print("target shape img init'd in: " + str(timeit.default_timer() - start_time))
         self.re_init_letter_mask()
-        start_time = timeit.default_timer()
+        #start_time = timeit.default_timer()
         self.init_target_shape_edges_img()
-        print("target shape edges init'd in: " + str(timeit.default_timer() - start_time))
-        start_time = timeit.default_timer()
+        #print("target shape edges init'd in: " + str(timeit.default_timer() - start_time))
+        #start_time = timeit.default_timer()
         self.init_shape_type()
-        print("shape type init'd in: " + str(timeit.default_timer() - start_time))
-        start_time = timeit.default_timer()
+        #print("shape type init'd in: " + str(timeit.default_timer() - start_time))
+        #start_time = timeit.default_timer()
         self.init_target_orientation()
-        print("target orientation init'd in: " + str(timeit.default_timer() - start_time))
-        start_time = timeit.default_timer()
+        #print("target orientation init'd in: " + str(timeit.default_timer() - start_time))
+        #start_time = timeit.default_timer()
         self.init_letter()
-        print("letter init'd in: " + str(timeit.default_timer() - start_time))
+        #print("letter init'd in: " + str(timeit.default_timer() - start_time))
 
 
     def init_edge_imgs(self):
@@ -160,6 +157,7 @@ class TargetTwo(object):
 
         self.target_mask = ImageOps.invert(background_mask)
 
+
         reduced_bounds_target_mask = NeighborhoodReduction.get_img_with_pixels_to_neighborhood_mode(self.target_mask, self.target_mask.load(), 9)
 
         inside_shape_img = Mask.get_bmp_masked_img(reduced_bounds_target_mask, reduced_bounds_target_mask.load(), self.target_img, self.target_image)
@@ -186,7 +184,7 @@ class TargetTwo(object):
                 sum[i] = int(float(sum[i])/float(num_instances))
         sum = tuple(sum)
         mean_possible_letter_color = sum
-        print("mean possible letter color is: ", mean_possible_letter_color)
+        #print("mean possible letter color is: ", mean_possible_letter_color)
 
         inside_shape_kmeans_colors = [(int(self.shape_rgb[0]), int(self.shape_rgb[1]), int(self.shape_rgb[2])), mean_possible_letter_color]
         letter_shape_img = ColorMath.get_img_rounded_to_colors(self.target_img, self.target_image, inside_shape_kmeans_colors)
@@ -235,8 +233,8 @@ class TargetTwo(object):
 
         self.letter_rgb = ImageMath.get_mean_color_excluding_transparent(letter_color_img2, letter_color_img2.load(), percent_outliers = .5)
 
-        self.TARGET_CHARACTER_COLOR = TargetColorReader.get_closest_target_color(self.letter_rgb)
 
+        self.TARGET_CHARACTER_COLOR = TargetColorReader.get_closest_target_color(self.letter_rgb)
 
 
 
@@ -310,10 +308,10 @@ class TargetTwo(object):
 
 
     def init_target_shape_edges_img(self):
-        self.target_edges_img = Mask.get_mask_edges(self.background_target_img, self.background_target_img.load())
+        self.target_edges_img = Mask.get_mask_edges(self.target_mask, self.target_mask.load())
 
     def init_shape_type(self):
-        self.shape_type = ShapeType(self.background_target_img.convert('L'), self.target_edges_img)
+        self.shape_type = ShapeType(self.target_mask, self.target_edges_img)
         self.TARGET_SHAPE = self.shape_type.get_shape_type()
 
     def init_letter_pca(self):
@@ -339,7 +337,7 @@ class TargetTwo(object):
         rotate_amount = -TargetTwo.ORIENTATION_INDEXES.index(self.TARGET_COMPASS_ORIENTATION)*45
         letter_img = self.get_letter_img_resized_to_PCA_dims(self.letter_segment_mask.rotate(rotate_amount, expand = True))
         scores = self.letter_categorizer.get_algorithm_return_smallest_to_large(letter_img, None)
-        print("score: " + str(scores[0:5]))
+        #print("score: " + str(scores[0:5]))
         self.TARGET_CHARACTER = str(scores[0][0])
 
     def __repr__(self):

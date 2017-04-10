@@ -117,7 +117,7 @@ class SyntheticTester(object):
                 self.wrong_scores[0].append(("Correct answer: " + str(str_scores[0]), "Actual answer: " + str(target_answers[0])))
         else:
             self.wrong_scores[0].append(("Correct answer: " + str(str_scores[0]), "Actual answer: " + str(target_answers[0])))
-        print("=============================================================")
+        print("========================================================================================")
 
 
 
@@ -131,8 +131,8 @@ class SyntheticTester(object):
         print("current score vals: " + str(self.score_vals) + ", num images run: " + str(index+1))
         print("time taken: " + str(timeit.default_timer() - start_time) + " seconds")
         #print("wrong score info: \n", self.get_wrong_score_info())
-        print("=============================================================")
-        print("------------------------------------------------------------")
+        print("========================================================================================")
+        print("----------------------------------------------------------------------------------------")
 
     def get_file_name_end_num(self, img_name):
         space_index = img_name.rfind(" ")

@@ -19,7 +19,24 @@ class PolarSideCounter(object):
         '''not sure if it is good to set under mean to mean, because there may be a shape that does have
         legitimate maximums that are smaller than the mean'''
         #self.setUnderMeanToMean()
+
+        '''pyplot_r = []
+        pyplot_theta = []
+        for i in range(2, len(self.plot)-2):
+            pyplot_r.append(self.plot[i].get_radius())
+            pyplot_theta.append(self.plot[i].get_angle())
+        pyplot.plot(pyplot_theta, pyplot_r)
+        pyplot.show()'''
         self.smooth_plot(6, 5)
+
+        '''pyplot_r = []
+        pyplot_theta = []
+        for i in range(2, len(self.plot)-2):
+            pyplot_r.append(self.plot[i].get_radius())
+            pyplot_theta.append(self.plot[i].get_angle())
+        pyplot.plot(pyplot_theta, pyplot_r)
+        pyplot.show()'''
+
 
         self.set_mean_radius()
         self.set_circle_score()
