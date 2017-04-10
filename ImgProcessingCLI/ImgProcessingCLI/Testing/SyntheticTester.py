@@ -75,15 +75,16 @@ class SyntheticTester(object):
 
     def init_score_vals(self):
         self.score_vals = numpy.zeros((5))
+        self.wrong_scores = [[] for i in range(0, 5)]
 
     def test_set(self):
         self.num_crashes = 0
         for index in range(0, len(self.img_files)):
-            #try:
-            self.run_img(index)
-        #    except:
-        #        self.num_crashes += 1
-        #        print("Crashed during test_set() on img", self.img_files[index])
+            try:
+                self.run_img(index)
+            except:
+                self.num_crashes += 1
+                print("Crashed during test_set() on img", self.img_files[index])
 
 
     def run_img(self, index):
@@ -108,11 +109,14 @@ class SyntheticTester(object):
 
         if str(scores[0].decode("utf-8")) == str(target_answers[0]):
             self.score_vals[0] += 1
-
         elif self.get_if_letter_is_bidirectional(str_scores[3]):
             flipped_angle = self.get_compass_angle_180_degrees_away(str(target_answers[0]))
             if str(flipped_angle) == str_scores[0]:
                 self.score_vals[0] += 1
+            else:
+                self.wrong_scores[0].append(("Correct answer: " + str(str_scores[0]), "Actual answer: " + str(target_answers[0])))
+        else:
+            self.wrong_scores[0].append(("Correct answer: " + str(str_scores[0]), "Actual answer: " + str(target_answers[0])))
         print("=============================================================")
 
 
@@ -122,8 +126,11 @@ class SyntheticTester(object):
         for answer_index in range(1, scores.shape[0]):
             if str(target_answers[answer_index]) == str(scores[answer_index].decode("utf-8")):
                 self.score_vals[answer_index] += 1
+            else:
+                self.wrong_scores[answer_index].append(("Correct answer: " + str(str_scores[answer_index]), "Actual answer: " + str(target_answers[answer_index])))
         print("current score vals: " + str(self.score_vals) + ", num images run: " + str(index+1))
         print("time taken: " + str(timeit.default_timer() - start_time) + " seconds")
+        #print("wrong score info: \n", self.get_wrong_score_info())
         print("=============================================================")
         print("------------------------------------------------------------")
 
@@ -161,6 +168,16 @@ class SyntheticTester(object):
 
     def get_score_vals(self):
         return self.score_vals
+
+    def get_wrong_score_info(self):
+        out_strs = ["Orientation errors: \n", "Shape errors: \n", "Shape color errors: \n", "Alphanumeric errors: \n", "Letter color errors: \n"]
+        out_str = ""
+        for i in range(0, len(out_strs)):
+            for j in range(0, len(self.wrong_scores[i])):
+                out_strs[i] += str(self.wrong_scores[i][j]) + "\n"
+            out_str += out_strs[i] + "\n"
+        return out_str
+
 
     def get_num_crashes(self):
         return self.num_crashes

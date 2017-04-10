@@ -1,5 +1,6 @@
 import numpy
 from PIL import Image, ImageDraw
+import ImgProcessingCLI.ImgStat.StatMath as StatMath
 
 def get_bw_img_mean_pixel(img, image):
     pixels_x = []
@@ -15,20 +16,48 @@ def get_bw_img_mean_pixel(img, image):
     y_mean = int(numpy.mean(pixels_y))
     return(x_mean, y_mean)
 
-def get_mean_color_excluding_transparent(img, image):
-    sums = [0,0,0]
+def get_mean_color_excluding_transparent(img, image, percent_outliers = 0):
+    #sums = [0,0,0]
+    set = []
     num_pixels = 0
     for x in range(0, img.size[0]):
         for y in range(0, img.size[1]):
             if image[x,y][3] != 0:
+                set.append(image[x,y][0:3])
                 num_pixels += 1
-                for i in range(0, 3):
-                    sums[i] += image[x,y][i]
+
+
     if num_pixels == 0:
         return (0,0,0)
+
+    set = StatMath.get_set_with_outliers_removed(set, percent_outliers)
+
+    '''
+
     for i in range(0, len(sums)):
         sums[i]/=float(num_pixels)
-    return tuple(sums)
+    return tuple(sums)'''
+    return tuple(numpy.average(numpy.asarray(set), axis = 0))
+
+def get_median_color_excluding_transparent(img, image):
+    rgbs = [[] for i in range(0, 3)]
+
+    for x in range(0, img.size[0]):
+        for y in range(0, img.size[1]):
+            if image[x,y][3] != 0:
+                for color_index in range(0, 3):
+                    rgbs[color_index].append(image[x,y][color_index])
+    rgbs = numpy.asarray(rgbs)
+    median_color = numpy.median(rgbs, axis = 0)
+    return tuple(median_color)
+
+def get_colors_in_img_list_excluding_transparent(img, image):
+    colors = []
+    for x in range(0, img.size[0]):
+        for y in range(0, img.size[1]):
+            if image[x,y][3] != 0:
+                colors.append(image[x,y][0:3])
+    return colors
 
 def merge_channels(dim, channel_images):
     out_img = Image.new("RGB", dim)

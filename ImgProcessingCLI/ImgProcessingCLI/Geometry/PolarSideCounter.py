@@ -19,7 +19,7 @@ class PolarSideCounter(object):
         '''not sure if it is good to set under mean to mean, because there may be a shape that does have
         legitimate maximums that are smaller than the mean'''
         #self.setUnderMeanToMean()
-        self.smooth_plot(6, 5)#num iterations used to be 3, found the output was kind of noisy
+        self.smooth_plot(6, 5)
 
         self.set_mean_radius()
         self.set_circle_score()

@@ -51,7 +51,12 @@ class Clusters(object):
     def __init__(self, data_in, clusters_in):
         self.data = data_in
         if type(clusters_in) is int:
-            self.clusters = [Cluster(get_random_value_from_list(data_in)) for i in range(0, clusters_in)]
+            #self.clusters = [Cluster(get_random_value_from_list(data_in)) for i in range(0, clusters_in)]
+            #self.clusters = []
+            cluster_origins = []
+            for i in range(0, clusters_in):
+                cluster_origins.append(get_random_value_from_list(data_in))
+            self.clusters = [Cluster(cluster_origins[i]) for i in range(0, len(cluster_origins))]
         else:
             self.clusters = clusters_in
 
@@ -71,6 +76,7 @@ class Clusters(object):
 
     def reset_empty_clusters(self, step, step_count):
         for i in range(0, len(self.clusters)):
+            cluster_origins = [self.clusters[i].get_origin() for i in range(0, len(self.clusters))]
             if len(self.clusters[i].get_vectors()) == 0:
                 self.clusters[i] = Cluster(get_random_value_from_list(self.data))
         self.clear_clusters()

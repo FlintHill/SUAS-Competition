@@ -8,7 +8,7 @@ from math import pi, sqrt
 
 class ShapeType(object):
 
-    CIRCLE_SCORE_THRESHOLD = 0.85#used to be .75 but there were many false positive circles
+    CIRCLE_SCORE_THRESHOLD = 0.9#used to be .75 but there were many false positive circles
     BLUR_KERNEL_SIZE = 3
     BLUR_STD_DEV = 1.0#2
     CANNY_SHAPE_THRESHOLDS = (10, 20)
@@ -18,7 +18,7 @@ class ShapeType(object):
     MIN_CORNER_CLUSTER = 1
     PENTAGON_STAR_CLUSTER_THRESHOLD = 8
     OCTAGON_CROSS_CLUSTER_THRESHOLD = 10
-    SQUARE_RECTANGLE_EIGEN_RATIO_THRESHOLD = 1.05
+    SQUARE_RECTANGLE_EIGEN_RATIO_THRESHOLD = 1.1#some rectangles have very low eigenratios that this will not catch. I figur it will get more squares wrong if I make it too low.
     HOUGH_CIRCUMFERENCE_THRESHOLD_MULTIPLIER = .8
 
 
@@ -72,9 +72,15 @@ class ShapeType(object):
                     self.shape_type = "Cross"
             else:
                 eigenvalues = self.get_shape_pca().get_eigenvalues()
-                eigen_ratio = sqrt(eigenvalues[0])/sqrt(eigenvalues[1])
+                print("eigenvalues are: ", eigenvalues)
+                eigen_ratio = abs(eigenvalues[0]/eigenvalues[1])
 
-                if eigen_ratio > ShapeType.SQUARE_RECTANGLE_EIGEN_RATIO_THRESHOLD or 1.0/eigen_ratio > ShapeType.SQUARE_RECTANGLE_EIGEN_RATIO_THRESHOLD:
+                if eigen_ratio < 1:
+                    eigen_ratio = 1.0/eigen_ratio
+
+                print("eignratio is: ", eigen_ratio)
+                if eigen_ratio > ShapeType.SQUARE_RECTANGLE_EIGEN_RATIO_THRESHOLD:
+                #if eigen_ratio > ShapeType.SQUARE_RECTANGLE_EIGEN_RATIO_THRESHOLD or 1.0/eigen_ratio > ShapeType.SQUARE_RECTANGLE_EIGEN_RATIO_THRESHOLD:
                     self.shape_type = "Rectangle"
                 else:
                     self.shape_type = "Square"
