@@ -79,6 +79,11 @@ if __name__ == '__main__':
                         if not is_array_in_array(center_point, image_score_info):
                             image_score_info.append(generated_image_crop["midpoint"])
                             false_positive = False
+                    else:
+                        for mid_point in image_score_info:
+                            if get_magnitude_of_difference(center_point, mid_point) < PIXEL_DISTANCE_THRESHOLD:
+                                false_positive = False
+                                break
 
                 if false_positive:
                     image_false_positives += 1
