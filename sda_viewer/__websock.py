@@ -11,7 +11,10 @@ async def time(websocket, path):
 	await asyncio.wait([ws.send('{"status": "connected"}') for ws in connected])
 	
 	while True:
+		# BEGIN CHANGES HERE
 		data = '{"alt": ' + str(22 * random.random()) + ', "dir": ' + str(44 * random.random()) + ', "speed": ' + str(33 * random.random()) + ', "vert_speed": ' + str(55 * random.random()) + ', "lat": ' + str(38.8712152 + random.random()) + ', "long": ' + str(-77.319965 + random.random()) + "}"
+		
+		# END CHANGES HERE
 		await websocket.send(data)
 		await asyncio.sleep(random.random())
 

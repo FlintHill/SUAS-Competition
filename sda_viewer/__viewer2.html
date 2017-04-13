@@ -197,7 +197,7 @@
 
 						console.log(interopEndpointURL);
 
-						$.when( $.ajax({
+						$.when($.ajax({
 							url: (interopEndpointURL + "login/"),
 							async: true, cache: false, method: "POST", crossDomain: true,
 							data: {"username":$("#username").val(), "password":$("#password").val()},
@@ -210,14 +210,12 @@
 
 							success:function(data) { // success or error for "complete"s
 								console.log(data);
-								console.log("WHY THE FUCK IS NOTHING WORKING");
 							},
 							error:function(textStatus) {
 								console.log("fail");
 								console.log(textStatus);
 							}
-						}) ).then(function() {
-							console.log("what the fuck");
+						})).then(function() {
 						})
 
 						console.log("outside");
