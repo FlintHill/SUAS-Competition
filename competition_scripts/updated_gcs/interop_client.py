@@ -34,10 +34,26 @@ class InteropClientConverter:
 
         return stationary_obstacles, moving_obstacles
 
+    def get_active_mission(self):
+        """
+        Get the active mission and return it. If no missions are active, return
+        None
+
+        Returned in the format: Mission
+        """
+        missions = self.client.get_missions()
+
+        for mission in missions:
+            if mission.active:
+                return mission
+
+        return None
+
 if __name__ == "__main__":
-    test_client = InteropClientConverter(22, "http://10.10.130.2:8000", "Flint", "2429875295")
+    test_client = InteropClientConverter(22, "http://10.10.130.101:8000", "Flint", "2429875295")
 
     while True:
         test_client.get_obstacles()
+        test_client.get_active_mission()
 
         sleep(0.5)

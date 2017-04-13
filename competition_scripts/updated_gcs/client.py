@@ -38,14 +38,14 @@ def read_data(connection):
 
     return data
 
-def sda_viewer_process(vehicle_state_data):
+def sda_viewer_process(vehicle_state_data, mission_data):
     """
     Creates a process for the SDA viewer
 
     :param vehicle_state_process: The vehicle's current state
     :type vehicle_state_process: multiprocessing.Array
     """
-    sda_viewer_server = SimpleWebSocketServer('', 8000, SDAViewSocket, vehicle_state_data)
+    sda_viewer_server = SimpleWebSocketServer('', 8000, SDAViewSocket, vehicle_state_data, mission_data)
     sda_viewer_server.serveforever()
 
 def target_listener(logger_queue, configurer, received_targets_array):
@@ -78,7 +78,8 @@ if __name__ == '__main__':
     # target_listener_process.start()
 
     vehicle_state_data = manager.list()
-    # sda_viewer_process = multiprocessing.Process(target=sda_viewer_process, args=(vehicle_state_data))
+    mission_data = manager.list()
+    # sda_viewer_process = multiprocessing.Process(target=sda_viewer_process, args=(vehicle_state_data, mission_data))
     # sda_viewer_process.start()
 
     logger_worker_configurer(logger_queue)
@@ -106,6 +107,7 @@ if __name__ == '__main__':
     sda_converter.set_waypoint(Location(38.8703041, -77.3214035, 100))
     #sda_converter.set_waypoint(Location(waypoints[0].x, waypoints[0].y, waypoints[0].z))
     vehicle_state_data.append(get_vehicle_state(vehicle, sda_converter))
+    mission_data.append(get_mission_json(interop_server_client.get_active_mission()))
 
     #try:
     while True:
@@ -123,6 +125,7 @@ if __name__ == '__main__':
             sda_converter.add_obstacle(get_obstacle_location(moving_obstacle), moving_obstacle)
 
         vehicle_state_data[0] = get_vehicle_state(vehicle, sda_converter)
+        mission_data[0] = get_mission_json(interop_server_client.get_active_mission())
 
         if vehicle.mode.name == "GUIDED" and sda_converter.has_uav_reached_guided_waypoint():
             vehicle.mode = VehicleMode("AUTO")

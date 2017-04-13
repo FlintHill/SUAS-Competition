@@ -47,6 +47,57 @@ def get_obstacle_location(obstacle):
 
     return Location(latitude, longitude, altitude)
 
+def get_mission_json(mission):
+    """
+    Convert a Mission object to a JSON format
+    """
+    mission_in_json = {}
+    mission_in_json["air_drop_pos"] = {
+        "latitude" : mission.air_drop_pos.latitude,
+        "longitude" : mission.air_drop_pos.longitude
+    }
+    mission_in_json["fly_zones"] = [
+        {"altitude_msl_min" : fly_zone.altitude_msl_min,
+        "altitude_msl_max" : fly_zone.altitude_msl_max,
+        "boundary_pts" : [
+            {
+                "latitude" : point.latitude,
+                "longitude" : point.longitude,
+                "order" : point.order
+            } for point in fly_zone.boundary_pts
+        ]} for fly_zone in mission.fly_zones
+    ]
+    mission_in_json["home_pos"] = {
+        "latitude" : mission.home_pos.latitude,
+        "longitude" : mission.home_pos.longitude
+    }
+    mission_in_json["mission_waypoints"] = [
+        {
+            "altitude_msl" : mission_waypoint.altitude_msl,
+            "latitude" : mission_waypoint.latitude,
+            "longitude" : mission_waypoint.longitude,
+            "order" : mission_waypoint.order
+        } for mission_waypoint in mission.mission_waypoints
+    ]
+    mission_in_json["off_axis_target_pos"] = {
+        "latitude" : mission.off_axis_target_pos.latitude,
+        "longitude" : mission.off_axis_target_pos.longitude
+    }
+    mission_in_json["emergent_last_known_pos"] = {
+        "latitude" : mission.emergent_last_known_pos.latitude,
+        "longitude" : mission.emergent_last_known_pos.longitude
+    }
+    mission_in_json["search_grid_points"] = [
+        {
+            "altitude_msl" : search_grid_point.altitude_msl,
+            "latitude" : search_grid_point.latitude,
+            "longitude" : search_grid_point.longitude,
+            "order" : search_grid_point.order
+        } for search_grid_point in mission.search_grid_points
+    ]
+
+    return mission_in_json
+
 def convert_to_point(initial_location, new_location):
     """
     Convert a location into a cartesian plane coordinate
