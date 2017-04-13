@@ -12,6 +12,7 @@ from ImgProcessingCLI.General.TargetTwo import TargetTwo
 from ImgProcessingCLI.Optimization.Optimizer import Optimizer
 from ImgProcessingCLI.DataMine.OrientationSolver import OrientationSolver
 from sklearn.neighbors import KNeighborsClassifier
+from ImgProcessingCLI.General.TargetFunneler import TargetFunneler
 
 class SyntheticTester(object):
 
@@ -24,31 +25,7 @@ class SyntheticTester(object):
         self.init_img_files()
         self.init_data_files()
         self.init_score_vals()
-
-
-        '''base_path = "/Users/phusisian/Desktop/Senior year/SUAS/Competition Files/GENERATED FORCED WINDOW PCA"
-        eigenvectors = NumpyLoader.load_numpy_arr(base_path + "/Data/Eigenvectors/eigenvectors 0.npy")
-        mean_img_vector = NumpyLoader.load_numpy_arr(base_path + "/Data/Mean/mean_img 0.npy")
-        self.optimizer = Optimizer(KNeighborsClassifier(n_neighbors = 5), base_path, "/Users/phusisian/Desktop/Senior year/SUAS/Generated Targets/LetterSet", 20, ".png")
-        '''
-
-        print("categorizer initialization started")
-        base_path = "/Users/phusisian/Desktop/Senior year/SUAS/Competition Files/GENERATED FORCED WINDOW PCA"
-        eigenvectors = load_numpy_arr(base_path + "/Data/Eigenvectors/eigenvectors 0.npy")
-        projections_path = base_path + "/Data/Projections"
-        mean = load_numpy_arr(base_path + "/Data/Mean/mean_img 0.npy")
-        num_dim = 20
-
-        self.letter_categorizer = Categorizer(eigenvectors, mean, projections_path, KMeansCompare, num_dim)
-
-
-        orientation_path = "/Users/phusisian/Desktop/Senior year/SUAS/Competition Files/GENERATED 180 ORIENTATION PCA"
-        orientation_eigenvectors = load_numpy_arr(orientation_path + "/Data/Eigenvectors/eigenvectors 0.npy")
-        orientation_projections_path = orientation_path + "/Data/Projections"
-        orientation_mean = load_numpy_arr(orientation_path + "/Data/Mean/mean_img 0.npy")
-        orientation_num_dim = 50
-
-        self.orientation_solver = OrientationSolver(orientation_eigenvectors, orientation_mean, orientation_path, orientation_num_dim)
+        self.target_funneler = TargetFunneler("/Users/phusisian/Desktop/Senior year/SUAS/Competition Files/GENERATED FORCED WINDOW PCA", 20, "/Users/phusisian/Desktop/Senior year/SUAS/Competition Files/GENERATED 180 ORIENTATION PCA", 50)
 
         print("categorizer initialization finished.")
         self.test_set()
@@ -80,11 +57,11 @@ class SyntheticTester(object):
     def test_set(self):
         self.num_crashes = 0
         for index in range(0, len(self.img_files)):
-            try:
-                self.run_img(index)
-            except:
-                self.num_crashes += 1
-                print("Crashed during test_set() on img", self.img_files[index])
+            #try:
+            self.run_img(index)
+        #    except:
+        #        self.num_crashes += 1
+        #        print("Crashed during test_set() on img", self.img_files[index])
 
 
     def run_img(self, index):
@@ -102,7 +79,7 @@ class SyntheticTester(object):
         scores = numpy.load(self.data_path + "/" + matching_data_file_name)
 
         shape_img = shape_img.resize((int(shape_img.size[0]*self.scale), int(shape_img.size[1]*self.scale)))
-        target = TargetTwo(shape_img.convert('RGB'), shape_img.convert('RGB').load(), self.letter_categorizer, self.orientation_solver)#Target(shape_img, shape_img.load(), self.letter_categorizer)
+        target = self.target_funneler.init_target(shape_img.convert('RGB'))#TargetTwo(shape_img.convert('RGB'), shape_img.convert('RGB').load(), self.letter_categorizer, self.orientation_solver)#Target(shape_img, shape_img.load(), self.letter_categorizer)
         target_answers = target.as_numpy()
         str_scores = [scores[i].decode("utf-8") for i in range(0, len(scores))]
 
@@ -117,7 +94,7 @@ class SyntheticTester(object):
                 self.wrong_scores[0].append(("Correct answer: " + str(str_scores[0]), "Actual answer: " + str(target_answers[0])))
         else:
             self.wrong_scores[0].append(("Correct answer: " + str(str_scores[0]), "Actual answer: " + str(target_answers[0])))
-        print("========================================================================================")
+        print("=================================================================================")
 
 
 
@@ -131,8 +108,8 @@ class SyntheticTester(object):
         print("current score vals: " + str(self.score_vals) + ", num images run: " + str(index+1))
         print("time taken: " + str(timeit.default_timer() - start_time) + " seconds")
         #print("wrong score info: \n", self.get_wrong_score_info())
-        print("========================================================================================")
-        print("----------------------------------------------------------------------------------------")
+        print("=================================================================================")
+        print("---------------------------------------------------------------------------------")
 
     def get_file_name_end_num(self, img_name):
         space_index = img_name.rfind(" ")

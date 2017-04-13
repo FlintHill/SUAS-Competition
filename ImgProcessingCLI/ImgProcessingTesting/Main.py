@@ -28,35 +28,28 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn import ensemble
 from ImgProcessingCLI.Optimization.OrientationOptimizer import OrientationOptimizer
 from ImgProcessingCLI.DataMine.OrientationSolver import OrientationSolver
+import ImgProcessingCLI.ImgStat.HistogramMaker as HistogramMaker
+
+from scipy.signal import argrelextrema
+from mpl_toolkits.mplot3d import Axes3D
+import matplotlib.pyplot as plt
+from sklearn.decomposition import PCA
+import scipy
+import ImgProcessingCLI.TargetTrait.FalseCropCatcher as FalseCropCatcher
+from ImgProcessingCLI.Testing.FalseCropTester import FalseCropTester
 
 '''
-set_gen = LetterGenerator("/Users/phusisian/Desktop/Senior year/SUAS/PCATesting/SUASLetterImgs/Imgs", ".png")
-#set_gen.generate_training_set("/Users/phusisian/Desktop/Senior year/SUAS/PCATesting/Generated Letter Sets/Generated Set 1/Training", 120)
-#set_gen.generate_orientation_test_set("/Users/phusisian/Desktop/Senior year/SUAS/Generated Targets/LetterSetOrientation", 5000)
-set_gen.generate_test_set("/Users/phusisian/Desktop/Senior year/SUAS/Generated Targets/LetterSet", 5000)
-'''
-'''
-base_path = "/Users/phusisian/Desktop/Senior year/SUAS/Competition Files/GENERATED FORCED WINDOW PCA"
-eigenvectors = NumpyLoader.load_numpy_arr(base_path + "/Data/Eigenvectors/eigenvectors 0.npy")
-mean_img_vector = NumpyLoader.load_numpy_arr(base_path + "/Data/Mean/mean_img 0.npy")
-optimizer = Optimizer(KNeighborsClassifier(n_neighbors = 5), base_path, "/Users/phusisian/Desktop/Senior year/SUAS/Generated Targets/LetterSet", 20, ".png")
-print("score: ", optimizer.get_test_score())
+false_crop_tester = FalseCropTester("/Users/phusisian/Dropbox/SUAS/Test sets/False Positive Catcher Set", 5, ".png", ".JPG")
+false_neg, false_pos = false_crop_tester.run_imgs()
+print("false negatives: ", false_neg, " false positives: ", false_pos)
 '''
 
-'''
-orientation_path = "/Users/phusisian/Desktop/Senior year/SUAS/Competition Files/GENERATED 180 ORIENTATION PCA"
-orientation_eigenvectors = load_numpy_arr(orientation_path + "/Data/Eigenvectors/eigenvectors 0.npy")
-orientation_projections_path = orientation_path + "/Data/Projections"
-orientation_mean = load_numpy_arr(orientation_path + "/Data/Mean/mean_img 0.npy")
-orientation_num_dim = 20
-orientation_solver = OrientationSolver(orientation_eigenvectors, orientation_mean, orientation_path, orientation_num_dim)
-orientation_optimizer = OrientationOptimizer(orientation_solver, "/Users/phusisian/Desktop/Senior year/SUAS/Generated Targets/LetterSetOrientation", ".png")
-print("score: ", orientation_optimizer.get_test_score())
-'''
+
+
 
 
 start_time = timeit.default_timer()
-base_path = "/Users/phusisian/Desktop/Senior year/SUAS/Generated Targets/BlockText 1000 Sets/Generated Targets BlockText 1000 C"
+base_path = "/Users/phusisian/Desktop/Senior year/SUAS/Generated Targets/BlockText 1000 Sets/Generated Targets BlockText 1000 F"
 tester = SyntheticTester(base_path + "/Images", base_path + "/Answers", 1, ".png")
 score_vals = tester.get_score_vals()
 total_score = numpy.sum(numpy.asarray(score_vals))
