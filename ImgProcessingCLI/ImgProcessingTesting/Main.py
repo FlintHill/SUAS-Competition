@@ -37,17 +37,41 @@ from sklearn.decomposition import PCA
 import scipy
 import ImgProcessingCLI.TargetTrait.FalseCropCatcher as FalseCropCatcher
 from ImgProcessingCLI.Testing.FalseCropTester import FalseCropTester
+import numpy
 
+
+false_crop_tester = FalseCropTester("/Users/phusisian/Dropbox/SUAS/Test sets/False Positive Catcher Set", 1000, ".png", ".JPG")
 '''
-false_crop_tester = FalseCropTester("/Users/phusisian/Dropbox/SUAS/Test sets/False Positive Catcher Set", 5, ".png", ".JPG")
+score_vals_positives = false_crop_tester.get_avg_squared_histogram_differences_of_set("positives")
+score_vals_negatives = false_crop_tester.get_avg_squared_histogram_differences_of_set("negatives")
+#print("score vals positives: ", score_vals_positives)
+#print("score vals negatives: ", score_vals_negatives)
+
+min_positive_avg_sqr = numpy.amin(score_vals_positives)
+max_positive_avg_sqr = numpy.amax(score_vals_positives)
+min_negative_avg_sqr = numpy.amin(score_vals_negatives)
+max_negative_avg_sqr = numpy.amax(score_vals_negatives)
+
+print("min positive sqr: ", min_positive_avg_sqr)
+print("max positive sqr: ", max_positive_avg_sqr)
+print("min negative sqr: ", min_negative_avg_sqr)
+print("max negative sqr: ", max_negative_avg_sqr)
+
+best_split_val = false_crop_tester.get_best_split_spot_of_avg_squared_histogram_differences(score_vals_positives, score_vals_negatives)
+print("best split val: ", best_split_val)
+
+false_crop_tester.get_entropy_at_split(score_vals_positives, score_vals_negatives, best_split_val, print_vals = True)
+'''
+
+
 false_neg, false_pos = false_crop_tester.run_imgs()
 print("false negatives: ", false_neg, " false positives: ", false_pos)
+
+
+
+
+
 '''
-
-
-
-
-
 start_time = timeit.default_timer()
 base_path = "/Users/phusisian/Desktop/Senior year/SUAS/Generated Targets/BlockText 1000 Sets/Generated Targets BlockText 1000 F"
 tester = SyntheticTester(base_path + "/Images", base_path + "/Answers", 1, ".png")
@@ -58,7 +82,7 @@ print("% correct: " + str(100.0 * total_score/(5.0 * 1000.0)))
 print("num crashed: " + str(tester.get_num_crashes()))
 print("time elapsed: " + str(timeit.default_timer() - start_time))
 print("wrong score info: \n" + str(tester.get_wrong_score_info()))
-
+'''
 
 '''
 img = Image.open("/Users/phusisian/Desktop/Senior year/SUAS/Object images test/300 crop 6480x4320.jpeg").convert('RGB')

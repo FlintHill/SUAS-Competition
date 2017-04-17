@@ -19,7 +19,7 @@ def get_root_locations(arr):
             roots.append(i)
     return numpy.asarray(roots)
 
-def get_maxes(arr):
+def get_maxes_from_deriv(arr):
     roots = get_root_locations(arr)
     maxes = []
     for i in range(0, roots.shape[0]):
@@ -27,7 +27,7 @@ def get_maxes(arr):
             maxes.append(roots[i])
     return numpy.asarray(roots)
 
-def get_mins(arr):
+def get_mins_from_deriv(arr):
     roots = get_root_locations(arr)
     maxes = []
     for i in range(0, roots.shape[0]):
