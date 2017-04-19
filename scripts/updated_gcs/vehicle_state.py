@@ -44,7 +44,12 @@ class VehicleState(Location):
         """
         Return the velocity
         """
-        return self.velocity
+        magnitude = 0
+        for component in self.velocity:
+            magnitude += component**2
+        magnitude = magnitude**0.5
+
+        return magnitude
 
     def get_obstacle_in_path(self):
         """
