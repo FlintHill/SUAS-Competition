@@ -15,3 +15,4 @@ from .letter import Letter
 from .target import Target
 from .synthetic_image import SyntheticImage
 from .ImageGenerator import ImageGenerator
+from .color import *

@@ -39,36 +39,85 @@ import ImgProcessingCLI.TargetTrait.FalseCropCatcher as FalseCropCatcher
 from ImgProcessingCLI.Testing.FalseCropTester import FalseCropTester
 import numpy
 
+from ImgProcessingCLI.Runtime.RuntimeTarget import RuntimeTarget
+from ImgProcessingCLI.Runtime.CompetitionInput import CompetitionInput
+from ImgProcessingCLI.Runtime.GeoStamps import GeoStamps
+from ImgProcessingCLI.Runtime.GeoStamp import GeoStamp
+#import exifread
+from PIL import ExifTags
+import ImgProcessingCLI.KernelOperations.ScaleSpace as ScaleSpace
+import ImgProcessingCLI.KernelOperations.BlobDetect as BlobDetect
+import ImgProcessingCLI.NoiseReduction.NeighborhoodReduction as NeighborhoodReduction
+import cv2
 
-false_crop_tester = FalseCropTester("/Users/phusisian/Dropbox/SUAS/Test sets/False Positive Catcher Set", 1000, ".png", ".JPG")
 '''
-score_vals_positives = false_crop_tester.get_avg_squared_histogram_differences_of_set("positives")
-score_vals_negatives = false_crop_tester.get_avg_squared_histogram_differences_of_set("negatives")
-#print("score vals positives: ", score_vals_positives)
-#print("score vals negatives: ", score_vals_negatives)
-
-min_positive_avg_sqr = numpy.amin(score_vals_positives)
-max_positive_avg_sqr = numpy.amax(score_vals_positives)
-min_negative_avg_sqr = numpy.amin(score_vals_negatives)
-max_negative_avg_sqr = numpy.amax(score_vals_negatives)
-
-print("min positive sqr: ", min_positive_avg_sqr)
-print("max positive sqr: ", max_positive_avg_sqr)
-print("min negative sqr: ", min_negative_avg_sqr)
-print("max negative sqr: ", max_negative_avg_sqr)
-
-best_split_val = false_crop_tester.get_best_split_spot_of_avg_squared_histogram_differences(score_vals_positives, score_vals_negatives)
-print("best split val: ", best_split_val)
-
-false_crop_tester.get_entropy_at_split(score_vals_positives, score_vals_negatives, best_split_val, print_vals = True)
-'''
-
-
+false_crop_tester = FalseCropTester("/Users/phusisian/Dropbox/SUAS/Test sets/False Positive Catcher Set", 10, ".png", ".JPG")
 false_neg, false_pos = false_crop_tester.run_imgs()
 print("false negatives: ", false_neg, " false positives: ", false_pos)
+'''
 
 
 
+cv_img = cv2.imread('/Users/phusisian/Dropbox/SUAS/Test sets/Generated Targets BlockText 1000 A/Images/Generated Target 5.png')
+colors = cv_img.reshape((-1, 3))
+colors = numpy.float32(colors)
+criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 10, 1.0)
+K = 3
+ret,label,center=cv2.kmeans(colors,K,None,criteria,10,cv2.KMEANS_RANDOM_CENTERS)
+center = numpy.uint8(center)
+res = center[label.flatten()]
+res2 = res.reshape((cv_img.shape))
+
+cv2.imshow('res2',res2)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+'''cv2.imshow('dst_rt', cv_img)
+cv2.waitKey(0)
+cv2.destroyAllWindows()'''
+
+'''
+img = (Image.open("/Users/phusisian/Dropbox/SUAS/Test sets/Full Synthetic Imgs/Generated_Targets_Full/Images/0.png").convert('L')).resize((1620,1080))
+#img = GaussianBlur.get_gaussian_filtered_bw_img(img, img.load(), 5, 1)
+img_sobel = SobelEdge(img)
+grad_mag_img = img_sobel.get_gradient_mag_img()
+grad_mag_image = grad_mag_img.load()
+
+sobel_mask = Image.new('L', grad_mag_img.size)
+sobel_image = sobel_mask.load()
+for i in range(0, sobel_mask.size[0]):
+    for j in range(0, sobel_mask.size[1]):
+        if grad_mag_image[i,j] < 15:
+            sobel_image[i,j] = 255
+sobel_mask.show()
+
+grad_mag_img.show()
+
+sobel_mask = NeighborhoodReduction.get_img_with_pixels_to_neighborhood_mode(sobel_mask, sobel_image, 3)
+sobel_mask = NeighborhoodReduction.get_img_with_pixels_to_neighborhood_mode(sobel_mask, sobel_image, 3)
+sobel_mask.show()
+#CannyEdge.get_canny_img(img_sobel, (20, 40)).show()
+gradient_mags = img_sobel.get_gradient_mags()
+img = Image.fromarray(255*gradient_mags.T/numpy.amax(gradient_mags))
+img = grad_mag_img
+#img = NeighborhoodReduction.get_img_with_pixels_to_neighborhood_mode(img, img.load(), 5)
+img.show()
+start_time = timeit.default_timer()
+space, t_key = ScaleSpace.get_gray_img_to_scale_space(sobel_mask.convert('L'), sobel_mask.convert('L').load(), 30, 18)
+crops = BlobDetect.get_blob_crops_from_scale_space_imgs(sobel_mask, space, t_key, 2, 30, response_threshold = 120)
+for i in range(0, len(crops)):
+    #crops[i].show()
+    if not FalseCropCatcher.get_if_is_false_positive(crops[i], crops[i].load(), min_area = 20, max_area = 800):
+        crops[i].show()
+print("time elapsed: ", timeit.default_timer() - start_time)
+'''
+'''
+img = Image.open("/Users/phusisian/Desktop/Senior year/SUAS/Object images/300.jpg")
+base_path = "/Users/phusisian/Desktop/Senior year/SUAS/Competition Files/GENERATED FORCED WINDOW PCA"
+orientation_path = "/Users/phusisian/Desktop/Senior year/SUAS/Competition Files/GENERATED 180 ORIENTATION PCA"
+
+test_geo_stamps = GeoStamps([GeoStamp((10, 10), 500)], [GeoStamp((10, 10), 500)])
+competition_solver = CompetitionInput("/Users/phusisian/Desktop/Senior year/SUAS/Competition Files/Competition Runtime Test", ".jpeg", base_path, 20, orientation_path, 50, test_geo_stamps)
+'''
 
 
 '''
@@ -85,7 +134,8 @@ print("wrong score info: \n" + str(tester.get_wrong_score_info()))
 '''
 
 '''
-img = Image.open("/Users/phusisian/Desktop/Senior year/SUAS/Object images test/300 crop 6480x4320.jpeg").convert('RGB')
+img = Image.open("/Users/phusisian/Dropbox/SUAS/Test sets/Real Targets/Real Target 1.jpg").convert('RGB').resize((45,45), Image.BICUBIV)
+img.show()
 base_path = "/Users/phusisian/Desktop/Senior year/SUAS/Competition Files/GENERATED FORCED WINDOW PCA"
 eigenvectors = load_numpy_arr(base_path + "/Data/Eigenvectors/eigenvectors 0.npy")
 projections_path = base_path + "/Data/Projections"

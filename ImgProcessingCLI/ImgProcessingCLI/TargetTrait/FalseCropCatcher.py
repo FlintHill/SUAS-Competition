@@ -24,8 +24,10 @@ PROBABILITY_DENSITY_THRESHOLD = .12#0
 #MIN_DISTRIBUTION_PEAK = 0
 MIN_IHIST_DIR_VAL = .00002
 
-
-def get_if_is_false_positive(img, image, show = False):
+'''where the default max area is an arbitrarily large number'''
+def get_if_is_false_positive(img, image, show = False, min_area = 0, max_area = 10000000000):
+    if img.size[0] * img.size[1] < min_area or img.size[0] * img.size[1] > max_area:
+        return True
     rgbs = get_rgbs(img, image)
     mean_rgb = get_mean_rgb(rgbs)
     eigenvectors = get_eigenvectors(rgbs, mean_rgb)

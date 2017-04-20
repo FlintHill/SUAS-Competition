@@ -23,7 +23,7 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.svm import LinearSVC
 from sklearn.naive_bayes import GaussianNB
 import timeit
-
+import cv2
 import random
 
 from EigenFit.DataMine import *
@@ -44,7 +44,7 @@ class TargetTwo(object):
 
     '''note a fair margin around the target is required for some of the assumptions this class makes in order for its
     composite algorithms to function'''
-
+    '''implement the faster gaussian two pass blur if I need to cut down on run time'''
     def __init__(self, target_img_in, target_image_in, letter_categorizer_in, orientation_solver_in):
         self.target_img = target_img_in
         self.target_image = target_image_in
@@ -119,14 +119,6 @@ class TargetTwo(object):
     def init_target_shape_img(self):
         target_img_with_letter_removed = self.target_img.copy().convert('RGB')
         target_image_with_letter_removed = target_img_with_letter_removed.load()
-
-        '''letter_segment_mask_image = self.letter_segment_mask.load()
-
-        for x in range(0, target_img_with_letter_removed.size[0]):
-            for y in range(0, target_img_with_letter_removed.size[1]):
-                if letter_segment_mask_image[x,y] != 0:
-                    target_image_with_letter_removed[x,y] = (int(self.shape_rgb[0]), int(self.shape_rgb[1]), int(self.shape_rgb[2]))
-        '''
         kmeans_resized_target_img_with_letter_removed = Scale.get_img_scaled_to_one_bound(target_img_with_letter_removed, TargetTwo.KMEANS_SIDE_CONSTRAINT)
         target_background_kmeans = KMeans.init_with_img(kmeans_resized_target_img_with_letter_removed, kmeans_resized_target_img_with_letter_removed.load(), 2, TargetTwo.KMEANS_RUN_TIMES)
         color_clusters = target_background_kmeans.get_cluster_origins_int()
@@ -211,6 +203,7 @@ class TargetTwo(object):
         '''very similar colors are rounded out after kmeans. If the two kmeans colors are too close, instead round the image to the shape
         color, and the second closest possible color to the list to the shape color'''
         self.letter_segment_mask = new_letter_mask
+        self.letter_segment_mask.show()
 
 
         #smaller_letter_segment_mask = NeighborhoodReduction.get_img_with_pixels_to_neighborhood_mode(self.letter_segment_mask, self.letter_segment_mask.load(), 7)
@@ -234,7 +227,11 @@ class TargetTwo(object):
         self.letter_rgb = ImageMath.get_mean_color_excluding_transparent(letter_color_img2, letter_color_img2.load(), percent_outliers = .5)
 
 
+        '''if it chooses the same color for the letter and the shape, it chooses the second closest color for the
+        letter color'''
         self.TARGET_CHARACTER_COLOR = TargetColorReader.get_closest_target_color(self.letter_rgb)
+        if str(self.TARGET_CHARACTER_COLOR) == str(self.TARGET_SHAPE_COLOR):
+            self.TARGET_CHARACTER_COLOR = TargetColorReader.get_target_colors_sorted_by_closeness(self.letter_rgb)[1]
 
 
 

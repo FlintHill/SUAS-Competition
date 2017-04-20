@@ -8,6 +8,9 @@ def get_closest_color_from_list(list_in, color):
     sorted_colors = sorted(list_in, key=lambda check_color: get_dist_between_colors(color, check_color))
     return sorted_colors[0]
 
+def get_colors_sorted_by_proximity(list_in, color):
+    return sorted(list_in, key = lambda iter_color: get_dist_between_colors(color, iter_color))
+
 def get_img_rounded_to_colors(img, image, colors):
     img_copy = Image.new("RGB", img.size)
     image_copy = img_copy.load()
