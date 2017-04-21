@@ -27,7 +27,7 @@ setup(
 
     packages = find_packages(),
 
-    install_requires = ['numpy', 'EigenFit', 'pillow', 'matplotlib', 'sklearn'],
+    install_requires = ['numpy', 'EigenFit', 'pillow', 'matplotlib', 'sklearn', 'rawpy'],
 
     keywords = ['SUAS'],
 )
