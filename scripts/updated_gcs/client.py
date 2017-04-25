@@ -54,22 +54,15 @@ def sda_viewer_process(logger_queue, configurer, vehicle_state_data, mission_dat
     sda_viewer_server.serveforever()
     log(name, "SDA Viewer process instantiated")
 
-def target_listener(logger_queue, configurer, received_targets_array):
+def target_listener(logger_queue, configurer):
     """
     Listen for targets sent from the TK1
     """
     configurer(logger_queue)
     name = multiprocessing.current_process().name
 
-    tk1_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    log(name, "Waiting to connect to the TK1...")
-    tk1_socket.connect(TK1_ADDRESS)
-    log(name, "Connected to TK1")
-
     while True:
-        data = read_data(tk1_socket)
-
-        print(data)
+        sleep(0.5)
 
 if __name__ == '__main__':
     interop_server_client = InteropClientConverter(MSL, INTEROP_URL, INTEROP_USERNAME, INTEROP_PASSWORD)
@@ -80,7 +73,7 @@ if __name__ == '__main__':
 
     manager = multiprocessing.Manager()
     received_targets = manager.list()
-    # target_listener_process = multiprocessing.Process(target=target_listener, args=(logger_queue, logger_worker_configurer, received_targets))
+    # target_listener_process = multiprocessing.Process(target=target_listener, args=(logger_queue, logger_worker_configurer))
     # target_listener_process.start()
 
     vehicle_state_data = manager.list()
