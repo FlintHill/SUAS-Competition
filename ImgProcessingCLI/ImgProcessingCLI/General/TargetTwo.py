@@ -29,8 +29,9 @@ import random
 from EigenFit.DataMine import *
 from EigenFit.Load import *
 from EigenFit.Vector import *
-'''
-'''
+import json
+
+
 class TargetTwo(object):
     KMEANS_RUN_TIMES = 10
     TARGET_BW_BLUR_KERNEL_SIZE = 3
@@ -53,37 +54,36 @@ class TargetTwo(object):
         self.bw_target_img = self.target_img.convert('L')
         self.bw_target_image = self.bw_target_img.load()
 
-        #start_time = timeit.default_timer()
-        self.init_edge_imgs()
-        #print("edge imgs init'd in: " + str(timeit.default_timer() - start_time))
-        #start_time = timeit.default_timer()
-        self.init_color_varyer()
-        #print("color varyer init'd in: " + str(timeit.default_timer() - start_time))
-        #start_time = timeit.default_timer()
-        self.init_shape_color()
-        #print("shape color init'd in: " + str(timeit.default_timer() - start_time))
-        #start_time = timeit.default_timer()
-        self.init_target_shape_img()
-        #print("target shape img init'd in: " + str(timeit.default_timer() - start_time))
-        self.re_init_letter_mask()
-        #start_time = timeit.default_timer()
-        self.init_target_shape_edges_img()
-        #print("target shape edges init'd in: " + str(timeit.default_timer() - start_time))
-        #start_time = timeit.default_timer()
-        self.init_shape_type()
-        #print("shape type init'd in: " + str(timeit.default_timer() - start_time))
-        #start_time = timeit.default_timer()
-        self.init_target_orientation()
-        #print("target orientation init'd in: " + str(timeit.default_timer() - start_time))
-        #start_time = timeit.default_timer()
-        self.init_letter()
-        #print("letter init'd in: " + str(timeit.default_timer() - start_time))
+        self.run_method_and_time(self.init_edge_imgs, do_print = False)
+        self.run_method_and_time(self.init_color_varyer, do_print = False)
+        self.run_method_and_time(self.init_shape_color, do_print = False)
+        self.run_method_and_time(self.init_target_shape_img, do_print = False)
+        self.run_method_and_time(self.re_init_letter_mask, do_print = False)
+        self.run_method_and_time(self.init_target_shape_edges_img , do_print = False)
+        self.run_method_and_time(self.init_shape_type, do_print = False)
+        self.run_method_and_time(self.init_target_orientation, do_print = False)
+        self.run_method_and_time(self.init_letter, do_print = False)
 
+    def run_method_and_time(self, method, args = [], do_print = False):
+        start_time = timeit.default_timer()
+        method(*args)
+        if do_print:
+            print(method.__name__ , "took: ", timeit.default_timer() - start_time)
 
+    @classmethod
+    def init_with_TargetCrop(cls, target_crop, letter_categorizer_in, orientation_solver_in):
+        target_img = target_crop.get_crop_img()
+        target_image = target_img.load()
+        return TargetTwo(target_img, target_image, letter_categorizer_in, orientation_solver_in)
+
+    '''insert a method that takes a function, a message to putput, and will run that method with the arguments
+    and then print the amount of time it took'''
     def init_edge_imgs(self):
-        self.gaussian_blurred_target_img = GaussianBlur.get_gaussian_filtered_bw_img(self.bw_target_img, self.bw_target_image, TargetTwo.TARGET_BW_BLUR_KERNEL_SIZE, TargetTwo.TARGET_BW_BLUR_STD_DEV)
-        self.target_sobel_edge = SobelEdge(self.gaussian_blurred_target_img)
-        self.target_canny_edge_img = CannyEdge.get_canny_img(self.target_sobel_edge, TargetTwo.CANNY_EDGE_THRESHOLDS)
+        cv_gaussian_img = cv2.GaussianBlur(numpy.array(self.bw_target_img), (5,5), 0)
+        self.gaussian_blurred_target_img = Image.fromarray(cv_gaussian_img)
+
+        cv_canny_img = cv2.Canny(numpy.array(self.bw_target_img), TargetTwo.CANNY_EDGE_THRESHOLDS[0], TargetTwo.CANNY_EDGE_THRESHOLDS[1])
+        self.target_canny_edge_img = Image.fromarray(cv_canny_img)
 
     def init_color_varyer(self):
         self.color_varyer = ColorVaryer(self.target_img, self.target_image)
@@ -120,12 +120,29 @@ class TargetTwo(object):
         target_img_with_letter_removed = self.target_img.copy().convert('RGB')
         target_image_with_letter_removed = target_img_with_letter_removed.load()
         kmeans_resized_target_img_with_letter_removed = Scale.get_img_scaled_to_one_bound(target_img_with_letter_removed, TargetTwo.KMEANS_SIDE_CONSTRAINT)
-        target_background_kmeans = KMeans.init_with_img(kmeans_resized_target_img_with_letter_removed, kmeans_resized_target_img_with_letter_removed.load(), 2, TargetTwo.KMEANS_RUN_TIMES)
-        color_clusters = target_background_kmeans.get_cluster_origins_int()
+
+
+        colors = numpy.array(kmeans_resized_target_img_with_letter_removed).reshape((-1, 3))
+        colors = numpy.float32(colors)
+
+        criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, TargetTwo.KMEANS_RUN_TIMES, 1.0)
+        ret, labels, color_clusters = cv2.kmeans(colors, 2, None, criteria, 10, cv2.KMEANS_RANDOM_CENTERS)
+
+        new_color_clusters = []
+        for i in range(0, len(color_clusters)):
+            new_color_clusters.append((int(color_clusters[i][0]), int(color_clusters[i][1]), int(color_clusters[i][2])))
+        color_clusters = new_color_clusters
+
+
         target_cluster_color = ColorMath.get_closest_color_from_list(color_clusters, self.shape_rgb)
 
         rounded_target_img = ColorMath.get_img_rounded_to_colors(target_img_with_letter_removed, target_image_with_letter_removed, color_clusters)
-        self.background_target_img = NeighborhoodReduction.get_img_with_pixels_to_neighborhood_mode(rounded_target_img, rounded_target_img.load(), 9)
+        #start_time = timeit.default_timer()
+        '''original kernel size for neighborhood reduction was 9, but was taking a very long time. Adjusted it to 3
+        to see how it would speed up. Sped up a lot. If shape accuracy becomes significantly worse, adjust back.
+        For speed, maybe should do this on the mask rather than an rgb image?'''
+        self.background_target_img = Image.fromarray(cv2.medianBlur(numpy.array(rounded_target_img), 5))#NeighborhoodReduction.get_img_with_pixels_to_neighborhood_mode(rounded_target_img.convert('L'), rounded_target_img.convert('L').load(), 5)#9)
+        #print("time taken by neighborhood reduction: ", timeit.default_timer() - start_time)
 
         background_target_image = self.background_target_img.load()
         self.target_mask = Image.new('L', self.target_img.size)
@@ -138,6 +155,11 @@ class TargetTwo(object):
 
 
     def re_init_letter_mask(self):
+
+        '''HSV draws bounding lines around the letter -- try KMEANSing using the HSV image then convert back to RGB?
+        Should better define the true edges of shape/letter'''
+
+
         target_mask_with_margin = Image.new('L', (self.target_mask.size[0]+2, self.target_mask.size[1]+2))
         Paste.paste_img_onto_img(self.target_mask, target_mask_with_margin, offset = (1,1))
 
@@ -149,8 +171,7 @@ class TargetTwo(object):
 
         self.target_mask = ImageOps.invert(background_mask)
 
-
-        reduced_bounds_target_mask = NeighborhoodReduction.get_img_with_pixels_to_neighborhood_mode(self.target_mask, self.target_mask.load(), 9)
+        reduced_bounds_target_mask = Image.fromarray(cv2.medianBlur(numpy.array(self.target_mask), 9))#NeighborhoodReduction.get_img_with_pixels_to_neighborhood_mode(self.target_mask, self.target_mask.load(), 9)
 
         inside_shape_img = Mask.get_bmp_masked_img(reduced_bounds_target_mask, reduced_bounds_target_mask.load(), self.target_img, self.target_image)
 
@@ -176,7 +197,7 @@ class TargetTwo(object):
                 sum[i] = int(float(sum[i])/float(num_instances))
         sum = tuple(sum)
         mean_possible_letter_color = sum
-        #print("mean possible letter color is: ", mean_possible_letter_color)
+
 
         inside_shape_kmeans_colors = [(int(self.shape_rgb[0]), int(self.shape_rgb[1]), int(self.shape_rgb[2])), mean_possible_letter_color]
         letter_shape_img = ColorMath.get_img_rounded_to_colors(self.target_img, self.target_image, inside_shape_kmeans_colors)
@@ -189,33 +210,34 @@ class TargetTwo(object):
         new_letter_mask_image = new_letter_mask.load()
 
 
+
         for x in range(0, letter_shape_img.size[0]):
             for y in range(0, letter_shape_img.size[1]):
                 if letter_shape_image[x,y][3] != 0:
                     if letter_shape_image[x,y][0:3] != shape_cluster_color:
                         new_letter_mask_image[x,y] = 255
 
+
         new_letter_mask_connected_components_map = ImageMath.get_bw_connected_components_map(new_letter_mask, new_letter_mask_image)
+
         new_letter_mask_connected_components_clusters = ImageMath.convert_connected_component_map_into_clusters(new_letter_mask_connected_components_map)
+
         new_letter_mask_connected_components_clusters = sorted(new_letter_mask_connected_components_clusters, key = lambda cluster : len(cluster), reverse = True)
+
         new_letter_mask = ImageMath.get_connected_component_mask(new_letter_mask.size, new_letter_mask_connected_components_clusters[0])
+
 
         '''very similar colors are rounded out after kmeans. If the two kmeans colors are too close, instead round the image to the shape
         color, and the second closest possible color to the list to the shape color'''
         self.letter_segment_mask = new_letter_mask
-        self.letter_segment_mask.show()
-
-
-        #smaller_letter_segment_mask = NeighborhoodReduction.get_img_with_pixels_to_neighborhood_mode(self.letter_segment_mask, self.letter_segment_mask.load(), 7)
-
-
 
         letter_color_img = Mask.get_bmp_masked_img(self.letter_segment_mask, self.letter_segment_mask.load(), self.target_img, self.target_image)
         '''find a way to make sure that neighborhood reduction kernel size will never completely wipe out a letter.
         (or pare it down so much that there are very few color samples left)
         This is at risk of happening with letters that have small stroke width.'''
         letter_color_img2 = letter_color_img
-        letter_color_img2 = NeighborhoodReduction.get_img_with_pixels_to_neighborhood_mode(letter_color_img, letter_color_img.load(), 5)
+        letter_color_img2 = Image.fromarray(cv2.medianBlur(numpy.array(letter_color_img), 5))#NeighborhoodReduction.get_img_with_pixels_to_neighborhood_mode(letter_color_img, letter_color_img.load(), 5)
+
 
         '''new idea for letter color segmentation:
         use the same method as before where colors with distances above the shape color
@@ -224,83 +246,17 @@ class TargetTwo(object):
         and the shape color. Should weed out bad instances independent of one color pair?
         (i.e. white to black is harsh so the threshold is easily exceeded)'''
 
-        self.letter_rgb = ImageMath.get_mean_color_excluding_transparent(letter_color_img2, letter_color_img2.load(), percent_outliers = .5)
-
+        '''try messing around with setting percent outliers to zero'''
+        self.letter_rgb = ImageMath.get_mean_color_excluding_transparent(letter_color_img2, letter_color_img2.load(), percent_outliers = 0)
 
         '''if it chooses the same color for the letter and the shape, it chooses the second closest color for the
         letter color'''
+
         self.TARGET_CHARACTER_COLOR = TargetColorReader.get_closest_target_color(self.letter_rgb)
         if str(self.TARGET_CHARACTER_COLOR) == str(self.TARGET_SHAPE_COLOR):
             self.TARGET_CHARACTER_COLOR = TargetColorReader.get_target_colors_sorted_by_closeness(self.letter_rgb)[1]
 
-
-
-
-        '''connected components reduction may be needed to remove small noise from letter at this point'''
-
-
-
-        '''
-        inside_shape_img = Mask.get_bmp_masked_img(self.target_mask, self.target_mask.load(), self.target_img, self.target_image).resize((40,40))
-        inside_shape_image = inside_shape_img.load()
-
-        color_vectors = []
-        for x in range(0, inside_shape_img.size[0]):
-            for y in range(0, inside_shape_img.size[1]):
-                if inside_shape_image[x,y][3] != 0:
-                    color_vectors.append(inside_shape_image[x,y][0:3])
-        shape_letter_kmeans = KMeans(color_vectors, 2, 30, step = 1)
-        clusters = shape_letter_kmeans.get_cluster_origins_int()
-        letter_shape_img = ColorMath.get_img_rounded_to_colors(self.target_img, self.target_image, clusters).convert('RGBA')
-
-
-
-        letter_shape_image = letter_shape_img.load()
-        target_mask_image = self.target_mask.load()
-
-        for x in range(0, letter_shape_img.size[0]):
-            for y in range(0, letter_shape_img.size[1]):
-                if target_mask_image[x,y] == 0:
-                    letter_shape_image[x,y] = (0, 0, 0, 0)
-        shape_color_cluster = ColorMath.get_closest_color_from_list(clusters, self.shape_rgb)
-        new_target_mask = Image.new('L', self.target_mask.size)
-
-        target_mask_image = new_target_mask.load()
-
-        letter_mask = Image.new('L', self.target_mask.size)
-        letter_mask_image = letter_mask.load()
-
-        for x in range(0, self.target_mask.size[0]):
-            for y in range(0, self.target_mask.size[1]):
-                if letter_shape_image[x,y][0:3] == shape_color_cluster:
-                    target_mask_image[x,y] = 255
-                elif letter_shape_image[x,y][0:3] != shape_color_cluster:# and letter_shape_image[x,y][3] != 0:
-                    letter_mask_image[x,y] = 255
-
-        connected_components_map = ImageMath.get_bw_connected_components_map(letter_mask, letter_mask.load())
-        connected_components_clusters = ImageMath.convert_connected_component_map_into_clusters(connected_components_map)
-        letter_connected_component_cluster = sorted(connected_components_clusters, key = lambda cluster : len(cluster))[0]
-        letter_mask = ImageMath.get_connected_component_mask(letter_mask.size, letter_connected_component_cluster)
-
-
-        for x in range(0, self.target_mask.size[0]):
-            for y in range(0, self.target_mask.size[1]):
-                if letter_mask_image[x,y] != 0:
-                    target_mask_image[x,y] = 255
-
-        self.letter_segment_mask = letter_mask
-        #smaller_letter_segment_mask = NeighborhoodReduction.get_img_with_pixels_to_neighborhood_mode(self.letter_segment_mask, self.letter_segment_mask.load(), 11)
-        letter_color_img = Mask.get_bmp_masked_img(self.letter_segment_mask, self.letter_segment_mask.load(), self.target_img, self.target_image)
-        test_letter_color_img = NeighborhoodReduction.get_img_with_pixels_to_neighborhood_mode(letter_color_img, letter_color_img.load(), 5)
-
-
-
-
-
-        self.letter_rgb = ImageMath.get_mean_color_excluding_transparent(test_letter_color_img, test_letter_color_img.load())
-        self.TARGET_CHARACTER_COLOR = TargetColorReader.get_closest_target_color(self.letter_rgb)
-        '''
-
+        
 
 
 
@@ -344,6 +300,14 @@ class TargetTwo(object):
                + "alphanumeric: " + str(self.TARGET_CHARACTER) + "\n"
                + "alphanumeric_color: " + str(self.TARGET_CHARACTER_COLOR) + "\n")
         return out
+
+    def as_json(self):
+        json_out = {"orientation": self.TARGET_COMPASS_ORIENTATION,
+            "shape": self.TARGET_SHAPE,
+            "background_color": self.TARGET_SHAPE_COLOR,
+            "alphanumeric": self.TARGET_CHARACTER,
+            "alphanumeric_color": self.TARGET_CHARACTER_COLOR}
+        return json.dumps(json_out)
 
     def as_numpy(self):
         return numpy.asarray((self.TARGET_COMPASS_ORIENTATION, self.TARGET_SHAPE, self.TARGET_SHAPE_COLOR, self.TARGET_CHARACTER, self.TARGET_CHARACTER_COLOR))

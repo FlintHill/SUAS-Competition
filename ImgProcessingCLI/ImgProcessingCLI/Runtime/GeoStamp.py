@@ -4,6 +4,9 @@ class GeoStamp(object):
         self.geo_pos = geo_pos
         self.time_stamp = time_stamp
 
+    def __getitem__(self, index):
+        return self.geo_pos[index]
+
     def get_geo(self):
         return self.geo_pos
 

@@ -158,3 +158,6 @@ class SyntheticTester(object):
 
     def get_num_crashes(self):
         return self.num_crashes
+
+    def get_score_denominator(self):
+        return len(self.img_files) * 5

@@ -7,7 +7,7 @@ from PIL import ImageOps
 import timeit
 import numpy
 from math import sqrt
-import matplotlib.pyplot as plot
+#import matplotlib.pyplot as plot
 import ImgProcessingCLI.ImageOperation.Mask as Mask
 from ImgProcessingCLI.Color.ColorVaryer import ColorVaryer
 import ImgProcessingCLI.ImageOperation.ImageMath as ImageMath

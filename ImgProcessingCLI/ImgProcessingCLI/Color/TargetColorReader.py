@@ -1,10 +1,16 @@
 from ImgProcessingCLI.Color import *
 import colorsys
 from math import pi, sqrt
+import cv2
+import numpy
 
 #black used to be (20,20,20) but black was often misclassified as gray so its value was moved higher
-named_target_colors = (('black', (40, 40, 40)), ('white', (244,244,252)), ('gray', (128,128,128)), ('red', (228, 60, 76)), ('blue', (44,124,228)),  ('green', (68,180,92)), ('yellow', (252,220,52)), ('purple', (116,68,179)), ('brown', (236,204, 132)), ('orange', (236,132,52)))
+named_target_colors = (("black", (40, 40, 40)), ("white", (244,244,252)), ("gray", (128,128,128)), ("red", (228, 60, 76)), ("blue", (44,124,228)),  ("green", (68,180,92)), ("yellow", (252,220,52)), ("purple", (116,68,179)), ("brown", (236,204, 132)), ('orange', (236,132,52)))
 target_colors = ((40,40,40), (244,244,252), (128,128,128), (228, 60, 76), (44,124,228), (68,180,92), (252,220,52), (116,68,179), (236,204,132), (236,132,52))
+
+#hsv_target_colors = tuple(tuple([cv2.cvtColor( numpy.array([[numpy.asarray(target_colors[i])]]), cv2.COLOR_RGB2HSV ) for i in range(0, len(target_colors))]))#((0,0,15.7), (240, 3.2, 98.8), (0,0,50.2), )
+
+
 LIGHTNESS_WEIGHT = 1
 
 def get_closest_target_color(color):
@@ -17,6 +23,7 @@ def get_target_colors_sorted_by_closeness(color):
     for i in range(0, len(sorted_rgbs)):
         out_arr.append(named_target_colors[target_colors.index(sorted_rgbs[i])][0])
     return out_arr
+
 
 def get_closest_HSL_target_color(color):
     hsl_color = colorsys.rgb_to_hls(float(color[0])/255.0, float(color[1])/255.0, LIGHTNESS_WEIGHT * float(color[2])/255.0)

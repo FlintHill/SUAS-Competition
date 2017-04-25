@@ -39,6 +39,27 @@ def get_mean_color_excluding_transparent(img, image, percent_outliers = 0):
     return tuple(sums)'''
     return tuple(numpy.average(numpy.asarray(set), axis = 0))
 
+def get_mean_hsv_excluding_black(cv_img):
+    mean = numpy.zeros((3))
+    num_pixels = 0
+    for x in range(0, cv_img.shape[0]):
+        for y in range(0, cv_img.shape[1]):
+            if numpy.all(cv_img[x,y] != numpy.zeros((3))):
+                mean += cv_img[x,y]
+                num_pixels += 1
+    if num_pixels != 0:
+        return mean/float(num_pixels)
+    return 0
+
+def get_median_hsv_excluding_black(cv_img):
+    set = []
+    for x in range(0, cv_img.shape[0]):
+        for y in range(0, cv_img.shape[1]):
+            if numpy.all(cv_img[x,y] != numpy.zeros((3))):
+                set.append(cv_img[x,y])
+    print("median is: ", tuple(numpy.median(numpy.asarray(set), axis = 0)))
+    return tuple(numpy.median(numpy.asarray(set), axis = 0))
+
 def get_median_color_excluding_transparent(img, image):
     rgbs = [[] for i in range(0, 3)]
 

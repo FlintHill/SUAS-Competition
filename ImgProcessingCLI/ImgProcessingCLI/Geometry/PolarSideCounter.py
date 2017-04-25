@@ -2,7 +2,7 @@ import numpy
 from math import sin, cos, atan2, pi
 from ImgProcessingCLI.Geometry import Rectangle
 from ImgProcessingCLI.ImageOperation import *
-import matplotlib.pyplot as pyplot
+#import matplotlib.pyplot as pyplot
 
 class PolarSideCounter(object):
     THETA_STEP = pi/256.0

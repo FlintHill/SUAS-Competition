@@ -13,3 +13,9 @@ def str_time_to_seconds(str_time):
     total_seconds += int(second_str)
 
     return total_seconds
+
+def get_time_img_taken(img):
+    return img._getexif()[36867]
+
+def get_second_img_taken(img):
+    return str_time_to_seconds(get_time_img_taken(img))
