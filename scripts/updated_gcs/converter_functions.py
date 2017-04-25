@@ -47,7 +47,7 @@ def get_obstacle_location(obstacle):
 
     return Location(latitude, longitude, altitude)
 
-def get_mission_json(mission):
+def get_mission_json(mission, obstacles):
     """
     Convert a Mission object to a JSON format
     """
@@ -94,6 +94,22 @@ def get_mission_json(mission):
             "longitude" : search_grid_point.longitude,
             "order" : search_grid_point.order
         } for search_grid_point in mission.search_grid_points
+    ]
+    mission_in_json["stationary_obstacles"] = [
+        {
+            "latitude" : stationary_obstacle.latitude,
+            "longitude" : stationary_obstacle.longitude,
+            "cylinder_radius" : stationary_obstacle.cylinder_radius,
+            "cylinder_height" : stationary_obstacle.cylinder_height
+        } for stationary_obstacle in obstacles[0]
+    ]
+    mission_in_json["moving_obstacles"] = [
+        {
+            "altitude_msl" : moving_obstacle.altitude_msl,
+            "latitude" : moving_obstacle.latitude,
+            "longitude" : moving_obstacle.longitude,
+            "sphere_radius" : moving_obstacle.sphere_radius
+        } for moving_obstacle in obstacles[1]
     ]
 
     return mission_in_json

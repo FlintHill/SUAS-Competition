@@ -17,7 +17,7 @@ TK1_ADDRESS = ('192.168.1.6', 9001)
 
 UAV_CONNECTION_STRING = "tcp:127.0.0.1:5760"
 
-INTEROP_URL = "http://10.10.130.101:8000"
+INTEROP_URL = "http://10.10.130.100:8000"
 INTEROP_USERNAME = "Flint"
 INTEROP_PASSWORD = "2429875295"
 
@@ -114,7 +114,9 @@ if __name__ == '__main__':
     #sda_converter.set_waypoint(Location(waypoints[0].x, waypoints[0].y, waypoints[0].z))
     log(name, "SDA enabled")
     vehicle_state_data.append(get_vehicle_state(vehicle, sda_converter))
-    mission_data.append(get_mission_json(interop_server_client.get_active_mission()))
+    stationary_obstacles, moving_obstacles = interop_server_client.get_obstacles()
+    obstacles_array = [stationary_obstacles, moving_obstacles]
+    mission_data.append(get_mission_json(interop_server_client.get_active_mission(), obstacles_array))
 
     log(name, "Everything is instantiated...Beginning operation")
     #try:
@@ -124,16 +126,17 @@ if __name__ == '__main__':
         current_uav_waypoint = waypoints[current_waypoint_number]
         sda_converter.set_waypoint(Location(current_uav_waypoint.x, current_uav_waypoint.y, current_uav_waypoint.z))
 
-        interop_server_client.post_telemetry(current_location)
+        interop_server_client.post_telemetry(current_location)"""
         stationary_obstacles, moving_obstacles = interop_server_client.get_obstacles()
-        sda_converter.reset_obstacles()
+        obstacles_array = [stationary_obstacles, moving_obstacles]
+        """sda_converter.reset_obstacles()
         for stationary_obstacle in stationary_obstacles:
             sda_converter.add_obstacle(get_obstacle_location(stationary_obstacle), stationary_obstacle)
         for moving_obstacle in moving_obstacles:
             sda_converter.add_obstacle(get_obstacle_location(moving_obstacle), moving_obstacle)"""
 
         vehicle_state_data[0] = get_vehicle_state(vehicle, sda_converter)
-        mission_data[0] = get_mission_json(interop_server_client.get_active_mission())
+        mission_data[0] = get_mission_json(interop_server_client.get_active_mission(), obstacles_array)
 
         sleep(0.5)
         """if vehicle.mode.name == "GUIDED" and sda_converter.has_uav_reached_guided_waypoint():
