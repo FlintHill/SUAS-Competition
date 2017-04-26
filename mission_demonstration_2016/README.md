@@ -22,5 +22,3 @@ To run the Client script, cd into the ```gcs``` directory, then run
 ```
 python client.py
 ```
-
-## Competition Viewer
