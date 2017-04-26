@@ -1,8 +1,7 @@
 from dronekit import connect, VehicleMode
 import socket
 import multiprocessing
-import pickle
-import struct
+from datetime import datetime
 from logger import *
 from time import sleep
 from interop_client import InteropClientConverter
@@ -12,6 +11,10 @@ from sda_viewer import SDAViewSocket
 from SimpleWebSocketServer import SimpleWebSocketServer
 from vehicle_state import VehicleState
 from SDA import *
+from ImgProcessingCLI.Runtime.RuntimeTarget import RuntimeTarget
+from ImgProcessingCLI.DataMine.OrientationSolver import OrientationSolver
+from EigenFit.DataMine import Categorizer
+from ImgProcessingCLI.Runtime.GeoStamp import GeoStamp
 
 TK1_ADDRESS = ('192.168.1.6', 9001)
 
@@ -25,19 +28,9 @@ MSL = 430
 MIN_REL_FLYING_ALT = 100
 MAX_REL_FLYING_ALT = 750
 
-def read_data(connection):
-    """
-    Read a data from a socket.
-
-    @returns the data received from the socket
-    """
-    raw_msglen = connection.recv(4)
-    msglen = struct.unpack('>I', raw_msglen)[0]
-
-    data = connection.recv(msglen)
-    data = pickle.loads(data)
-
-    return data
+GENERATED_DATA_LOCATION = "/path/to/generated/data/location"
+BASE_LETTER_CATEGORIZER_PCA_PATH = "/Users/vtolpegin/Desktop/GENERATED FORCED WINDOW PCA"
+BASE_ORIENTATION_CLASSIFIER_PCA_PATH = "/Users/vtolpegin/Desktop/GENERATED 180 ORIENTATION PCA"
 
 def sda_viewer_process(logger_queue, configurer, vehicle_state_data, mission_data):
     """
@@ -54,26 +47,49 @@ def sda_viewer_process(logger_queue, configurer, vehicle_state_data, mission_dat
     sda_viewer_server.serveforever()
     log(name, "SDA Viewer process instantiated")
 
-def target_listener(logger_queue, configurer):
+def target_listener(logger_queue, configurer, timestamped_location_data_array):
     """
-    Listen for targets sent from the TK1
+    Run targets and submit them to the interoperability server
     """
     configurer(logger_queue)
     name = multiprocessing.current_process().name
 
+    interop_server_client = InteropClientConverter(MSL, INTEROP_URL, INTEROP_USERNAME, INTEROP_PASSWORD)
+
+    eigenvectors = load_numpy_arr(BASE_LETTER_CATEGORIZER_PCA_PATH + "/Data/Eigenvectors/eigenvectors 0.npy")
+    projections_path = BASE_LETTER_CATEGORIZER_PCA_PATH + "/Data/Projections"
+    mean = load_numpy_arr(BASE_LETTER_CATEGORIZER_PCA_PATH + "/Data/Mean/mean_img 0.npy")
+    num_dim = 20
+    letter_categorizer = Categorizer(eigenvectors, mean, projections_path, KMeansCompare, num_dim)
+
+    orientation_eigenvectors = load_numpy_arr(BASE_ORIENTATION_CLASSIFIER_PCA_PATH + "/Data/Eigenvectors/eigenvectors 0.npy")
+    orientation_projections_path = BASE_ORIENTATION_CLASSIFIER_PCA_PATH + "/Data/Projections"
+    orientation_mean = load_numpy_arr(BASE_ORIENTATION_CLASSIFIER_PCA_PATH + "/Data/Mean/mean_img 0.npy")
+    orientation_num_dim = 50
+    orientation_solver = OrientationSolver(orientation_eigenvectors, orientation_mean, orientation_path, orientation_num_dim)
+
     while True:
+        print(timestamped_location_data_array)
+        # Wait for SD card to be loaded
         sleep(0.5)
 
+    # Once SD card is loaded, begin processing
+    # For every image on the SD card
+    # 1. Load the image
+    # 2. Process the crops, determine the ones that are targets
+    # 3. Save the targets to GENERATED_DATA_LOCATION
+    # 4. Upload the targets to interop server
+
 if __name__ == '__main__':
+    manager = multiprocessing.Manager()
     interop_server_client = InteropClientConverter(MSL, INTEROP_URL, INTEROP_USERNAME, INTEROP_PASSWORD)
 
     logger_queue = multiprocessing.Queue(-1)
     logger_listener_process = multiprocessing.Process(target=listener_process, args=(logger_queue, logger_listener_configurer))
     logger_listener_process.start()
 
-    manager = multiprocessing.Manager()
-    received_targets = manager.list()
-    # target_listener_process = multiprocessing.Process(target=target_listener, args=(logger_queue, logger_worker_configurer))
+    timestamped_location_data_array = manager.list()
+    # target_listener_process = multiprocessing.Process(target=target_listener, args=(logger_queue, logger_worker_configurer, timestamped_location_data_array))
     # target_listener_process.start()
 
     vehicle_state_data = manager.list()
@@ -114,12 +130,13 @@ if __name__ == '__main__':
     log(name, "Everything is instantiated...Beginning operation")
     #try:
     while True:
-        """current_location = get_location(vehicle)
-        current_waypoint_number = vehicle.commands.next
+        current_location = get_location(vehicle)
+        """current_waypoint_number = vehicle.commands.next
         current_uav_waypoint = waypoints[current_waypoint_number]
         sda_converter.set_waypoint(Location(current_uav_waypoint.x, current_uav_waypoint.y, current_uav_waypoint.z))
 
         interop_server_client.post_telemetry(current_location)"""
+        timestamped_location_data_array.append(GeoStamp((current_location.get_lat(), current_location.get_lon()), datetime.now()))
         stationary_obstacles, moving_obstacles = interop_server_client.get_obstacles()
         obstacles_array = [stationary_obstacles, moving_obstacles]
         """sda_converter.reset_obstacles()
