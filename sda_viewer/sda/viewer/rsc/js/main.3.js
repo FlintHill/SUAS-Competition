@@ -16,6 +16,7 @@
  * @author		James Villemarette
  * @version		3.0
  * @since		2016-04-21
+ * @see			readme.md
  */
 
 class EssentialsContainer {
@@ -440,6 +441,8 @@ class WebsocketHandler {
 	 *
 	 * This is a looping function that continously sends the String "update" to
 	 * the websocket in order to provoke a response from the websocket server.
+	 *
+	 * @returns		nothing.
 	 */
 	static update() {
 
@@ -511,6 +514,8 @@ class WebsocketControls {
 	 * doConnect()
 	 *
 	 * Launches a connection to the websocket.
+	 *
+	 * @returns		nothing.
 	 */
 	static doConnect() {
 
@@ -572,7 +577,9 @@ class WebsocketControls {
 }
 
 // icons
-iS = [32, 32]; iA = [iS[0]/2, iS[1]]; pA = [0, iS[0]];
+var iS = [32, 32]; 
+var iA = [iS[0]/2, iS[1]]; 
+var pA = [0, iS[0]];
 
 // TODO: Add retina version of markers
 var Icon_drone = L.icon({
@@ -581,30 +588,35 @@ var Icon_drone = L.icon({
 	iconAnchor: iA,
 	popupAnchor: pA
 });
+
 var Icon_markerRed = L.icon({
 	iconUrl: 'rsc/img/icons/128-map-marker-red.png',
 	iconSize: iS,
 	iconAnchor: iA,
 	popupAnchor: pA
 });
+
 var Icon_markerBlue = L.icon({
 	iconUrl: 'rsc/img/icons/128-map-marker-blue.png',
 	iconSize: iS,
 	iconAnchor: iA,
 	popupAnchor: pA
 });
+
 var Icon_markerGreen = L.icon({
 	iconUrl: 'rsc/img/icons/128-map-marker-green.png',
 	iconSize: iS,
 	iconAnchor: iA,
 	popupAnchor: pA
 });
+
 var Icon_markerPurple = L.icon({
 	iconUrl: 'rsc/img/icons/128-map-marker-purple.png',
 	iconSize: iS,
 	iconAnchor: iA,
 	popupAnchor: pA
 });
+
 var Icon_markerYellow = L.icon({
 	iconUrl: 'rsc/img/icons/128-map-marker-yellow.png',
 	iconSize: iS,
@@ -618,3 +630,5 @@ var Icon_searchPoint = L.icon({
 	iconAnchor: [iS[0]/2, iS[1]/2],
 	popupAnchor: [0, 32]
 });
+
+
