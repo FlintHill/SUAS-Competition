@@ -307,6 +307,8 @@ var websocketRequestNum = 0;
 class WebsocketHandler {
 
 	/**
+	 * WebsocketHandler class
+	 *
 	 * Handles the connection to the websocket.
 	 *
 	 * Is used by class WebsocketControls.
@@ -315,7 +317,9 @@ class WebsocketHandler {
 	/**
 	 * init()
 	 *
-	 * Initializes a connection to the websocket. If the connection is successful
+	 * Initializes a connection to the websocket.
+	 *
+	 * @returns		nothing.
 	 */
 	static init() {
 
@@ -325,6 +329,7 @@ class WebsocketHandler {
 		websocket.onopen = function(evt) {
 			
 			// when a connection with the websocket is initially established
+			
 			console.log("OK: Websocket connection with " + websocketEndpointURL + " is successful.");
 
 			if(websocket.readyState === websocket.OPEN) {
@@ -356,7 +361,10 @@ class WebsocketHandler {
 				var flightData = [ "alt", "dir", "speed", "velocity" ];
 
 				for(var i = 0; i < flightData.length; i++)
-					$("#" + flightData[i]).html((data[flightData[i]]).toFixed(2));
+					if(flightData[i] == "dir")
+						$("#" + flightData[i]).html((data[flightData[i]]).toFixed(2) + "&deg;");
+					else
+						$("#" + flightData[i]).html((data[flightData[i]]).toFixed(2));
 
 				// drone pos
 				leafletData.drone_pos_point = 
@@ -387,22 +395,20 @@ class WebsocketHandler {
 			// LINE: fly zone
 			leafletData.fly_zone_line = DataConverters.line(data["fly_zones"][0]["boundary_pts"].concat(data["fly_zones"][0]["boundary_pts"][0]), "red", false, "", "");
 
-			// air drop pos
+			// MARKER: air drop pos
 			leafletData.air_drop_pos_point = 
 				DataConverters.marker(data["air_drop_pos"], "Air Drop Position", Icon_markerRed);
-			// emergent last known pos
+			//  MARKER: emergent last known pos
 			leafletData.emergent_last_know_pos_point = 
 				DataConverters.marker(data["emergent_last_known_pos"], "Emergent Target Last Known Position", Icon_markerBlue);
-			// air drop pos
+			//  MARKER: air drop pos
 			leafletData.home_pos_point = 
 				DataConverters.marker(data["home_pos"], "Home", Icon_markerGreen);
-			// air drop pos
+			//  MARKER: off axis target pos
 			leafletData.off_axis_target_pos_point = 
 				DataConverters.marker(data["off_axis_target_pos"], "Off Axis Target Position", Icon_markerRed);
 
-			/*obstacles_circles: [],*/
-
-			// obstacles
+			// CIRCLES: obstacles
 				// stationary obstacles
 				leafletData.obstacles_circles =
 					DataConverters.circle(data["stationary_obstacles"], false, -1, "red", "Stationary Obstacle");
