@@ -8,10 +8,143 @@ import ImgProcessingCLI.TargetTrait.FalseCropCatcher as FalseCropCatcher
 from math import sqrt
 import ImgProcessingCLI.ImageOperation.Crop as Crop
 from ImgProcessingCLI.Geometry.Rectangle import Rectangle
-
-DOWNSCALE_CONSTRAINT = 800
-VARIANCE_THRESHOLD = 2000
+import timeit
+DOWNSCALE_CONSTRAINT = 600
+LOCAL_VARIANCE_THRESHOLD = 2000
+BILAT_FILTER_THRESHOLDS = (15, 40, 40)
+LOCAL_VARIANCE_KERNEL_SIZE = 3
+LOCAL_VARIANCE_KERNEL_MARGIN = (LOCAL_VARIANCE_KERNEL_SIZE-1)//2
 MAX_SQUARE_CROP_BOUNDS = 200*sqrt(2)
+'''small margin of error added'''
+'''something is wrong with min_max_crop_area_inches, can't figure out what.
+Probably just bad ppsi numbers being fed in'''
+MIN_MAX_CROP_AREA_INCHES = (1, 100000000)#(300, 14400)
+CONNECTED_COMPONENT_SIZE_THRESHOLDS = (20, 200)#used to be (38, 200)
+CROP_MARGIN_INCHES = 6
+'''sometimes there are cases where the same crop can be created
+multiple times. In order to prevent this, crops with midpoints
+that are within this variable away from each other (in inches)
+are removed'''
+MIN_CROP_DIST_AWAY = 120
+
+def get_target_crops_from_img2(parent_img, geo_stamps, ppsi, get_centers = False):
+    downsized_parent_image = numpy.array(Scale.get_img_scaled_to_one_bound(parent_img, DOWNSCALE_CONSTRAINT).convert('RGB'))
+
+    downscale_multiplier = float(DOWNSCALE_CONSTRAINT)/float(parent_img.size[0])
+    upscale_multiplier = 1.0/downscale_multiplier
+
+    bilat_downsized_parent_image = cv2.bilateralFilter(downsized_parent_image, BILAT_FILTER_THRESHOLDS[0], BILAT_FILTER_THRESHOLDS[1], BILAT_FILTER_THRESHOLDS[2])
+    local_variance_image = create_local_variance_image(bilat_downsized_parent_image)
+
+    thresholded_local_variance_img = create_thresholded_local_variance_img(local_variance_image)
+    connected_components_map = cv2.connectedComponents(numpy.uint8(numpy.array(thresholded_local_variance_img).T), connectivity = 4)
+    connected_components_map = connected_components_map[1]
+
+    connected_components = ImageMath.convert_connected_component_map_into_clusters(connected_components_map)
+    crop_masks = []
+    for i in range(0, len(connected_components)):
+        if len(connected_components[i]) > CONNECTED_COMPONENT_SIZE_THRESHOLDS[0] and len(connected_components[i]) < CONNECTED_COMPONENT_SIZE_THRESHOLDS[1]:
+            crop_masks.append(ImageMath.get_connected_component_mask(thresholded_local_variance_img.size, connected_components[i]))
+    #new_img = parent_img.crop((100,100,200,200))
+    color_target_rects = []
+    pixel_crop_margin = int(float(CROP_MARGIN_INCHES) / sqrt(ppsi))+1
+    for i in range(0, len(crop_masks)):
+        mask_bounding_rect = Crop.get_bw_img_bounds(crop_masks[i], crop_masks[i].load())
+        '''for some reason adding a crop margin to the right and bottom edge to the crop requires more than just
+        2* the crop margin. The *3 is to mitigate this, and seems to work'''
+        parent_img_bounding_rect = Rectangle(int(upscale_multiplier * mask_bounding_rect.get_x()) - pixel_crop_margin, int(upscale_multiplier * mask_bounding_rect.get_y()) - pixel_crop_margin, int(upscale_multiplier * mask_bounding_rect.get_width()) + (3 * pixel_crop_margin), int(upscale_multiplier * mask_bounding_rect.get_height()) + (3 * pixel_crop_margin))
+        #append_img = Crop.get_img_cropped_to_bounds(parent_img, parent_img_bounding_rect)
+        crop_midpoint = parent_img_bounding_rect.get_center()
+        color_target_rects.append((crop_midpoint, parent_img_bounding_rect))
+
+    removal_start_time = timeit.default_timer()
+
+    remove_duplicate_imgs_by_proximity(color_target_rects, ppsi)
+    remove_crops_by_area(color_target_rects, ppsi)
+
+    color_target_crops = []
+    for i in range(0, len(color_target_rects)):
+        color_target_crops.append((color_target_rects[i][0], Crop.get_img_cropped_to_bounds(parent_img, color_target_rects[i][1])))
+
+    remove_crops_with_false_crop_catcher(color_target_crops)
+
+    if get_centers:
+        centers = []
+        for i in range(0, len(color_target_crops)):
+            centers.append(color_target_rects[i][1].get_center())
+        return centers
+
+    '''further improvement ideas:
+    kmeans to three, then sum the distances from each colors and set a threshold that will
+    eliminate images whose kmeans clusters are fairly close to each other (less likely to
+    hold a target)'''
+    target_crops = []
+    for i in range(0, len(color_target_crops)):
+        target_crops.append(TargetCrop(parent_img, color_target_crops[i][1], geo_stamps, color_target_crops[i][0], ppsi))
+    return target_crops
+
+
+
+
+
+
+def remove_duplicate_imgs_by_proximity(color_target_crops, ppsi):
+    min_pixel_distance_away = float(MIN_CROP_DIST_AWAY)/sqrt(ppsi)
+    i = 0
+    while i < len(color_target_crops):
+        sorted_color_targets_by_proximity = sorted(color_target_crops, key = lambda crop : numpy.linalg.norm(crop[0]-color_target_crops[i][0]))
+        '''the second instance from the sorted list will be compared to since
+        the first one will always be the crop to which we are comparing'''
+        smallest_dist = numpy.linalg.norm(sorted_color_targets_by_proximity[1][0] - color_target_crops[i][0])
+        if smallest_dist < min_pixel_distance_away:
+            area_iter = color_target_crops[i][1].get_width() * color_target_crops[i][1].get_height()
+            area_compare = sorted_color_targets_by_proximity[1][1].get_width() * sorted_color_targets_by_proximity[1][1].get_height()
+            if area_iter < area_compare:
+                del color_target_crops[i]
+            else:
+                i += 1
+        else:
+            i += 1
+
+def remove_crops_by_area(color_target_crops, ppsi):
+    i = 0
+    while i < len(color_target_crops):
+        pixel_area = color_target_crops[i][1].get_width() * color_target_crops[i][1].get_height()#color_target_crops[i][1].size[0] * color_target_crops[i][1].size[1]
+        sqr_inch_area = float(pixel_area)/ppsi
+        if not(sqr_inch_area > MIN_MAX_CROP_AREA_INCHES[0] and sqr_inch_area < MIN_MAX_CROP_AREA_INCHES[1]):
+            del color_target_crops[i]
+        else:
+            i += 1
+
+def remove_crops_with_false_crop_catcher(color_target_crops):
+    i = 0
+    while i < len(color_target_crops):
+        is_false_positive = FalseCropCatcher.get_if_is_false_positive(color_target_crops[i][1], color_target_crops[i][1].load())
+        if is_false_positive:
+            del color_target_crops[i]
+        else:
+            i+=1
+
+def create_local_variance_image(bilat_downsized_parent_image):
+    local_variance_image = numpy.zeros((bilat_downsized_parent_image.shape[0], bilat_downsized_parent_image.shape[1]))
+    for x in range(LOCAL_VARIANCE_KERNEL_MARGIN, local_variance_image.shape[0] - LOCAL_VARIANCE_KERNEL_MARGIN):
+        for y in range(LOCAL_VARIANCE_KERNEL_MARGIN, local_variance_image.shape[1] - LOCAL_VARIANCE_KERNEL_MARGIN):
+            window_arr = bilat_downsized_parent_image[x - LOCAL_VARIANCE_KERNEL_MARGIN : x + LOCAL_VARIANCE_KERNEL_MARGIN + 1, y - LOCAL_VARIANCE_KERNEL_MARGIN : y + LOCAL_VARIANCE_KERNEL_MARGIN + 1]
+            mean, std_dev = cv2.meanStdDev(window_arr)
+            local_variance_image[x,y] = numpy.linalg.norm(std_dev)#**2
+    return numpy.square(local_variance_image)
+
+def create_thresholded_local_variance_img(local_variance_image):
+    image = numpy.zeros((local_variance_image.shape[0], local_variance_image.shape[1]))
+    for x in range(0, local_variance_image.shape[0]):
+        for y in range(0, local_variance_image.shape[1]):
+            if local_variance_image[x,y] > LOCAL_VARIANCE_THRESHOLD:
+                image[x,y] = 255
+    return Image.fromarray(image)
+
+
+
+
 
 def get_target_crops_from_img(img, geo_stamps, ppsi):
     '''takes the full image, geostamps, and ppsi and finds the targets,
@@ -34,32 +167,14 @@ def get_target_crops_from_img(img, geo_stamps, ppsi):
     kernel_size = 3
     kernel_margin = (kernel_size - 1)//2
     variance_map = numpy.zeros(img.size)
-    '''
-    def get_var_in_kernel(image1, xy, kernel_size):
-        kernel_margin = (kernel_size-1)//2
-        colors = []
-        for x in range(xy[0]-kernel_margin, xy[0]+kernel_margin):
-            for y in range(xy[1]-kernel_margin, xy[1]+kernel_margin):
-                colors.append(image1[x,y])
-        colors = numpy.asarray(colors)
-        #print("colors: ", colors)
-        return numpy.linalg.norm(numpy.var(colors, axis = 1))
 
-    var_img = numpy.zeros((image.shape[0], image.shape[1]))
-    for x in range(kernel_margin, image.shape[0]-kernel_margin):
-        for y in range(kernel_margin, image.shape[1]-kernel_margin):
-            var_img[x,y] = get_var_in_kernel(image, (x,y), kernel_size)
-        print("at x: ", x)
-    '''
 
     var_img = numpy.zeros((image.shape[0], image.shape[1]))
     for x in range(kernel_margin, var_img.shape[0]-kernel_margin):
         for y in range(kernel_margin, var_img.shape[1]-kernel_margin):
             sub_arr = image[x-kernel_margin:x+kernel_margin+1, y-kernel_margin:y+kernel_margin+1]
 
-            #print("sub arr shape: ", sub_arr.shape)
             mean, std_dev = (cv2.meanStdDev(sub_arr))
-            #print("std dev: ", std_dev)
             '''for some reason porting to this hasn't been the same as it functioned before'''
             var_img[x,y] = numpy.linalg.norm(std_dev)**2
     Image.fromarray(255*var_img/numpy.amax(var_img)).show()
@@ -110,8 +225,6 @@ def get_target_crops_from_img(img, geo_stamps, ppsi):
         bilat_start_x = crop_img_mean_pixel[0]-(100 * (1.0/resize_ratio))
         bilat_start_y = crop_img_mean_pixel[1]-(100 * (1.0/resize_ratio))
         bilat_bounding_rect = Crop.get_bw_img_bounds(bilat_crop_canny_img, bilat_crop_canny_img.load())
-        #bounding_rect = Rectangle(bilat_start_x + bilat_bounding_rect.get_x(), bilat_start_y + bilat_bounding_rect.get_y(), bilat_bounding_rect.get_width(), bilat_bounding_rect.get_height())
-        #print("bounding rect: ", bounding_rect)
         bounding_rect = Crop.get_bw_img_bounds(crop_img, crop_img.load())
         bounding_rect.set_x(int(bounding_rect.get_x() * resize_ratio) - crop_margin)
         bounding_rect.set_y(int(bounding_rect.get_y() * resize_ratio) - crop_margin)
@@ -125,7 +238,7 @@ def get_target_crops_from_img(img, geo_stamps, ppsi):
     min_dist_threshold = 15
 
     min_area = 1600
-    max_area = 48400
+    max_area = 48400*3
     i = 0
     while i < len(color_crops):
         sorted_crops = sorted(color_crops, key = lambda crop : numpy.linalg.norm(crop[0]-color_crops[i][0]))
@@ -136,7 +249,6 @@ def get_target_crops_from_img(img, geo_stamps, ppsi):
             else:
                 i+=1
         else:
-
             i+=1
 
     i = 0
@@ -150,6 +262,7 @@ def get_target_crops_from_img(img, geo_stamps, ppsi):
     i = 0
     KMEANS_RUN_TIMES = 10
     MIN_TOTAL_CLUSTER_DISTANCE_SUM = 370
+    '''maybe, instead of summing the distance, use the area of the triangle that the three points make and threshold that'''
     while i < len(color_crops):
         #print('color crops[i][1]: ', color_crops[i][1])
         colors = numpy.array(color_crops[i][1].convert('RGB')).reshape((-1, 3))

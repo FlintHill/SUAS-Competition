@@ -81,6 +81,9 @@ class Rectangle(object):
     def get_width(self):
         return self.width
 
+    def get_center(self):
+        return numpy.array([self.x + self.width//2, self.y + self.height//2])
+
     def set_width(self, width_in):
         self.width = width_in
 

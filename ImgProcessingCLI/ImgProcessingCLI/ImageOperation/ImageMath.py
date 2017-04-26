@@ -124,12 +124,15 @@ def get_bw_connected_components_map(img, image):
     return connected_components_map
 
 def convert_connected_component_map_into_clusters(connected_components_map):
+
     num_connected_components = numpy.amax(connected_components_map)
     connected_component_pixels = [[] for i in range(0, num_connected_components)]
+
     for x in range(0, connected_components_map.shape[0]):
         for y in range(0, connected_components_map.shape[1]):
             if connected_components_map[x,y] != 0:
                 connected_component_pixels[int(connected_components_map[x,y]-1)].append((x,y))
+    
     return connected_component_pixels
 
 def get_connected_component_mask(dim, connected_component):

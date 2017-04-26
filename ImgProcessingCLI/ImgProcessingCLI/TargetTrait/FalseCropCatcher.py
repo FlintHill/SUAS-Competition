@@ -6,8 +6,8 @@ import matplotlib.pyplot as plt
 from sklearn.linear_model import LogisticRegression
 from math import sqrt, pi, exp
 
-BINS = 100#100
-SMOOTH_WINDOW = 25#20#50
+BINS = 100
+SMOOTH_WINDOW = 25
 DIR_SMOOTH_WINDOW = 10
 '''was trained using many generated images to find a good split value
 normal distribution differences below this are false positives (contain no targets)
@@ -102,6 +102,7 @@ def get_normal_distribution_estimation(i_hist, i_projections):
     mean = numpy.argmax(i_hist)
     std_dev = numpy.std(i_projections, dtype = numpy.float64)
     out_arr = numpy.zeros((i_hist.shape[0]))
+    '''can divide by zero sometimes?'''
     base = 1.0/(sqrt(2.0 * pi * std_dev**2))
     for i in range(0, out_arr.shape[0]):
         index_val = base * exp(- (float(i - mean)**2)/(2.0 * std_dev**2))

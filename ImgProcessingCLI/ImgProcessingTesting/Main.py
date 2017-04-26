@@ -40,7 +40,6 @@ from ImgProcessingCLI.Testing.FalseCropTester import FalseCropTester
 import numpy
 
 from ImgProcessingCLI.Runtime.RuntimeTarget import RuntimeTarget
-from ImgProcessingCLI.Runtime.CompetitionInput import CompetitionInput
 from ImgProcessingCLI.Runtime.GeoStamps import GeoStamps
 from ImgProcessingCLI.Runtime.GeoStamp import GeoStamp
 #import exifread
@@ -54,6 +53,7 @@ import rawpy
 from ImgProcessingCLI.Runtime.TargetCrop import TargetCrop
 from ImgProcessingCLI.Runtime.RuntimeTarget import RuntimeTarget
 import ImgProcessingCLI.Runtime.TargetCropper as TargetCropper
+from ImgProcessingCLI.Testing.CropTester import CropTester
 
 
 
@@ -88,7 +88,7 @@ print("wrong score info: \n" + str(tester.get_wrong_score_info()))
 
 
 
-
+'''
 path = '/Users/phusisian/Dropbox/SUAS/Test sets/Crisp Real Flight Images/Crisp Img 1.SRW'
 raw = rawpy.imread(path)
 rgb = raw.postprocess()
@@ -97,15 +97,28 @@ rgb = raw.postprocess()
 
 img = Image.fromarray(rgb).convert('RGB')#Image.open("/Users/phusisian/Dropbox/SUAS/Test sets/Crisp Real Flight Images/Crisp Img 1.SRW").convert('RGB')
 #img.show()
-img = Image.open("/Users/phusisian/Dropbox/SUAS/Test sets/False Positive Catcher Set/False Positives/FP1.JPG")
+'''
+
+start_time = timeit.default_timer()
+crop_tester = CropTester("/Users/phusisian/Dropbox/SUAS/Test sets/Full Synthetic Imgs/Generated_Targets_Full", ".png")
+pos, false_neg, missing = crop_tester.test_set(250)
+print("final scores: \n positives: ", pos, ", false negatives: ", false_neg, ", missing: ", missing)
+print("time taken for crop tester to run: ", timeit.default_timer() - start_time)
+
+
+
+
+'''
+img = Image.open("/Users/phusisian/Dropbox/SUAS/Test sets/Full Synthetic Imgs/Generated_Targets_Full/Images/10.png")
 
 test_geo_stamps = GeoStamps([GeoStamp((10, 10), 500), GeoStamp((10, 10), 500)])
 #img = Image.open("/Users/phusisian/Dropbox/SUAS/Test sets/Full Synthetic Imgs/Generated_Targets_Full/Images/7.png")#("/Users/phusisian/Dropbox/SUAS/Test sets/False Positive Catcher Set/False Positives/FP2.JPG")#
 img.show()
-target_crops = TargetCropper.get_target_crops_from_img(img, test_geo_stamps, 3.567)
+target_crops = TargetCropper.get_target_crops_from_img2(img, test_geo_stamps, 3.567)
 for i in range(0, len(target_crops)):
     target_crops[i].get_crop_img().show()
-
+'''
+'''
 base_path = "/Users/phusisian/Desktop/Senior year/SUAS/Competition Files/GENERATED FORCED WINDOW PCA"
 eigenvectors = load_numpy_arr(base_path + "/Data/Eigenvectors/eigenvectors 0.npy")
 projections_path = base_path + "/Data/Projections"
@@ -138,7 +151,7 @@ for i in range(0, len(target_crops)):
     append_runtime_target = RuntimeTarget(target_crops[i], letter_categorizer, orientation_solver)
     print("target ", i, ": ", append_runtime_target)
     runtime_targets.append(append_runtime_target)
-
+'''
 
 
 #target = RuntimeTarget(target_crop, letter_categorizer, orientation_solver)#TargetTwo.init_with_TargetCrop(target_crop, letter_categorizer, orientation_solver)
