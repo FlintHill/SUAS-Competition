@@ -1,4 +1,4 @@
-# SDA VIEWER
+# SDA Viewer
 
 This page details the setup, function, and operation of the Sense, Detect, and Avoid viewer.
 
@@ -21,11 +21,12 @@ This is used by Flint Hill's Animus Ferus Team in the AUVSI SUAS Competition.
 
 The rough instructions on how to start up and configure the viewer are detailed below:
 
-1. Download and install:
+1. Download and install into the root directory, `C:/` (preferrably in 64-bit, if using a 64-bit OS):
 	- Apache 2.4
 	- PHP 7
 	- MySQL
-	- 
+2. Configure the Apache Server:
+	- Edit `Apache24/bin/httpd.conf`, in `<Directory C:/Apache24/htdocs>` field to `Allow override`.
 
 
 ### Interop. Server Specification
@@ -33,8 +34,6 @@ The rough instructions on how to start up and configure the viewer are detailed 
 This section details the exact information retrieved from the AUVSI SUAS' Interoperability Server, based off the specifications that they detail here: 
 
 http://auvsi-suas-competition-interoperability-system.readthedocs.io/en/latest/specification.html
-
-
 
 ### WebSocket Server Specification
 
@@ -47,15 +46,69 @@ An **example of the response** that a websocket might return is displayed below:
 
 ```
 {
-    "alt": 100,
-    "dir": 123.45,
-    "speed": 0.0,
-    "lat": 38.870373038,
-    "long": -77.319760077
+    // "topical" information (drone data)
+    "alt":0.00,
+    "dir":3,
+    "speed":0.0,
+    "velocity":0.0316227766017,
+    "lat":38.870304,
+    "long":-77.321404,
+	
+    // interop. server info (obstacles, points, flyzones, etc.)
+    "0":{
+        "stationary_obstacles":[
+            {
+                "latitude":38.87152778,
+                "cylinder_height":780.0,
+                "cylinder_radius":50.0,
+                "longitude":-77.32138889
+            }
+        ],
+        "moving_obstacles":[ ... ],
+        "fly_zones":[
+            {
+                "altitude_msl_max":835.0,
+				"altitude_msl_min":530.0
+                "boundary_pts":[
+                    {
+                        "latitude":38.87291667,
+                        "order":1,
+                        "longitude":-77.32208333
+                    },
+                    ...
+                ],
+            }
+        ],
+        "mission_waypoints":[
+            {
+                "latitude":38.8725,
+                "altitude_msl":780.0,
+                "order":12,
+                "longitude":-77.32083333
+            },
+            ...
+        ],
+        "search_grid_points":[
+            {
+                "latitude":38.87263889,
+                "altitude_msl":430.0,
+                "order":8,
+                "longitude":-77.32208333
+            },
+            ...
+        ],
+		"off_axis_target_pos":{
+            "latitude":38.87069444,
+            "longitude":-77.32152778
+        },
+        "emergent_last_known_pos":{ ... },
+        "home_pos":{ ... },
+        "air_drop_pos":{ .. }
+    }
 }
 ```
 
-**Note:** The the response is just a simple collection of JSON elements, not an array.
+**Note:** This example response is also available in the same directory as this readme, labeled `data.json`. The JSON data has been reorganized here for logical ordering and brevity.
 
 The information, mych like the example response above, is retrieved after a dummy message is sent to the websocket, where the websocket then returns the information immediately afterwards.
 
