@@ -13,8 +13,10 @@ from vehicle_state import VehicleState
 from SDA import *
 from ImgProcessingCLI.Runtime.RuntimeTarget import RuntimeTarget
 from ImgProcessingCLI.DataMine.OrientationSolver import OrientationSolver
+from ImgProcessingCLI.DataMine import KMeansCompare
 from EigenFit.DataMine import Categorizer
 from ImgProcessingCLI.Runtime.GeoStamp import GeoStamp
+from EigenFit.Load import *
 
 TK1_ADDRESS = ('192.168.1.6', 9001)
 
@@ -31,6 +33,8 @@ MAX_REL_FLYING_ALT = 750
 GENERATED_DATA_LOCATION = "/path/to/generated/data/location"
 BASE_LETTER_CATEGORIZER_PCA_PATH = "/Users/vtolpegin/Desktop/GENERATED FORCED WINDOW PCA"
 BASE_ORIENTATION_CLASSIFIER_PCA_PATH = "/Users/vtolpegin/Desktop/GENERATED 180 ORIENTATION PCA"
+
+SD_CARD_NAME = "NX500"
 
 def sda_viewer_process(logger_queue, configurer, vehicle_state_data, mission_data):
     """
@@ -56,21 +60,35 @@ def target_listener(logger_queue, configurer, timestamped_location_data_array):
 
     interop_server_client = InteropClientConverter(MSL, INTEROP_URL, INTEROP_USERNAME, INTEROP_PASSWORD)
 
+    log(name, "Instantiating letter categorizer")
     eigenvectors = load_numpy_arr(BASE_LETTER_CATEGORIZER_PCA_PATH + "/Data/Eigenvectors/eigenvectors 0.npy")
     projections_path = BASE_LETTER_CATEGORIZER_PCA_PATH + "/Data/Projections"
     mean = load_numpy_arr(BASE_LETTER_CATEGORIZER_PCA_PATH + "/Data/Mean/mean_img 0.npy")
     num_dim = 20
     letter_categorizer = Categorizer(eigenvectors, mean, projections_path, KMeansCompare, num_dim)
+    log(name, "Letter categorizer instantiated successfully")
 
+    log(name, "Instantiating orientation solver")
     orientation_eigenvectors = load_numpy_arr(BASE_ORIENTATION_CLASSIFIER_PCA_PATH + "/Data/Eigenvectors/eigenvectors 0.npy")
     orientation_projections_path = BASE_ORIENTATION_CLASSIFIER_PCA_PATH + "/Data/Projections"
     orientation_mean = load_numpy_arr(BASE_ORIENTATION_CLASSIFIER_PCA_PATH + "/Data/Mean/mean_img 0.npy")
     orientation_num_dim = 50
-    orientation_solver = OrientationSolver(orientation_eigenvectors, orientation_mean, orientation_path, orientation_num_dim)
+    orientation_solver = OrientationSolver(orientation_eigenvectors, orientation_mean, BASE_ORIENTATION_CLASSIFIER_PCA_PATH, orientation_num_dim)
+    log(name, "Orientation solver instantiated")
 
+    sd_path = os.path.join("/media", SD_CARD_NAME)
+    gps_coords = []
+    gps_update_index = 0
     while True:
-        print(timestamped_location_data_array)
+        if len(timestamped_location_data_array) != 0:
+            if timestamped_location_data_array[0]["index"] != gps_update_index:
+                gps_coords.append(timestamped_location_data_array[0]["geo_stamp"])
+                gps_update_index += 1
+
         # Wait for SD card to be loaded
+        if os.path.exists(sd_path):
+            break
+
         sleep(0.5)
 
     # Once SD card is loaded, begin processing
@@ -79,6 +97,7 @@ def target_listener(logger_queue, configurer, timestamped_location_data_array):
     # 2. Process the crops, determine the ones that are targets
     # 3. Save the targets to GENERATED_DATA_LOCATION
     # 4. Upload the targets to interop server
+    print(os.listdir(sd_path))
 
 if __name__ == '__main__':
     manager = multiprocessing.Manager()
@@ -89,8 +108,8 @@ if __name__ == '__main__':
     logger_listener_process.start()
 
     timestamped_location_data_array = manager.list()
-    # target_listener_process = multiprocessing.Process(target=target_listener, args=(logger_queue, logger_worker_configurer, timestamped_location_data_array))
-    # target_listener_process.start()
+    target_listener_process = multiprocessing.Process(target=target_listener, args=(logger_queue, logger_worker_configurer, timestamped_location_data_array))
+    target_listener_process.start()
 
     vehicle_state_data = manager.list()
     mission_data = manager.list()
@@ -122,6 +141,12 @@ if __name__ == '__main__':
     sda_converter.set_waypoint(Location(38.8703041, -77.3214035, 100))
     #sda_converter.set_waypoint(Location(waypoints[0].x, waypoints[0].y, waypoints[0].z))
     log(name, "SDA enabled")
+    gps_update_index = 0
+    current_location = get_location(vehicle)
+    timestamped_location_data_array.append({
+        "index" : gps_update_index,
+        "geo_stamp" : GeoStamp((current_location.get_lat(), current_location.get_lon()), datetime.now())
+    })
     vehicle_state_data.append(get_vehicle_state(vehicle, sda_converter))
     stationary_obstacles, moving_obstacles = interop_server_client.get_obstacles()
     obstacles_array = [stationary_obstacles, moving_obstacles]
@@ -136,7 +161,11 @@ if __name__ == '__main__':
         sda_converter.set_waypoint(Location(current_uav_waypoint.x, current_uav_waypoint.y, current_uav_waypoint.z))
 
         interop_server_client.post_telemetry(current_location)"""
-        timestamped_location_data_array.append(GeoStamp((current_location.get_lat(), current_location.get_lon()), datetime.now()))
+        gps_update_index += 1
+        timestamped_location_data_array[0] = {
+            "index" : gps_update_index,
+            "geo_stamp" : GeoStamp((current_location.get_lat(), current_location.get_lon()), datetime.now())
+        }
         stationary_obstacles, moving_obstacles = interop_server_client.get_obstacles()
         obstacles_array = [stationary_obstacles, moving_obstacles]
         """sda_converter.reset_obstacles()
