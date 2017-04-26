@@ -1,20 +1,24 @@
-SDA VIEWER
-======================
+# SDA VIEWER
+
+This page details the setup, function, and operation of the Sense, Detect, and Avoid viewer.
+
+## Viewer
+
 This application allows us to view, from any modern web browser, the current 
 set of obstacles and the drone's position via websockets in realtime.
 
 The details of the program are enumerated below.
 
-About
----
+### About
+
 Using a combination of an [Apache webserver](https://www.apache.org/) with a [PHP](https://php.net/) extension and a [MySQLi library](https://php.net/manual/en/book.mysqli.php) included, [MySQL database](https://www.mysql.com/), Javascript with [JQuery](https://jquery.com/) and [LeafletJS](http://leafletjs.com/) libraries inlcuded, we have created viewer that allows e
 
 DESCRIPTION OF WHY THIS IS REQUIRED.
 
 This is used by Flint Hill's Animus Ferus Team in the AUVSI SUAS Competition.
 
-Setup and Configuration
----
+### Setup and Configuration
+
 The rough instructions on how to start up and configure the viewer are detailed below:
 
 1. Download and install:
@@ -24,16 +28,16 @@ The rough instructions on how to start up and configure the viewer are detailed 
 	- 
 
 
-Interop. Server Specification
----
+### Interop. Server Specification
+
 This section details the exact information retrieved from the AUVSI SUAS' Interoperability Server, based off the specifications that they detail here: 
 
 http://auvsi-suas-competition-interoperability-system.readthedocs.io/en/latest/specification.html
 
 
 
-WebSocket Server Specification
----
+### WebSocket Server Specification
+
 This section regards the information that needs to be transmitted from
 a WebSocket server in order to be used in the viewer.
 
@@ -70,3 +74,5 @@ All of this information, except altitude, is critical in displaying the drone's 
 ### Features not yet implemented
 
 Currently, the altitude is not taken into account with regards to obstacles. If an obstacle does not exist on the same altitude as the drone, then ideally, the obstacle would be made either semi or fully transparent. This is a feature that needs to implemented at a later date.
+
+## Tile Server
