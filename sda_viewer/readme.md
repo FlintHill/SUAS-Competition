@@ -26,14 +26,27 @@ The rough instructions on how to start up and configure the viewer are detailed 
 	- PHP 7
 	- MySQL
 2. Configure the Apache Server:
-	- Edit `Apache24/bin/httpd.conf`, in `<Directory C:/Apache24/htdocs>` field to `Allow override`.
-
+	- Open `Apache24/bin/httpd.conf`
+		- In the `<Directory C:/Apache24/htdocs>` field to `Allow override`.
+		- Enable the PHP module by adding `PHPinDir` ... TODO: EXPNAD
+	- Save an exit the `httpd.conf` file
+3. Configure PHP:
+	- Open `php/bin/setting.cong` TODO: < not correct
+		- Uncomment the line `#php_extension=mysqli.dll` to `php_extension=mysqli.dll`
+4. Install MySQL:
+	- Open the installer and choose all the default options
+		- Remember to save the root account password name.
+5. Restart the Apache Server.
+6. Drop all the files within this sda_viewer/ directory into `C:/Apache24/htdocs/`
+7. Finished.
 
 ### Interop. Server Specification
 
 This section details the exact information retrieved from the AUVSI SUAS' Interoperability Server, based off the specifications that they detail here: 
 
 http://auvsi-suas-competition-interoperability-system.readthedocs.io/en/latest/specification.html
+
+TODO: correct because the viewer no longer _directly_ relies on the interop server.
 
 ### WebSocket Server Specification
 
@@ -108,9 +121,11 @@ An **example of the response** that a websocket might return is displayed below:
 }
 ```
 
-**Note:** This example response is also available in the same directory as this readme, labeled `data.json`. The JSON data has been reorganized here for logical ordering and brevity.
+**Note:** This example response is also available in the same directory as this readme, labeled `data_example.json`. 
 
-The information, mych like the example response above, is retrieved after a dummy message is sent to the websocket, where the websocket then returns the information immediately afterwards.
+**2nd Note:** The JSON data has been reorganized here for logical ordering and brevity.
+
+The information, much like the example response above, is retrieved after a dummy message is sent off. In our case, we just send a String, `update`. This message is intended to provoke a response from the websocket. Where the websocket then returns the information immediately afterwards.
 
 The following information is **required** for the viewer to operate:
 
@@ -129,3 +144,5 @@ All of this information, except altitude, is critical in displaying the drone's 
 Currently, the altitude is not taken into account with regards to obstacles. If an obstacle does not exist on the same altitude as the drone, then ideally, the obstacle would be made either semi or fully transparent. This is a feature that needs to implemented at a later date.
 
 ## Tile Server
+
+TODO: expand setup of tile server.
