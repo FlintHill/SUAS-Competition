@@ -5,8 +5,8 @@ import multiprocessing
 import timeit
 import os
 
-DATA_PATH = "/Users/phusisian/Desktop/Senior year/SUAS GIT/SUAS-Competition VALE REWRITES/SUAS-Competition/SyntheticDataset/data/fonts"
-SAVE_PATH = "/Users/phusisian/Dropbox/SUAS/Test sets/Full Synthetic Imgs"
+DATA_PATH = "/Users/vtolpegin/github/SUAS-Competition/SyntheticDataset/data"
+SAVE_PATH = "/Users/vtolpegin/github/SUAS-Competition/SyntheticDataset/Generated_Full_Targets"
 TOTAL_GENERATED_TARGETS = 2
 NUM_PICS_PER_TARGET = 10
 

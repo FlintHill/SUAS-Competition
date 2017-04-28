@@ -20,9 +20,9 @@ from EigenFit.Load import *
 
 TK1_ADDRESS = ('192.168.1.6', 9001)
 
-UAV_CONNECTION_STRING = "tcp:127.0.0.1:5760"
+UAV_CONNECTION_STRING = "tcp:127.0.0.1:14551"
 
-INTEROP_URL = "http://10.10.130.100:8000"
+INTEROP_URL = "http://10.10.130.2:8000"
 INTEROP_USERNAME = "Flint"
 INTEROP_PASSWORD = "2429875295"
 
@@ -156,11 +156,11 @@ if __name__ == '__main__':
     #try:
     while True:
         current_location = get_location(vehicle)
-        """current_waypoint_number = vehicle.commands.next
-        current_uav_waypoint = waypoints[current_waypoint_number]
-        sda_converter.set_waypoint(Location(current_uav_waypoint.x, current_uav_waypoint.y, current_uav_waypoint.z))
+        #current_waypoint_number = vehicle.commands.next
+        #current_uav_waypoint = waypoints[current_waypoint_number]
+        #sda_converter.set_waypoint(Location(current_uav_waypoint.x, current_uav_waypoint.y, current_uav_waypoint.z))
 
-        interop_server_client.post_telemetry(current_location)"""
+        interop_server_client.post_telemetry(current_location, vehicle.heading)
         gps_update_index += 1
         timestamped_location_data_array[0] = {
             "index" : gps_update_index,

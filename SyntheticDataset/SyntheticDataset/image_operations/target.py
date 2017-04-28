@@ -20,7 +20,7 @@ class Target(object):
         self.rotation = rotationIn
         self.color = colorIn
         self.setPolygon()
-        self.grayGradient = GrayGradientMaker((self.polygon.getBoundsWithMargin(Polygon.defaultMaskMargin).getWidth(), self.polygon.getBoundsWithMargin(Polygon.defaultMaskMargin).getHeight()), .04)
+        self.grayGradient = GrayGradientMaker((self.polygon.getBoundsWithMargin(Polygon.defaultMaskMargin).getWidth(), self.polygon.getBoundsWithMargin(Polygon.defaultMaskMargin).getHeight()), 0.1)
         self.setObjectLetter(letterIn)
 
     def setObjectLetter(self, letter):
@@ -48,7 +48,9 @@ class Target(object):
             "shape_color" : ColorList.getClosestColorsName(self.color),
             "letter" : self.objectLetter.getLetter(),
             "letter_color" : ColorList.getClosestColorsName(self.objectLetter.getColor()),
-            "midpoint" : [self.getMidpointFromBounds().getX(), self.getMidpointFromBounds().getY()]
+            "midpoint" : [self.getMidpointFromBounds().getX(), self.getMidpointFromBounds().getY()],
+            "width" : self.bounds.getWidth(),
+            "height" : self.bounds.getHeight()
         }
 
         return dictionary_representation
@@ -96,7 +98,7 @@ class Target(object):
         tempImg = Image.new('RGBA', pasteShapeImg.size, Target.grassColor)
         tempImg.paste(pasteShapeImg, (0,0), pasteShapeImg)
         pasteShapeImg = tempImg
-        pasteShapeImg = GaussianBlur.getGaussianFilteredImg(pasteShapeImg, pasteShapeImg.load(), 3, .8)
+        pasteShapeImg = GaussianBlur.getGaussianFilteredImg(pasteShapeImg, pasteShapeImg.load(), 5, .8)
 
         pasteMaskImg.paste(pasteShapeImg, (margin, margin), pasteShapeImg)
         newBounds = self.polygon.getBoundsWithMargin(Polygon.defaultMaskMargin + margin)

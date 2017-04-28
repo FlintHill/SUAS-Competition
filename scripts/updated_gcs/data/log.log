@@ -1,117 +1,116 @@
-2017-04-26 10:22:04,242 MainProcess [INFO] Connecting to UAV on: tcp:127.0.0.1:5760
-2017-04-26 10:22:04,250 Process-4 [INFO] Instantiating SDA Viewer process
-2017-04-26 10:22:04,351 Process-3 [INFO] Instantiating letter categorizer
-2017-04-26 10:22:15,217 MainProcess [INFO] Connected to UAV on: tcp:127.0.0.1:5760
-2017-04-26 10:22:15,218 MainProcess [INFO]  Get all vehicle attribute values:
-2017-04-26 10:22:15,218 MainProcess [INFO]  Autopilot Firmware version: APM:Copter-3.3.0
-2017-04-26 10:22:15,218 MainProcess [INFO]    Major version number: 3
-2017-04-26 10:22:15,219 MainProcess [INFO]    Minor version number: 3
-2017-04-26 10:22:15,220 MainProcess [INFO]    Patch version number: 0
-2017-04-26 10:22:15,220 MainProcess [INFO]    Release type: rc
-2017-04-26 10:22:15,220 MainProcess [INFO]    Release version: 0
-2017-04-26 10:22:15,221 MainProcess [INFO]    Stable release?: True
-2017-04-26 10:22:15,221 MainProcess [INFO]  Autopilot capabilities
-2017-04-26 10:22:15,221 MainProcess [INFO]    Supports MISSION_FLOAT message type: True
-2017-04-26 10:22:15,221 MainProcess [INFO]    Supports PARAM_FLOAT message type: True
-2017-04-26 10:22:15,222 MainProcess [INFO]    Supports MISSION_INT message type: False
-2017-04-26 10:22:15,222 MainProcess [INFO]    Supports COMMAND_INT message type: False
-2017-04-26 10:22:15,222 MainProcess [INFO]    Supports PARAM_UNION message type: False
-2017-04-26 10:22:15,222 MainProcess [INFO]    Supports ftp for file transfers: False
-2017-04-26 10:22:15,223 MainProcess [INFO]    Supports commanding attitude offboard: False
-2017-04-26 10:22:15,223 MainProcess [INFO]    Supports commanding position and velocity targets in local NED frame: True
-2017-04-26 10:22:15,223 MainProcess [INFO]    Supports set position + velocity targets in global scaled integers: True
-2017-04-26 10:22:15,224 MainProcess [INFO]    Supports terrain protocol / data handling: True
-2017-04-26 10:22:15,224 MainProcess [INFO]    Supports direct actuator control: False
-2017-04-26 10:22:15,224 MainProcess [INFO]    Supports the flight termination command: True
-2017-04-26 10:22:15,224 MainProcess [INFO]    Supports mission_float message type: True
-2017-04-26 10:22:15,225 MainProcess [INFO]    Supports onboard compass calibration: False
-2017-04-26 10:22:15,225 MainProcess [INFO]  Global Location: LocationGlobal:lat=38.870304,lon=-77.321404,alt=584.0
-2017-04-26 10:22:15,225 MainProcess [INFO]  Global Location (relative altitude): LocationGlobalRelative:lat=38.870304,lon=-77.321404,alt=0.01
-2017-04-26 10:22:15,226 MainProcess [INFO]  Local Location: LocationLocal:north=None,east=None,down=None
-2017-04-26 10:22:15,226 MainProcess [INFO]  Attitude: Attitude:pitch=-0.00109733594581,yaw=0.0539582967758,roll=-0.00116905744653
-2017-04-26 10:22:15,226 MainProcess [INFO]  Velocity: [0.02, -0.01, 0.0]
-2017-04-26 10:22:15,227 MainProcess [INFO]  GPS: GPSInfo:fix=3,num_sat=10
-2017-04-26 10:22:15,227 MainProcess [INFO]  Gimbal status: Gimbal: pitch=None, roll=None, yaw=None
-2017-04-26 10:22:15,227 MainProcess [INFO]  Battery: Battery:voltage=12.587,current=0.0,level=100
-2017-04-26 10:22:15,228 MainProcess [INFO]  EKF OK?: True
-2017-04-26 10:22:15,228 MainProcess [INFO]  Last Heartbeat: 0.851155244978
-2017-04-26 10:22:15,228 MainProcess [INFO]  Rangefinder: Rangefinder: distance=None, voltage=None
-2017-04-26 10:22:15,229 MainProcess [INFO]  Rangefinder distance: None
-2017-04-26 10:22:15,229 MainProcess [INFO]  Rangefinder voltage: None
-2017-04-26 10:22:15,229 MainProcess [INFO]  Heading: 3
-2017-04-26 10:22:15,230 MainProcess [INFO]  Is Armable?: True
-2017-04-26 10:22:15,230 MainProcess [INFO]  System status: STANDBY
-2017-04-26 10:22:15,230 MainProcess [INFO]  Groundspeed: 0.0
-2017-04-26 10:22:15,230 MainProcess [INFO]  Airspeed: 0.0
-2017-04-26 10:22:15,231 MainProcess [INFO]  Mode: STABILIZE
-2017-04-26 10:22:15,231 MainProcess [INFO]  Armed: False
-2017-04-26 10:22:15,231 MainProcess [INFO] Waiting for UAV to be armable
-2017-04-26 10:22:15,232 MainProcess [INFO] Waiting for UAV to load waypoints
-2017-04-26 10:22:15,232 MainProcess [INFO] Downloading waypoints from UAV on: tcp:127.0.0.1:5760
-2017-04-26 10:22:15,440 MainProcess [INFO] Waypoints successfully downloaded
-2017-04-26 10:22:15,440 MainProcess [INFO] Enabling SDA...
-2017-04-26 10:22:15,441 MainProcess [INFO] SDA enabled
-2017-04-26 10:22:15,561 MainProcess [INFO] Everything is instantiated...Beginning operation
-2017-04-26 10:22:21,202 Process-3 [INFO] Letter categorizer instantiated successfully
-2017-04-26 10:22:21,203 Process-3 [INFO] Instantiating orientation solver
-2017-04-26 10:22:22,237 Process-3 [INFO] Orientation solver instantiated
-,level=100
-2017-04-26 10:22:15,228 MainProcess [INFO]  EKF OK?: True
-2017-04-26 10:22:15,228 MainProcess [INFO]  Last Heartbeat: 0.851155244978
-2017-04-26 10:22:15,223 MainProcess [INFO]    Supports commanding position and velocity targets in local NED frame: True
-2017-04-26 10:22:15,228 MainProcess [INFO]  Rangefinder: Rangefinder: distance=None, voltage=None
-2017-04-26 10:22:15,223 MainProcess [INFO]    Supports set position + velocity targets in global scaled integers: True
-2017-04-26 10:22:15,229 MainProcess [INFO]  Rangefinder distance: None
-2017-04-26 10:22:15,229 MainProcess [INFO]  Rangefinder voltage: None
-2017-04-26 10:22:15,224 MainProcess [INFO]    Supports terrain protocol / data handling: True
-2017-04-26 10:22:15,229 MainProcess [INFO]  Heading: 3
-2017-04-26 10:22:15,230 MainProcess [INFO]  Is Armable?: True
-2017-04-26 10:22:15,224 MainProcess [INFO]    Supports direct actuator control: False
-2017-04-26 10:22:15,230 MainProcess [INFO]  System status: STANDBY
-2017-04-26 10:22:15,224 MainProcess [INFO]    Supports the flight termination command: True
-2017-04-26 10:22:15,230 MainProcess [INFO]  Groundspeed: 0.0
-2017-04-26 10:22:15,230 MainProcess [INFO]  Airspeed: 0.0
-2017-04-26 10:22:15,224 MainProcess [INFO]    Supports mission_float message type: True
-2017-04-26 10:22:15,231 MainProcess [INFO]  Mode: STABILIZE
-2017-04-26 10:22:15,231 MainProcess [INFO]  Armed: False
-2017-04-26 10:22:15,225 MainProcess [INFO]    Supports onboard compass calibration: False
-2017-04-26 10:22:15,231 MainProcess [INFO] Waiting for UAV to be armable
-2017-04-26 10:22:15,232 MainProcess [INFO] Waiting for UAV to load waypoints
-2017-04-26 10:22:15,225 MainProcess [INFO]  Global Location: LocationGlobal:lat=38.870304,lon=-77.321404,alt=584.0
-2017-04-26 10:22:15,232 MainProcess [INFO] Downloading waypoints from UAV on: tcp:127.0.0.1:5760
-2017-04-26 10:22:15,225 MainProcess [INFO]  Global Location (relative altitude): LocationGlobalRelative:lat=38.870304,lon=-77.321404,alt=0.01
-2017-04-26 10:22:15,226 MainProcess [INFO]  Local Location: LocationLocal:north=None,east=None,down=None
-2017-04-26 10:22:15,226 MainProcess [INFO]  Attitude: Attitude:pitch=-0.00109733594581,yaw=0.0539582967758,roll=-0.00116905744653
-2017-04-26 10:22:15,226 MainProcess [INFO]  Velocity: [0.02, -0.01, 0.0]
-2017-04-26 10:22:15,227 MainProcess [INFO]  GPS: GPSInfo:fix=3,num_sat=10
-2017-04-26 10:22:15,227 MainProcess [INFO]  Gimbal status: Gimbal: pitch=None, roll=None, yaw=None
-2017-04-26 10:22:15,227 MainProcess [INFO]  Battery: Battery:voltage=12.587,current=0.0,level=100
-2017-04-26 10:22:15,228 MainProcess [INFO]  EKF OK?: True
-2017-04-26 10:22:15,228 MainProcess [INFO]  Last Heartbeat: 0.851155244978
-2017-04-26 10:22:15,228 MainProcess [INFO]  Rangefinder: Rangefinder: distance=None, voltage=None
-2017-04-26 10:22:15,229 MainProcess [INFO]  Rangefinder distance: None
-2017-04-26 10:22:15,229 MainProcess [INFO]  Rangefinder voltage: None
-2017-04-26 10:22:15,229 MainProcess [INFO]  Heading: 3
-2017-04-26 10:22:15,230 MainProcess [INFO]  Is Armable?: True
-2017-04-26 10:22:15,230 MainProcess [INFO]  System status: STANDBY
-2017-04-26 10:22:15,230 MainProcess [INFO]  Groundspeed: 0.0
-2017-04-26 10:22:15,230 MainProcess [INFO]  Airspeed: 0.0
-2017-04-26 10:22:15,231 MainProcess [INFO]  Mode: STABILIZE
-2017-04-26 10:22:15,231 MainProcess [INFO]  Armed: False
-2017-04-26 10:22:15,231 MainProcess [INFO] Waiting for UAV to be armable
-2017-04-26 10:22:15,232 MainProcess [INFO] Waiting for UAV to load waypoints
-2017-04-26 10:22:15,232 MainProcess [INFO] Downloading waypoints from UAV on: tcp:127.0.0.1:5760
-2017-04-26 10:22:15,440 MainProcess [INFO] Waypoints successfully downloaded
-2017-04-26 10:22:15,440 MainProcess [INFO] Enabling SDA...
-2017-04-26 10:22:15,440 MainProcess [INFO] Waypoints successfully downloaded
-2017-04-26 10:22:15,441 MainProcess [INFO] SDA enabled
-2017-04-26 10:22:15,440 MainProcess [INFO] Enabling SDA...
-2017-04-26 10:22:15,441 MainProcess [INFO] SDA enabled
-2017-04-26 10:22:15,561 MainProcess [INFO] Everything is instantiated...Beginning operation
-2017-04-26 10:22:15,561 MainProcess [INFO] Everything is instantiated...Beginning operation
-2017-04-26 10:22:21,202 Process-3 [INFO] Letter categorizer instantiated successfully
-2017-04-26 10:22:21,203 Process-3 [INFO] Instantiating orientation solver
-2017-04-26 10:22:21,202 Process-3 [INFO] Letter categorizer instantiated successfully
-2017-04-26 10:22:21,203 Process-3 [INFO] Instantiating orientation solver
-2017-04-26 10:22:22,237 Process-3 [INFO] Orientation solver instantiated
-2017-04-26 10:22:22,237 Process-3 [INFO] Orientation solver instantiated
+2017-04-27 16:59:20,819 MainProcess [INFO] Connecting to UAV on: tcp:127.0.0.1:14551
+2017-04-27 16:59:20,826 Process-4 [INFO] Instantiating SDA Viewer process
+2017-04-27 16:59:20,910 Process-3 [INFO] Instantiating letter categorizer
+2017-04-27 16:59:32,483 MainProcess [INFO] Connected to UAV on: tcp:127.0.0.1:14551
+2017-04-27 16:59:32,483 MainProcess [INFO]  Get all vehicle attribute values:
+2017-04-27 16:59:32,484 MainProcess [INFO]  Autopilot Firmware version: APM:Copter-3.3.0
+2017-04-27 16:59:32,484 MainProcess [INFO]    Major version number: 3
+2017-04-27 16:59:32,484 MainProcess [INFO]    Minor version number: 3
+2017-04-27 16:59:32,484 MainProcess [INFO]    Patch version number: 0
+2017-04-27 16:59:32,485 MainProcess [INFO]    Release type: rc
+2017-04-27 16:59:32,485 MainProcess [INFO]    Release version: 0
+2017-04-27 16:59:32,485 MainProcess [INFO]    Stable release?: True
+2017-04-27 16:59:32,485 MainProcess [INFO]  Autopilot capabilities
+2017-04-27 16:59:32,485 MainProcess [INFO]    Supports MISSION_FLOAT message type: True
+2017-04-27 16:59:32,485 MainProcess [INFO]    Supports PARAM_FLOAT message type: True
+2017-04-27 16:59:32,486 MainProcess [INFO]    Supports MISSION_INT message type: False
+2017-04-27 16:59:32,486 MainProcess [INFO]    Supports COMMAND_INT message type: False
+2017-04-27 16:59:32,487 MainProcess [INFO]    Supports PARAM_UNION message type: False
+2017-04-27 16:59:32,487 MainProcess [INFO]    Supports ftp for file transfers: False
+2017-04-27 16:59:32,487 MainProcess [INFO]    Supports commanding attitude offboard: False
+2017-04-27 16:59:32,487 MainProcess [INFO]    Supports commanding position and velocity targets in local NED frame: True
+2017-04-27 16:59:32,487 MainProcess [INFO]    Supports set position + velocity targets in global scaled integers: True
+2017-04-27 16:59:32,487 MainProcess [INFO]    Supports terrain protocol / data handling: True
+2017-04-27 16:59:32,487 MainProcess [INFO]    Supports direct actuator control: False
+2017-04-27 16:59:32,488 MainProcess [INFO]    Supports the flight termination command: True
+2017-04-27 16:59:32,488 MainProcess [INFO]    Supports mission_float message type: True
+2017-04-27 16:59:32,488 MainProcess [INFO]    Supports onboard compass calibration: False
+2017-04-27 16:59:32,488 MainProcess [INFO]  Global Location: LocationGlobal:lat=38.870304,lon=-77.321404,alt=584.01
+2017-04-27 16:59:32,488 MainProcess [INFO]  Global Location (relative altitude): LocationGlobalRelative:lat=38.870304,lon=-77.321404,alt=0.02
+2017-04-27 16:59:32,488 MainProcess [INFO]  Local Location: LocationLocal:north=None,east=None,down=None
+2017-04-27 16:59:32,488 MainProcess [INFO]  Attitude: Attitude:pitch=0.000922172621358,yaw=0.101581171155,roll=-0.00170800741762
+2017-04-27 16:59:32,489 MainProcess [INFO]  Velocity: [-0.01, -0.03, 0.0]
+2017-04-27 16:59:32,489 MainProcess [INFO]  GPS: GPSInfo:fix=3,num_sat=10
+2017-04-27 16:59:32,491 MainProcess [INFO]  Gimbal status: Gimbal: pitch=None, roll=None, yaw=None
+2017-04-27 16:59:32,491 MainProcess [INFO]  Battery: Battery:voltage=12.587,current=0.0,level=100
+2017-04-27 16:59:32,491 MainProcess [INFO]  EKF OK?: True
+2017-04-27 16:59:32,492 MainProcess [INFO]  Last Heartbeat: 0.744825604001
+2017-04-27 16:59:32,492 MainProcess [INFO]  Rangefinder: Rangefinder: distance=None, voltage=None
+2017-04-27 16:59:32,492 MainProcess [INFO]  Rangefinder distance: None
+2017-04-27 16:59:32,492 MainProcess [INFO]  Rangefinder voltage: None
+2017-04-27 16:59:32,492 MainProcess [INFO]  Heading: 5
+2017-04-27 16:59:32,492 MainProcess [INFO]  Is Armable?: True
+2017-04-27 16:59:32,493 MainProcess [INFO]  System status: STANDBY
+2017-04-27 16:59:32,493 MainProcess [INFO]  Groundspeed: 0.0
+2017-04-27 16:59:32,493 MainProcess [INFO]  Airspeed: 0.0
+2017-04-27 16:59:32,493 MainProcess [INFO]  Mode: STABILIZE
+2017-04-27 16:59:32,493 MainProcess [INFO]  Armed: False
+2017-04-27 16:59:32,493 MainProcess [INFO] Waiting for UAV to be armable
+2017-04-27 16:59:32,493 MainProcess [INFO] Waiting for UAV to load waypoints
+2017-04-27 16:59:32,493 MainProcess [INFO] Downloading waypoints from UAV on: tcp:127.0.0.1:14551
+2017-04-27 16:59:32,801 MainProcess [INFO] Waypoints successfully downloaded
+2017-04-27 16:59:32,802 MainProcess [INFO] Enabling SDA...
+2017-04-27 16:59:32,802 MainProcess [INFO] SDA enabled
+2017-04-27 16:59:32,916 MainProcess [INFO] Everything is instantiated...Beginning operation
+2017-04-27 16:59:37,083 Process-3 [INFO] Letter categorizer instantiated successfully
+2017-04-27 16:59:37,084 Process-3 [INFO] Instantiating orientation solver
+2017-04-27 16:59:37,739 Process-3 [INFO] Orientation solver instantiated
+cess [INFO]  Rangefinder: Rangefinder: distance=None, voltage=None
+2017-04-27 16:59:32,487 MainProcess [INFO]    Supports ftp for file transfers: False
+2017-04-27 16:59:32,492 MainProcess [INFO]  Rangefinder distance: None
+2017-04-27 16:59:32,492 MainProcess [INFO]  Rangefinder voltage: None
+2017-04-27 16:59:32,492 MainProcess [INFO]  Heading: 5
+2017-04-27 16:59:32,487 MainProcess [INFO]    Supports commanding attitude offboard: False
+2017-04-27 16:59:32,492 MainProcess [INFO]  Is Armable?: True
+2017-04-27 16:59:32,493 MainProcess [INFO]  System status: STANDBY
+2017-04-27 16:59:32,493 MainProcess [INFO]  Groundspeed: 0.0
+2017-04-27 16:59:32,487 MainProcess [INFO]    Supports commanding position and velocity targets in local NED frame: True
+2017-04-27 16:59:32,493 MainProcess [INFO]  Airspeed: 0.0
+2017-04-27 16:59:32,493 MainProcess [INFO]  Mode: STABILIZE
+2017-04-27 16:59:32,493 MainProcess [INFO]  Armed: False
+2017-04-27 16:59:32,493 MainProcess [INFO] Waiting for UAV to be armable
+2017-04-27 16:59:32,487 MainProcess [INFO]    Supports set position + velocity targets in global scaled integers: True
+2017-04-27 16:59:32,493 MainProcess [INFO] Waiting for UAV to load waypoints
+2017-04-27 16:59:32,493 MainProcess [INFO] Downloading waypoints from UAV on: tcp:127.0.0.1:14551
+2017-04-27 16:59:32,487 MainProcess [INFO]    Supports terrain protocol / data handling: True
+2017-04-27 16:59:32,487 MainProcess [INFO]    Supports direct actuator control: False
+2017-04-27 16:59:32,488 MainProcess [INFO]    Supports the flight termination command: True
+2017-04-27 16:59:32,488 MainProcess [INFO]    Supports mission_float message type: True
+2017-04-27 16:59:32,488 MainProcess [INFO]    Supports onboard compass calibration: False
+2017-04-27 16:59:32,488 MainProcess [INFO]  Global Location: LocationGlobal:lat=38.870304,lon=-77.321404,alt=584.01
+2017-04-27 16:59:32,488 MainProcess [INFO]  Global Location (relative altitude): LocationGlobalRelative:lat=38.870304,lon=-77.321404,alt=0.02
+2017-04-27 16:59:32,488 MainProcess [INFO]  Local Location: LocationLocal:north=None,east=None,down=None
+2017-04-27 16:59:32,488 MainProcess [INFO]  Attitude: Attitude:pitch=0.000922172621358,yaw=0.101581171155,roll=-0.00170800741762
+2017-04-27 16:59:32,489 MainProcess [INFO]  Velocity: [-0.01, -0.03, 0.0]
+2017-04-27 16:59:32,489 MainProcess [INFO]  GPS: GPSInfo:fix=3,num_sat=10
+2017-04-27 16:59:32,491 MainProcess [INFO]  Gimbal status: Gimbal: pitch=None, roll=None, yaw=None
+2017-04-27 16:59:32,491 MainProcess [INFO]  Battery: Battery:voltage=12.587,current=0.0,level=100
+2017-04-27 16:59:32,491 MainProcess [INFO]  EKF OK?: True
+2017-04-27 16:59:32,492 MainProcess [INFO]  Last Heartbeat: 0.744825604001
+2017-04-27 16:59:32,492 MainProcess [INFO]  Rangefinder: Rangefinder: distance=None, voltage=None
+2017-04-27 16:59:32,492 MainProcess [INFO]  Rangefinder distance: None
+2017-04-27 16:59:32,492 MainProcess [INFO]  Rangefinder voltage: None
+2017-04-27 16:59:32,492 MainProcess [INFO]  Heading: 5
+2017-04-27 16:59:32,492 MainProcess [INFO]  Is Armable?: True
+2017-04-27 16:59:32,493 MainProcess [INFO]  System status: STANDBY
+2017-04-27 16:59:32,493 MainProcess [INFO]  Groundspeed: 0.0
+2017-04-27 16:59:32,493 MainProcess [INFO]  Airspeed: 0.0
+2017-04-27 16:59:32,493 MainProcess [INFO]  Mode: STABILIZE
+2017-04-27 16:59:32,493 MainProcess [INFO]  Armed: False
+2017-04-27 16:59:32,493 MainProcess [INFO] Waiting for UAV to be armable
+2017-04-27 16:59:32,493 MainProcess [INFO] Waiting for UAV to load waypoints
+2017-04-27 16:59:32,493 MainProcess [INFO] Downloading waypoints from UAV on: tcp:127.0.0.1:14551
+2017-04-27 16:59:32,801 MainProcess [INFO] Waypoints successfully downloaded
+2017-04-27 16:59:32,802 MainProcess [INFO] Enabling SDA...
+2017-04-27 16:59:32,801 MainProcess [INFO] Waypoints successfully downloaded
+2017-04-27 16:59:32,802 MainProcess [INFO] SDA enabled
+2017-04-27 16:59:32,802 MainProcess [INFO] Enabling SDA...
+2017-04-27 16:59:32,802 MainProcess [INFO] SDA enabled
+2017-04-27 16:59:32,916 MainProcess [INFO] Everything is instantiated...Beginning operation
+2017-04-27 16:59:32,916 MainProcess [INFO] Everything is instantiated...Beginning operation
+2017-04-27 16:59:37,083 Process-3 [INFO] Letter categorizer instantiated successfully
+2017-04-27 16:59:37,084 Process-3 [INFO] Instantiating orientation solver
+2017-04-27 16:59:37,083 Process-3 [INFO] Letter categorizer instantiated successfully
+2017-04-27 16:59:37,084 Process-3 [INFO] Instantiating orientation solver
+2017-04-27 16:59:37,739 Process-3 [INFO] Orientation solver instantiated
+2017-04-27 16:59:37,739 Process-3 [INFO] Orientation solver instantiated
