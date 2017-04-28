@@ -10,19 +10,19 @@
  * 	- Add and update relevant points, such as drone position, obstacles, and
  * 	  more to the LeafletJS map.
  *
- * This code depends on, but doesn't necessarily check for: 
+ * This code depends on, but doesn't necessarily check for:
  * 	- JQuery (version >= 3.1.1)
  *
  * @author		James Villemarette
  * @version		3.0
- * @since		2016-04-21
- * @see			readme.md
+ * @since			2016-04-21
+ * @see				readme.md
  */
 
 class EssentialsContainer {
 
 	/**
-	 * EssentialsContainer class 
+	 * EssentialsContainer class
 	 *
 	 * Contains all the essential functions needed throughout the rest of this
 	 * script and other console-based commands.
@@ -33,14 +33,14 @@ class EssentialsContainer {
 	 *
 	 * Pauses the execution of the script for a specificed amount of time.
 	 *
-	 * @param	milliseconds	number of milliseconds to pause execution for.
-	 * @returns					nothing.
+	 * @param	 		milliseconds	number of milliseconds to pause execution for.
+	 * @returns 	nothing.
 	 */
 	static sleep(milliseconds) {
 
 		var start = new Date().getTime();
-		for (var i = 0; i < 1e7; i++) {
-			if ((new Date().getTime() - start) > milliseconds){
+		for(var i = 0; i < 1e7; i++) {
+			if((new Date().getTime() - start) > milliseconds) {
 				break;
 			}
 		}
@@ -71,13 +71,15 @@ class EssentialsContainer {
 	 * @returns		nothing.
 	 */
 	static rips() {
-		if( $("#information").css("display") == "block" ) {
+
+		if($("#information").css("display") == "block") {
 			$("#information").css("display", "none");
 			$("#dropdown").text("Show Description"); // &uarr;
 		} else {
 			$("#information").css("display", "block");
 			$("#dropdown").text("Show Description"); // &darr;
 		}
+
 	};
 
 }
@@ -106,25 +108,25 @@ class DataConverters {
 	 *		}
 	 *	]
 	 *
-	 * to a Leaflet Marker, Line, both, or a circle. 
+	 * to a Leaflet Marker, Line, both, or a circle.
 	 */
 
 	/**
-	 * line(Array data, String title, String _color, Boolean marker, 
+	 * line(Array data, String title, String _color, Boolean marker,
 	 *	String _title, Variable _icon)
-	 * 
-	 * @param	data 	array where indexes are arrays with two elements: 
+	 *
+	 * @param	data 	array where indexes are arrays with two elements:
 	 *					lat, lng.
 	 * @param	_color	specifies the color of the line.
 	 *	- examples: 'red', 'green', 'blue', 'purple', and etc.
 	 *
 	 * @param	marker 	whether or not points are added to the line.
-	 *  - if (markers) is true, this function returns an array with two 
+	 *  - if (markers) is true, this function returns an array with two
 	 *	  elements: line, and marker.
 	 *
 	 * @param	_title	if marker is true: specifies the hover text.
 	 * @param	_icon 	if marker is true: the icon that appears on the markers.
-	 * @returns			A Leaflet polyline if marker is false, or an array 
+	 * @returns			A Leaflet polyline if marker is false, or an array
 	 *					containing a Leaflet polyline and Leaflet markers if
 	 *					marker is true.
 	 */
@@ -201,22 +203,22 @@ var leafletData = {
 
 	// mission waypoints
 	waypoints_points: [],
-	waypoints_line: null, 
-	waypoints_latlngs: [], 
+	waypoints_line: null,
+	waypoints_latlngs: [],
 
 	// search grid
-	search_grid_points: [], 
-	search_grid_line: null, 
+	search_grid_points: [],
+	search_grid_line: null,
 	search_grid_latlngs: [],
 
 	// flight zone
-	fly_zone_line: null, 
+	fly_zone_line: null,
 	fly_zone_latlngs: [],
 
 	// points
-	air_drop_pos_point: null, 
-	emergent_last_know_pos_point: null, 
-	home_pos_point: null, 
+	air_drop_pos_point: null,
+	emergent_last_know_pos_point: null,
+	home_pos_point: null,
 	off_axis_target_pos_point: null,
 
 	// circles and special points
@@ -229,7 +231,7 @@ class LeafletInterface {
 
 	/**
 	 * LeafletInterface class
-	 * 
+	 *
 	 * Is used by the WebsocketHandler class to interact with the LeafletJS map.
 	 */
 
@@ -238,7 +240,7 @@ class LeafletInterface {
 	 * Primarily, the action "remove" will be used. "clear" is not expected to
 	 * be implemented in any use case.
 	 *
-	 * @param	action	a string that contains either "clear", "addTo", or 
+	 * @param	action	a string that contains either "clear", "addTo", or
 	 *					"remove".
 	 * @param	map 	optional variable that is only required if action is
 	 *					"addTo", as it is required to add markers to the
@@ -327,10 +329,9 @@ class WebsocketHandler {
 		websocketEndpointURL = "ws://" + $("#url").val() + ":8000/";
 		websocket = new WebSocket(websocketEndpointURL);
 
+		// when a connection with the websocket is initially established
 		websocket.onopen = function(evt) {
-			
-			// when a connection with the websocket is initially established
-			
+
 			console.log("OK: Websocket connection with " + websocketEndpointURL + " is successful.");
 
 			if(websocket.readyState === websocket.OPEN) {
@@ -352,9 +353,8 @@ class WebsocketHandler {
 
 		};
 
+		// when this script receives a message from the websocket
 		websocket.onmessage = function(evt) {
-			
-			// when this script receives a message from the websocket
 
 			// get topical response data
 				var data = JSON.parse(evt.data);
@@ -368,7 +368,7 @@ class WebsocketHandler {
 						$("#" + flightData[i]).html((data[flightData[i]]).toFixed(2));
 
 				// drone pos
-				leafletData.drone_pos_point = 
+				leafletData.drone_pos_point =
 					DataConverters.circle({"latitude": data["lat"], "longitude": data["long"]}, true, 0, "blue", "DRONE");
 
 			// get data package from websocket
@@ -397,16 +397,16 @@ class WebsocketHandler {
 			leafletData.fly_zone_line = DataConverters.line(data["fly_zones"][0]["boundary_pts"].concat(data["fly_zones"][0]["boundary_pts"][0]), "red", false, "", "");
 
 			// MARKER: air drop pos
-			leafletData.air_drop_pos_point = 
+			leafletData.air_drop_pos_point =
 				DataConverters.marker(data["air_drop_pos"], "Air Drop Position", Icon_markerRed);
 			//  MARKER: emergent last known pos
-			leafletData.emergent_last_know_pos_point = 
+			leafletData.emergent_last_know_pos_point =
 				DataConverters.marker(data["emergent_last_known_pos"], "Emergent Target Last Known Position", Icon_markerBlue);
 			//  MARKER: air drop pos
-			leafletData.home_pos_point = 
+			leafletData.home_pos_point =
 				DataConverters.marker(data["home_pos"], "Home", Icon_markerGreen);
 			//  MARKER: off axis target pos
-			leafletData.off_axis_target_pos_point = 
+			leafletData.off_axis_target_pos_point =
 				DataConverters.marker(data["off_axis_target_pos"], "Off Axis Target Position", Icon_markerRed);
 
 			// CIRCLES: obstacles
@@ -414,19 +414,21 @@ class WebsocketHandler {
 				leafletData.obstacles_circles =
 					DataConverters.circle(data["stationary_obstacles"], false, -1, "red", "Stationary Obstacle");
 				// moving obstacles
-				leafletData.obstacles_circles = leafletData.obstacles_circles.concat( 
+				leafletData.obstacles_circles = leafletData.obstacles_circles.concat(
 					DataConverters.circle(data["moving_obstacles"], false, -1, "orange", "Moving Obstacle") );
 
 			LeafletInterface.markersDo("addTo", mymap);
 
 		};
 
+		// when the connection with the websocket is closed by either user or server
 		websocket.onclose = function(evt) {
-			
+
 			LeafletInterface.markersDo("remove", mymap);
 
 		};
 
+		// when the connection fails to succeed
 		websocket.onerror = function(evt) {
 
 			console.log("ERROR: Failed to connect to websocket. See details:");
@@ -451,7 +453,7 @@ class WebsocketHandler {
 			if(websocketEndpointURL != "") {
 
 				// where the updates are requested
-				console.log("Requested update #" + (websocketRequestNum++) + 
+				console.log("Requested update #" + (websocketRequestNum++) +
 					" : " + websocket.send("update"));
 
 			} else {
@@ -473,7 +475,7 @@ class WebsocketHandler {
 	/**
 	 * close()
 	 *
-	 * Closes the connection with the websocket. 
+	 * Closes the connection with the websocket.
 	 *
 	 * @returns		true if successful, false if not.
 	 */
@@ -504,9 +506,9 @@ class WebsocketHandler {
 class WebsocketControls {
 
 	/**
-	 * WebsocketControls class 
+	 * WebsocketControls class
 	 *
-	 * Contains all the functions that are triggered by the UI to launch a 
+	 * Contains all the functions that are triggered by the UI to launch a
 	 * connection to the websocket.
 	 */
 
@@ -526,7 +528,7 @@ class WebsocketControls {
 			WebsocketHandler.init();
 
 			// TODO add alert for failure to connect
-			alert("OK: Successfully connected to the websocket."); 
+			alert("OK: Successfully connected to the websocket.");
 
 		} else {
 
@@ -546,7 +548,7 @@ class WebsocketControls {
 	static doDisconnect() {
 
 		console.log("WebsocketControls: Disconnecting from websocket...");
-		
+
 		if(websocketEndpointURL != "") {
 			websocket.close();
 			websocket = null;
@@ -577,8 +579,8 @@ class WebsocketControls {
 }
 
 // icons
-var iS = [32, 32]; 
-var iA = [iS[0]/2, iS[1]]; 
+var iS = [32, 32];
+var iA = [iS[0]/2, iS[1]];
 var pA = [0, iS[0]];
 
 // TODO: Add retina version of markers
@@ -630,5 +632,3 @@ var Icon_searchPoint = L.icon({
 	iconAnchor: [iS[0]/2, iS[1]/2],
 	popupAnchor: [0, 32]
 });
-
-

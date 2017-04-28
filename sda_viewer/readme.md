@@ -4,7 +4,7 @@ This page details the setup, function, and operation of the Sense, Detect, and A
 
 ## Viewer
 
-This application allows us to view, from any modern web browser, the current 
+This application allows us to view, from any modern web browser, the current
 set of obstacles and the drone's position via websockets in realtime.
 
 The details of the program are enumerated below.
@@ -12,8 +12,9 @@ The details of the program are enumerated below.
 ### About
 
 Using a combination of an [Apache webserver](https://www.apache.org/) with a [PHP](https://php.net/) extension and a [MySQLi library](https://php.net/manual/en/book.mysqli.php) included, [MySQL database](https://www.mysql.com/), Javascript with [JQuery](https://jquery.com/) and [LeafletJS](http://leafletjs.com/) libraries inlcuded, we have created viewer that allows e
+Using a combination of an [Apache webserver](https://www.apache.org/) with a [PHP](https://php.net/) extension (and a [MySQLi library](https://php.net/manual/en/book.mysqli.php) included), [MySQL database](https://www.mysql.com/), Javascript (consisting of [JQuery](https://jquery.com/) and [LeafletJS](http://leafletjs.com/) libraries included), we have created viewer that allows see—in realtime—the position of our team's drone, obstacles, waypoints, and more.
 
-DESCRIPTION OF WHY THIS IS REQUIRED.
+DESCRIPTION OF WHY THIS IS REQUIRED. You see.
 
 This is used by Flint Hill's Animus Ferus Team in the AUVSI SUAS Competition.
 
@@ -21,28 +22,37 @@ This is used by Flint Hill's Animus Ferus Team in the AUVSI SUAS Competition.
 
 The rough instructions on how to start up and configure the viewer are detailed below:
 
-1. Download and install into the root directory, `C:/` (preferrably in 64-bit, if using a 64-bit OS):
+1. Download and install into the root directory, `C:/` (preferably in 64-bit, if using a 64-bit OS):
 	- Apache 2.4
 	- PHP 7
 	- MySQL
 2. Configure the Apache Server:
 	- Open `Apache24/bin/httpd.conf`
-		- In the `<Directory C:/Apache24/htdocs>` field to `Allow override`.
-		- Enable the PHP module by adding `PHPinDir` ... TODO: EXPNAD
-	- Save an exit the `httpd.conf` file
+		- In the `<Directory "C:/Apache24/htdocs">` field, change  `AllowOverride None` to `AllowOverride all`.
+
+		- Change `DirectoryIndex index.html` to `DirectoryIndex index.php index.html`
+
+		- Enable the PHP module by adding the following lines to the end of the configuration file:
+
+		`LoadModule php5_module "C:/PHP/php5apache2_4.dll"
+		AddHandler application/x-httpd-php .php
+		PHPIniDir C:/PHP`
+	- Save and exit the `httpd.conf` file.
+
 3. Configure PHP:
-	- Open `php/bin/setting.cong` TODO: < not correct
-		- Uncomment the line `#php_extension=mysqli.dll` to `php_extension=mysqli.dll`
+	- Navigate to `C:/PHP`, and rename `php.ini-development` to `php.ini`.
+	- Open the newly renamed file.
+		- Uncomment the line `#extension=mysqli.dll` to `extension=mysqli.dll`
+	- Save and exit the `php.ini` file.
 4. Install MySQL:
-	- Open the installer and choose all the default options
-		- Remember to save the root account password name.
-5. Restart the Apache Server.
-6. Drop all the files within this sda_viewer/ directory into `C:/Apache24/htdocs/`
-7. Finished.
+	- Open the installer and choose all the default options.
+		- Remember to save the root account password.
+5. Hit the Windows key, and in the menu that appears, type in `services.msc`, and hit enter.
+	- In the window that opens, right click on the `Apache Server` service, and select `Restart`.
+6. Drop all the files within this `sda_viewer/` directory into `C:/Apache24/htdocs/`
 
 ### Interop. Server Specification
 
-This section details the exact information retrieved from the AUVSI SUAS' Interoperability Server, based off the specifications that they detail here: 
 
 http://auvsi-suas-competition-interoperability-system.readthedocs.io/en/latest/specification.html
 
@@ -50,8 +60,6 @@ TODO: correct because the viewer no longer _directly_ relies on the interop serv
 
 ### WebSocket Server Specification
 
-This section regards the information that needs to be transmitted from
-a WebSocket server in order to be used in the viewer.
 
 A websocket is the second and last connection that the viewer needs to establish in order to obtain the drone's current position, as it cannot be obtained elsewhere.
 
@@ -66,7 +74,6 @@ An **example of the response** that a websocket might return is displayed below:
     "velocity":0.0316227766017,
     "lat":38.870304,
     "long":-77.321404,
-	
     // interop. server info (obstacles, points, flyzones, etc.)
     "0":{
         "stationary_obstacles":[
@@ -121,7 +128,6 @@ An **example of the response** that a websocket might return is displayed below:
 }
 ```
 
-**Note:** This example response is also available in the same directory as this readme, labeled `data_example.json`. 
 
 **2nd Note:** The JSON data has been reorganized here for logical ordering and brevity.
 

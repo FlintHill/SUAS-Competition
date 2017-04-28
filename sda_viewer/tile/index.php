@@ -1,5 +1,6 @@
 <?php
-	
+
+	# change "robo" and "password" to their respective username and password
 	$link = mysqli_connect("localhost", "robo", "password", "tile");
 
 	$query = $link->query("SELECT SQL_CACHE defaults, image FROM `tiles` WHERE ".
