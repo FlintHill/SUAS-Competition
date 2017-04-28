@@ -9,6 +9,7 @@ from math import sqrt
 import ImgProcessingCLI.ImageOperation.Crop as Crop
 from ImgProcessingCLI.Geometry.Rectangle import Rectangle
 import timeit
+
 DOWNSCALE_CONSTRAINT = 600
 LOCAL_VARIANCE_THRESHOLD = 2000
 BILAT_FILTER_THRESHOLDS = (15, 40, 40)
@@ -28,17 +29,28 @@ are removed'''
 MIN_CROP_DIST_AWAY = 120
 
 def get_target_crops_from_img2(parent_img, geo_stamps, ppsi, get_centers = False):
+    print("AT THE START of img2")
     downsized_parent_image = numpy.array(Scale.get_img_scaled_to_one_bound(parent_img, DOWNSCALE_CONSTRAINT).convert('RGB'))
+    print("DOWNSIZED PARENT IMAGE")
 
     downscale_multiplier = float(DOWNSCALE_CONSTRAINT)/float(parent_img.size[0])
     upscale_multiplier = 1.0/downscale_multiplier
 
-    bilat_downsized_parent_image = cv2.bilateralFilter(downsized_parent_image, BILAT_FILTER_THRESHOLDS[0], BILAT_FILTER_THRESHOLDS[1], BILAT_FILTER_THRESHOLDS[2])
+    print("BEFORE BILATERAL FILTER")
+    print(type(downsized_parent_image))
+    #cv2.imwrite("test.png", downsized_parent_image)
+    cv2.imread(downsized_parent_image)
+    #cv2.GaussianBlur(numpy.array(downsized_parent_image), (5,5), 3)
+    print("TESTING")
+    bilat_downsized_parent_image = cv2.GaussianBlur(numpy.array(downsized_parent_image), (5,5), 3)#cv2.bilateralFilter(downsized_parent_image, BILAT_FILTER_THRESHOLDS[0], BILAT_FILTER_THRESHOLDS[1], BILAT_FILTER_THRESHOLDS[2])
+    print("BEFORE create_local_variance_image")
     local_variance_image = create_local_variance_image(bilat_downsized_parent_image)
+    print("BILATERAL FILTER DONE")
 
     thresholded_local_variance_img = create_thresholded_local_variance_img(local_variance_image)
     connected_components_map = cv2.connectedComponents(numpy.uint8(numpy.array(thresholded_local_variance_img).T), connectivity = 4)
     connected_components_map = connected_components_map[1]
+    print("THRESHOLDED IMG & CONNECTED COMPONENTS COMPLETED")
 
     connected_components = ImageMath.convert_connected_component_map_into_clusters(connected_components_map)
     crop_masks = []
