@@ -48,6 +48,9 @@ class TargetTwo(object):
     '''implement the faster gaussian two pass blur if I need to cut down on run time'''
     def __init__(self, target_img_in, target_image_in, letter_categorizer_in, orientation_solver_in):
         self.target_img = target_img_in
+
+        self.target_img.show()
+
         self.target_image = target_image_in
         self.letter_categorizer = letter_categorizer_in
         self.orientation_solver = orientation_solver_in
@@ -91,6 +94,8 @@ class TargetTwo(object):
     def init_shape_color(self):
         connected_component_shape_mask = self.color_varyer.get_biggest_component_mask(rescale_dim = self.target_img.size)
         shape_color_img = Mask.get_bmp_masked_img(connected_component_shape_mask, connected_component_shape_mask.load(), self.target_img, self.target_image)
+
+        shape_color_img.show()
 
         self.shape_rgb = ImageMath.get_mean_color_excluding_transparent(shape_color_img, shape_color_img.load())
         self.TARGET_SHAPE_COLOR = TargetColorReader.get_closest_target_color(self.shape_rgb)
@@ -171,6 +176,8 @@ class TargetTwo(object):
 
         self.target_mask = ImageOps.invert(background_mask)
 
+        self.target_mask.show()
+
         reduced_bounds_target_mask = Image.fromarray(cv2.medianBlur(numpy.array(self.target_mask), 9))#NeighborhoodReduction.get_img_with_pixels_to_neighborhood_mode(self.target_mask, self.target_mask.load(), 9)
 
         inside_shape_img = Mask.get_bmp_masked_img(reduced_bounds_target_mask, reduced_bounds_target_mask.load(), self.target_img, self.target_image)
@@ -231,7 +238,11 @@ class TargetTwo(object):
         color, and the second closest possible color to the list to the shape color'''
         self.letter_segment_mask = new_letter_mask
 
+        self.letter_segment_mask.show()
+
         letter_color_img = Mask.get_bmp_masked_img(self.letter_segment_mask, self.letter_segment_mask.load(), self.target_img, self.target_image)
+
+        letter_color_img.show()
         '''find a way to make sure that neighborhood reduction kernel size will never completely wipe out a letter.
         (or pare it down so much that there are very few color samples left)
         This is at risk of happening with letters that have small stroke width.'''
@@ -256,7 +267,7 @@ class TargetTwo(object):
         if str(self.TARGET_CHARACTER_COLOR) == str(self.TARGET_SHAPE_COLOR):
             self.TARGET_CHARACTER_COLOR = TargetColorReader.get_target_colors_sorted_by_closeness(self.letter_rgb)[1]
 
-        
+
 
 
 

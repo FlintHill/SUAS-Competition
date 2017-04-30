@@ -11,7 +11,7 @@ from ImgProcessingCLI.Geometry.Rectangle import Rectangle
 
 class CropTester(object):
 
-    DEFAULT_PPSI = 3.567
+    DEFAULT_PPSI = 6.0#3.567
     DEFAULT_GEOSTAMPS = GeoStamps([GeoStamp((100, 100), 0), GeoStamp((100, 150), 1)])
 
     def __init__(self, set_path, image_type):
@@ -41,15 +41,24 @@ class CropTester(object):
             target_centers = TargetCropper.get_target_crops_from_img2(img, CropTester.DEFAULT_GEOSTAMPS, CropTester.DEFAULT_PPSI, get_centers = True)
             #print("json answer is: ", answer[0])
             answer_centers = []
-            for i in range(0, len(answer)):
-                answer_centers.append(answer[i]["midpoint"])
+            for j in range(0, len(answer)):
+                answer_centers.append(answer[j]["midpoint"])
             #print("answer centers: ", answer_centers)
-            iter_positives, iter_false_positives, iter_missing_targets = self.check_centers(target_centers, answer_centers, max_pixel_distance_to_correct)
+            iter_positives, iter_false_positives, iter_missing_targets, iter_possible = self.check_centers(target_centers, answer_centers, max_pixel_distance_to_correct)
             tot_positives += iter_positives
             tot_false_positives += iter_false_positives
             tot_missing += iter_missing_targets
-            tot_possible += len(answer_centers)
+            tot_possible += iter_possible
+
+            actual_crops = TargetCropper.get_target_crops_from_img2(img, CropTester.DEFAULT_GEOSTAMPS, CropTester.DEFAULT_PPSI)
+            for j in range(0, len(actual_crops)):
+                #actual_crops[j].get_crop_img().show()
+                actual_crops[j].get_crop_img().save("/Users/phusisian/Dropbox/SUAS/Test sets/Full Synthetic Imgs/Generated_Targets_Full/Test Outputs/" + str(i) + "," + str(j) + ".png")
+
             print("tot positives: ", tot_positives, ", tot false positives: ", tot_false_positives, ", tot missing: ", tot_missing, ", tot possible: ", tot_possible)
+            if iter_false_positives > 0:
+                self.check_centers(target_centers, answer_centers, max_pixel_distance_to_correct, img = img)
+
             #print("iter positives: ", iter_positives, ", iter false positives: ", iter_false_positives, ", iter missing targets: ", iter_missing_targets)
         return tot_positives, tot_false_positives, tot_missing, tot_possible
 
@@ -60,7 +69,7 @@ class CropTester(object):
         false_positives = 0
         i = 0
 
-
+        tot_possible = len(answer_centers)
         while i < len(target_centers) and len(answer_centers) > 0:
             target_center = target_centers[i]
             answers_sorted_by_proximity = sorted(answer_centers, key = lambda center : numpy.linalg.norm(numpy.asarray(target_center)-numpy.asarray(center)))
@@ -74,7 +83,8 @@ class CropTester(object):
                 false_positives += 1
             i += 1
 
-        missing_targets = len(answer_centers) - positives
+
+        missing_targets = tot_possible - positives
         '''i = 0
         while i < len(answer_centers) and len(target_centers) > 0:
             answer_center = answer_centers[i]
@@ -95,7 +105,8 @@ class CropTester(object):
                 blue_rect = Rectangle(int(target_centers[i][0]-15), int(target_centers[i][1]-15), 30, 30)
                 blue_rect.fill(img_copy, image_copy, (0,0,255))
             img_copy.show()
-        return positives, false_positives, missing_targets
+            #img_copy.show()
+        return positives, false_positives, missing_targets, tot_possible
 
 
 
