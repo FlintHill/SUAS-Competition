@@ -117,23 +117,24 @@ def target_listener(logger_queue, configurer, timestamped_location_data_array):
         pictures_dir_path = os.path.join(sd_path, pic_folder)
 
         for pic_name in os.listdir(pictures_dir_path):
-            start_time = default_timer()
-            log(name, "Loading image " + pic_name)
-            pic_path = os.path.join(pictures_dir_path, pic_name)
-            img = rawpy.imread(pic_path).postprocess()
-            rgb_image = cv2.cvtColor(img, cv2.BGR2RGB)
-            rgb_image = Image.fromarray(rgb_image).convert('RGB')
+            if ".SRW" in pic_name:
+                start_time = default_timer()
+                log(name, "Loading image " + pic_name)
+                pic_path = os.path.join(pictures_dir_path, pic_name)
+                img = rawpy.imread(pic_path).postprocess()
+                rgb_image = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+                rgb_image = Image.fromarray(rgb_image).convert('RGB')
 
-            target_crops = TargetCropper.get_target_crops_from_img2(rgb_image, GeoStamps(gps_coords), 6)
-            #print(len(target_crops))
+                target_crops = TargetCropper.get_target_crops_from_img2(rgb_image, GeoStamps(gps_coords), 6)
+                #print(len(target_crops))
 
-            log(name, "Finished processing " + pic_name)
-            print(default_timer() - start_time)
-            exit()
+                log(name, "Finished processing " + pic_name)
+                print(default_timer() - start_time)
+                exit()
 
 if __name__ == '__main__':
     manager = multiprocessing.Manager()
-    #interop_server_client = InteropClientConverter(MSL, INTEROP_URL, INTEROP_USERNAME, INTEROP_PASSWORD)
+    interop_server_client = InteropClientConverter(MSL, INTEROP_URL, INTEROP_USERNAME, INTEROP_PASSWORD)
 
     logger_queue = multiprocessing.Queue(-1)
     logger_listener_process = multiprocessing.Process(target=listener_process, args=(logger_queue, logger_listener_configurer))
@@ -141,10 +142,10 @@ if __name__ == '__main__':
 
     timestamped_location_data_array = manager.list()
     target_listener_process = multiprocessing.Process(target=target_listener, args=(logger_queue, logger_worker_configurer, timestamped_location_data_array))
-    target_listener_process.start()
+    #target_listener_process.start()
 
-    while True:
-        sleep(0.5)
+    #while True:
+    #    sleep(0.5)
 
     vehicle_state_data = manager.list()
     mission_data = manager.list()
@@ -155,7 +156,7 @@ if __name__ == '__main__':
     name = multiprocessing.current_process().name
 
     log(name, "Connecting to UAV on: %s" % UAV_CONNECTION_STRING)
-    vehicle = connect(UAV_CONNECTION_STRING, wait_ready=False)
+    vehicle = connect(UAV_CONNECTION_STRING, wait_ready=True, baud=57600)
     vehicle.wait_ready('autopilot_version')
     log(name, "Connected to UAV on: %s" % UAV_CONNECTION_STRING)
     log_vehicle_state(vehicle, name)
