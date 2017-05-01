@@ -156,20 +156,20 @@ if __name__ == '__main__':
     name = multiprocessing.current_process().name
 
     log(name, "Connecting to UAV on: %s" % UAV_CONNECTION_STRING)
-    vehicle = connect(UAV_CONNECTION_STRING, wait_ready=True, baud=57600)
+    vehicle = connect(UAV_CONNECTION_STRING, wait_ready=False)
     vehicle.wait_ready('autopilot_version')
     log(name, "Connected to UAV on: %s" % UAV_CONNECTION_STRING)
     log_vehicle_state(vehicle, name)
 
     log(name, "Waiting for UAV to be armable")
     log(name, "Waiting for UAV to load waypoints")
-    while len(vehicle.commands) < 1 and not vehicle.is_armable:
-        sleep(0.05)
+    #while len(vehicle.commands) < 1 and not vehicle.is_armable:
+    #    sleep(0.05)
 
     log(name, "Downloading waypoints from UAV on: %s" % UAV_CONNECTION_STRING)
     waypoints = vehicle.commands
     waypoints.download()
-    waypoints.wait_ready()
+    #waypoints.wait_ready()
     log(name, "Waypoints successfully downloaded")
 
     log(name, "Enabling SDA...")
