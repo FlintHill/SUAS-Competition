@@ -1,31 +1,46 @@
-# SDA Viewer
+# SDA Viewer #
 
 This page details the setup, function, and operation of the Sense, Detect, and Avoid viewer.
 
-## Viewer
+---
+
+## Viewer ##
 
 This application allows us to view, from any modern web browser, the current
 set of obstacles and the drone's position via websockets in realtime.
 
 The details of the program are enumerated below.
 
-### About
+### About ###
 
-Using a combination of an [Apache webserver](https://www.apache.org/) with a [PHP](https://php.net/) extension and a [MySQLi library](https://php.net/manual/en/book.mysqli.php) included, [MySQL database](https://www.mysql.com/), Javascript with [JQuery](https://jquery.com/) and [LeafletJS](http://leafletjs.com/) libraries inlcuded, we have created viewer that allows e
 Using a combination of an [Apache webserver](https://www.apache.org/) with a [PHP](https://php.net/) extension (and a [MySQLi library](https://php.net/manual/en/book.mysqli.php) included), [MySQL database](https://www.mysql.com/), Javascript (consisting of [JQuery](https://jquery.com/) and [LeafletJS](http://leafletjs.com/) libraries included), we have created viewer that allows see—in realtime—the position of our team's drone, obstacles, waypoints, and more.
 
 DESCRIPTION OF WHY THIS IS REQUIRED. You see.
 
 This is used by Flint Hill's Animus Ferus Team in the AUVSI SUAS Competition.
 
-### Setup and Configuration
+### Setup and Configuration ###
 
 The rough instructions on how to start up and configure the viewer are detailed below:
 
+**Note:** It's recommended that you install [WinRAR](http://www.rarlab.com/download.htm) to simplify
+
 1. Download and install into the root directory, `C:/` (preferably in 64-bit, if using a 64-bit OS):
-	- Apache 2.4
-	- PHP 7
-	- MySQL
+	- [Apache 2.4](https://www.apachelounge.com/download/)
+		- Download the most recent windows binary that's labeled `Win64`
+		- Open the downloaded archive and drag all the contents to the root of your computer.
+
+		The folder structure should look like `C:/Apache24/` where the `Apache24` directory contains the `htdocs`, and other Apache associated directories.
+		- Open a command prompt window, and cd into `C:/Apache24/bin` then execute the command `httpd -k install`, and `http -k start`
+		- Open a browser window, and navigate to `localhost`. You should be able to see the status message `It works!`.
+	- [PHP 7](http://windows.php.net/download#php-7.1)
+		- Download the most recent version of PHP that contains the text `x64 Non Thread Safe` in the title.
+		- Drag the contents of downloaded archive into the root of your computer.
+
+		The folder structure should look like `C:/php/` where the `php` directory contains the `lib` directory, and other PHP associated directories.
+	- [MySQL](https://dev.mysql.com/downloads/mysql/)
+		- Open the installer and choose all the default options.
+			- Remember to save the root account password.
 2. Configure the Apache Server:
 	- Open `Apache24/bin/httpd.conf`
 		- In the `<Directory "C:/Apache24/htdocs">` field, change  `AllowOverride None` to `AllowOverride all`.
@@ -44,26 +59,40 @@ The rough instructions on how to start up and configure the viewer are detailed 
 	- Open the newly renamed file.
 		- Uncomment the line `#extension=mysqli.dll` to `extension=mysqli.dll`
 	- Save and exit the `php.ini` file.
-4. Install MySQL:
-	- Open the installer and choose all the default options.
-		- Remember to save the root account password.
+4. Configure MySQL:
+	- Download [phpmyadmin](https://www.phpmyadmin.net/), and drag the contents of the download archive to the `C:/Apache24/htdocs/` directory.
+
+	The folder inside the archive usually has some complicated name, so it is **strongly recommended** to rename the directory to simply `phpmyadmin`, so that the folder structure looks like `C:/Apache24/htdocs/phpmyadmin/`.
+	- Navigate to `localhost/phpmyadmin` (or if you did not change the name of the phpmyadmin directory, replace phpmyadmin with whatever is the name of the directory in `htdocs`), and type in the username `root`, and the password of the root user that you set during the MySQL installation.
+		- If you do not remember the password you set, you may need to reinstall MySQL.
+	- Create a new MySQL database, called `tiles`.
+	- Open the `tiles` database, if it is not already open in phpmyadmin.
+	- Create a table (while still in the `tiles` database) called `tiles` TODO: fix
 5. Hit the Windows key, and in the menu that appears, type in `services.msc`, and hit enter.
 	- In the window that opens, right click on the `Apache Server` service, and select `Restart`.
 6. Drop all the files within this `sda_viewer/` directory into `C:/Apache24/htdocs/`
+	- Edit `tile/index.php` to the correct username and password to the MySQL account that you setup earlier.
+7. You are finished.
 
-### Interop. Server Specification
+You should be able to navigate to `localhost/sda/viewer/`, and see map tiles in the background. Additionally, if you run the dummy websocket server in `sda/viewer/python/demo-websocket/server.py`, and connect to it in the viewer with the IP address `localhost`, you should also be able to see map points, such as drone position, flight boundaries, and more.
 
+### Interop. Server Specification ###
+
+This section details the exact information retrieved from the AUVSI SUAS' Interoperability Server, based off the specifications that competition managers detail here:
 
 http://auvsi-suas-competition-interoperability-system.readthedocs.io/en/latest/specification.html
 
-TODO: correct because the viewer no longer _directly_ relies on the interop server.
+The Interop. server is not used directly by the viewer—as the Interop. mission and obstacle data is supplied through the websocket—, however, the format of the data, as described in the link above, is what is expected to be received by the viewer.
 
-### WebSocket Server Specification
+The exact format expected is described below with the websocket server JSON response data, in the field labeled `interop. server info`.
 
+### WebSocket Server Specification ###
 
-A websocket is the second and last connection that the viewer needs to establish in order to obtain the drone's current position, as it cannot be obtained elsewhere.
+This section regards the information that needs to be transmitted from a WebSocket server in order to be used in the viewer.
 
-An **example of the response** that a websocket might return is displayed below:
+A websocket is the primary and only connection that the viewer needs to establish in order to obtain the drone's current position, obstacle data, and other relevant mission points.
+
+An **example response** that a websocket must return is displayed below:
 
 ```
 {
@@ -74,8 +103,9 @@ An **example of the response** that a websocket might return is displayed below:
     "velocity":0.0316227766017,
     "lat":38.870304,
     "long":-77.321404,
+
     // interop. server info (obstacles, points, flyzones, etc.)
-    "0":{
+    "0": {
         "stationary_obstacles":[
             {
                 "latitude":38.87152778,
@@ -128,8 +158,7 @@ An **example of the response** that a websocket might return is displayed below:
 }
 ```
 
-
-**2nd Note:** The JSON data has been reorganized here for logical ordering and brevity.
+**Note:** This example response is available in it's unedited entirety at `viewer/python/demo-websocket/data_example.json` (relative to this readme).
 
 The information, much like the example response above, is retrieved after a dummy message is sent off. In our case, we just send a String, `update`. This message is intended to provoke a response from the websocket. Where the websocket then returns the information immediately afterwards.
 
@@ -137,18 +166,25 @@ The following information is **required** for the viewer to operate:
 
 | Short | Full Field Name | Type              | Description |
 | :---- | :-------------- | :---------------- | :---------- |
-| alt   | Altitude        | (Integer) Decimal | Absolute distance from the ground, not sea level, to the drone. |
-| dir   | Direction       | _same as above_   | In degrees, from 0 to 360 inclusive, where the drone is pointing to relative to the north pole. |
-| speed | Speed           | _same as above_   | The change, or delta, in the drone's current latitude and longitude from it's last. |
-| lat   | Latitude        | _same as above_   | The difference from the equator to the drone's current latitude in decimal degrees.
-| long  | Longitude       | _same as above_   | The difference from the Prime Meridian to the drone's current longitude in decimal degrees. |
+| 0  | Interop. Mission Data | (Mixed) ___JSON element___  | All the mission data that the Interop. server provides on the API endpoint `api/missions`, as well as `api/obstacles` included. |
+| alt   | Altitude | (Float/Double) ___Decimal___ | Absolute distance from the ground, not sea level, to the drone. |
+| dir   | Direction | (Float/Double) ___Degrees___ | In degrees, from 0 to 360 inclusive, where the drone is pointing to relative to the north pole. |
+| speed | Speed | (Float/Double) ___Decimal___ | The change, or delta, in the drone's current latitude and longitude from it's last. |
+| velocity | Velocity | _same as above_ | The change, or delta, in the drone's current position (lat, long, alt) from it's last. |
+| lat   | Latitude | _same as above_   | The difference from the equator to the drone's current latitude in decimal degrees.
+| long  | Longitude  | _same as above_   | The difference from the Prime Meridian to the drone's current longitude in decimal degrees. |
 
 All of this information, except altitude, is critical in displaying the drone's current position.
 
-### Features not yet implemented
+### Features not yet implemented ###
 
-Currently, the altitude is not taken into account with regards to obstacles. If an obstacle does not exist on the same altitude as the drone, then ideally, the obstacle would be made either semi or fully transparent. This is a feature that needs to implemented at a later date.
+There are several features that have not been implemented:
 
-## Tile Server
+ - Currently, the altitude is not taken into account with regards to obstacles. If an obstacle does not exist on the same altitude as the drone, then ideally, the obstacle would be made either semi or fully transparent. This is a feature that needs to implemented at a later date.
+ - The lack of error support in websocket connections needs to be addressed.
+ - Add retina versions of marker icons.
+ - Change the drone position icon to a classic GPS triangle icon that correctly indicates the direction of the drone.
+
+## Tile Server ##
 
 TODO: expand setup of tile server.
