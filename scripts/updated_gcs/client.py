@@ -33,7 +33,7 @@ INTEROP_URL = "http://10.10.130.2:8000"
 INTEROP_USERNAME = "Flint"
 INTEROP_PASSWORD = "2429875295"
 
-MSL = 430
+MSL_ALT = 430
 MIN_REL_FLYING_ALT = 100
 MAX_REL_FLYING_ALT = 750
 
@@ -65,9 +65,9 @@ def target_listener(logger_queue, configurer, timestamped_location_data_array):
     configurer(logger_queue)
     name = multiprocessing.current_process().name
 
-    #interop_server_client = InteropClientConverter(MSL, INTEROP_URL, INTEROP_USERNAME, INTEROP_PASSWORD)
+    #interop_server_client = InteropClientConverter(MSL_ALT, INTEROP_URL, INTEROP_USERNAME, INTEROP_PASSWORD)
 
-    """log(name, "Instantiating letter categorizer")
+    log(name, "Instantiating letter categorizer")
     eigenvectors = load_numpy_arr(BASE_LETTER_CATEGORIZER_PCA_PATH + "/Data/Eigenvectors/eigenvectors 0.npy")
     projections_path = BASE_LETTER_CATEGORIZER_PCA_PATH + "/Data/Projections"
     mean = load_numpy_arr(BASE_LETTER_CATEGORIZER_PCA_PATH + "/Data/Mean/mean_img 0.npy")
@@ -81,7 +81,7 @@ def target_listener(logger_queue, configurer, timestamped_location_data_array):
     orientation_mean = load_numpy_arr(BASE_ORIENTATION_CLASSIFIER_PCA_PATH + "/Data/Mean/mean_img 0.npy")
     orientation_num_dim = 50
     orientation_solver = OrientationSolver(orientation_eigenvectors, orientation_mean, BASE_ORIENTATION_CLASSIFIER_PCA_PATH, orientation_num_dim)
-    log(name, "Orientation solver instantiated")"""
+    log(name, "Orientation solver instantiated")
 
     if not os.path.exists(GENERATED_DATA_LOCATION):
         os.mkdir(GENERATED_DATA_LOCATION)
@@ -104,7 +104,7 @@ def target_listener(logger_queue, configurer, timestamped_location_data_array):
         if os.path.exists(sd_path):
             break
 
-        sleep(0.5)
+        sleep(1)
 
     # Once SD card is loaded, begin processing
     # For every image on the SD card
@@ -125,7 +125,9 @@ def target_listener(logger_queue, configurer, timestamped_location_data_array):
                 rgb_image = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
                 rgb_image = Image.fromarray(rgb_image).convert('RGB')
 
+                print("BEFORE TargetCropper")
                 target_crops = TargetCropper.get_target_crops_from_img2(rgb_image, GeoStamps(gps_coords), 6)
+                print("AFTER TargetCropper")
                 #print(len(target_crops))
 
                 log(name, "Finished processing " + pic_name)
@@ -134,7 +136,7 @@ def target_listener(logger_queue, configurer, timestamped_location_data_array):
 
 if __name__ == '__main__':
     manager = multiprocessing.Manager()
-    interop_server_client = InteropClientConverter(MSL, INTEROP_URL, INTEROP_USERNAME, INTEROP_PASSWORD)
+    #interop_server_client = InteropClientConverter(MSL_ALT, INTEROP_URL, INTEROP_USERNAME, INTEROP_PASSWORD)
 
     logger_queue = multiprocessing.Queue(-1)
     logger_listener_process = multiprocessing.Process(target=listener_process, args=(logger_queue, logger_listener_configurer))
@@ -142,10 +144,10 @@ if __name__ == '__main__':
 
     timestamped_location_data_array = manager.list()
     target_listener_process = multiprocessing.Process(target=target_listener, args=(logger_queue, logger_worker_configurer, timestamped_location_data_array))
-    #target_listener_process.start()
+    target_listener_process.start()
 
-    #while True:
-    #    sleep(0.5)
+    while True:
+        sleep(0.5)
 
     vehicle_state_data = manager.list()
     mission_data = manager.list()
@@ -183,7 +185,7 @@ if __name__ == '__main__':
         "index" : gps_update_index,
         "geo_stamp" : GeoStamp((current_location.get_lat(), current_location.get_lon()), datetime.now())
     })
-    vehicle_state_data.append(get_vehicle_state(vehicle, sda_converter))
+    vehicle_state_data.append(get_vehicle_state(vehicle, sda_converter, MSL_ALT))
     stationary_obstacles, moving_obstacles = interop_server_client.get_obstacles()
     obstacles_array = [stationary_obstacles, moving_obstacles]
     mission_data.append(get_mission_json(interop_server_client.get_active_mission(), obstacles_array))
@@ -210,7 +212,7 @@ if __name__ == '__main__':
         for moving_obstacle in moving_obstacles:
             sda_converter.add_obstacle(get_obstacle_location(moving_obstacle), moving_obstacle)"""
 
-        vehicle_state_data[0] = get_vehicle_state(vehicle, sda_converter)
+        vehicle_state_data[0] = get_vehicle_state(vehicle, sda_converter, MSL_ALT)
         mission_data[0] = get_mission_json(interop_server_client.get_active_mission(), obstacles_array)
 
         sleep(0.5)
