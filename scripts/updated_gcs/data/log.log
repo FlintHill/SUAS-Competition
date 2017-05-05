@@ -1,15 +1,9 @@
-2017-05-05 09:54:55,931 MainProcess [INFO] Instantiating letter categorizer
-2017-05-05 09:55:12,313 MainProcess [INFO] Letter categorizer instantiated successfully
-2017-05-05 09:55:12,313 MainProcess [INFO] Instantiating orientation solver
-2017-05-05 09:55:13,019 MainProcess [INFO] Orientation solver instantiated
-2017-05-05 09:55:13,021 MainProcess [INFO] Beginning image processing...
-2017-05-05 09:55:13,021 MainProcess [INFO] Loading image 05050003.SRW
-2017-05-05 09:55:30,321 MainProcess [INFO] Finished processing 05050003.SRW
- solver instantiated
-2017-05-05 09:55:13,019 MainProcess [INFO] Orientation solver instantiated
-2017-05-05 09:55:13,021 MainProcess [INFO] Beginning image processing...
-2017-05-05 09:55:13,021 MainProcess [INFO] Loading image 05050003.SRW
-2017-05-05 09:55:13,021 MainProcess [INFO] Beginning image processing...
-2017-05-05 09:55:13,021 MainProcess [INFO] Loading image 05050003.SRW
-2017-05-05 09:55:30,321 MainProcess [INFO] Finished processing 05050003.SRW
-2017-05-05 09:55:30,321 MainProcess [INFO] Finished processing 05050003.SRW
+2017-05-05 11:03:21,704 MainProcess [INFO] Instantiating letter categorizer
+2017-05-05 11:03:37,723 MainProcess [INFO] Letter categorizer instantiated successfully
+2017-05-05 11:03:37,725 MainProcess [INFO] Instantiating orientation solver
+2017-05-05 11:03:38,504 MainProcess [INFO] Orientation solver instantiated
+
+2017-05-05 11:03:37,723 MainProcess [INFO] Letter categorizer instantiated successfully
+2017-05-05 11:03:37,725 MainProcess [INFO] Instantiating orientation solver
+2017-05-05 11:03:38,504 MainProcess [INFO] Orientation solver instantiated
+2017-05-05 11:03:38,504 MainProcess [INFO] Orientation solver instantiated

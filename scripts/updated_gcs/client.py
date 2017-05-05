@@ -7,6 +7,7 @@ from time import sleep
 from interop_client import InteropClientConverter
 from sda_converter import SDAConverter
 from converter_functions import *
+from data_functions import *
 from sda_viewer import SDAViewSocket
 from SimpleWebSocketServer import SimpleWebSocketServer
 from vehicle_state import VehicleState
@@ -21,11 +22,8 @@ from ImgProcessingCLI.Runtime.GeoStamps import GeoStamps
 from EigenFit.Load import *
 from timeit import default_timer
 import rawpy
-import cv2
 import shutil
 import PIL
-
-TK1_ADDRESS = ('192.168.1.6', 9001)
 
 UAV_CONNECTION_STRING = "tcp:127.0.0.1:14551"
 
@@ -83,11 +81,11 @@ def target_listener(logger_queue, configurer, timestamped_location_data_array):
     orientation_solver = OrientationSolver(orientation_eigenvectors, orientation_mean, BASE_ORIENTATION_CLASSIFIER_PCA_PATH, orientation_num_dim)
     log(name, "Orientation solver instantiated")
 
-    if not os.path.exists(GENERATED_DATA_LOCATION):
-        os.mkdir(GENERATED_DATA_LOCATION)
-    else:
+    if os.path.exists(GENERATED_DATA_LOCATION):
         shutil.rmtree(GENERATED_DATA_LOCATION)
-        os.mkdir(GENERATED_DATA_LOCATION)
+
+    os.mkdir(GENERATED_DATA_LOCATION)
+    os.mkdir(os.path.join(GENERATED_DATA_LOCATION, "object_file_format"))
 
     sd_path = os.path.join("/Volumes", SD_CARD_NAME, "DCIM")
     gps_coords = []
@@ -113,6 +111,7 @@ def target_listener(logger_queue, configurer, timestamped_location_data_array):
     # 3. Save the targets to GENERATED_DATA_LOCATION
     # 4. Upload the targets to interop server
     log(name, "Beginning image processing...")
+    crop_index = 0
     for pic_folder in os.listdir(sd_path):
         pictures_dir_path = os.path.join(sd_path, pic_folder)
 
@@ -125,10 +124,19 @@ def target_listener(logger_queue, configurer, timestamped_location_data_array):
                 rgb_image = Image.fromarray(numpy.roll(img, 1, axis=0))
 
                 target_crops = TargetCropper.get_target_crops_from_img2(rgb_image, GeoStamps(gps_coords), 6)
+                log(name, "Finished processing", pic_name, "in", str(default_timer() - start_time))
 
-                log(name, "Finished processing " + pic_name)
-                print(default_timer() - start_time)
-                exit()
+                for target_crop in target_crops:
+                    log(name, "Identifying target characteristics of target #" + str(crop_index))
+                    runtime_target = RuntimeTarget(target_crop, letter_categorizer, orientation_solver)
+                    target_json_output = runtime_target.get_competition_json_output()
+
+                    log(name, "Saving target characteristics of target #" + str(crop_index))
+                    output_pic_name = os.path.join(GENERATED_DATA_LOCATION, "object_file_format", str(crop_index) + ".png")
+                    output_json_name = os.path.join(GENERATED_DATA_LOCATION, "object_file_format", str(crop_index) + ".json")
+                    save_json_data(output_json_name, target_json_output)
+
+                    crop_index += 1
 
 if __name__ == '__main__':
     manager = multiprocessing.Manager()
@@ -142,7 +150,6 @@ if __name__ == '__main__':
     target_listener_process = multiprocessing.Process(target=target_listener, args=(logger_queue, logger_worker_configurer, timestamped_location_data_array))
     #target_listener_process.start()
     target_listener(logger_queue, logger_worker_configurer, timestamped_location_data_array)
-
     while True:
         sleep(0.5)
 
@@ -180,7 +187,7 @@ if __name__ == '__main__':
     current_location = get_location(vehicle)
     timestamped_location_data_array.append({
         "index" : gps_update_index,
-        "geo_stamp" : GeoStamp((current_location.get_lat(), current_location.get_lon()), datetime.now())
+        "geo_stamp" : GeoStamp((current_location.get_lat(), current_location.get_lon()), datetime.now().strftime("%h %M %S"))
     })
     vehicle_state_data.append(get_vehicle_state(vehicle, sda_converter, MSL_ALT))
     stationary_obstacles, moving_obstacles = interop_server_client.get_obstacles()
@@ -224,4 +231,6 @@ if __name__ == '__main__':
             log("root", "Avoiding obstacles...")
             vehicle.simple_goto(obj_avoid_coordinates)"""
     #except:
+    #    while True:
+    #        sleep(0.5)
     #    pass#vehicle.close()
