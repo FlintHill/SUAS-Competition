@@ -122,13 +122,9 @@ def target_listener(logger_queue, configurer, timestamped_location_data_array):
                 log(name, "Loading image " + pic_name)
                 pic_path = os.path.join(pictures_dir_path, pic_name)
                 img = rawpy.imread(pic_path).postprocess()
-                rgb_image = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-                rgb_image = Image.fromarray(rgb_image).convert('RGB')
+                rgb_image = Image.fromarray(numpy.roll(img, 1, axis=0))
 
-                print("BEFORE TargetCropper")
                 target_crops = TargetCropper.get_target_crops_from_img2(rgb_image, GeoStamps(gps_coords), 6)
-                print("AFTER TargetCropper")
-                #print(len(target_crops))
 
                 log(name, "Finished processing " + pic_name)
                 print(default_timer() - start_time)
@@ -144,7 +140,8 @@ if __name__ == '__main__':
 
     timestamped_location_data_array = manager.list()
     target_listener_process = multiprocessing.Process(target=target_listener, args=(logger_queue, logger_worker_configurer, timestamped_location_data_array))
-    target_listener_process.start()
+    #target_listener_process.start()
+    target_listener(logger_queue, logger_worker_configurer, timestamped_location_data_array)
 
     while True:
         sleep(0.5)
