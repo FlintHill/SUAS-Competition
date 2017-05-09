@@ -16,7 +16,7 @@ def get_location(vehicle):
 
     return Location(latitude, longitude, altitude)
 
-def get_vehicle_state(vehicle, sda_converter):
+def get_vehicle_state(vehicle, sda_converter, MSL_ALT):
     """
     Convert the vehicle's current position and information into a vehicle
     state object
@@ -27,8 +27,8 @@ def get_vehicle_state(vehicle, sda_converter):
     """
     latitude = vehicle.location.global_relative_frame.lat
     longitude = vehicle.location.global_relative_frame.lon
-    altitude = vehicle.location.global_relative_frame.alt
-    groundspeed = vehicle.groundspeed
+    altitude = vehicle.location.global_relative_frame.alt + MSL_ALT
+    groundspeed = vehicle.groundspeed * 1.94384448
     velocity = vehicle.velocity
     direction = vehicle.heading
 
@@ -108,7 +108,7 @@ def get_mission_json(mission, obstacles):
             "altitude_msl" : moving_obstacle.altitude_msl,
             "latitude" : moving_obstacle.latitude,
             "longitude" : moving_obstacle.longitude,
-            "sphere_radius" : moving_obstacle.sphere_radius
+            "cylinder_radius" : moving_obstacle.sphere_radius
         } for moving_obstacle in obstacles[1]
     ]
 

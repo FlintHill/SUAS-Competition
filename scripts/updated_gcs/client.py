@@ -7,6 +7,7 @@ from time import sleep
 from interop_client import InteropClientConverter
 from sda_converter import SDAConverter
 from converter_functions import *
+from data_functions import *
 from sda_viewer import SDAViewSocket
 from SimpleWebSocketServer import SimpleWebSocketServer
 from vehicle_state import VehicleState
@@ -14,23 +15,27 @@ from SDA import *
 from ImgProcessingCLI.Runtime.RuntimeTarget import RuntimeTarget
 from ImgProcessingCLI.DataMine.OrientationSolver import OrientationSolver
 from ImgProcessingCLI.DataMine import KMeansCompare
+from ImgProcessingCLI.Runtime import TargetCropper
 from EigenFit.DataMine import Categorizer
 from ImgProcessingCLI.Runtime.GeoStamp import GeoStamp
+from ImgProcessingCLI.Runtime.GeoStamps import GeoStamps
 from EigenFit.Load import *
+from timeit import default_timer
+import rawpy
+import shutil
+import PIL
 
-TK1_ADDRESS = ('192.168.1.6', 9001)
+UAV_CONNECTION_STRING = "tcp:127.0.0.1:14551"
 
-UAV_CONNECTION_STRING = "tcp:127.0.0.1:5760"
-
-INTEROP_URL = "http://10.10.130.100:8000"
+INTEROP_URL = "http://10.10.130.2:8000"
 INTEROP_USERNAME = "Flint"
 INTEROP_PASSWORD = "2429875295"
 
-MSL = 430
+MSL_ALT = 430
 MIN_REL_FLYING_ALT = 100
 MAX_REL_FLYING_ALT = 750
 
-GENERATED_DATA_LOCATION = "/path/to/generated/data/location"
+GENERATED_DATA_LOCATION = "image_data"
 BASE_LETTER_CATEGORIZER_PCA_PATH = "/Users/vtolpegin/Desktop/GENERATED FORCED WINDOW PCA"
 BASE_ORIENTATION_CLASSIFIER_PCA_PATH = "/Users/vtolpegin/Desktop/GENERATED 180 ORIENTATION PCA"
 
@@ -58,7 +63,7 @@ def target_listener(logger_queue, configurer, timestamped_location_data_array):
     configurer(logger_queue)
     name = multiprocessing.current_process().name
 
-    interop_server_client = InteropClientConverter(MSL, INTEROP_URL, INTEROP_USERNAME, INTEROP_PASSWORD)
+    #interop_server_client = InteropClientConverter(MSL_ALT, INTEROP_URL, INTEROP_USERNAME, INTEROP_PASSWORD)
 
     log(name, "Instantiating letter categorizer")
     eigenvectors = load_numpy_arr(BASE_LETTER_CATEGORIZER_PCA_PATH + "/Data/Eigenvectors/eigenvectors 0.npy")
@@ -76,7 +81,13 @@ def target_listener(logger_queue, configurer, timestamped_location_data_array):
     orientation_solver = OrientationSolver(orientation_eigenvectors, orientation_mean, BASE_ORIENTATION_CLASSIFIER_PCA_PATH, orientation_num_dim)
     log(name, "Orientation solver instantiated")
 
-    sd_path = os.path.join("/media", SD_CARD_NAME)
+    if os.path.exists(GENERATED_DATA_LOCATION):
+        shutil.rmtree(GENERATED_DATA_LOCATION)
+
+    os.mkdir(GENERATED_DATA_LOCATION)
+    os.mkdir(os.path.join(GENERATED_DATA_LOCATION, "object_file_format"))
+
+    sd_path = os.path.join("/Volumes", SD_CARD_NAME, "DCIM")
     gps_coords = []
     gps_update_index = 0
     while True:
@@ -85,11 +96,13 @@ def target_listener(logger_queue, configurer, timestamped_location_data_array):
                 gps_coords.append(timestamped_location_data_array[0]["geo_stamp"])
                 gps_update_index += 1
 
+        print("Waiting for path to exist...")
+
         # Wait for SD card to be loaded
         if os.path.exists(sd_path):
             break
 
-        sleep(0.5)
+        sleep(1)
 
     # Once SD card is loaded, begin processing
     # For every image on the SD card
@@ -97,11 +110,37 @@ def target_listener(logger_queue, configurer, timestamped_location_data_array):
     # 2. Process the crops, determine the ones that are targets
     # 3. Save the targets to GENERATED_DATA_LOCATION
     # 4. Upload the targets to interop server
-    print(os.listdir(sd_path))
+    log(name, "Beginning image processing...")
+    crop_index = 0
+    for pic_folder in os.listdir(sd_path):
+        pictures_dir_path = os.path.join(sd_path, pic_folder)
+
+        for pic_name in os.listdir(pictures_dir_path):
+            if ".SRW" in pic_name:
+                start_time = default_timer()
+                log(name, "Loading image " + pic_name)
+                pic_path = os.path.join(pictures_dir_path, pic_name)
+                img = rawpy.imread(pic_path).postprocess()
+                rgb_image = Image.fromarray(numpy.roll(img, 1, axis=0))
+
+                target_crops = TargetCropper.get_target_crops_from_img2(rgb_image, GeoStamps(gps_coords), 6)
+                log(name, "Finished processing", pic_name, "in", str(default_timer() - start_time))
+
+                for target_crop in target_crops:
+                    log(name, "Identifying target characteristics of target #" + str(crop_index))
+                    runtime_target = RuntimeTarget(target_crop, letter_categorizer, orientation_solver)
+                    target_json_output = runtime_target.get_competition_json_output()
+
+                    log(name, "Saving target characteristics of target #" + str(crop_index))
+                    output_pic_name = os.path.join(GENERATED_DATA_LOCATION, "object_file_format", str(crop_index) + ".png")
+                    output_json_name = os.path.join(GENERATED_DATA_LOCATION, "object_file_format", str(crop_index) + ".json")
+                    save_json_data(output_json_name, target_json_output)
+
+                    crop_index += 1
 
 if __name__ == '__main__':
     manager = multiprocessing.Manager()
-    interop_server_client = InteropClientConverter(MSL, INTEROP_URL, INTEROP_USERNAME, INTEROP_PASSWORD)
+    #interop_server_client = InteropClientConverter(MSL_ALT, INTEROP_URL, INTEROP_USERNAME, INTEROP_PASSWORD)
 
     logger_queue = multiprocessing.Queue(-1)
     logger_listener_process = multiprocessing.Process(target=listener_process, args=(logger_queue, logger_listener_configurer))
@@ -109,7 +148,10 @@ if __name__ == '__main__':
 
     timestamped_location_data_array = manager.list()
     target_listener_process = multiprocessing.Process(target=target_listener, args=(logger_queue, logger_worker_configurer, timestamped_location_data_array))
-    target_listener_process.start()
+    #target_listener_process.start()
+    target_listener(logger_queue, logger_worker_configurer, timestamped_location_data_array)
+    while True:
+        sleep(0.5)
 
     vehicle_state_data = manager.list()
     mission_data = manager.list()
@@ -127,8 +169,8 @@ if __name__ == '__main__':
 
     log(name, "Waiting for UAV to be armable")
     log(name, "Waiting for UAV to load waypoints")
-    while len(vehicle.commands) < 1 and not vehicle.is_armable:
-        sleep(0.05)
+    #while len(vehicle.commands) < 1 and not vehicle.is_armable:
+    #    sleep(0.05)
 
     log(name, "Downloading waypoints from UAV on: %s" % UAV_CONNECTION_STRING)
     waypoints = vehicle.commands
@@ -145,9 +187,9 @@ if __name__ == '__main__':
     current_location = get_location(vehicle)
     timestamped_location_data_array.append({
         "index" : gps_update_index,
-        "geo_stamp" : GeoStamp((current_location.get_lat(), current_location.get_lon()), datetime.now())
+        "geo_stamp" : GeoStamp((current_location.get_lat(), current_location.get_lon()), datetime.now().strftime("%h %M %S"))
     })
-    vehicle_state_data.append(get_vehicle_state(vehicle, sda_converter))
+    vehicle_state_data.append(get_vehicle_state(vehicle, sda_converter, MSL_ALT))
     stationary_obstacles, moving_obstacles = interop_server_client.get_obstacles()
     obstacles_array = [stationary_obstacles, moving_obstacles]
     mission_data.append(get_mission_json(interop_server_client.get_active_mission(), obstacles_array))
@@ -156,11 +198,11 @@ if __name__ == '__main__':
     #try:
     while True:
         current_location = get_location(vehicle)
-        """current_waypoint_number = vehicle.commands.next
-        current_uav_waypoint = waypoints[current_waypoint_number]
-        sda_converter.set_waypoint(Location(current_uav_waypoint.x, current_uav_waypoint.y, current_uav_waypoint.z))
+        #current_waypoint_number = vehicle.commands.next
+        #current_uav_waypoint = waypoints[current_waypoint_number]
+        #sda_converter.set_waypoint(Location(current_uav_waypoint.x, current_uav_waypoint.y, current_uav_waypoint.z))
 
-        interop_server_client.post_telemetry(current_location)"""
+        interop_server_client.post_telemetry(current_location, vehicle.heading)
         gps_update_index += 1
         timestamped_location_data_array[0] = {
             "index" : gps_update_index,
@@ -174,7 +216,7 @@ if __name__ == '__main__':
         for moving_obstacle in moving_obstacles:
             sda_converter.add_obstacle(get_obstacle_location(moving_obstacle), moving_obstacle)"""
 
-        vehicle_state_data[0] = get_vehicle_state(vehicle, sda_converter)
+        vehicle_state_data[0] = get_vehicle_state(vehicle, sda_converter, MSL_ALT)
         mission_data[0] = get_mission_json(interop_server_client.get_active_mission(), obstacles_array)
 
         sleep(0.5)
@@ -189,4 +231,6 @@ if __name__ == '__main__':
             log("root", "Avoiding obstacles...")
             vehicle.simple_goto(obj_avoid_coordinates)"""
     #except:
+    #    while True:
+    #        sleep(0.5)
     #    pass#vehicle.close()

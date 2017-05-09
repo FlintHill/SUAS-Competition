@@ -14,7 +14,7 @@ class SDAViewSocket(WebSocket):
 
     def handleMessage(self):
         data = '{"obstacle_present":' + str(self.vehicle_state_data[0].get_obstacle_in_path()).lower() +  ', '
-        data += '"0": ' + str(self.mission_data[0]).encode("utf-8") + ', '
+        data += '"0": ' + str(self.mission_data[0]) + ', '
         data += '"alt": ' + str(self.vehicle_state_data[0].get_alt())
         data += ', "dir": ' + str(self.vehicle_state_data[0].get_direction())
         data += ', "speed": ' + str(self.vehicle_state_data[0].get_groundspeed())

@@ -22,3 +22,5 @@ To run the Client script, cd into the ```gcs``` directory, then run
 ```
 python client.py
 ```
+
+Ensure that the version of Python you are using is 2.7.x. If attempting to use Python 3, the program will crash with a Timeout command.

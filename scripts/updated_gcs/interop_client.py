@@ -13,14 +13,16 @@ class InteropClientConverter:
 
         self.client = Client(url, username, password)
 
-    def post_telemetry(self, telemetry):
+    def post_telemetry(self, location, heading):
         """
         Post the drone's telemetry information
 
-        :param telemetry: The telemetry to post
-        :type telemetry: CurrentCoordinates
+        :param location: The location to post
+        :type location: Location
+        :param heading: The UAV's heading
+        :type heading: Float
         """
-        telem_upload_data = Telemetry(telemetry.get_latitude(), telemetry.get_longitude(), telemetry.get_altitude() + self.msl_alt, telemetry.get_heading())
+        telem_upload_data = Telemetry(location.get_lat(), location.get_lon(), location.get_alt() + self.msl_alt, heading)
 
         self.client.post_telemetry(telem_upload_data)
 

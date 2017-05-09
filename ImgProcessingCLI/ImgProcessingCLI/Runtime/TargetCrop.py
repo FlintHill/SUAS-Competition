@@ -2,7 +2,6 @@ import ImgProcessingCLI.Runtime.TimeOps as TimeOps
 import ImgProcessingCLI.Runtime.GPSOperations as GPSOperations
 from math import sqrt
 import numpy
-import haversine
 
 class TargetCrop(object):
 

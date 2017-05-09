@@ -48,6 +48,7 @@ class VehicleState(Location):
         for component in self.velocity:
             magnitude += component**2
         magnitude = magnitude**0.5
+        magnitude *= 1.94384448
 
         return magnitude
 

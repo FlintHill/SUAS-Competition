@@ -77,11 +77,11 @@ def log_vehicle_state(vehicle, logger_name):
     Log a vehicle's state
     """
     log(logger_name, " Get all vehicle attribute values:")
-    log(logger_name, " Autopilot Firmware version: %s" % vehicle.version)
+    #log(logger_name, " Autopilot Firmware version: %s" % vehicle.version)
     log(logger_name, "   Major version number: %s" % vehicle.version.major)
     log(logger_name, "   Minor version number: %s" % vehicle.version.minor)
     log(logger_name, "   Patch version number: %s" % vehicle.version.patch)
-    log(logger_name, "   Release type: %s" % vehicle.version.release_type())
+    #log(logger_name, "   Release type: %s" % vehicle.version.release_type())
     log(logger_name, "   Release version: %s" % vehicle.version.release_version())
     log(logger_name, "   Stable release?: %s" % vehicle.version.is_stable())
     log(logger_name, " Autopilot capabilities")
