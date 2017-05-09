@@ -15,8 +15,6 @@ The details of the program are enumerated below.
 
 Using a combination of an [Apache webserver](https://www.apache.org/) with a [PHP](https://php.net/) extension (and a [MySQLi library](https://php.net/manual/en/book.mysqli.php) included), [MySQL database](https://www.mysql.com/), Javascript (consisting of [JQuery](https://jquery.com/) and [LeafletJS](http://leafletjs.com/) libraries included), we have created viewer that allows see—in realtime—the position of our team's drone, obstacles, waypoints, and more.
 
-DESCRIPTION OF WHY THIS IS REQUIRED. You see.
-
 This is used by Flint Hill's Animus Ferus Team in the AUVSI SUAS Competition.
 
 ### Setup and Configuration ###
@@ -63,13 +61,26 @@ The rough instructions on how to start up and configure the viewer are detailed 
 	- Download [phpmyadmin](https://www.phpmyadmin.net/), and drag the contents of the download archive to the `C:/Apache24/htdocs/` directory.
 
 	The folder inside the archive usually has some complicated name, so it is **strongly recommended** to rename the directory to simply `phpmyadmin`, so that the folder structure looks like `C:/Apache24/htdocs/phpmyadmin/`.
-	- Navigate to `localhost/phpmyadmin` (or if you did not change the name of the phpmyadmin directory, replace phpmyadmin with whatever is the name of the directory in `htdocs`), and type in the username `root`, and the password of the root user that you set during the MySQL installation.
+	- In a web browser, navigate to `localhost/phpmyadmin` (or if you did not change the name of the phpmyadmin directory, replace phpmyadmin with whatever is the name of the directory in `htdocs`), and type in the username `root`, and the password of the root user that you set during the MySQL installation.
 		- If you do not remember the password you set, you may need to reinstall MySQL.
-	- Create a new MySQL database, called `tiles`.
-	- Open the `tiles` database, if it is not already open in phpmyadmin.
-	- Create a table (while still in the `tiles` database) called `tiles` TODO: fix
+	- Create a new MySQL database, called `tile`.
+	- Open the `tile` database, if it is not already open in phpmyadmin.
+	- Create a new table within the `tile` database, called `tiles` with the following column structure:
+		- Row 1 -> name: `id`, type: `INT`, index: `PRIMARY` (a pop-up box will appear, just hit ok.)
+		- Row 2 -> name: `z`, type: `INT`.
+		- Row 3 -> name: `x`, type: `INT`.
+		- Row 4 -> name: `y`, type: `INT`.
+		- Row 5 -> name: `defaults`, type: `INT`, default: `As defined: -1`.
+		- Row 6 -> name: `image`, type: `blob`.
+	- Going back to the `SUAS-Competition` github repo, open `sda_viewer/tile/resources/`, and within phpmyadmin, import the file `defaults.sql` while still within the `tile` database.
+	- Go into `sda_viewer/tile/scripts/` and run `download.py`, and enter the coordinates of your current position. The script will stop once it has downloaded all the map tiles. **This may take some time, so be patient.**
+	- Move the tile folder, and the script named `import.php` that is also within the `scripts` directory to `htdocs`, and then open `localhost/import.php` on a web browser.
+		- This will load all the images into the MySQL database. **This should take no longer than 30 seconds.**
+	- To ensure that the import script worked successfully, open the `tiles` table in phpmyadmin, and check to see if there are rows with different and unique z, x, and y rows with the blob image size varying between the different row entries.
+		- You can also navigate to `localhost/sda/viewer/` in your browser, and if you see tiles, **then you have successfully setup the MySQL server.**
 5. Hit the Windows key, and in the menu that appears, type in `services.msc`, and hit enter.
-	- In the window that opens, right click on the `Apache Server` service, and select `Restart`.
+	- In the window that opens, right click on the `Apache2.4` (Apache Server) service, and select `Restart`.
+	- Right click on the `Apache2.4` process again and click `Properties`. Change `Startup type` to `Automatic`. This will tell Windows to launch the Apache server every time the computer restarts, or boots up from a shutdown.
 6. Drop all the files within this `sda_viewer/` directory into `C:/Apache24/htdocs/`
 	- Edit `tile/index.php` to the correct username and password to the MySQL account that you setup earlier.
 7. You are finished.
@@ -166,7 +177,7 @@ The following information is **required** for the viewer to operate:
 
 | Short | Full Field Name | Type              | Description |
 | :---- | :-------------- | :---------------- | :---------- |
-| 0  | Interop. Mission Data | (Mixed) ___JSON element___  | All the mission data that the Interop. server provides on the API endpoint `api/missions`, as well as `api/obstacles` included. |
+| 0  | Interop. Mission Data | (Mixed) ___JSON element___  | All the mission data that the Interop. server provides on the API endpoint `api/missions`, as well as `api/obstacles` included within the initial `api/missions` JSON data. |
 | alt   | Altitude | (Float/Double) ___Decimal___ | Absolute distance from the ground, not sea level, to the drone. |
 | dir   | Direction | (Float/Double) ___Degrees___ | In degrees, from 0 to 360 inclusive, where the drone is pointing to relative to the north pole. |
 | speed | Speed | (Float/Double) ___Decimal___ | The change, or delta, in the drone's current latitude and longitude from it's last. |
@@ -174,7 +185,7 @@ The following information is **required** for the viewer to operate:
 | lat   | Latitude | _same as above_   | The difference from the equator to the drone's current latitude in decimal degrees.
 | long  | Longitude  | _same as above_   | The difference from the Prime Meridian to the drone's current longitude in decimal degrees. |
 
-All of this information, except altitude, is critical in displaying the drone's current position.
+All of this information, except 0 and altitude, is critical in displaying the drone's current position.
 
 ### Features not yet implemented ###
 
@@ -187,4 +198,10 @@ There are several features that have not been implemented:
 
 ## Tile Server ##
 
-TODO: expand setup of tile server.
+The details of the tile server are detailed below.
+
+The setup of the tile server is included in the set of instructions above.
+
+The tile server is required to serve the map tiles that appear in the background of the viewer offline, because at the competition, an internet connection will not be provided.
+
+---
