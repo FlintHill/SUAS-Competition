@@ -65,26 +65,24 @@ class ObstacleMap(object):
         for obstacle in self.obstacles.tolist():
             if self.does_point_intersect_obstacle(obstacle, drone_point, self.drone.get_waypoint_holder().get_current_waypoint()):
                 new_attempt_pos_points = [
-                    [obstacle.get_point()[0], obstacle.get_point()[1] + (obstacle.get_radius() * 2**0.5), 0],
-                    [obstacle.get_point()[0], obstacle.get_point()[1] - (obstacle.get_radius() * 2**0.5), 0],
-                    [obstacle.get_point()[0] + (obstacle.get_radius() * 2**0.5), obstacle.get_point()[1], 0],
-                    [obstacle.get_point()[0] - (obstacle.get_radius() * 2**0.5), obstacle.get_point()[1], 0],
                     [obstacle.get_point()[0] + obstacle.get_radius(), obstacle.get_point()[1] + obstacle.get_radius(), 0],
                     [obstacle.get_point()[0] - obstacle.get_radius(), obstacle.get_point()[1] - obstacle.get_radius(), 0],
                     [obstacle.get_point()[0] + obstacle.get_radius(), obstacle.get_point()[1] - obstacle.get_radius(), 0],
                     [obstacle.get_point()[0] - obstacle.get_radius(), obstacle.get_point()[1] + obstacle.get_radius(), 0]
                 ]
 
-                new_pos_points = []
+                new_paths = []
                 for new_pos_point in new_attempt_pos_points:
-                    if not self.does_point_intersect_obstacle(obstacle, drone_point, new_pos_point) and not self.does_point_intersect_obstacle(obstacle, new_pos_point, self.drone.get_waypoint_holder().get_current_waypoint()):
-                        new_pos_points.append(new_pos_point)
+                    if not self.does_point_intersect_obstacle(obstacle, drone_point, new_pos_point):
+                        for recursive_new_pos_point in new_attempt_pos_points:
+                            if not self.does_point_intersect_obstacle(obstacle, new_pos_point, recursive_new_pos_point) and not self.does_point_intersect_obstacle(obstacle, recursive_new_pos_point, self.drone.get_waypoint_holder().get_current_waypoint()):
+                                new_paths.append([new_pos_point, recursive_new_pos_point])
 
                 # Uncomment for DEBUGGING ONLY
-                #for new_pos_point in new_pos_points:
-                #    print("Point:", str(new_pos_point))
+                #for path in new_paths:
+                #    print("Point:", str(path))
 
-                return True, np.array(new_pos_points)
+                return True, np.array(new_paths)
 
         return False, None
 
@@ -107,11 +105,11 @@ class ObstacleMap(object):
         rejection_vector_magnitude = VectorMath.get_vector_magnitude(rejection_vector)
 
         # Uncomment for DEBUGGING ONLY
-        print("Waypoint Vector: " + str(waypoint_vector))
-        print("Obstacle Vector: " + str(obstacle_vector))
-        print("Rejection Vector: " + str(rejection_vector))
-        print("Rejection Vector Magnitude: " + str(rejection_vector_magnitude))
-        print("Obstacle Safety Radius: " + str(obstacle.get_safety_radius()))
+        #print("Waypoint Vector: " + str(waypoint_vector))
+        #print("Obstacle Vector: " + str(obstacle_vector))
+        #print("Rejection Vector: " + str(rejection_vector))
+        #print("Rejection Vector Magnitude: " + str(rejection_vector_magnitude))
+        #print("Obstacle Safety Radius: " + str(obstacle.get_safety_radius()))
 
         if self.is_obstacle_in_path_of_drone(obstacle_vector, waypoint_vector):
             return rejection_vector_magnitude < obstacle.get_radius()
@@ -133,38 +131,41 @@ class ObstacleMap(object):
 
         return True
 
-    def get_min_tangent_point(self, points):
+    def get_min_path(self, paths):
         """
-        Return the shortest tangent point from the points provided. This function assumes
+        Return the shortest path from the paths provided. This function assumes
         that the paths are possible waypoints calculated from the is_obstacle_in_path()
         function
 
-        :param points: The points to determine the minimum distance of
-        :type points: Numpy Array
+        :param paths: The paths to determine the minimum distance of
+        :type paths: Numpy Array
         """
-        shortest_tangent_point = points[0]
-        shortest_distance = self.get_path_distance(points[0])
+        shortest_path = paths[0]
+        shortest_distance = self.get_path_distance(paths[0])
 
-        for tangent_point in points.tolist()[1:]:
-            distance = self.get_path_distance(tangent_point)
+        for path in paths[1:]:
+            distance = self.get_path_distance(path)
 
             if distance < shortest_distance:
-                shortest_tangent_point = np.array(tangent_point)
+                shortest_path = path
                 shortest_distance = distance
 
-        return shortest_tangent_point
+        return shortest_path
 
-    def get_path_distance(self, tangent_point):
+    def get_path_distance(self, path):
         """
-        Get the path distance from drone point to path point to current waypoint
+        Get the path distance from drone point to path points to current
+        waypoint. It will find the distance of a n-length path
 
-        :param tangent_point: The tangent point to calculate distance from
-        :type tangent_point: Numpy Array
+        :param path: The path to calculate distance of
+        :type path: Numpy Array
         """
-        first_leg_distance = VectorMath.get_magnitude(self.drone.get_point(), tangent_point)
-        second_leg_distance = VectorMath.get_magnitude(tangent_point, self.drone.get_waypoint_holder().get_current_waypoint())
+        distance = VectorMath.get_magnitude(self.drone.get_point(), path[0])
+        for index in range(len(path[:-1])):
+            distance += VectorMath.get_magnitude(path[index], path[index + 1])
+        distance += VectorMath.get_magnitude(path[-1], self.drone.get_waypoint_holder().get_current_waypoint())
 
-        return first_leg_distance + second_leg_distance
+        return distance
 
     def get_obstacles(self):
         """

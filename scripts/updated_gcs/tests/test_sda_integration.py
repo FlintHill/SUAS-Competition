@@ -60,7 +60,7 @@ class SDAIntegrationTestCase(unittest.TestCase):
         self.sda_converter.obstacle_map.add_obstacle(StationaryObstacle(numpy.array([waypoint_holder[0][0] / 2.0, waypoint_holder[0][1] / 2.0, 0]), 50))
         uav_bearing = bearing(self.initial_coordinates, test_waypoint)
         self.sda_converter.avoid_obstacles()
-        new_geo_point = self.sda_converter.get_uav_avoid_coordinates()
+        new_geo_path = self.sda_converter.get_uav_avoid_coordinates()
 
-        self.assertTrue(abs(new_geo_point.lat - 38.8717414325) < 0.002)
-        self.assertTrue(abs(new_geo_point.lon + 77.3232347661) < 0.002)
+        self.assertTrue(abs(new_geo_path[0].lat - 38.8717414325) < 0.002)
+        self.assertTrue(abs(new_geo_path[0].lon + 77.3232347661) < 0.002)

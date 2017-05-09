@@ -220,17 +220,20 @@ if __name__ == '__main__':
         #vehicle_state_data[0] = get_vehicle_state(vehicle, sda_converter, MSL_ALT)
         #mission_data[0] = get_mission_json(interop_server_client.get_active_mission(), obstacles_array)
 
-        if vehicle.mode.name == "GUIDED" and sda_converter.has_uav_reached_guided_waypoint():
-            vehicle.mode = VehicleMode("AUTO")
-
         sda_converter.set_uav_position(current_location)
         sda_converter.avoid_obstacles()
 
-        if sda_converter.is_obstacle_in_path() and vehicle.mode.name == "AUTO" and (vehicle.location.global_relative_frame.alt * 3.28084) > 60:
-            log("root", "Avoiding obstacles...")
-            print(sda_converter.get_uav_avoid_coordinates())
-            vehicle.mode = VehicleMode("GUIDED")
-            vehicle.simple_goto(sda_converter.get_uav_avoid_coordinates())
+        if (vehicle.location.global_relative_frame.alt * 3.28084) > 60:
+            if len(sda_converter.get_uav_avoid_coordinates()) != 0:
+                log("root", "Avoiding obstacles...")
+                vehicle.mode = VehicleMode("GUIDED")
+                vehicle.simple_goto(sda_converter.get_uav_avoid_coordinates()[0])
+            elif sda_converter.is_obstacle_in_path():
+                vehicle.mode = VehicleMode("GUIDED")
+                vehicle.simple_goto(sda_converter.get_uav_avoid_coordinates()[0])
+
+        if vehicle.mode.name == "GUIDED" and sda_converter.has_uav_reached_guided_waypoint() and len(sda_converter.get_uav_avoid_coordinates()) == 0:
+            vehicle.mode = VehicleMode("AUTO")
 
         sleep(0.5)
     #except:

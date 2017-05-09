@@ -53,7 +53,7 @@ class SDATestCase(unittest.TestCase):
         self.obstacle_map.add_obstacle(obstacle_in_path)
         self.obstacle_map.add_waypoint(waypoint)
 
-        obstacle_in_path_boolean, avoid_coords = self.obstacle_map.is_obstacle_in_path()
+        obstacle_in_path_boolean, avoid_paths = self.obstacle_map.is_obstacle_in_path()
         self.assertEqual(obstacle_in_path_boolean, False)
 
     def test_obstacle_in_path_detection_true(self):
@@ -70,5 +70,5 @@ class SDATestCase(unittest.TestCase):
         self.obstacle_map.add_obstacle(obstacle_in_path)
         self.obstacle_map.add_waypoint(waypoint)
 
-        obstacle_in_path_boolean, avoid_coords = self.obstacle_map.is_obstacle_in_path()
+        obstacle_in_path_boolean, avoid_paths = self.obstacle_map.is_obstacle_in_path()
         self.assertEqual(obstacle_in_path_boolean, True)

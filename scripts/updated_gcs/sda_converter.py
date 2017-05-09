@@ -19,7 +19,7 @@ class SDAConverter(object):
         self.obstacle_map = ObstacleMap()
 
         self.initial_coordinates = initial_coordinates
-        self.previous_min_tangent_point = numpy.array([0, 0, 0])
+        self.current_path = numpy.array([])
         self.minimum_change_in_guided_waypoint = 3
 
         # REMOVE THE BELOW LINE DURING ACTUAL FLIGHT
@@ -79,25 +79,48 @@ class SDAConverter(object):
         #    print(inverse_haversine(self.initial_coordinates, point).as_global_relative_frame())
 
         if obstacle_in_path_boolean:
-            min_tangent_point = self.obstacle_map.get_min_tangent_point(avoid_coords)
+            min_path = self.obstacle_map.get_min_path(avoid_coords)
 
-            if VectorMath.get_magnitude(self.previous_min_tangent_point, min_tangent_point) > self.minimum_change_in_guided_waypoint:
-                self.previous_min_tangent_point = min_tangent_point
+            if self.current_path.shape[0] != 0:
+                self.current_path = min_path
+            elif self.has_path_changed(self.current_path, min_path):
+                self.current_path = min_path
+
+    def has_path_changed(self, path1, path2):
+        """
+        Compares two paths to see if one has any changed points
+
+        :param path1: The first path to compare
+        :type path1: Numpy Array
+        :param path2: The second path to compare
+        :type path2: Numpy Array
+        """
+        if path1.shape[0] != path2.shape[0]:
+            return True
+
+        for index in range(path1.shape[0]):
+            if VectorMath.get_magnitude(path1[index], path2[index]) > self.minimum_change_in_guided_waypoint:
+                return True
+
+        return False
 
     def get_uav_avoid_coordinates(self):
         """
         Return the coordinates to avoid the object
         """
-        return inverse_haversine(self.initial_coordinates, self.previous_min_tangent_point).as_global_relative_frame()
+        return [inverse_haversine(self.initial_coordinates, gps_point).as_global_relative_frame() for gps_point in self.current_path]
 
     def has_uav_reached_guided_waypoint(self):
         """
         Return True if the UAV has reached the current guided waypoint
         """
-        distance = VectorMath.get_magnitude(self.previous_min_tangent_point, self.obstacle_map.get_drone().get_point())
-        print("DIST TO GUIDED WAYPOINT:", distance)
-        print("MIN TANGENT POINT:", self.previous_min_tangent_point)
-        return distance < Constants.MAX_DISTANCE_TO_TARGET
+        if self.current_path.shape[0] != 0:
+            distance = VectorMath.get_magnitude(self.current_path[0], self.obstacle_map.get_drone().get_point())
+
+            if distance < Constants.MAX_DISTANCE_TO_TARGET:
+                self.current_path = self.current_path[1:]
+
+            return distance < Constants.MAX_DISTANCE_TO_TARGET
 
     def is_obstacle_in_path(self):
         """
