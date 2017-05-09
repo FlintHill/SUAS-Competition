@@ -19,11 +19,11 @@ class SDAConverter(object):
         self.obstacle_map = ObstacleMap()
 
         self.initial_coordinates = initial_coordinates
-        self.previous_min_tangent_point = numpy.array([0, 0])
+        self.previous_min_tangent_point = numpy.array([0, 0, 0])
         self.minimum_change_in_guided_waypoint = 3
 
         # REMOVE THE BELOW LINE DURING ACTUAL FLIGHT
-        #self.obstacle_map.add_obstacle(StationaryObstacle(numpy.array([100.0, -8.0]), 5));
+        #self.obstacle_map.add_obstacle(StationaryObstacle(numpy.array([44.47100422, -63.9544778, 100]), 5))
 
     def set_waypoint(self, new_waypoint):
         """
@@ -67,16 +67,16 @@ class SDAConverter(object):
         converted_uav_location = convert_to_point(self.initial_coordinates, new_location)
 
         self.obstacle_map.set_drone_position(converted_uav_location)
-        print(converted_uav_location)
+        print("Current UAV position:", converted_uav_location)
 
-    def avoid_obstacles(self, bearing):
+    def avoid_obstacles(self):
         """
         Run obstacle avoidance using the drone's new position
-
-        :param uav_bearing: The bearing of the UAV (in radians)
-        :type uav_bearing: float
         """
         obstacle_in_path_boolean, avoid_coords = self.obstacle_map.is_obstacle_in_path()
+
+        #for point in avoid_coords:
+        #    print(inverse_haversine(self.initial_coordinates, point).as_global_relative_frame())
 
         if obstacle_in_path_boolean:
             min_tangent_point = self.obstacle_map.get_min_tangent_point(avoid_coords)
@@ -84,15 +84,19 @@ class SDAConverter(object):
             if VectorMath.get_magnitude(self.previous_min_tangent_point, min_tangent_point) > self.minimum_change_in_guided_waypoint:
                 self.previous_min_tangent_point = min_tangent_point
 
-                return inverse_haversine(self.initial_coordinates, min_tangent_point, bearing).as_global_relative_frame()
-
-        return None
+    def get_uav_avoid_coordinates(self):
+        """
+        Return the coordinates to avoid the object
+        """
+        return inverse_haversine(self.initial_coordinates, self.previous_min_tangent_point).as_global_relative_frame()
 
     def has_uav_reached_guided_waypoint(self):
         """
         Return True if the UAV has reached the current guided waypoint
         """
         distance = VectorMath.get_magnitude(self.previous_min_tangent_point, self.obstacle_map.get_drone().get_point())
+        print("DIST TO GUIDED WAYPOINT:", distance)
+        print("MIN TANGENT POINT:", self.previous_min_tangent_point)
         return distance < Constants.MAX_DISTANCE_TO_TARGET
 
     def is_obstacle_in_path(self):
