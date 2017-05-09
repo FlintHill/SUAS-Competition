@@ -1,24 +1,40 @@
-/* Adds styling to the viewer UI */
+/**
+ * SDA Viewer Main Styling
+ * ===
+ * This is the javascript file the contains all the code necessary to operate
+ * the viewer. The code's functions are as follows:
+ *
+ * 	- Initialize a LeafletJS map that loads tiles from a local server.
+ *  - Handle the User Interface in the browser.
+ * 	- Connect to the SDA Viewer websocket.
+ * 	- Add and update relevant points, such as drone position, obstacles, and
+ * 	  more to the LeafletJS map.
+ */
 
 #mapid { height:100vh; }
+
 html, body {
 	font-family:'Arial',sans-serif,serif;
 	overflow-y:hidden;
 	margin:0;
 }
+
 td {
 	font-size:1.03em;
 	padding:4px 0;
 }
+
 .shadow {
 	-webkit-box-shadow:6px 6px 0px 0px rgba(0,0,0,0.54);
 	-moz-box-shadow:6px 6px 0px 0px rgba(0,0,0,0.54);
 	box-shadow:6px 6px 0px 0px rgba(0,0,0,0.54);
 }
+
 .window {
 	width:100%;
 	height:100vh;
 }
+
 .status {
 	z-index:1000 !important;
 	background-color:white;
@@ -29,47 +45,16 @@ td {
 	padding:4px;
 	width:350px;
 }
+
 .num {
 	font-size:2.5em !important;
 }
-.obstacle {
-	position:absolute;
-	z-index:1000 !important;
-	background-color:#e74c3c;
-	color:#ecf0f1;
-	width:450px;
-	height:110px;
-	top:25px;
-	margin:0 auto;
-	left:0;
-	right:0;
-	padding:16px;
-	font-family:"Consolas","Inconsolata",sans-serif;
-	font-size:1.9em;
-	-moz-box-sizing:border-box; 
-	-webkit-box-sizing:border-box; 
-	box-sizing:border-box;
 
-	-webkit-animation: flash 1s linear infinite;
-	-moz-animation: flash 1s linear infinite;
-	animation: flash 1s linear infinite;
-}
-@-webkit-keyframes flash {
-	0% { border:3px solid black; }
-	100% { border:3px solid red; }
-}​
-@-moz-keyframes flash {
-	0% { border:3px solid black; }
-	100% { border:3px solid red; }
-}
-@keyframes flash {
-	0% { border:3px solid black; }
-	100% { border:3px solid red; }
-}
 .g-button {
 	width:100%;
 	height:38px
 }
+
 .SvgOverlay svg {
 	position:absolute;
 	top:-4000px;
@@ -77,45 +62,46 @@ td {
 	width:8000px;
 	height:8000px;
 }
-#droneSymbol {
-	position:absolute;
-}
+
 #dropdown {
 	cursor:pointer;
 	padding:5px 8px;
 	border-radius:5px;
 	display:inline-block;
 }
-#dropdown:hover {
-	background-color:#95a5a6;
-}
-.inline {
-	margin-bottom:4px;
-}
+
+#dropdown:hover { background-color:#95a5a6; }
+
+.inline { margin-bottom:4px; }
+
+/* ui-inputs */
 fieldset {
 	border:1px solid black;
 	background-color:rgba(0,0,0,0.09);
 }
-legend {
-	background-color:#fff;
-}
+
+legend { background-color:#fff; }
+
 label {
 	display:block;
 	position:relative;
 	padding-left:40px; /* adjust if necessary */
 }
+
 label > span {
 	position:absolute;
 	left:0;
 }
+
 div.notice {
 	font-family:Consolas,Inconsolata,sans-serif,serif;
 	text-align:center;
 	font-style:italic;
 }
-.hidden {
-	display:none;
-}
+
+/* helper classes */
+.hidden { display:none; }
+
 .noselect {
 	-webkit-touch-callout:none;
 	-webkit-user-select:none;
