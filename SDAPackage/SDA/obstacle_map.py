@@ -4,15 +4,25 @@ from SDA import Drone
 from SDA import StationaryObstacle
 from SDA import VectorMath
 from SDA import Constants
+from SDA import FlightBoundary
 
 class ObstacleMap(object):
     """
     Wrapper class for an obstacle map
     """
 
-    def __init__(self):
+    def __init__(self, drone_point, boundary_points):
+        """
+        Initialize
+
+        :param drone_point: The UAV's starting location
+        :type drone_point: Numpy Array
+        :param boundary_points: The boundary points for the flight path
+        :type boundary_points: Numpy Array
+        """
         self.obstacles = np.array([])
-        self.drone = Drone(np.array([0,0,0]), np.array([]))
+        self.drone = Drone(drone_point, np.array([]))
+        self.flight_boundary = FlightBoundary(-1, 750, boundary_points)
 
     def add_obstacle(self, obstacle_to_add):
         """
@@ -80,8 +90,9 @@ class ObstacleMap(object):
                         for new_pos_point in new_attempt_pos_points:
                             if not self.does_path_intersect_obstacle_3d(obstacle, drone_point, new_pos_point):
                                 for recursive_new_pos_point in new_attempt_pos_points:
-                                    if not self.does_path_intersect_obstacle_3d(obstacle, new_pos_point, recursive_new_pos_point) and not self.does_path_intersect_obstacle_3d(obstacle, recursive_new_pos_point, self.drone.get_waypoint_holder().get_current_waypoint()):
-                                        new_paths.append([new_pos_point, recursive_new_pos_point])
+                                    if self.flight_boundary.is_point_in_bounds(recursive_new_pos_point):
+                                        if not self.does_path_intersect_obstacle_3d(obstacle, new_pos_point, recursive_new_pos_point) and not self.does_path_intersect_obstacle_3d(obstacle, recursive_new_pos_point, self.drone.get_waypoint_holder().get_current_waypoint()):
+                                            new_paths.append([new_pos_point, recursive_new_pos_point])
 
                         # Uncomment for DEBUGGING ONLY
                         #for path in new_paths:

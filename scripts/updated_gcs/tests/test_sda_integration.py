@@ -47,20 +47,3 @@ class SDAIntegrationTestCase(unittest.TestCase):
 
         self.assertTrue(abs(new_gps_point.get_lat() - test_waypoint.get_lat()) < 0.004)
         self.assertTrue(abs(new_gps_point.get_lon() - test_waypoint.get_lon()) < 0.004)
-
-    def test_update_drone_mass_position(self):
-        """
-        Test the update_drone_mass_position() method
-        """
-        self.setup_client_converter()
-
-        test_waypoint = Location(38.8742103, -77.3217697, 91.44000244140625)
-        self.sda_converter.set_waypoint(test_waypoint)
-        waypoint_holder = self.sda_converter.obstacle_map.drone.get_waypoint_holder()
-        self.sda_converter.obstacle_map.add_obstacle(StationaryObstacle(numpy.array([waypoint_holder[0][0] / 2.0, waypoint_holder[0][1] / 2.0, 0]), 50))
-        uav_bearing = bearing(self.initial_coordinates, test_waypoint)
-        self.sda_converter.avoid_obstacles()
-        new_geo_path = self.sda_converter.get_uav_avoid_coordinates()
-
-        self.assertTrue(abs(new_geo_path[0].lat - 38.8717414325) < 0.002)
-        self.assertTrue(abs(new_geo_path[0].lon + 77.3232347661) < 0.002)

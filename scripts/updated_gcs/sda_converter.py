@@ -16,7 +16,7 @@ class SDAConverter(object):
         :param initial_coordinates: The initial GPS coordinates of the UAV
         :type initial_coordinates: GPSCoordinates
         """
-        self.obstacle_map = ObstacleMap()
+        self.obstacle_map = ObstacleMap(numpy.array([0,0,0]), numpy.array([[-1000, -1000], [-1000, 1000], [1000, 1000], [1000, -1000]]))
 
         self.initial_coordinates = initial_coordinates
         self.current_path = numpy.array([])

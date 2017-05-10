@@ -1,4 +1,6 @@
-class FlightBoundaries(object):
+from matplotlib import path
+
+class FlightBoundary(object):
     """
     Provides an interface for flight zone boundaries
     """
@@ -13,10 +15,11 @@ class FlightBoundaries(object):
         :type max_altitude: Float
         :param boundary_waypoints: The boundary waypoints. Outside of this polygon
             of waypoints exists the no flight zone
+        :type boundary_waypoints: Numpy Array
         """
         self.min_altitude = min_altitude
         self.max_altitude = max_altitude
-        self.boundary_waypoints = boundary_waypoints
+        self.boundary_path = path.Path(boundary_waypoints)
 
     def is_point_in_bounds(self, point):
         """
@@ -25,7 +28,8 @@ class FlightBoundaries(object):
         :param point: The point to test
         :type point: Numpy Array
         """
-        is_point_in_polygon = self.point_in_polygon(point)
+        dim_reduced_point = point[:2]
+        is_point_in_polygon = self.point_in_polygon(dim_reduced_point)
         is_point_in_alts = (point[2] > self.min_altitude and point[2] < self.max_altitude)
 
         if is_point_in_polygon and is_point_in_alts:
@@ -35,11 +39,10 @@ class FlightBoundaries(object):
 
     def point_in_polygon(self, point):
         """
-        Returns True if the point is in the polygon, and false if it is
+        Returns True if the point is in the bounding polygon, false if it is
         outside of it.
 
-        :param point: The point to determine its location
+        :param point: The point
         :type point: Numpy Array
         """
-        for corner in polygon:
-            pass
+        return self.boundary_path.contains_point(point)

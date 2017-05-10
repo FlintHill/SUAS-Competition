@@ -5,7 +5,7 @@ from SDA import *
 class SDATestCase(unittest.TestCase):
 
     def setUp(self):
-        self.obstacle_map = ObstacleMap()
+        self.obstacle_map = ObstacleMap(np.array([0,0,0]), np.array([[-1, -1], [-1, 100], [100, 100], [100, -1]]))
 
     def test_add_obstacles(self):
         """
