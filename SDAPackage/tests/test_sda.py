@@ -112,4 +112,4 @@ class SDATestCase(unittest.TestCase):
         self.obstacle_map.set_drone_position(new_uav_position)
 
         obstacle_in_path_boolean, avoid_paths = self.obstacle_map.is_obstacle_in_path()
-        self.assertEqual(obstacle_in_path_boolean, False)
+        self.assertEqual(obstacle_in_path_boolean, True)
