@@ -22,7 +22,7 @@ class ObstacleMap(object):
         """
         self.obstacles = np.array([])
         self.drone = Drone(drone_point, np.array([]))
-        self.flight_boundary = FlightBoundary(-1, 750, boundary_points)
+        self.flight_boundary = FlightBoundary(Constants.MIN_ALT, Constants.MAX_ALT, boundary_points)
 
     def add_obstacle(self, obstacle_to_add):
         """

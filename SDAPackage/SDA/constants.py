@@ -7,3 +7,6 @@ class Constants(object):
     MAX_DISTANCE_TO_TARGET = 5
 
     DETECTION_THRESHOLD_MULTIPLE = 3
+
+    MAX_ALT = 750
+    MIN_ALT = 0
