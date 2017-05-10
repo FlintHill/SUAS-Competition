@@ -9,18 +9,32 @@ class SDAConverter(object):
     algorithm implemented
     """
 
-    def __init__(self, initial_coordinates):
+    def __init__(self, initial_coordinates, boundary_pts):
         """
         Initialize the converter
 
         :param initial_coordinates: The initial GPS coordinates of the UAV
         :type initial_coordinates: GPSCoordinates
         """
-        self.obstacle_map = ObstacleMap(numpy.array([0,0,0]), numpy.array([[-1000, -1000], [-1000, 1000], [1000, 1000], [1000, -1000]]))
-
         self.initial_coordinates = initial_coordinates
         self.current_path = numpy.array([])
         self.minimum_change_in_guided_waypoint = 3
+
+        converted_boundary_points = self.convert_boundary_points(boundary_pts)
+        self.obstacle_map = ObstacleMap(numpy.array([0,0,0]), converted_boundary_points)
+
+    def convert_boundary_points(self, boundary_pts):
+        """
+        Converts a bunch of boundary points to the XY coordinate mapping
+
+        :param boundary_pts: The boundary points that need to be converted
+        :type boundary_pts: List (of Location objects)
+        """
+        converted_boundary_points = []
+        for boundary_point in boundary_pts:
+            converted_boundary_points.append(convert_to_point(self.initial_coordinates, boundary_point)[:2])
+
+        return numpy.array(converted_boundary_points)
 
     def set_waypoint(self, new_waypoint):
         """

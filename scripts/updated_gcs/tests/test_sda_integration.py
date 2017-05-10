@@ -16,8 +16,14 @@ class SDAIntegrationTestCase(unittest.TestCase):
 
     def setup_client_converter(self):
         self.initial_coordinates = Location(38.8703041, -77.3214035, 60.950000762939453)
+        self.boundary_points = [
+            Location(38.867580, -77.330360, 0),
+            Location(38.876535, -77.330060, 0),
+            Location(38.877002, -77.314997, 0),
+            Location(38.867513, -77.315769, 0)
+        ]
 
-        self.sda_converter = SDAConverter(self.initial_coordinates)
+        self.sda_converter = SDAConverter(self.initial_coordinates, self.boundary_points)
 
     def test_reset_obstacles(self):
         """

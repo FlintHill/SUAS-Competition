@@ -169,8 +169,6 @@ if __name__ == '__main__':
 
     log(name, "Waiting for UAV to be armable")
     log(name, "Waiting for UAV to load waypoints")
-    #while len(vehicle.commands) < 1 and not vehicle.is_armable:
-    #    sleep(0.05)
 
     log(name, "Downloading waypoints from UAV on: %s" % UAV_CONNECTION_STRING)
     waypoints = vehicle.commands
@@ -178,20 +176,29 @@ if __name__ == '__main__':
     waypoints.wait_ready()
     log(name, "Waypoints successfully downloaded")
 
-    log(name, "Enabling SDA...")
-    sda_converter = SDAConverter(get_location(vehicle))
-    sda_converter.set_waypoint(Location(waypoints[1].x, waypoints[1].y, waypoints[1].z))
-    log(name, "SDA enabled")
     gps_update_index = 0
     current_location = get_location(vehicle)
     timestamped_location_data_array.append({
         "index" : gps_update_index,
         "geo_stamp" : GeoStamp((current_location.get_lat(), current_location.get_lon()), datetime.now().strftime("%h %M %S"))
     })
-    vehicle_state_data.append(get_vehicle_state(vehicle, sda_converter, MSL_ALT))
     #stationary_obstacles, moving_obstacles = interop_server_client.get_obstacles()
     #obstacles_array = [stationary_obstacles, moving_obstacles]
     #mission_data.append(get_mission_json(interop_server_client.get_active_mission(), obstacles_array))
+
+    boundary_points = mission_data[0]["fly_zones"]["boundary_pts"]
+    converted_boundary_points = []
+    for boundary_point in boundary_points:
+        converted_boundary_points.append(Location(boundary_point["lat"], boundary_point["lon"]))
+
+    log(name, "Enabling SDA...")
+    sda_converter = SDAConverter(get_location(vehicle), converted_boundary_points)
+    sda_converter.set_waypoint(Location(waypoints[1].x, waypoints[1].y, waypoints[1].z))
+    log(name, "SDA enabled")
+
+    vehicle_state_data.append(get_vehicle_state(vehicle, sda_converter, MSL_ALT))
+
+    # Remove the below line during actual flight
     sda_converter.add_obstacle(Location(38.872342, -77.321627, 250), None)
 
     log(name, "Everything is instantiated...Beginning operation")
