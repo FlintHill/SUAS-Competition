@@ -44,7 +44,7 @@ class SDAConverter(object):
         :type obstacle: StationaryObstacle or MovingObstacle
         """
         converted_obstacle_location = convert_to_point(self.initial_coordinates, obstacle_location)
-        new_obstacle = StationaryObstacle(converted_obstacle_location, 100)
+        new_obstacle = StationaryObstacle(converted_obstacle_location, 100, 100)
 
         self.obstacle_map.add_obstacle(new_obstacle)
 

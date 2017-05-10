@@ -11,7 +11,7 @@ class SDATestCase(unittest.TestCase):
         """
         Test ObstacleMap's add_obstacle() method
         """
-        new_obstacle = StationaryObstacle(np.array([0, 10, 0]), 5)
+        new_obstacle = StationaryObstacle(np.array([0, 10, 0]), 5, 20)
 
         self.obstacle_map.add_obstacle(np.array([new_obstacle]))
 
@@ -21,7 +21,7 @@ class SDATestCase(unittest.TestCase):
         """
         Test ObstacleMap's reset_obstacles() method
         """
-        new_obstacle = StationaryObstacle(np.array([0, 10, 0]), 5)
+        new_obstacle = StationaryObstacle(np.array([0, 10, 0]), 5, 20)
 
         self.obstacle_map.add_obstacle(np.array([new_obstacle]))
         self.obstacle_map.reset_obstacles()
@@ -33,6 +33,8 @@ class SDATestCase(unittest.TestCase):
         Test ObstacleMap's reset_waypoints() method
         """
         self.obstacle_map.reset_obstacles()
+        self.obstacle_map.reset_obstacles()
+        self.obstacle_map.set_drone_position(np.array([0,0,0]))
         waypoint = np.array([20, 0, 0])
 
         self.obstacle_map.add_waypoint(waypoint)
@@ -47,7 +49,9 @@ class SDATestCase(unittest.TestCase):
         of the UAV.
         """
         self.obstacle_map.reset_obstacles()
-        obstacle_in_path = StationaryObstacle(np.array([50, 0, 0]), 5)
+        self.obstacle_map.reset_waypoints()
+        self.obstacle_map.set_drone_position(np.array([0,0,0]))
+        obstacle_in_path = StationaryObstacle(np.array([50, 0, 0]), 5, 20)
         waypoint = np.array([50, 50, 0])
 
         self.obstacle_map.add_obstacle(obstacle_in_path)
@@ -64,7 +68,8 @@ class SDATestCase(unittest.TestCase):
         """
         self.obstacle_map.reset_obstacles()
         self.obstacle_map.reset_waypoints()
-        obstacle_in_path = StationaryObstacle(np.array([50, 0, 0]), 5)
+        self.obstacle_map.set_drone_position(np.array([0,0,0]))
+        obstacle_in_path = StationaryObstacle(np.array([50, 0, 0]), 5, 20)
         waypoint = np.array([100, 0, 0])
 
         self.obstacle_map.add_obstacle(obstacle_in_path)
@@ -72,3 +77,39 @@ class SDATestCase(unittest.TestCase):
 
         obstacle_in_path_boolean, avoid_paths = self.obstacle_map.is_obstacle_in_path()
         self.assertEqual(obstacle_in_path_boolean, True)
+
+    def test_obstacle_under_waypoint_path_false(self):
+        """
+        Test ObstacleMap's ability to go above an obstacle
+        """
+        self.obstacle_map.reset_obstacles()
+        self.obstacle_map.reset_waypoints()
+        self.obstacle_map.set_drone_position(np.array([0,0,0]))
+        obstacle_in_path = StationaryObstacle(np.array([50, 0, 0]), 5, 10)
+        waypoint = np.array([100, 0, 25])
+        new_uav_position = np.array([0, 0, 25])
+
+        self.obstacle_map.add_obstacle(obstacle_in_path)
+        self.obstacle_map.add_waypoint(waypoint)
+        self.obstacle_map.set_drone_position(new_uav_position)
+
+        obstacle_in_path_boolean, avoid_paths = self.obstacle_map.is_obstacle_in_path()
+        self.assertEqual(obstacle_in_path_boolean, False)
+
+    def test_obstacle_under_waypoint_path_true(self):
+        """
+        Test ObstacleMap's ability to go above an obstacle
+        """
+        self.obstacle_map.reset_obstacles()
+        self.obstacle_map.reset_waypoints()
+        self.obstacle_map.set_drone_position(np.array([0,0,0]))
+        obstacle_in_path = StationaryObstacle(np.array([50, 0, 0]), 5, 15)
+        waypoint = np.array([100, 0, 25])
+        new_uav_position = np.array([0, 0, 25])
+
+        self.obstacle_map.add_obstacle(obstacle_in_path)
+        self.obstacle_map.add_waypoint(waypoint)
+        self.obstacle_map.set_drone_position(new_uav_position)
+
+        obstacle_in_path_boolean, avoid_paths = self.obstacle_map.is_obstacle_in_path()
+        self.assertEqual(obstacle_in_path_boolean, False)
