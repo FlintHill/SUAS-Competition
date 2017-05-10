@@ -1,5 +1,3 @@
-from matplotlib import path
-
 class FlightBoundary(object):
     """
     Provides an interface for flight zone boundaries
@@ -19,7 +17,7 @@ class FlightBoundary(object):
         """
         self.min_altitude = min_altitude
         self.max_altitude = max_altitude
-        self.boundary_path = path.Path(boundary_waypoints)
+        self.boundary_path = boundary_waypoints
 
     def is_point_in_bounds(self, point):
         """
@@ -29,7 +27,7 @@ class FlightBoundary(object):
         :type point: Numpy Array
         """
         dim_reduced_point = point[:2]
-        is_point_in_polygon = self.point_in_polygon(dim_reduced_point)
+        is_point_in_polygon = self.ray_tracing_method(dim_reduced_point[0], dim_reduced_point[1])
         is_point_in_alts = (point[2] > self.min_altitude and point[2] < self.max_altitude)
 
         if is_point_in_polygon and is_point_in_alts:
@@ -37,12 +35,30 @@ class FlightBoundary(object):
 
         return False
 
-    def point_in_polygon(self, point):
+    def ray_tracing_method(self, x,y):
         """
         Returns True if the point is in the bounding polygon, false if it is
         outside of it.
 
-        :param point: The point
-        :type point: Numpy Array
+        :param x: The X-coordinate of the point
+        :type x: int
+        :param y: They Y-coordinate of the point
+        :type y: int
         """
-        return self.boundary_path.contains_point(point)
+        poly = self.boundary_path
+        n = len(poly)
+        inside = False
+
+        p1x,p1y = poly[0]
+        for i in range(n+1):
+            p2x,p2y = poly[i % n]
+            if y > min(p1y,p2y):
+                if y <= max(p1y,p2y):
+                    if x <= max(p1x,p2x):
+                        if p1y != p2y:
+                            xints = (y-p1y)*(p2x-p1x)/(p2y-p1y)+p1x
+                            if p1x == p2x or x <= xints:
+                                inside = not inside
+            p1x,p1y = p2x,p2y
+
+        return inside
