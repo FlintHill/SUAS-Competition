@@ -22,9 +22,6 @@ class SDAConverter(object):
         self.current_path = numpy.array([])
         self.minimum_change_in_guided_waypoint = 3
 
-        # REMOVE THE BELOW LINE DURING ACTUAL FLIGHT
-        #self.obstacle_map.add_obstacle(StationaryObstacle(numpy.array([44.47100422, -63.9544778, 100]), 5))
-
     def set_waypoint(self, new_waypoint):
         """
         Set the current waypoint
@@ -47,7 +44,7 @@ class SDAConverter(object):
         :type obstacle: StationaryObstacle or MovingObstacle
         """
         converted_obstacle_location = convert_to_point(self.initial_coordinates, obstacle_location)
-        new_obstacle = StationaryObstacle(converted_obstacle_location, 5)
+        new_obstacle = StationaryObstacle(converted_obstacle_location, 100)
 
         self.obstacle_map.add_obstacle(new_obstacle)
 
@@ -73,15 +70,12 @@ class SDAConverter(object):
         """
         Run obstacle avoidance using the drone's new position
         """
-        obstacle_in_path_boolean, avoid_coords = self.obstacle_map.is_obstacle_in_path()
-
-        #for point in avoid_coords:
-        #    print(inverse_haversine(self.initial_coordinates, point).as_global_relative_frame())
+        obstacle_in_path_boolean, paths = self.obstacle_map.is_obstacle_in_path()
 
         if obstacle_in_path_boolean:
-            min_path = self.obstacle_map.get_min_path(avoid_coords)
+            min_path = self.obstacle_map.get_min_path(paths)
 
-            if self.current_path.shape[0] != 0:
+            if self.current_path.shape[0] == 0:
                 self.current_path = min_path
             elif self.has_path_changed(self.current_path, min_path):
                 self.current_path = min_path
@@ -108,7 +102,11 @@ class SDAConverter(object):
         """
         Return the coordinates to avoid the object
         """
-        return [inverse_haversine(self.initial_coordinates, gps_point).as_global_relative_frame() for gps_point in self.current_path]
+        gps_points = []
+        for xy_loc_point in self.current_path:
+            gps_points.append(inverse_haversine(self.initial_coordinates, xy_loc_point).as_global_relative_frame())
+
+        return gps_points
 
     def has_uav_reached_guided_waypoint(self):
         """
@@ -119,6 +117,8 @@ class SDAConverter(object):
 
             if distance < Constants.MAX_DISTANCE_TO_TARGET:
                 self.current_path = self.current_path[1:]
+
+            print(self.current_path)
 
             return distance < Constants.MAX_DISTANCE_TO_TARGET
 

@@ -63,26 +63,29 @@ class ObstacleMap(object):
         drone_point = self.drone.get_point()
 
         for obstacle in self.obstacles.tolist():
-            if self.does_point_intersect_obstacle(obstacle, drone_point, self.drone.get_waypoint_holder().get_current_waypoint()):
-                new_attempt_pos_points = [
-                    [obstacle.get_point()[0] + obstacle.get_radius(), obstacle.get_point()[1] + obstacle.get_radius(), 0],
-                    [obstacle.get_point()[0] - obstacle.get_radius(), obstacle.get_point()[1] - obstacle.get_radius(), 0],
-                    [obstacle.get_point()[0] + obstacle.get_radius(), obstacle.get_point()[1] - obstacle.get_radius(), 0],
-                    [obstacle.get_point()[0] - obstacle.get_radius(), obstacle.get_point()[1] + obstacle.get_radius(), 0]
-                ]
+            dist_to_obstacle = VectorMath.get_vector_magnitude(np.subtract(obstacle.get_point(), self.drone.get_point()))
+            if dist_to_obstacle < obstacle.get_radius() * 3:
+                if self.does_point_intersect_obstacle(obstacle, drone_point, self.drone.get_waypoint_holder().get_current_waypoint()):
+                    new_attempt_pos_points = [
+                        [obstacle.get_point()[0] + obstacle.get_radius(), obstacle.get_point()[1] + obstacle.get_radius(), self.drone.get_waypoint_holder().get_current_waypoint()[2]],
+                        [obstacle.get_point()[0] - obstacle.get_radius(), obstacle.get_point()[1] - obstacle.get_radius(), self.drone.get_waypoint_holder().get_current_waypoint()[2]],
+                        [obstacle.get_point()[0] + obstacle.get_radius(), obstacle.get_point()[1] - obstacle.get_radius(), self.drone.get_waypoint_holder().get_current_waypoint()[2]],
+                        [obstacle.get_point()[0] - obstacle.get_radius(), obstacle.get_point()[1] + obstacle.get_radius(), self.drone.get_waypoint_holder().get_current_waypoint()[2]]
+                    ]
 
-                new_paths = []
-                for new_pos_point in new_attempt_pos_points:
-                    if not self.does_point_intersect_obstacle(obstacle, drone_point, new_pos_point):
-                        for recursive_new_pos_point in new_attempt_pos_points:
-                            if not self.does_point_intersect_obstacle(obstacle, new_pos_point, recursive_new_pos_point) and not self.does_point_intersect_obstacle(obstacle, recursive_new_pos_point, self.drone.get_waypoint_holder().get_current_waypoint()):
-                                new_paths.append([new_pos_point, recursive_new_pos_point])
+                    new_paths = []
+                    for new_pos_point in new_attempt_pos_points:
+                        if not self.does_point_intersect_obstacle(obstacle, drone_point, new_pos_point):
+                            for recursive_new_pos_point in new_attempt_pos_points:
+                                if recursive_new_pos_point[0] != new_pos_point[0] or recursive_new_pos_point[1] != new_pos_point[1]:
+                                    if not self.does_point_intersect_obstacle(obstacle, new_pos_point, recursive_new_pos_point) and not self.does_point_intersect_obstacle(obstacle, recursive_new_pos_point, self.drone.get_waypoint_holder().get_current_waypoint()):
+                                        new_paths.append([new_pos_point, recursive_new_pos_point])
 
-                # Uncomment for DEBUGGING ONLY
-                #for path in new_paths:
-                #    print("Point:", str(path))
+                    # Uncomment for DEBUGGING ONLY
+                    #for path in new_paths:
+                    #    print("Point:", str(path))
 
-                return True, np.array(new_paths)
+                    return True, np.array(new_paths)
 
         return False, None
 

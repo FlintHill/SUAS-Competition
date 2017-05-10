@@ -161,15 +161,12 @@ def inverse_haversine(location1, point):
     :param point: The point in the map that the obstacle occupies
     :type point: Numpy Array
     """
-    point[1] /= (3.28084 * 1000)
-    point[0] /= (3.28084 * 1000)
+    dy = point[1] / (3.28084 * 1000)
+    dx = point[0] / (3.28084 * 1000)
 
-    lat = location1.get_lat() + (point[1] / 111.195)
-    lon = location1.get_lon() + (point[0] / (math.cos(math.radians((lat + location1.get_lat()) / 2.0)) * 111.191))
-    try:
-        alt = point[2]
-    except:
-        alt = location1.get_alt()
+    lat = location1.get_lat() + (dy / 111.195)
+    lon = location1.get_lon() + (dx / (math.cos(math.radians((lat + location1.get_lat()) / 2.0)) * 111.191))
+    alt = point[2] / 3.28084
 
     return Location(lat, lon, alt)
 

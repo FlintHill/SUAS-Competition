@@ -180,7 +180,6 @@ if __name__ == '__main__':
 
     log(name, "Enabling SDA...")
     sda_converter = SDAConverter(get_location(vehicle))
-    #sda_converter.set_waypoint(Location(38.8703041, -77.3214035, 100))
     sda_converter.set_waypoint(Location(waypoints[1].x, waypoints[1].y, waypoints[1].z))
     log(name, "SDA enabled")
     gps_update_index = 0
@@ -193,6 +192,7 @@ if __name__ == '__main__':
     #stationary_obstacles, moving_obstacles = interop_server_client.get_obstacles()
     #obstacles_array = [stationary_obstacles, moving_obstacles]
     #mission_data.append(get_mission_json(interop_server_client.get_active_mission(), obstacles_array))
+    sda_converter.add_obstacle(Location(38.872342, -77.321627, 250), None)
 
     log(name, "Everything is instantiated...Beginning operation")
     #try:
@@ -201,7 +201,7 @@ if __name__ == '__main__':
         current_waypoint_number = vehicle.commands.next
         if current_waypoint_number != 0:
             current_uav_waypoint = waypoints[current_waypoint_number]
-            sda_converter.set_waypoint(Location(current_uav_waypoint.x, current_uav_waypoint.y, current_uav_waypoint.z))
+            sda_converter.set_waypoint(Location(current_uav_waypoint.x, current_uav_waypoint.y, current_uav_waypoint.z * 3.28084))
 
         #interop_server_client.post_telemetry(current_location, vehicle.heading)
         """gps_update_index += 1
@@ -226,9 +226,7 @@ if __name__ == '__main__':
         if (vehicle.location.global_relative_frame.alt * 3.28084) > 60:
             if len(sda_converter.get_uav_avoid_coordinates()) != 0:
                 log("root", "Avoiding obstacles...")
-                vehicle.mode = VehicleMode("GUIDED")
-                vehicle.simple_goto(sda_converter.get_uav_avoid_coordinates()[0])
-            elif sda_converter.is_obstacle_in_path():
+                print(sda_converter.get_uav_avoid_coordinates()[0])
                 vehicle.mode = VehicleMode("GUIDED")
                 vehicle.simple_goto(sda_converter.get_uav_avoid_coordinates()[0])
 
