@@ -74,6 +74,7 @@ class ObstacleMap(object):
         drone_point = self.drone.get_point()
 
         for obstacle in self.obstacles.tolist():
+            obstacle = obstacle[0]
             dist_to_obstacle = VectorMath.get_vector_magnitude(np.subtract(obstacle.get_point(), self.drone.get_point()))
             if dist_to_obstacle < obstacle.get_radius() * Constants.DETECTION_THRESHOLD_MULTIPLE:
                 if self.does_uav_intersect_obstacle_vertically(obstacle, drone_point, self.drone.get_waypoint_holder().get_current_waypoint()):
@@ -83,7 +84,7 @@ class ObstacleMap(object):
                             [obstacle.get_point()[0] - obstacle.get_radius(), obstacle.get_point()[1] - obstacle.get_radius(), self.drone.get_point()[2]],
                             [obstacle.get_point()[0] + obstacle.get_radius(), obstacle.get_point()[1] - obstacle.get_radius(), self.drone.get_point()[2]],
                             [obstacle.get_point()[0] - obstacle.get_radius(), obstacle.get_point()[1] + obstacle.get_radius(), self.drone.get_point()[2]],
-                            [obstacle.get_point()[0], obstacle.get_point()[1], obstacle.avoidance_by_alt_altitude + Constants.STATIONARY_OBSTACLE_SAFETY_RADIUS]
+                            [obstacle.get_point()[0], obstacle.get_point()[1], obstacle.avoidance_by_alt_altitude + (Constants.STATIONARY_OBSTACLE_SAFETY_RADIUS * 2)]
                         ]
 
                         new_paths = []
@@ -91,8 +92,9 @@ class ObstacleMap(object):
                             if not self.does_path_intersect_obstacle_3d(obstacle, drone_point, new_pos_point):
                                 for recursive_new_pos_point in new_attempt_pos_points:
                                     if self.flight_boundary.is_point_in_bounds(recursive_new_pos_point):
-                                        if not self.does_path_intersect_obstacle_3d(obstacle, new_pos_point, recursive_new_pos_point) and not self.does_path_intersect_obstacle_3d(obstacle, recursive_new_pos_point, self.drone.get_waypoint_holder().get_current_waypoint()):
-                                            new_paths.append([new_pos_point, recursive_new_pos_point])
+                                        if recursive_new_pos_point[0] != new_pos_point[0] or recursive_new_pos_point[1] != new_pos_point[1]:
+                                            if not self.does_path_intersect_obstacle_3d(obstacle, new_pos_point, recursive_new_pos_point) and not self.does_path_intersect_obstacle_3d(obstacle, recursive_new_pos_point, self.drone.get_waypoint_holder().get_current_waypoint()):
+                                                new_paths.append([new_pos_point, recursive_new_pos_point])
 
                         # Uncomment for DEBUGGING ONLY
                         #for path in new_paths:
@@ -146,7 +148,8 @@ class ObstacleMap(object):
         #print("Obstacle Vector: " + str(obstacle_vector))
         #print("Rejection Vector: " + str(rejection_vector))
         #print("Rejection Vector Magnitude: " + str(rejection_vector_magnitude))
-        #print("Obstacle Safety Radius: " + str(obstacle.get_safety_radius()))
+        #print("Obstacle Radius: " + str(obstacle.get_radius()))
+        #print("Distance From Obstacle: " + str(VectorMath.get_vector_magnitude(np.subtract(uav_point, obstacle.get_point()))))
 
         if self.is_obstacle_in_path_of_drone(obstacle_vector, waypoint_vector):
             return rejection_vector_magnitude < obstacle.get_radius()
@@ -176,10 +179,11 @@ class ObstacleMap(object):
         #print("Obstacle Vector: " + str(obstacle_vector))
         #print("Rejection Vector: " + str(rejection_vector))
         #print("Rejection Vector Magnitude: " + str(rejection_vector_magnitude))
-        #print("Obstacle Safety Radius: " + str(obstacle.get_safety_radius()))
+        #print("Obstacle Radius: " + str(obstacle.get_radius()))
+        #print("Distance From Obstacle: " + str(VectorMath.get_vector_magnitude(np.subtract(drone_point, obstacle.get_point()))))
 
         if self.is_obstacle_in_path_of_drone(obstacle_vector, waypoint_vector):
-            return rejection_vector_magnitude < obstacle.get_radius()
+            return rejection_vector_magnitude < Constants.STATIONARY_OBSTACLE_SAFETY_RADIUS
 
         return False
 

@@ -186,10 +186,16 @@ if __name__ == '__main__':
     #obstacles_array = [stationary_obstacles, moving_obstacles]
     #mission_data.append(get_mission_json(interop_server_client.get_active_mission(), obstacles_array))
 
-    boundary_points = mission_data[0]["fly_zones"]["boundary_pts"]
+    """boundary_points = mission_data[0]["fly_zones"]["boundary_pts"]
     converted_boundary_points = []
     for boundary_point in boundary_points:
-        converted_boundary_points.append(Location(boundary_point["lat"], boundary_point["lon"]))
+        converted_boundary_points.append(Location(boundary_point["lat"], boundary_point["lon"]))"""
+    converted_boundary_points = [
+        Location(38.867580, -77.330360, 0),
+        Location(38.876535, -77.330060, 0),
+        Location(38.877002, -77.314997, 0),
+        Location(38.867513, -77.315769, 0)
+    ]
 
     log(name, "Enabling SDA...")
     sda_converter = SDAConverter(get_location(vehicle), converted_boundary_points)
@@ -198,8 +204,11 @@ if __name__ == '__main__':
 
     vehicle_state_data.append(get_vehicle_state(vehicle, sda_converter, MSL_ALT))
 
-    # Remove the below line during actual flight
-    sda_converter.add_obstacle(Location(38.872342, -77.321627, 250), None)
+    # Remove the below lines during actual flight
+    #sda_converter.add_obstacle(Location(38.872342, -77.321627, 250), None)
+    sda_converter.add_obstacle(Location(38.871423, -77.319932, 200), None)
+    sda_converter.add_obstacle(Location(38.872960, -77.321048, 500), None)
+    sda_converter.add_obstacle(Location(38.872225, -77.324352, 100), None)
 
     log(name, "Everything is instantiated...Beginning operation")
     #try:
@@ -207,7 +216,7 @@ if __name__ == '__main__':
         current_location = get_location(vehicle)
         current_waypoint_number = vehicle.commands.next
         if current_waypoint_number != 0:
-            current_uav_waypoint = waypoints[current_waypoint_number]
+            current_uav_waypoint = waypoints[current_waypoint_number - 1]
             sda_converter.set_waypoint(Location(current_uav_waypoint.x, current_uav_waypoint.y, current_uav_waypoint.z * 3.28084))
 
         #interop_server_client.post_telemetry(current_location, vehicle.heading)
@@ -231,13 +240,14 @@ if __name__ == '__main__':
         sda_converter.avoid_obstacles()
 
         if (vehicle.location.global_relative_frame.alt * 3.28084) > 60:
-            if len(sda_converter.get_uav_avoid_coordinates()) != 0:
+            if not sda_converter.has_uav_completed_guided_path():
                 log("root", "Avoiding obstacles...")
-                print(sda_converter.get_uav_avoid_coordinates()[0])
+                print(sda_converter.get_uav_avoid_coordinates())
                 vehicle.mode = VehicleMode("GUIDED")
-                vehicle.simple_goto(sda_converter.get_uav_avoid_coordinates()[0])
+                vehicle.simple_goto(sda_converter.get_uav_avoid_coordinates())
 
-        if vehicle.mode.name == "GUIDED" and sda_converter.has_uav_reached_guided_waypoint() and len(sda_converter.get_uav_avoid_coordinates()) == 0:
+        if vehicle.mode.name == "GUIDED" and sda_converter.has_uav_reached_guided_waypoint() and sda_converter.has_uav_completed_guided_path():
+            print("SWITCHING BACK INTO AUTO MODE")
             vehicle.mode = VehicleMode("AUTO")
 
         sleep(0.5)

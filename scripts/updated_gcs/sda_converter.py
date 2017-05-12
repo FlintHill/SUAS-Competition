@@ -18,6 +18,7 @@ class SDAConverter(object):
         """
         self.initial_coordinates = initial_coordinates
         self.current_path = numpy.array([])
+        self.current_path_index = 1
         self.minimum_change_in_guided_waypoint = 3
 
         converted_boundary_points = self.convert_boundary_points(boundary_pts)
@@ -58,7 +59,7 @@ class SDAConverter(object):
         :type obstacle: StationaryObstacle or MovingObstacle
         """
         converted_obstacle_location = convert_to_point(self.initial_coordinates, obstacle_location)
-        new_obstacle = StationaryObstacle(converted_obstacle_location, 100, 100)
+        new_obstacle = StationaryObstacle(converted_obstacle_location, 150, obstacle_location.get_alt())
 
         self.obstacle_map.add_obstacle(new_obstacle)
 
@@ -78,6 +79,7 @@ class SDAConverter(object):
         converted_uav_location = convert_to_point(self.initial_coordinates, new_location)
 
         self.obstacle_map.set_drone_position(converted_uav_location)
+        self.has_uav_reached_guided_waypoint()
         print("Current UAV position:", converted_uav_location)
 
     def avoid_obstacles(self):
@@ -90,8 +92,10 @@ class SDAConverter(object):
             min_path = self.obstacle_map.get_min_path(paths)
 
             if self.current_path.shape[0] == 0:
+                self.current_path_index = 0
                 self.current_path = min_path
             elif self.has_path_changed(self.current_path, min_path):
+                self.current_path_index = 0
                 self.current_path = min_path
 
     def has_path_changed(self, path1, path2):
@@ -112,15 +116,22 @@ class SDAConverter(object):
 
         return False
 
+    def has_uav_completed_guided_path(self):
+        """
+        Returns True if the UAV has completed the guided path, False if not
+        """
+        return self.current_path_index > len(self.current_path)
+
     def get_uav_avoid_coordinates(self):
         """
-        Return the coordinates to avoid the object
+        Return the current coordinates to avoid the object
         """
         gps_points = []
         for xy_loc_point in self.current_path:
+            print(inverse_haversine(self.initial_coordinates, xy_loc_point).as_global_relative_frame())
             gps_points.append(inverse_haversine(self.initial_coordinates, xy_loc_point).as_global_relative_frame())
 
-        return gps_points
+        return gps_points[self.current_path_index]
 
     def has_uav_reached_guided_waypoint(self):
         """
@@ -130,9 +141,7 @@ class SDAConverter(object):
             distance = VectorMath.get_magnitude(self.current_path[0], self.obstacle_map.get_drone().get_point())
 
             if distance < Constants.MAX_DISTANCE_TO_TARGET:
-                self.current_path = self.current_path[1:]
-
-            print(self.current_path)
+                self.current_path_index += 1
 
             return distance < Constants.MAX_DISTANCE_TO_TARGET
 
