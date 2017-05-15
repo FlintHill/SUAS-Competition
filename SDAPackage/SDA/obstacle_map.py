@@ -89,7 +89,7 @@ class ObstacleMap(object):
 
                         new_paths = []
                         for new_pos_point in new_attempt_pos_points:
-                            if not self.does_path_intersect_obstacle_3d(obstacle, drone_point, new_pos_point):
+                            if not self.does_path_intersect_obstacle_3d(obstacle, drone_point, new_pos_point) and self.flight_boundary.is_point_in_bounds(new_pos_point):
                                 for recursive_new_pos_point in new_attempt_pos_points:
                                     if self.flight_boundary.is_point_in_bounds(recursive_new_pos_point):
                                         if recursive_new_pos_point[0] != new_pos_point[0] or recursive_new_pos_point[1] != new_pos_point[1]:

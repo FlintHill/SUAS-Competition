@@ -9,4 +9,4 @@ class Constants(object):
     DETECTION_THRESHOLD = 50
 
     MAX_ALT = 750
-    MIN_ALT = 0
+    MIN_ALT = -100#100
