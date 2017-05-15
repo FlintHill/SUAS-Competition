@@ -156,7 +156,7 @@ if __name__ == '__main__':
     vehicle_state_data = manager.list()
     mission_data = manager.list()
     sda_viewer_process = multiprocessing.Process(target=sda_viewer_process, args=(logger_queue, logger_worker_configurer, vehicle_state_data, mission_data))
-    #sda_viewer_process.start()
+    sda_viewer_process.start()
 
     logger_worker_configurer(logger_queue)
     name = multiprocessing.current_process().name
@@ -224,9 +224,9 @@ if __name__ == '__main__':
         timestamped_location_data_array[0] = {
             "index" : gps_update_index,
             "geo_stamp" : GeoStamp((current_location.get_lat(), current_location.get_lon()), datetime.now())
-        }
-        stationary_obstacles, moving_obstacles = interop_server_client.get_obstacles()
-        obstacles_array = [stationary_obstacles, moving_obstacles]"""
+        }"""
+        #stationary_obstacles, moving_obstacles = interop_server_client.get_obstacles()
+        #obstacles_array = [stationary_obstacles, moving_obstacles]
         """sda_converter.reset_obstacles()
         for stationary_obstacle in stationary_obstacles:
             sda_converter.add_obpstacle(get_obstacle_location(stationary_obstacle), stationary_obstacle)
@@ -246,8 +246,8 @@ if __name__ == '__main__':
                 vehicle.mode = VehicleMode("GUIDED")
                 vehicle.simple_goto(sda_converter.get_uav_avoid_coordinates())
 
-        if vehicle.mode.name == "GUIDED" and sda_converter.has_uav_reached_guided_waypoint() and sda_converter.has_uav_completed_guided_path():
-            print("SWITCHING BACK INTO AUTO MODE")
+        if vehicle.mode.name == "GUIDED" and sda_converter.has_uav_completed_guided_path() and sda_converter.does_guided_path_exist():
+            print("SWITCHING INTO AUTO")
             vehicle.mode = VehicleMode("AUTO")
 
         sleep(0.5)

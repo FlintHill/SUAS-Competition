@@ -77,9 +77,13 @@ class SDAConverter(object):
         :type new_location: Location
         """
         converted_uav_location = convert_to_point(self.initial_coordinates, new_location)
-
         self.obstacle_map.set_drone_position(converted_uav_location)
-        self.has_uav_reached_guided_waypoint()
+
+        if not self.has_uav_completed_guided_path():
+            if self.get_distance_to_current_guided_waypoint() < Constants.MAX_DISTANCE_TO_TARGET:
+                print("Dist to current waypoint:", self.get_distance_to_current_guided_waypoint())
+                self.current_path_index += 1
+
         print("Current UAV position:", converted_uav_location)
 
     def avoid_obstacles(self):
@@ -120,7 +124,13 @@ class SDAConverter(object):
         """
         Returns True if the UAV has completed the guided path, False if not
         """
-        return self.current_path_index > len(self.current_path)
+        return self.current_path_index >= len(self.current_path)
+
+    def does_guided_path_exist(self):
+        """
+        Returns True if a guided path exists and False otherwise
+        """
+        return self.current_path.shape[0] != 0
 
     def get_uav_avoid_coordinates(self):
         """
@@ -128,22 +138,29 @@ class SDAConverter(object):
         """
         gps_points = []
         for xy_loc_point in self.current_path:
-            print(inverse_haversine(self.initial_coordinates, xy_loc_point).as_global_relative_frame())
             gps_points.append(inverse_haversine(self.initial_coordinates, xy_loc_point).as_global_relative_frame())
 
+        print(self.current_path_index)
+        print(len(gps_points))
         return gps_points[self.current_path_index]
 
     def has_uav_reached_guided_waypoint(self):
         """
         Return True if the UAV has reached the current guided waypoint
         """
+        return self.get_distance_to_current_guided_waypoint() < Constants.MAX_DISTANCE_TO_TARGET
+
+    def get_distance_to_current_guided_waypoint(self):
+        """
+        Returns the distance to the current guided waypoint
+        """
         if self.current_path.shape[0] != 0:
-            distance = VectorMath.get_magnitude(self.current_path[0], self.obstacle_map.get_drone().get_point())
+            distance = VectorMath.get_magnitude(self.current_path[self.current_path_index], self.obstacle_map.get_drone().get_point())
 
-            if distance < Constants.MAX_DISTANCE_TO_TARGET:
-                self.current_path_index += 1
+            return distance
 
-            return distance < Constants.MAX_DISTANCE_TO_TARGET
+        # Any really high number will work here
+        return 100000000
 
     def is_obstacle_in_path(self):
         """
