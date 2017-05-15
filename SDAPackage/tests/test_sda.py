@@ -131,5 +131,53 @@ class SDATestCase(unittest.TestCase):
         self.obstacle_map.set_drone_position(new_uav_position)
 
         obstacle_in_path_boolean, avoid_paths = self.obstacle_map.is_obstacle_in_path()
-        print(self.obstacle_map.get_min_path(avoid_paths))
         self.assertEqual(obstacle_in_path_boolean, False)
+
+    def test_flight_boundary_simple(self):
+        """
+        Test the flight boundary system using a simple boundary
+        """
+        min_alt = 100
+        max_alt = 750
+        flight_boundary_test_object = FlightBoundary(min_alt, max_alt, np.array([[-2000, -2000], [-2000, 2000], [2000, 2000], [2000, -2000]]))
+
+        # Inside alt
+        in_bounds_boolean = flight_boundary_test_object.is_point_in_bounds(np.array([0, 0, ((min_alt + max_alt) / 2)]))
+        self.assertTrue(in_bounds_boolean)
+
+        # Below minimum altitude
+        in_bounds_boolean = flight_boundary_test_object.is_point_in_bounds(np.array([0, 0, min_alt - 10]))
+        self.assertEqual(in_bounds_boolean, False)
+
+        # Above maximum altitude
+        in_bounds_boolean = flight_boundary_test_object.is_point_in_bounds(np.array([0, 0, max_alt + 10]))
+        self.assertEqual(in_bounds_boolean, False)
+
+        # Inside alt, outside XY
+        in_bounds_boolean = flight_boundary_test_object.is_point_in_bounds(np.array([2010, 2010, ((min_alt + max_alt) / 2)]))
+        self.assertEqual(in_bounds_boolean, False)
+
+    def test_flight_boundary_complicated(self):
+        """
+        Test the flight boundary system using a complicated boundary
+        """
+        min_alt = 100
+        max_alt = 750
+        flight_boundary_test_object = FlightBoundary(min_alt, max_alt, np.array([[0, 1000], [100, 100], [1000, 0], [100, -100], [0, -1000], [-100, -100], [-1000, 0], [-100, 100]]))
+
+        # Inside bounds
+        in_bounds_boolean = flight_boundary_test_object.is_point_in_bounds(np.array([50, 50, 200]))
+        self.assertTrue(in_bounds_boolean)
+
+        in_bounds_boolean = flight_boundary_test_object.is_point_in_bounds(np.array([0, 800, 200]))
+        self.assertTrue(in_bounds_boolean)
+
+        # Outside bounds
+        in_bounds_boolean = flight_boundary_test_object.is_point_in_bounds(np.array([200, 200, 200]))
+        self.assertEqual(in_bounds_boolean, False)
+
+        in_bounds_boolean = flight_boundary_test_object.is_point_in_bounds(np.array([-200, -200, 200]))
+        self.assertEqual(in_bounds_boolean, False)
+
+        in_bounds_boolean = flight_boundary_test_object.is_point_in_bounds(np.array([0, 2000, 200]))
+        self.assertEqual(in_bounds_boolean, False)
