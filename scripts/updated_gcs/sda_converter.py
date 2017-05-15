@@ -81,7 +81,6 @@ class SDAConverter(object):
 
         if not self.has_uav_completed_guided_path():
             if self.get_distance_to_current_guided_waypoint() < Constants.MAX_DISTANCE_TO_TARGET:
-                print("Dist to current waypoint:", self.get_distance_to_current_guided_waypoint())
                 self.current_path_index += 1
 
         print("Current UAV position:", converted_uav_location)
@@ -140,8 +139,6 @@ class SDAConverter(object):
         for xy_loc_point in self.current_path:
             gps_points.append(inverse_haversine(self.initial_coordinates, xy_loc_point).as_global_relative_frame())
 
-        print(self.current_path_index)
-        print(len(gps_points))
         return gps_points[self.current_path_index]
 
     def has_uav_reached_guided_waypoint(self):

@@ -76,7 +76,7 @@ class ObstacleMap(object):
         for obstacle in self.obstacles.tolist():
             obstacle = obstacle[0]
             dist_to_obstacle = VectorMath.get_vector_magnitude(np.subtract(obstacle.get_point(), self.drone.get_point()))
-            if dist_to_obstacle < obstacle.get_radius() * Constants.DETECTION_THRESHOLD_MULTIPLE:
+            if dist_to_obstacle < obstacle.get_radius() + Constants.DETECTION_THRESHOLD:
                 if self.does_uav_intersect_obstacle_vertically(obstacle, drone_point, self.drone.get_waypoint_holder().get_current_waypoint()):
                     if self.does_path_intersect_obstacle_2d(obstacle, drone_point, self.drone.get_waypoint_holder().get_current_waypoint()):
                         new_attempt_pos_points = [

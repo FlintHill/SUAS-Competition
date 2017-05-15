@@ -247,7 +247,6 @@ if __name__ == '__main__':
                 vehicle.simple_goto(sda_converter.get_uav_avoid_coordinates())
 
         if vehicle.mode.name == "GUIDED" and sda_converter.has_uav_completed_guided_path() and sda_converter.does_guided_path_exist():
-            print("SWITCHING INTO AUTO")
             vehicle.mode = VehicleMode("AUTO")
 
         sleep(0.5)
