@@ -1,10 +1,6 @@
 import numpy as np
 from math import atan2, cos, sin, pi
-from SDA import Drone
-from SDA import StationaryObstacle
-from SDA import VectorMath
-from SDA import Constants
-from SDA import FlightBoundary
+from SDA import *
 
 class ObstacleMap(object):
     """
@@ -77,30 +73,36 @@ class ObstacleMap(object):
             obstacle = obstacle[0]
             dist_to_obstacle = VectorMath.get_vector_magnitude(np.subtract(obstacle.get_point(), self.drone.get_point()))
             if dist_to_obstacle < obstacle.get_radius() + Constants.DETECTION_THRESHOLD:
-                if self.does_uav_intersect_obstacle_vertically(obstacle, drone_point, self.drone.get_waypoint_holder().get_current_waypoint()):
-                    if self.does_path_intersect_obstacle_2d(obstacle, drone_point, self.drone.get_waypoint_holder().get_current_waypoint()):
-                        new_attempt_pos_points = [
-                            [obstacle.get_point()[0] + obstacle.get_radius(), obstacle.get_point()[1] + obstacle.get_radius(), self.drone.get_point()[2]],
-                            [obstacle.get_point()[0] - obstacle.get_radius(), obstacle.get_point()[1] - obstacle.get_radius(), self.drone.get_point()[2]],
-                            [obstacle.get_point()[0] + obstacle.get_radius(), obstacle.get_point()[1] - obstacle.get_radius(), self.drone.get_point()[2]],
-                            [obstacle.get_point()[0] - obstacle.get_radius(), obstacle.get_point()[1] + obstacle.get_radius(), self.drone.get_point()[2]],
-                            [obstacle.get_point()[0], obstacle.get_point()[1], obstacle.avoidance_by_alt_altitude + (Constants.STATIONARY_OBSTACLE_SAFETY_RADIUS * 2)]
-                        ]
+                if isinstance(obstacle, StationaryObstacle):
+                    if self.does_uav_intersect_obstacle_vertically(obstacle, drone_point, self.drone.get_waypoint_holder().get_current_waypoint()):
+                        if self.does_path_intersect_obstacle_2d(obstacle, drone_point, self.drone.get_waypoint_holder().get_current_waypoint()):
+                            new_attempt_pos_points = [
+                                [obstacle.get_point()[0] + obstacle.get_radius(), obstacle.get_point()[1] + obstacle.get_radius(), self.drone.get_point()[2]],
+                                [obstacle.get_point()[0] - obstacle.get_radius(), obstacle.get_point()[1] - obstacle.get_radius(), self.drone.get_point()[2]],
+                                [obstacle.get_point()[0] + obstacle.get_radius(), obstacle.get_point()[1] - obstacle.get_radius(), self.drone.get_point()[2]],
+                                [obstacle.get_point()[0] - obstacle.get_radius(), obstacle.get_point()[1] + obstacle.get_radius(), self.drone.get_point()[2]],
+                                [obstacle.get_point()[0], obstacle.get_point()[1] + obstacle.get_radius(), obstacle.avoidance_by_alt_altitude + (Constants.STATIONARY_OBSTACLE_SAFETY_RADIUS * 2)],
+                                [obstacle.get_point()[0], obstacle.get_point()[1] - obstacle.get_radius(), obstacle.avoidance_by_alt_altitude + (Constants.STATIONARY_OBSTACLE_SAFETY_RADIUS * 2)],
+                                [obstacle.get_point()[0] + obstacle.get_radius(), obstacle.get_point()[1], obstacle.avoidance_by_alt_altitude + (Constants.STATIONARY_OBSTACLE_SAFETY_RADIUS * 2)],
+                                [obstacle.get_point()[0] - obstacle.get_radius(), obstacle.get_point()[1], obstacle.avoidance_by_alt_altitude + (Constants.STATIONARY_OBSTACLE_SAFETY_RADIUS * 2)]
+                            ]
 
-                        new_paths = []
-                        for new_pos_point in new_attempt_pos_points:
-                            if not self.does_path_intersect_obstacle_3d(obstacle, drone_point, new_pos_point) and self.flight_boundary.is_point_in_bounds(new_pos_point):
-                                for recursive_new_pos_point in new_attempt_pos_points:
-                                    if self.flight_boundary.is_point_in_bounds(recursive_new_pos_point):
-                                        if recursive_new_pos_point[0] != new_pos_point[0] or recursive_new_pos_point[1] != new_pos_point[1]:
-                                            if not self.does_path_intersect_obstacle_3d(obstacle, new_pos_point, recursive_new_pos_point) and not self.does_path_intersect_obstacle_3d(obstacle, recursive_new_pos_point, self.drone.get_waypoint_holder().get_current_waypoint()):
-                                                new_paths.append([new_pos_point, recursive_new_pos_point])
+                            new_paths = []
+                            for new_pos_point in new_attempt_pos_points:
+                                if not self.does_path_intersect_obstacle_3d(obstacle, drone_point, new_pos_point) and self.flight_boundary.is_point_in_bounds(new_pos_point):
+                                    for recursive_new_pos_point in new_attempt_pos_points:
+                                        if self.flight_boundary.is_point_in_bounds(recursive_new_pos_point) and abs(recursive_new_pos_point[2] - new_pos_point[2]) < 5:
+                                            if recursive_new_pos_point[0] != new_pos_point[0] or recursive_new_pos_point[1] != new_pos_point[1]:
+                                                if not self.does_path_intersect_obstacle_3d(obstacle, new_pos_point, recursive_new_pos_point) and not self.does_path_intersect_obstacle_3d(obstacle, recursive_new_pos_point, self.drone.get_waypoint_holder().get_current_waypoint()):
+                                                    new_paths.append([new_pos_point, recursive_new_pos_point])
 
-                        # Uncomment for DEBUGGING ONLY
-                        #for path in new_paths:
-                        #    print("Point:", str(path))
+                            # Uncomment for DEBUGGING ONLY
+                            #for path in new_paths:
+                            #    print("Point:", str(path))
 
-                        return True, np.array(new_paths)
+                            return True, np.array(new_paths)
+                elif isinstance(obstacle, MovingObstacle):
+                    pass
 
         return False, None
 
