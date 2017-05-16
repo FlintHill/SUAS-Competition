@@ -2,6 +2,7 @@ from SDA import *
 from converter_functions import *
 from location_data import Location
 import numpy
+import interop
 
 class SDAConverter(object):
     """
@@ -59,9 +60,12 @@ class SDAConverter(object):
         :type obstacle: StationaryObstacle or MovingObstacle
         """
         converted_obstacle_location = convert_to_point(self.initial_coordinates, obstacle_location)
-        new_obstacle = StationaryObstacle(converted_obstacle_location, 150, obstacle_location.get_alt())
+        if isinstance(obstacle, interop.StationaryObstacle):
+            new_obstacle = StationaryObstacle(converted_obstacle_location, obstacle.cylinder_radius, obstacle.cylinder_height)
+        else:
+            pass
 
-        self.obstacle_map.add_obstacle(new_obstacle)
+        self.obstacle_map.add_obstacle(numpy.array([new_obstacle]))
 
     def reset_obstacles(self):
         """

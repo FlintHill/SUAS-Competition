@@ -19,7 +19,6 @@ class StationaryObstacle(Obstacle):
 
         self.radius = radius
         self.height = height
-        self.avoidance_by_alt_altitude = self.height
 
     def get_radius(self):
         """

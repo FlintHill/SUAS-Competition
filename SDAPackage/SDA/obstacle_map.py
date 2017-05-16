@@ -81,10 +81,10 @@ class ObstacleMap(object):
                                 [obstacle.get_point()[0] - obstacle.get_radius(), obstacle.get_point()[1] - obstacle.get_radius(), self.drone.get_point()[2]],
                                 [obstacle.get_point()[0] + obstacle.get_radius(), obstacle.get_point()[1] - obstacle.get_radius(), self.drone.get_point()[2]],
                                 [obstacle.get_point()[0] - obstacle.get_radius(), obstacle.get_point()[1] + obstacle.get_radius(), self.drone.get_point()[2]],
-                                [obstacle.get_point()[0], obstacle.get_point()[1] + obstacle.get_radius(), obstacle.avoidance_by_alt_altitude + (Constants.STATIONARY_OBSTACLE_SAFETY_RADIUS * 2)],
-                                [obstacle.get_point()[0], obstacle.get_point()[1] - obstacle.get_radius(), obstacle.avoidance_by_alt_altitude + (Constants.STATIONARY_OBSTACLE_SAFETY_RADIUS * 2)],
-                                [obstacle.get_point()[0] + obstacle.get_radius(), obstacle.get_point()[1], obstacle.avoidance_by_alt_altitude + (Constants.STATIONARY_OBSTACLE_SAFETY_RADIUS * 2)],
-                                [obstacle.get_point()[0] - obstacle.get_radius(), obstacle.get_point()[1], obstacle.avoidance_by_alt_altitude + (Constants.STATIONARY_OBSTACLE_SAFETY_RADIUS * 2)]
+                                [obstacle.get_point()[0], obstacle.get_point()[1] + obstacle.get_radius(), obstacle.get_height() + (Constants.STATIONARY_OBSTACLE_SAFETY_RADIUS * 2)],
+                                [obstacle.get_point()[0], obstacle.get_point()[1] - obstacle.get_radius(), obstacle.get_height() + (Constants.STATIONARY_OBSTACLE_SAFETY_RADIUS * 2)],
+                                [obstacle.get_point()[0] + obstacle.get_radius(), obstacle.get_point()[1], obstacle.get_height() + (Constants.STATIONARY_OBSTACLE_SAFETY_RADIUS * 2)],
+                                [obstacle.get_point()[0] - obstacle.get_radius(), obstacle.get_point()[1], obstacle.get_height() + (Constants.STATIONARY_OBSTACLE_SAFETY_RADIUS * 2)]
                             ]
 
                             new_paths = []
