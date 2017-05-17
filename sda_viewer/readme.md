@@ -200,7 +200,7 @@ There are several features that have not been implemented:
 
 The details of the tile server are detailed below.
 
-The setup of the tile server is included in the set of instructions above.
+The setup of the tile server is included in the set of instructions above. But, to summarize the instructions: You need to download map tiles from an online resource (such as OpenStreetMap), and import them into a MySQL database.
 
 The tile server is required to serve the map tiles that appear in the background of the viewer offline, because at the competition, an internet connection will not be provided.
 
