@@ -45,3 +45,6 @@ class Location(object):
         Get the LocationGlobalRelative form of this location
         """
         return self.location
+
+    def __repr__(self):
+        return "Lat: " + str(self.get_lat()) + " Lon: " + str(self.get_lon()) + " Alt: " + str(self.get_alt())

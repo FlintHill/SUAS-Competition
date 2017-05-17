@@ -55,3 +55,12 @@ class VectorMath(object):
         mag = VectorMath.get_vector_magnitude(vector_two)
 
         return vector_two * (dot_prod / (mag**2))
+
+    @staticmethod
+    def get_vector_rejection(vector_one, vector_two):
+        """
+        Returns the vector rejection between two vectors
+        """
+        projection_vector = VectorMath.get_vector_projection(vector_one, vector_two)
+
+        return np.subtract(vector_one, projection_vector)

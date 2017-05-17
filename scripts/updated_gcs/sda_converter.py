@@ -2,6 +2,7 @@ from SDA import *
 from converter_functions import *
 from location_data import Location
 import numpy
+import interop
 
 class SDAConverter(object):
     """
@@ -9,21 +10,33 @@ class SDAConverter(object):
     algorithm implemented
     """
 
-    def __init__(self, initial_coordinates):
+    def __init__(self, initial_coordinates, boundary_pts):
         """
         Initialize the converter
 
         :param initial_coordinates: The initial GPS coordinates of the UAV
         :type initial_coordinates: GPSCoordinates
         """
-        self.obstacle_map = ObstacleMap()
-
         self.initial_coordinates = initial_coordinates
-        self.previous_min_tangent_point = numpy.array([0, 0])
+        self.current_path = numpy.array([])
+        self.current_path_index = 1
         self.minimum_change_in_guided_waypoint = 3
 
-        # REMOVE THE BELOW LINE DURING ACTUAL FLIGHT
-        #self.obstacle_map.add_obstacle(StationaryObstacle(numpy.array([100.0, -8.0]), 5));
+        converted_boundary_points = self.convert_boundary_points(boundary_pts)
+        self.obstacle_map = ObstacleMap(numpy.array([0,0,0]), converted_boundary_points)
+
+    def convert_boundary_points(self, boundary_pts):
+        """
+        Converts a bunch of boundary points to the XY coordinate mapping
+
+        :param boundary_pts: The boundary points that need to be converted
+        :type boundary_pts: List (of Location objects)
+        """
+        converted_boundary_points = []
+        for boundary_point in boundary_pts:
+            converted_boundary_points.append(convert_to_point(self.initial_coordinates, boundary_point)[:2])
+
+        return numpy.array(converted_boundary_points)
 
     def set_waypoint(self, new_waypoint):
         """
@@ -47,9 +60,12 @@ class SDAConverter(object):
         :type obstacle: StationaryObstacle or MovingObstacle
         """
         converted_obstacle_location = convert_to_point(self.initial_coordinates, obstacle_location)
-        new_obstacle = StationaryObstacle(converted_obstacle_location, 5)
+        if isinstance(obstacle, interop.StationaryObstacle):
+            new_obstacle = StationaryObstacle(converted_obstacle_location, obstacle.cylinder_radius, obstacle.cylinder_height)
+        else:
+            pass
 
-        self.obstacle_map.add_obstacle(new_obstacle)
+        self.obstacle_map.add_obstacle(numpy.array([new_obstacle]))
 
     def reset_obstacles(self):
         """
@@ -65,35 +81,87 @@ class SDAConverter(object):
         :type new_location: Location
         """
         converted_uav_location = convert_to_point(self.initial_coordinates, new_location)
-
         self.obstacle_map.set_drone_position(converted_uav_location)
-        print(converted_uav_location)
 
-    def avoid_obstacles(self, bearing):
+        if not self.has_uav_completed_guided_path():
+            if self.get_distance_to_current_guided_waypoint() < Constants.MAX_DISTANCE_TO_TARGET:
+                self.current_path_index += 1
+
+        print("Current UAV position:", converted_uav_location)
+
+    def avoid_obstacles(self):
         """
         Run obstacle avoidance using the drone's new position
-
-        :param uav_bearing: The bearing of the UAV (in radians)
-        :type uav_bearing: float
         """
-        obstacle_in_path_boolean, avoid_coords = self.obstacle_map.is_obstacle_in_path()
+        obstacle_in_path_boolean, paths = self.obstacle_map.is_obstacle_in_path()
 
         if obstacle_in_path_boolean:
-            min_tangent_point = self.obstacle_map.get_min_tangent_point(avoid_coords)
+            min_path = self.obstacle_map.get_min_path(paths)
 
-            if VectorMath.get_magnitude(self.previous_min_tangent_point, min_tangent_point) > self.minimum_change_in_guided_waypoint:
-                self.previous_min_tangent_point = min_tangent_point
+            if self.current_path.shape[0] == 0:
+                self.current_path_index = 0
+                self.current_path = min_path
+            elif self.has_path_changed(self.current_path, min_path):
+                self.current_path_index = 0
+                self.current_path = min_path
 
-                return inverse_haversine(self.initial_coordinates, min_tangent_point, bearing).as_global_relative_frame()
+    def has_path_changed(self, path1, path2):
+        """
+        Compares two paths to see if one has any changed points
 
-        return None
+        :param path1: The first path to compare
+        :type path1: Numpy Array
+        :param path2: The second path to compare
+        :type path2: Numpy Array
+        """
+        if path1.shape[0] != path2.shape[0]:
+            return True
+
+        for index in range(path1.shape[0]):
+            if VectorMath.get_magnitude(path1[index], path2[index]) > self.minimum_change_in_guided_waypoint:
+                return True
+
+        return False
+
+    def has_uav_completed_guided_path(self):
+        """
+        Returns True if the UAV has completed the guided path, False if not
+        """
+        return self.current_path_index >= len(self.current_path)
+
+    def does_guided_path_exist(self):
+        """
+        Returns True if a guided path exists and False otherwise
+        """
+        return self.current_path.shape[0] != 0
+
+    def get_uav_avoid_coordinates(self):
+        """
+        Return the current coordinates to avoid the object
+        """
+        gps_points = []
+        for xy_loc_point in self.current_path:
+            gps_points.append(inverse_haversine(self.initial_coordinates, xy_loc_point).as_global_relative_frame())
+
+        return gps_points[self.current_path_index]
 
     def has_uav_reached_guided_waypoint(self):
         """
         Return True if the UAV has reached the current guided waypoint
         """
-        distance = VectorMath.get_magnitude(self.previous_min_tangent_point, self.obstacle_map.get_drone().get_point())
-        return distance < Constants.MAX_DISTANCE_TO_TARGET
+        return self.get_distance_to_current_guided_waypoint() < Constants.MAX_DISTANCE_TO_TARGET
+
+    def get_distance_to_current_guided_waypoint(self):
+        """
+        Returns the distance to the current guided waypoint
+        """
+        if self.current_path.shape[0] != 0:
+            distance = VectorMath.get_magnitude(self.current_path[self.current_path_index], self.obstacle_map.get_drone().get_point())
+
+            return distance
+
+        # Any really high number will work here
+        return 100000000
 
     def is_obstacle_in_path(self):
         """

@@ -12,7 +12,7 @@ def get_location(vehicle):
     """
     latitude = vehicle.location.global_relative_frame.lat
     longitude = vehicle.location.global_relative_frame.lon
-    altitude = vehicle.location.global_relative_frame.alt
+    altitude = vehicle.location.global_relative_frame.alt * 3.28084
 
     return Location(latitude, longitude, altitude)
 
@@ -27,7 +27,7 @@ def get_vehicle_state(vehicle, sda_converter, MSL_ALT):
     """
     latitude = vehicle.location.global_relative_frame.lat
     longitude = vehicle.location.global_relative_frame.lon
-    altitude = vehicle.location.global_relative_frame.alt + MSL_ALT
+    altitude = (vehicle.location.global_relative_frame.alt * 3.28084) + MSL_ALT
     groundspeed = vehicle.groundspeed * 1.94384448
     velocity = vehicle.velocity
     direction = vehicle.heading
@@ -124,10 +124,62 @@ def convert_to_point(initial_location, new_location):
         on (0,0) being at the initial location
     :type new_location: Location
     """
-    haversine_dist = haversine(initial_location, new_location)
-    obstacle_bearing = bearing(initial_location, new_location)
+    dx, dy, dz = haversine(initial_location, new_location, units="US")
 
-    dx = haversine_dist * math.cos(obstacle_bearing)
-    dy = haversine_dist * math.sin(obstacle_bearing)
+    return numpy.array([dx, dy, new_location.get_alt()])
 
-    return numpy.array([dx, dy])
+def haversine(location1, location2, units="METRIC"):
+    """
+    Calculates the great circle distance between two points
+    on the earth (specified in decimal degrees)
+
+    :param location1: The first GPS location
+    :type location1: Location
+    :param location2: The second GPS location
+    :type location2: Location
+    """
+    dz = location2.get_alt() - location1.get_alt()
+    dy = (location2.get_lat() - location1.get_lat()) * 69.172
+    dx = (location2.get_lon() - location1.get_lon()) * 69.172 * math.cos(math.radians(location1.get_lat() + location2.get_lat()) / 2)
+
+    if "metric" in units.lower():
+        dy *= 1609.34
+        dx *= 1609.34
+    elif "us" in units.lower():
+        dy *= 1609.34 * 3.28084
+        dx *= 1609.34 * 3.28084
+
+    return dx, dy, dz
+
+def inverse_haversine(location1, point):
+    """
+    Calculate a second GPS point through using a single GPS point and a
+    different in XY units
+
+    :param location1: The first GPS coordinate
+    :type location1: Location
+    :param point: The point in the map that the obstacle occupies
+    :type point: Numpy Array
+    """
+    dy = point[1] / (3.28084 * 1000)
+    dx = point[0] / (3.28084 * 1000)
+
+    lat = location1.get_lat() + (dy / 111.195)
+    lon = location1.get_lon() + (dx / (math.cos(math.radians((lat + location1.get_lat()) / 2.0)) * 111.191))
+    alt = point[2] / 3.28084
+
+    return Location(lat, lon, alt)
+
+def bearing(location1, location2):
+    """
+    Calculates the bearing between two points
+
+    :param location1: The first GPS location
+    :type location1: Location
+    :param location2: The second GPS location
+    :type location2: Location
+    """
+    dx, dy, dz = haversine(location1, location2)
+    initial_bearing = math.atan2(dx, dy)
+
+    return initial_bearing
