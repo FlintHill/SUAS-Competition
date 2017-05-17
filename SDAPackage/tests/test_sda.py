@@ -86,8 +86,8 @@ class SDATestCase(unittest.TestCase):
         self.obstacle_map.reset_waypoints()
         self.obstacle_map.set_drone_position(np.array([0,0,0]))
         obstacle_in_path = StationaryObstacle(np.array([50, 0, 0]), 5, 10)
-        waypoint = np.array([100, 0, 25])
-        new_uav_position = np.array([0, 0, 25])
+        waypoint = np.array([100, 0, 50])
+        new_uav_position = np.array([0, 0, 50])
 
         self.obstacle_map.add_obstacle([obstacle_in_path])
         self.obstacle_map.add_waypoint(waypoint)
