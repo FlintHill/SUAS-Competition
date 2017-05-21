@@ -20,6 +20,7 @@ from EigenFit.DataMine import Categorizer
 from ImgProcessingCLI.Runtime.GeoStamp import GeoStamp
 from ImgProcessingCLI.Runtime.GeoStamps import GeoStamps
 from EigenFit.Load import *
+from Runtime.TargetCrop import TargetCrop
 from timeit import default_timer
 import rawpy
 import shutil
@@ -40,6 +41,8 @@ BASE_LETTER_CATEGORIZER_PCA_PATH = "/Users/vtolpegin/Desktop/GENERATED FORCED WI
 BASE_ORIENTATION_CLASSIFIER_PCA_PATH = "/Users/vtolpegin/Desktop/GENERATED 180 ORIENTATION PCA"
 
 SD_CARD_NAME = "NX500"
+
+MIN_DIST_BETWEEN_TARGETS_KM = 30.0/1000.0
 
 def sda_viewer_process(logger_queue, configurer, vehicle_state_data, mission_data):
     """
@@ -111,7 +114,10 @@ def target_listener(logger_queue, configurer, timestamped_location_data_array):
     # 3. Save the targets to GENERATED_DATA_LOCATION
     # 4. Upload the targets to interop server
     log(name, "Beginning image processing...")
+    geo_stamps = GeoStamps(gps_coords)
     crop_index = 0
+
+    all_target_crops = []
     for pic_folder in os.listdir(sd_path):
         pictures_dir_path = os.path.join(sd_path, pic_folder)
 
@@ -123,7 +129,9 @@ def target_listener(logger_queue, configurer, timestamped_location_data_array):
                 img = rawpy.imread(pic_path).postprocess()
                 rgb_image = Image.fromarray(numpy.roll(img, 1, axis=0))
 
-                target_crops = TargetCropper.get_target_crops_from_img2(rgb_image, GeoStamps(gps_coords), 6)
+                target_crops = TargetCropper.get_target_crops_from_img2(rgb_image, geo_stamps, 6)
+                target_crops = TargetCrop.get_non_duplicate_crops(all_target_crops, target_crops, client.MIN_DIST_BETWEEN_TARGETS_KM)
+                all_target_crops.extend(target_crops)
                 log(name, "Finished processing", pic_name, "in", str(default_timer() - start_time))
 
                 for target_crop in target_crops:
@@ -137,10 +145,15 @@ def target_listener(logger_queue, configurer, timestamped_location_data_array):
                     save_json_data(output_json_name, target_json_output)
 
                     crop_index += 1
+                '''have to submit generated data to interop server'''
 
 if __name__ == '__main__':
     manager = multiprocessing.Manager()
+<<<<<<< HEAD
     interop_server_client = InteropClientConverter(MSL_ALT, INTEROP_URL, INTEROP_USERNAME, INTEROP_PASSWORD)
+=======
+    interop_server_client = InteropClientConverter(MSL, INTEROP_URL, INTEROP_USERNAME, INTEROP_PASSWORD)
+>>>>>>> committed so I don't lose everything during a rebase
 
     logger_queue = multiprocessing.Queue(-1)
     logger_listener_process = multiprocessing.Process(target=listener_process, args=(logger_queue, logger_listener_configurer))
@@ -148,10 +161,19 @@ if __name__ == '__main__':
 
     timestamped_location_data_array = manager.list()
     target_listener_process = multiprocessing.Process(target=target_listener, args=(logger_queue, logger_worker_configurer, timestamped_location_data_array))
+<<<<<<< HEAD
     #target_listener_process.start()
     #target_listener(logger_queue, logger_worker_configurer, timestamped_location_data_array)
     #while True:
     #    sleep(0.5)
+=======
+    '''
+    target_listener_process.start()
+
+    while True:
+        sleep(0.5)
+    '''
+>>>>>>> committed so I don't lose everything during a rebase
 
     vehicle_state_data = manager.list()
     mission_data = manager.list()
@@ -173,7 +195,7 @@ if __name__ == '__main__':
     log(name, "Downloading waypoints from UAV on: %s" % UAV_CONNECTION_STRING)
     waypoints = vehicle.commands
     waypoints.download()
-    waypoints.wait_ready()
+    #waypoints.wait_ready()
     log(name, "Waypoints successfully downloaded")
 
     gps_update_index = 0
@@ -205,10 +227,19 @@ if __name__ == '__main__':
     #try:
     while True:
         current_location = get_location(vehicle)
+<<<<<<< HEAD
         current_waypoint_number = vehicle.commands.next
         if current_waypoint_number != 0:
             current_uav_waypoint = waypoints[current_waypoint_number - 1]
             sda_converter.set_waypoint(Location(current_uav_waypoint.x, current_uav_waypoint.y, current_uav_waypoint.z * 3.28084))
+=======
+        #current_waypoint_number = vehicle.commands.next
+        #current_uav_waypoint = waypoints[current_waypoint_number]
+        #sda_converter.set_waypoint(Location(current_uav_waypoint.x, current_uav_waypoint.y, current_uav_waypoint.z))
+        print(current_location.get_lat())
+        print(current_location.get_lon())
+        print("\n\n\n")
+>>>>>>> committed so I don't lose everything during a rebase
 
         interop_server_client.post_telemetry(current_location, vehicle.heading)
         """gps_update_index += 1

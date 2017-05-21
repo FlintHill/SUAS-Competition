@@ -13,6 +13,10 @@ target_colors = ((40,40,40), (244,244,252), (128,128,128), (228, 60, 76), (44,12
 
 LIGHTNESS_WEIGHT = 1
 
+def get_closest_target_rgb_and_name(color):
+    closest_color = get_closest_color_from_list(target_colors, color)
+    return named_target_colors[target_colors.index(closest_color)]
+
 def get_closest_target_color(color):
     closest_color = get_closest_color_from_list(target_colors, color)
     return named_target_colors[target_colors.index(closest_color)][0]

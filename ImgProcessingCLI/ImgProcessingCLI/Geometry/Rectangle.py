@@ -15,8 +15,8 @@ class Rectangle(object):
                     image[x,y] = color
         return None
 
-    def draw(self, img, image, color):
-        for x in range(self.x, self.x+self.width):
+    def draw(self, img, image, color, stroke_width = 1):
+        '''for x in range(self.x, self.x+self.width):
             if x > 0 and x < img.size[0]:
                 if self.y > 0 and self.y < img.size[1]:
                     image[x,self.y] = color
@@ -27,7 +27,22 @@ class Rectangle(object):
                 if self.x > 0 and self.x < img.size[0]:
                     image[self.x, y] = color
                 if self.x > 0 and self.x + self.width < img.size[0]:
-                    image[self.x+self.width, y] = color
+                    image[self.x+self.width, y] = color'''
+        stroke_margin = (stroke_width+1)//2
+        for x in range(self.x-stroke_width, self.x+self.width+stroke_width):
+            for y in range(self.y-stroke_width, self.y):
+                if x > 0 and x < img.size[0] and y > 0 and y < img.size[1]:
+                    image[x,y] = color
+            for y in range(self.y+self.height, self.y+self.height+stroke_width):
+                if x > 0 and x < img.size[0] and y > 0 and y < img.size[1]:
+                    image[x,y] = color
+        for y in range(self.y - stroke_width, self.y+self.height+stroke_width):
+            for x in range(self.x-stroke_width, self.x):
+                if x > 0 and x < img.size[0] and y > 0 and y < img.size[1]:
+                    image[x,y] = color
+            for x in range(self.x+self.width, self.x+self.width+stroke_width):
+                if x > 0 and x < img.size[0] and y > 0 and y < img.size[1]:
+                    image[x,y] = color
 
     def as_points(self):
         return numpy.array([[self.x, self.y],

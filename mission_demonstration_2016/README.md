@@ -10,7 +10,9 @@ Each folder contains instructions for how to run each individual code component.
 2) Run ```mavproxy.py``` script with the following command:
 
 ```
-sudo python mavproxy.py --console --master=tcp:127.0.0.1:5760 --out=tcpin:127.0.0.1:14551 --out=tcpin:0.0.0.0:14550
+sudo python mavproxy.py --console --master=/dev/tty.usbserial-DN00BATE --out=tcpin:127.0.0.1:14551 --out=tcpin:0.0.0.0:14550
+sudo python mavproxy.py --console --master=/dev/tty.usbserial-DJ00DM78 --out=tcpin:127.0.0.1:14551 --out=tcpin:0.0.0.0:14550
+
 ```
 
 This will start up MAVProxy and connect to the UAV over the USB interface.

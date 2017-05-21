@@ -22,6 +22,8 @@ class TargetCrop(object):
         self.init_gps_of_crop(ppsi)
 
 
+    def get_crop_loc(self):
+        return self.crop_loc
 
     def init_time_taken(self):
         try:
@@ -42,6 +44,28 @@ class TargetCrop(object):
 
     def get_crop_gps_lat_lon(self):
         return self.crop_gps_lat_lon
+
+    '''distance threshold is in km'''
+    @staticmethod
+    def get_non_duplicate_crops(previous_target_crops, check_target_crops, distance_threshold):
+        out_targets = []
+        for i in range(0, len(check_target_crops)):
+            if not TargetCrop.get_if_target_crop_is_duplicate(previous_target_crops, check_target_crops[i], distance_threshold):
+                out_targets.append(check_target_crops[i])
+        return out_targets
+
+    '''distance_threshold is in km'''
+    @staticmethod
+    def get_if_target_crop_is_duplicate(target_crops, target_crop, distance_threshold):
+        threshold_in_km = distance_threshold / 1000.0
+        target_crop_gps = target_crop.get_crop_gps_lat_lon()
+        for i in range(0, len(target_crops)):
+            dist_between = GPSOperations.haversine_distance(target_crop_gps, target_crops[i].get_crop_gps_lat_lon())
+            if dist_between < threshold_in_km:
+                return True
+        return False
+
+
 
     def __str__(self):
         out_str = "Target crop taken at second: {}, at parent geo location: {}, with target geolocation of: {}, with pixel location relative to center: {}"

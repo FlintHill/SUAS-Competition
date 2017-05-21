@@ -9,9 +9,11 @@ from math import sqrt
 import ImgProcessingCLI.ImageOperation.Crop as Crop
 from ImgProcessingCLI.Geometry.Rectangle import Rectangle
 import timeit
+import ImgProcessingCLI.Color.TargetColorReader as TargetColorReader
+import ImgProcessingCLI.Color.ColorMath as ColorMath
 
 DOWNSCALE_CONSTRAINT = 600
-LOCAL_VARIANCE_THRESHOLD = 2000#second number is the rgb threshold, the first number is the CIE LAB threshold #150
+LOCAL_VARIANCE_THRESHOLD = 200#second number is the rgb threshold, the first number is the CIE LAB threshold #150
 BILAT_FILTER_THRESHOLDS = (15, 40, 40)
 LOCAL_VARIANCE_KERNEL_SIZE = 3
 LOCAL_VARIANCE_KERNEL_MARGIN = (LOCAL_VARIANCE_KERNEL_SIZE-1)//2
@@ -19,8 +21,8 @@ MAX_SQUARE_CROP_BOUNDS = 200*sqrt(2)
 '''small margin of error added'''
 '''something is wrong with min_max_crop_area_inches, can't figure out what.
 Probably just bad ppsi numbers being fed in'''
-MIN_MAX_CROP_AREA_INCHES = (1, 100000000)#(300, 14400)
-CONNECTED_COMPONENT_SIZE_THRESHOLDS = (20, 200)#used to be (38, 200)
+MIN_MAX_CROP_AREA_INCHES = (300, 14400)
+CONNECTED_COMPONENT_SIZE_THRESHOLDS = (60, 200)#used to be (38, 200)#thresholds are not tuned to the ppsi of the image.
 CROP_MARGIN_INCHES = 6
 MIN_CROP_SIZE_INCHES = 36
 '''sometimes there are cases where the same crop can be created
@@ -30,18 +32,57 @@ are removed'''
 MIN_CROP_DIST_AWAY = 120
 
 def get_target_crops_from_img2(parent_img, geo_stamps, ppsi, get_centers = False):
+<<<<<<< HEAD
     downsized_parent_image = numpy.array(Scale.get_img_scaled_to_one_bound(parent_img, DOWNSCALE_CONSTRAINT).convert('RGB'))
     downscale_multiplier = float(DOWNSCALE_CONSTRAINT)/float(parent_img.size[0])
     upscale_multiplier = 1.0/downscale_multiplier
 
     bilat_downsized_parent_image = cv2.bilateralFilter(downsized_parent_image, BILAT_FILTER_THRESHOLDS[0], BILAT_FILTER_THRESHOLDS[1], BILAT_FILTER_THRESHOLDS[2])
     local_variance_image = create_local_variance_image(bilat_downsized_parent_image)
+=======
+    #print("AT THE START of img2")
+    downsized_parent_image = numpy.array(Scale.get_img_scaled_to_one_bound(parent_img, DOWNSCALE_CONSTRAINT).convert('RGB'))
+    #print("DOWNSIZED PARENT IMAGE")
+
+    downscale_multiplier = float(DOWNSCALE_CONSTRAINT)/float(parent_img.size[0])
+    upscale_multiplier = 1.0/downscale_multiplier
+
+    #print("BEFORE BILATERAL FILTER")
+    #print(type(downsized_parent_image))
+    #cv2.imwrite("test.png", downsized_parent_image)
+    #cv2.imread(downsized_parent_image)
+    #cv2.GaussianBlur(numpy.array(downsized_parent_image), (5,5), 3)
+    #print("TESTING")
+    #downsized_parent_image = cv2.cvtColor(downsized_parent_image, cv2.COLOR_RGB2LAB)
+    #downsized_parent_image = cv2.GaussianBlur(downsized_parent_image, (5,5), 2)
+    img = Image.fromarray(downsized_parent_image)
+
+    img = ColorMath.get_img_rounded_to_colors(img, img.load(), TargetColorReader.target_colors)
+
+    downsized_parent_image = numpy.array(img)
+    downsized_parent_image = cv2.GaussianBlur(downsized_parent_image, (7,7), 2)
+    bilat_downsized_parent_image = cv2.medianBlur(downsized_parent_image, 5)
+    bilat_downsized_parent_image = cv2.medianBlur(downsized_parent_image, 5)
+    #bilat_downsized_parent_image = cv2.bilateralFilter(downsized_parent_image, BILAT_FILTER_THRESHOLDS[0], BILAT_FILTER_THRESHOLDS[1], BILAT_FILTER_THRESHOLDS[2])
+
+    #bilat_downsized_parent_image = cv2.medianBlur(downsized_parent_image, 9)
+    Image.fromarray(bilat_downsized_parent_image).show()
+
+    local_variance_image = create_local_variance_image(bilat_downsized_parent_image)
+    #print("BILATERAL FILTER DONE")
+>>>>>>> committed so I don't lose everything during a rebase
     thresholded_local_variance_img = create_thresholded_local_variance_img(local_variance_image)
-    thresholded_local_variance_img = Image.fromarray(cv2.medianBlur(numpy.array(thresholded_local_variance_img), 3))
+
+    thresholded_local_variance_img = Image.fromarray(cv2.medianBlur(numpy.array(thresholded_local_variance_img), 5))
+    thresholded_local_variance_img.show()
 
     #thresholded_local_variance_img.show()
     connected_components_map = cv2.connectedComponents(numpy.uint8(numpy.array(thresholded_local_variance_img).T), connectivity = 4)
     connected_components_map = connected_components_map[1]
+<<<<<<< HEAD
+=======
+    #print("THRESHOLDED IMG & CONNECTED COMPONENTS COMPLETED")
+>>>>>>> committed so I don't lose everything during a rebase
 
     connected_components = ImageMath.convert_connected_component_map_into_clusters(connected_components_map)
     crop_masks = []
@@ -61,30 +102,82 @@ def get_target_crops_from_img2(parent_img, geo_stamps, ppsi, get_centers = False
         color_target_rects.append((crop_midpoint, parent_img_bounding_rect))
 
     removal_start_time = timeit.default_timer()
-
+    print("len before first remove step: ", len(color_target_rects))
     remove_duplicate_imgs_by_proximity(color_target_rects, ppsi)
+    print("len before second remove step: ", len(color_target_rects))
     remove_crops_by_area(color_target_rects, ppsi)
 
     color_target_crops = []
     for i in range(0, len(color_target_rects)):
         color_target_crops.append((color_target_rects[i][0], Crop.get_img_cropped_to_bounds(parent_img, color_target_rects[i][1], min_size = (sqrt(ppsi)*MIN_CROP_SIZE_INCHES, sqrt(ppsi)*MIN_CROP_SIZE_INCHES))))
+    print("len before third remove step: ", len(color_target_crops))
+
+    '''needs to remove bad crops through kmeans.
+    Run kmeans on the image and find where the clusetres are. Two of these cluseters should be
+    near valid target and letter colors'''
+
+    '''crop removal with false crop catcher needs a more aggressive threshold to be set.
+    Rather than only training off of random crops selected from images as false positives,
+    instead use actual false positives that were found in the images it was run on.'''
 
     remove_crops_with_false_crop_catcher(color_target_crops)
 
+    '''further improvement ideas:
+    kmeans to three, then sum the distances from each colors and set a threshold that will
+    eliminate images whose kmeans clusters are fairly close to each other (less likely to
+    hold a target)'''
+    print('len before fourth remove step: ', len(color_target_crops))
+    remove_crops_with_kmeans(color_target_crops)
+    print("final len after removing: ", len(color_target_crops))
     if get_centers:
         centers = []
         for i in range(0, len(color_target_crops)):
             centers.append(color_target_rects[i][1].get_center())
         return centers
 
-    '''further improvement ideas:
-    kmeans to three, then sum the distances from each colors and set a threshold that will
-    eliminate images whose kmeans clusters are fairly close to each other (less likely to
-    hold a target)'''
+
+
     target_crops = []
     for i in range(0, len(color_target_crops)):
         target_crops.append(TargetCrop(parent_img, color_target_crops[i][1], geo_stamps, color_target_crops[i][0], ppsi))
     return target_crops
+
+
+
+
+def remove_crops_with_kmeans(color_target_crops):
+    i = 0
+    '''the third cluster should not be anywhere close to the other two. There are many false crop instances
+    where there are two possible colors present, btu it lacks another background color (like if it gets the runway by accident)'''
+    target_colors = TargetColorReader.named_target_colors
+    while i < len(color_target_crops):
+        colors = numpy.array(color_target_crops[i][1]).reshape((-1, 3))
+        colors = numpy.float32(colors)
+        criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 10, 1.0)
+        ret, labels, color_clusters = cv2.kmeans(colors, 2, None, criteria, 10, cv2.KMEANS_RANDOM_CENTERS)
+        cluster_names_and_distances = []
+        for cluster_index in range(0, color_clusters.shape[0]):
+            rounded_rgb_and_name = TargetColorReader.get_closest_target_rgb_and_name(tuple(color_clusters[cluster_index].tolist()))
+            dist = ColorMath.get_dist_between_colors(rounded_rgb_and_name[1], tuple(color_clusters[cluster_index].tolist()))
+            cluster_names_and_distances.append((rounded_rgb_and_name[0], dist))
+        '''holds the number of differently named colors that kmeans rounded to'''
+        num_satisfying_cluster_names = 0
+        for j in range(0, len(cluster_names_and_distances)):
+            name = cluster_names_and_distances[j][0]
+            dupe_found = False
+            for k in range(0, len(cluster_names_and_distances)):
+                if k != j:
+
+                    if cluster_names_and_distances[k][0] == name:
+                        dupe_found = True
+            if not dupe_found:
+                num_satisfying_cluster_names += 1
+        if num_satisfying_cluster_names < 2:
+            '''removes if there are dupe names'''
+            del color_target_crops[i]
+        else:
+            i+=1
+
 
 
 

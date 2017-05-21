@@ -8,7 +8,7 @@ from ImgProcessingCLI.Runtime.GeoStamp import GeoStamp
 from math import sqrt
 import numpy
 from ImgProcessingCLI.Geometry.Rectangle import Rectangle
-
+import ImgProcessingCLI.Runtime.TargetCropper2 as TargetCropper2
 class CropTester(object):
 
     DEFAULT_PPSI = 6.0#3.567
@@ -30,6 +30,7 @@ class CropTester(object):
 
 
     def test_set(self, max_pixel_distance_to_correct):
+
         total_score = 0
         total_possible = 0
         tot_positives = 0
@@ -37,32 +38,36 @@ class CropTester(object):
         tot_missing = 0
         tot_possible = 0
         for i in range(0, len(self.image_paths)):
+            #try:
             img, answer = self.load_img_and_answers(i)
-            target_centers = TargetCropper.get_target_crops_from_img2(img, CropTester.DEFAULT_GEOSTAMPS, CropTester.DEFAULT_PPSI, get_centers = True)
+            actual_crops, target_centers = TargetCropper2.get_target_crops_from_img(img, CropTester.DEFAULT_GEOSTAMPS, CropTester.DEFAULT_PPSI, get_centers = True)
             #print("json answer is: ", answer[0])
             answer_centers = []
             for j in range(0, len(answer)):
                 answer_centers.append(answer[j]["midpoint"])
             #print("answer centers: ", answer_centers)
-            iter_positives, iter_false_positives, iter_missing_targets, iter_possible = self.check_centers(target_centers, answer_centers, max_pixel_distance_to_correct)
+            iter_positives, iter_false_positives, iter_missing_targets, iter_possible = self.check_centers(target_centers, answer_centers, max_pixel_distance_to_correct, img, i, actual_crops)
             tot_positives += iter_positives
             tot_false_positives += iter_false_positives
             tot_missing += iter_missing_targets
             tot_possible += iter_possible
 
-            actual_crops = TargetCropper.get_target_crops_from_img2(img, CropTester.DEFAULT_GEOSTAMPS, CropTester.DEFAULT_PPSI)
+
             for j in range(0, len(actual_crops)):
                 #actual_crops[j].get_crop_img().show()
-                actual_crops[j].get_crop_img().save("/Users/phusisian/Dropbox/SUAS/Test sets/Full Synthetic Imgs/Generated_Targets_Full/Test Outputs/" + str(i) + "," + str(j) + ".png")
+                actual_crops[j].get_crop_img().save("/Users/phusisian/Dropbox/SUAS/Test sets/Full Synthetic Imgs/Generated_Targets_Full/Test Outputs Multiple Backgrounds 2/" + str(i) + "," + str(j) + ".png")
 
             print("tot positives: ", tot_positives, ", tot false positives: ", tot_false_positives, ", tot missing: ", tot_missing, ", tot possible: ", tot_possible)
             if iter_false_positives > 0:
                 self.check_centers(target_centers, answer_centers, max_pixel_distance_to_correct, img = img)
+            #except:
+            #    print('some kind of error occurred in CropTester')
 
             #print("iter positives: ", iter_positives, ", iter false positives: ", iter_false_positives, ", iter missing targets: ", iter_missing_targets)
         return tot_positives, tot_false_positives, tot_missing, tot_possible
 
-    def check_centers(self, target_centers, answer_centers, max_pixel_distance_to_correct, img = None):
+
+    def check_centers(self, target_centers, answer_centers, max_pixel_distance_to_correct, img = None, index = None, actual_crops = None):
 
         positives = 0
         missing_targets = 0
@@ -94,18 +99,17 @@ class CropTester(object):
                 missing_targets += 1
             i += 1'''
 
-        if img != None:
+        '''if img != None and index != None:
             img_copy = img.copy()
             image_copy = img_copy.load()
-            for i in range(0, len(answer_centers)):
-                red_rect = Rectangle(int(answer_centers[i][0]-15), int(answer_centers[i][1]-15), 30, 30)
-                red_rect.fill(img_copy, image_copy, (255,0,0))
 
             for i in range(0, len(target_centers)):
-                blue_rect = Rectangle(int(target_centers[i][0]-15), int(target_centers[i][1]-15), 30, 30)
-                blue_rect.fill(img_copy, image_copy, (0,0,255))
-            img_copy.show()
-            #img_copy.show()
+                blue_rect = Rectangle(int(actual_crops[i].get_crop_loc()[0]-actual_crops[i].get_crop_img().size[0]//2), int(actual_crops[i].get_crop_loc()[1]-actual_crops[i].get_crop_img().size[1]//2), actual_crops[i].get_crop_img().size[0], actual_crops[i].get_crop_img().size[1])
+                blue_rect.draw(img_copy, image_copy, (0,0,255), stroke_width = 15)
+            img_copy.save("/Users/phusisian/Dropbox/SUAS/Test sets/Full Synthetic Imgs/Generated_Targets_Full/DotsAtCrops/" + str(index) + ".png")
+        '''
+        #img_copy.show()
+        #img_copy.show()
         return positives, false_positives, missing_targets, tot_possible
 
 

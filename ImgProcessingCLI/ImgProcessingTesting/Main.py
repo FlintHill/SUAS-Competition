@@ -68,8 +68,7 @@ test_geo_stamps = GeoStamps([GeoStamp((10, 10), 500)], [GeoStamp((10, 10), 500)]
 competition_solver = CompetitionInput("/Users/phusisian/Desktop/Senior year/SUAS/Competition Files/Competition Runtime Test", ".jpeg", base_path, 20, orientation_path, 50, test_geo_stamps)
 '''
 
-
-
+'''
 start_time = timeit.default_timer()
 base_path = "/Users/phusisian/Desktop/Senior year/SUAS/Generated Targets/BlockText 1000 Sets/Generated Targets BlockText 1000 A"#"/Users/phusisian/Desktop/Senior year/SUAS/Generated Targets/Generated Targets BlockText"#
 tester = SyntheticTester(base_path + "/Images", base_path + "/Answers", 1, ".png")
@@ -80,7 +79,7 @@ print("% correct: " + str(100.0 * total_score/float(tester.get_score_denominator
 print("num crashed: " + str(tester.get_num_crashes()))
 print("time elapsed: " + str(timeit.default_timer() - start_time))
 print("wrong score info: \n" + str(tester.get_wrong_score_info()))
-
+'''
 
 #cv_img = cv2.imread('/Users/phusisian/Dropbox/SUAS/Test sets/Crisp Real Flight Images/Crisp Img 1.SRW')
 #cv2.imshow('hi', cv_img)
@@ -99,13 +98,13 @@ img = Image.fromarray(rgb).convert('RGB')#Image.open("/Users/phusisian/Dropbox/S
 img.show()
 print("time taken: ", timeit.default_timer() - start_time)
 '''
-'''
+
 start_time = timeit.default_timer()
-crop_tester = CropTester("/Users/phusisian/Dropbox/SUAS/Test sets/Full Synthetic Imgs/Generated_Targets_Full", ".png")
+crop_tester = CropTester("/Users/phusisian/Dropbox/SUAS/Test sets/Full Synthetic Imgs/Big Synthetic Set/Generated_Full_Targets_Updated", ".png")
 pos, false_neg, missing = crop_tester.test_set(250)
 print("final scores: \n positives: ", pos, ", false negatives: ", false_neg, ", missing: ", missing)
 print("time taken for crop tester to run: ", timeit.default_timer() - start_time)
-'''
+
 
 
 
