@@ -149,11 +149,7 @@ def target_listener(logger_queue, configurer, timestamped_location_data_array):
 
 if __name__ == '__main__':
     manager = multiprocessing.Manager()
-<<<<<<< HEAD
     interop_server_client = InteropClientConverter(MSL_ALT, INTEROP_URL, INTEROP_USERNAME, INTEROP_PASSWORD)
-=======
-    interop_server_client = InteropClientConverter(MSL, INTEROP_URL, INTEROP_USERNAME, INTEROP_PASSWORD)
->>>>>>> committed so I don't lose everything during a rebase
 
     logger_queue = multiprocessing.Queue(-1)
     logger_listener_process = multiprocessing.Process(target=listener_process, args=(logger_queue, logger_listener_configurer))
@@ -161,19 +157,10 @@ if __name__ == '__main__':
 
     timestamped_location_data_array = manager.list()
     target_listener_process = multiprocessing.Process(target=target_listener, args=(logger_queue, logger_worker_configurer, timestamped_location_data_array))
-<<<<<<< HEAD
     #target_listener_process.start()
     #target_listener(logger_queue, logger_worker_configurer, timestamped_location_data_array)
     #while True:
     #    sleep(0.5)
-=======
-    '''
-    target_listener_process.start()
-
-    while True:
-        sleep(0.5)
-    '''
->>>>>>> committed so I don't lose everything during a rebase
 
     vehicle_state_data = manager.list()
     mission_data = manager.list()
@@ -227,19 +214,10 @@ if __name__ == '__main__':
     #try:
     while True:
         current_location = get_location(vehicle)
-<<<<<<< HEAD
         current_waypoint_number = vehicle.commands.next
         if current_waypoint_number != 0:
             current_uav_waypoint = waypoints[current_waypoint_number - 1]
             sda_converter.set_waypoint(Location(current_uav_waypoint.x, current_uav_waypoint.y, current_uav_waypoint.z * 3.28084))
-=======
-        #current_waypoint_number = vehicle.commands.next
-        #current_uav_waypoint = waypoints[current_waypoint_number]
-        #sda_converter.set_waypoint(Location(current_uav_waypoint.x, current_uav_waypoint.y, current_uav_waypoint.z))
-        print(current_location.get_lat())
-        print(current_location.get_lon())
-        print("\n\n\n")
->>>>>>> committed so I don't lose everything during a rebase
 
         interop_server_client.post_telemetry(current_location, vehicle.heading)
         """gps_update_index += 1
