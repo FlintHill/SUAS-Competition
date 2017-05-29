@@ -7,7 +7,7 @@ import os
 
 DATA_PATH = "/Users/vtolpegin/github/SUAS-Competition/SyntheticDataset/data"
 SAVE_PATH = "/Users/vtolpegin/github/SUAS-Competition/SyntheticDataset/Generated_Full_Targets"
-TOTAL_GENERATED_TARGETS = 2
+TOTAL_GENERATED_TARGETS = 140
 NUM_PICS_PER_TARGET = 10
 
 def run_image_generator(process_number, num_pics, starting_index):
@@ -15,12 +15,12 @@ def run_image_generator(process_number, num_pics, starting_index):
 
     # NOTE: Only leave one of the two sets of code uncommented
     # NOTE: Uncomment the following two lines to generate polygon pics
-    #generator.fillPolyPics(int(num_pics), starting_index)
-    #generator.savePolyPicImgs(SAVE_PATH)
+    generator.fillPolyPics(int(num_pics), starting_index)
+    generator.savePolyPicImgs(SAVE_PATH)
 
     # NOTE: Uncomment the following two lines to generate full synthetic images
-    generator.generate_synthetic_images(int(num_pics), NUM_PICS_PER_TARGET, starting_index)
-    generator.save_synthetic_images(SAVE_PATH)
+    #generator.generate_synthetic_images(int(num_pics), NUM_PICS_PER_TARGET, starting_index)
+    #generator.save_synthetic_images(SAVE_PATH)
 
 if __name__ == '__main__':
     cpu_count = multiprocessing.cpu_count()

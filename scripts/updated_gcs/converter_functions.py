@@ -43,9 +43,8 @@ def get_obstacle_location(obstacle):
     """
     latitude = obstacle.latitude
     longitude = obstacle.longitude
-    altitude = 0#obstacle.altitude
 
-    return Location(latitude, longitude, altitude)
+    return Location(latitude, longitude, 0)
 
 def get_mission_json(mission, obstacles):
     """
