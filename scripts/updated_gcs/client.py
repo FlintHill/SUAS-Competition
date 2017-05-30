@@ -15,7 +15,7 @@ from SDA import *
 from ImgProcessingCLI.Runtime.RuntimeTarget import RuntimeTarget
 from ImgProcessingCLI.DataMine.OrientationSolver import OrientationSolver
 from ImgProcessingCLI.DataMine import KMeansCompare
-from ImgProcessingCLI.Runtime import TargetCropper
+from ImgProcessingCLI.Runtime import TargetCropper2
 from EigenFit.DataMine import Categorizer
 from ImgProcessingCLI.Runtime.GeoStamp import GeoStamp
 from ImgProcessingCLI.Runtime.GeoStamps import GeoStamps
@@ -129,7 +129,7 @@ def target_listener(logger_queue, configurer, timestamped_location_data_array):
                 img = rawpy.imread(pic_path).postprocess()
                 rgb_image = Image.fromarray(numpy.roll(img, 1, axis=0))
 
-                target_crops = TargetCropper.get_target_crops_from_img2(rgb_image, geo_stamps, 6)
+                target_crops = TargetCropper2.get_target_crops_from_img2(rgb_image, geo_stamps, 6)
                 target_crops = TargetCrop.get_non_duplicate_crops(all_target_crops, target_crops, client.MIN_DIST_BETWEEN_TARGETS_KM)
                 all_target_crops.extend(target_crops)
                 log(name, "Finished processing", pic_name, "in", str(default_timer() - start_time))
