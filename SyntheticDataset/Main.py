@@ -7,7 +7,7 @@ import os
 
 DATA_PATH = "/Users/vtolpegin/github/SUAS-Competition/SyntheticDataset/data"
 SAVE_PATH = "/Users/vtolpegin/github/SUAS-Competition/SyntheticDataset/Generated_Full_Targets"
-TOTAL_GENERATED_TARGETS = 140
+TOTAL_GENERATED_TARGETS = 500
 NUM_PICS_PER_TARGET = 10
 
 def run_image_generator(process_number, num_pics, starting_index):

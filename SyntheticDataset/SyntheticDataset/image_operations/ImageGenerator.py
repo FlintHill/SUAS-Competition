@@ -10,10 +10,10 @@ import os
 import json
 
 class ImageGenerator(object):
-    minWidth = 40
-    minHeight = 40
-    maxWidth = 161
-    maxHeight = 161
+    minWidth = 33
+    minHeight = 33
+    maxWidth = 135
+    maxHeight = 135
     varianceTheta = math.pi/32.0
     blurKernelSize = 3
     blurStdDev = 2
