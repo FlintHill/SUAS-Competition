@@ -24,7 +24,7 @@ MIN_CROP_SIZE_INCHES = 24#36
 WIDTH_LENGTH_CUTOFF_RATIO = 3
 MEDIAN_BLUR_RUN_TIMES = 4
 
-def get_target_crops_from_img(parent_img, geo_stamps, ppsi, get_centers = False):
+def get_target_crops_from_img(parent_img, image_timestamp, geo_stamps, ppsi, get_centers = False):
     downsized_parent_image = numpy.array(Scale.get_img_scaled_to_one_bound(parent_img, DOWNSCALE_CONSTRAINT).convert('RGB'))
 
     downscale_multiplier = float(DOWNSCALE_CONSTRAINT)/float(parent_img.size[0])
@@ -105,7 +105,7 @@ def get_target_crops_from_img(parent_img, geo_stamps, ppsi, get_centers = False)
 
     target_crops = []
     for i in range(0, len(color_target_crops)):
-        target_crops.append(TargetCrop(parent_img, color_target_crops[i][1], geo_stamps, color_target_crops[i][0], ppsi))
+        target_crops.append(TargetCrop(parent_img, color_target_crops[i][1], image_timestamp, geo_stamps, color_target_crops[i][0], ppsi))
 
     if get_centers:
         return target_crops, centers

@@ -1,5 +1,5 @@
 import numpy
-from math import cos, sin, atan2, radians, pi
+from math import cos, sin, atan2, radians, pi, sqrt
 
 
 EARTH_RADIUS_KM = 6371.0
@@ -23,7 +23,7 @@ def haversine_distance(lat_lon1, lat_lon2):
     lat_lon2_radians = 180.0 * numpy.array(lat_lon2)/pi
     dlon = lat_lon2_radians[0] - lat_lon1_radians[0]
     dlat = lat_lon2_radians[1] - lat_lon1_radians[1]
-    
+
     a = (sin(dlat/2))**2 + cos(lat_lon1_radians[0]) * cos(lat_lon2_radians[0]) * (sin(dlon/2))**2
     c = 2.0 * atan2( sqrt(a), sqrt(1-a) )
     geo_dist = EARTH_RADIUS_KM * c

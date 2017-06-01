@@ -1,5 +1,4 @@
 from ImgProcessingCLI.General.TargetTwo import TargetTwo
-import ImgProcessingCLI.Runtime.TimeOps as TimeOps
 from ImgProcessingCLI.Runtime.GeoStamp import GeoStamp
 import json
 

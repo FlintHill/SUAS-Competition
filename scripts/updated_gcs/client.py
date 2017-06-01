@@ -20,11 +20,12 @@ from EigenFit.DataMine import Categorizer
 from ImgProcessingCLI.Runtime.GeoStamp import GeoStamp
 from ImgProcessingCLI.Runtime.GeoStamps import GeoStamps
 from EigenFit.Load import *
-from Runtime.TargetCrop import TargetCrop
+from ImgProcessingCLI.Runtime.TargetCrop import TargetCrop
 from timeit import default_timer
 import rawpy
 import shutil
 import PIL
+import exifread
 
 UAV_CONNECTION_STRING = "tcp:127.0.0.1:14551"
 
@@ -59,6 +60,17 @@ def sda_viewer_process(logger_queue, configurer, vehicle_state_data, mission_dat
     sda_viewer_server.serveforever()
     log(name, "SDA Viewer process instantiated")
 
+def get_image_timestamp(filename):
+    """
+    Returns an image's timestamp
+    """
+    opened_file = open(filename, 'rb')
+    tags = exifread.process_file(opened_file)
+    image_raw_time = tags['Image DateTime']
+    converted_time = datetime.strptime(str(image_raw_time), "%Y:%m:%d %H:%M:%S")
+
+    return converted_time
+
 def target_listener(logger_queue, configurer, timestamped_location_data_array):
     """
     Run targets and submit them to the interoperability server
@@ -66,7 +78,7 @@ def target_listener(logger_queue, configurer, timestamped_location_data_array):
     configurer(logger_queue)
     name = multiprocessing.current_process().name
 
-    interop_server_client = InteropClientConverter(MSL_ALT, INTEROP_URL, INTEROP_USERNAME, INTEROP_PASSWORD)
+    #interop_server_client = InteropClientConverter(MSL_ALT, INTEROP_URL, INTEROP_USERNAME, INTEROP_PASSWORD)
 
     log(name, "Instantiating letter categorizer")
     eigenvectors = load_numpy_arr(BASE_LETTER_CATEGORIZER_PCA_PATH + "/Data/Eigenvectors/eigenvectors 0.npy")
@@ -114,7 +126,7 @@ def target_listener(logger_queue, configurer, timestamped_location_data_array):
     # 3. Save the targets to GENERATED_DATA_LOCATION
     # 4. Upload the targets to interop server
     log(name, "Beginning image processing...")
-    geo_stamps = GeoStamps(gps_coords)
+    geo_stamps = GeoStamps([GeoStamp([38.38875, -77.27532], datetime.now())])#gps_coords)
     crop_index = 0
 
     all_target_crops = []
@@ -128,21 +140,23 @@ def target_listener(logger_queue, configurer, timestamped_location_data_array):
                 pic_path = os.path.join(pictures_dir_path, pic_name)
                 img = rawpy.imread(pic_path).postprocess()
                 rgb_image = Image.fromarray(numpy.roll(img, 1, axis=0))
+                image_timestamp = get_image_timestamp(pic_path)
 
-                target_crops = TargetCropper2.get_target_crops_from_img2(rgb_image, geo_stamps, 6)
-                target_crops = TargetCrop.get_non_duplicate_crops(all_target_crops, target_crops, client.MIN_DIST_BETWEEN_TARGETS_KM)
+                target_crops = TargetCropper2.get_target_crops_from_img(rgb_image, image_timestamp, geo_stamps, 6)
+                target_crops = TargetCrop.get_non_duplicate_crops(all_target_crops, target_crops, MIN_DIST_BETWEEN_TARGETS_KM)
                 all_target_crops.extend(target_crops)
-                log(name, "Finished processing", pic_name, "in", str(default_timer() - start_time))
+                log(name, "Finished processing " + pic_name + " in " + str(default_timer() - start_time) + " seconds")
 
                 for target_crop in target_crops:
                     log(name, "Identifying target characteristics of target #" + str(crop_index))
-                    runtime_target = RuntimeTarget(target_crop, letter_categorizer, orientation_solver)
-                    target_json_output = runtime_target.get_competition_json_output()
+                    #runtime_target = RuntimeTarget(target_crop, letter_categorizer, orientation_solver)
+                    #target_json_output = runtime_target.get_competition_json_output()
 
                     log(name, "Saving target characteristics of target #" + str(crop_index))
                     output_pic_name = os.path.join(GENERATED_DATA_LOCATION, "object_file_format", str(crop_index) + ".png")
                     output_json_name = os.path.join(GENERATED_DATA_LOCATION, "object_file_format", str(crop_index) + ".json")
-                    save_json_data(output_json_name, target_json_output)
+                    save_json_data(output_json_name, {"target_json_output" : "Testing"})#target_json_output)
+                    target_crop.get_crop_img().save(output_pic_name)
 
                     crop_index += 1
                 '''have to submit generated data to interop server'''
@@ -198,7 +212,7 @@ def find_largest_flight_zone(fly_zones):
 
 if __name__ == '__main__':
     manager = multiprocessing.Manager()
-    interop_server_client = InteropClientConverter(MSL_ALT, INTEROP_URL, INTEROP_USERNAME, INTEROP_PASSWORD)
+    #interop_server_client = InteropClientConverter(MSL_ALT, INTEROP_URL, INTEROP_USERNAME, INTEROP_PASSWORD)
 
     logger_queue = multiprocessing.Queue(-1)
     logger_listener_process = multiprocessing.Process(target=listener_process, args=(logger_queue, logger_listener_configurer))
@@ -207,9 +221,9 @@ if __name__ == '__main__':
     timestamped_location_data_array = manager.list()
     target_listener_process = multiprocessing.Process(target=target_listener, args=(logger_queue, logger_worker_configurer, timestamped_location_data_array))
     #target_listener_process.start()
-    #target_listener(logger_queue, logger_worker_configurer, timestamped_location_data_array)
-    #while True:
-    #    sleep(0.5)
+    target_listener(logger_queue, logger_worker_configurer, timestamped_location_data_array)
+    while True:
+        sleep(0.5)
 
     vehicle_state_data = manager.list()
     mission_data = manager.list()
