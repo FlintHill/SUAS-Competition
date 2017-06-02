@@ -22,6 +22,7 @@ from ImgProcessingCLI.Runtime.GeoStamps import GeoStamps
 from EigenFit.Load import *
 from ImgProcessingCLI.Runtime.TargetCrop import TargetCrop
 from timeit import default_timer
+from upload_targets import *
 import rawpy
 import shutil
 import PIL
@@ -155,14 +156,18 @@ def target_listener(logger_queue, configurer, timestamped_location_data_array):
 
                         log(name, "Saving target characteristics of target #" + str(crop_index))
                         output_pic_name = os.path.join(GENERATED_DATA_LOCATION, "object_file_format", str(crop_index) + ".png")
-                        output_json_name = os.path.join(GENERATED_DATA_LOCATION, "object_file_format", str(crop_index) + ".json")
+                        output_json_name = os.path.join(GENERATED_DATA_LOCATION, "object_file_format", str(crop_index) + ".txt")
                         save_json_data(output_json_name, {"target_json_output" : "Testing"})#target_json_output)
                         target_crop.get_crop_img().save(output_pic_name)
 
                         crop_index += 1
                     except:
                         log(name, "ERROR: Could not process a target crop")
-                '''have to submit generated data to interop server'''
+
+    if crop_index != 0:
+        interop_client = interop_server_client.get_client()
+
+        upload_targets(interop_client, os.path.join(GENERATED_DATA_LOCATION, "object_file_format"), team_id=INTEROP_USERNAME)
 
 if __name__ == '__main__':
     manager = multiprocessing.Manager()

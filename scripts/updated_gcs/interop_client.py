@@ -51,6 +51,12 @@ class InteropClientConverter:
 
         return None
 
+    def get_client(self):
+        """
+        Return's the client
+        """
+        return self.client
+
 if __name__ == "__main__":
     test_client = InteropClientConverter(22, "http://10.10.130.101:8000", "Flint", "2429875295")
 
