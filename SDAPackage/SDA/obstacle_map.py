@@ -7,18 +7,18 @@ class ObstacleMap(object):
     Wrapper class for an obstacle map
     """
 
-    def __init__(self, drone_point, boundary_points):
+    def __init__(self, drone_point, fly_zones):
         """
         Initialize
 
         :param drone_point: The UAV's starting location
         :type drone_point: Numpy Array
-        :param boundary_points: The boundary points for the flight path
-        :type boundary_points: Numpy Array
+        :param fly_zones: The fly zones for the UAV
+        :type fly_zones: Numpy Array
         """
         self.obstacles = np.array([])
         self.drone = Drone(drone_point, np.array([]))
-        self.flight_boundary = FlightBoundary(Constants.MIN_ALT, Constants.MAX_ALT, boundary_points)
+        self.flight_boundary = FlightBoundariesContainer(fly_zones)
 
     def add_obstacle(self, obstacle_to_add):
         """

@@ -5,6 +5,7 @@ from sda_converter import SDAConverter
 from location_data import *
 import unittest
 import numpy
+import interop
 
 class SDAIntegrationTestCase(unittest.TestCase):
 
@@ -17,20 +18,20 @@ class SDAIntegrationTestCase(unittest.TestCase):
     def setup_client_converter(self):
         self.initial_coordinates = Location(38.8703041, -77.3214035, 60.950000762939453)
         self.boundary_points = [
-            Location(38.867580, -77.330360, 0),
-            Location(38.876535, -77.330060, 0),
-            Location(38.877002, -77.314997, 0),
-            Location(38.867513, -77.315769, 0)
+            {"latitude" : 38.867580, "longitude" : -77.330360, "order" : 0},
+            {"latitude" : 38.876535, "longitude" : -77.330060, "order" : 0},
+            {"latitude" : 38.877002, "longitude" : -77.314997, "order" : 0},
+            {"latitude" : 38.867513, "longitude" : -77.315769, "order" : 0}
         ]
 
-        self.sda_converter = SDAConverter(self.initial_coordinates, self.boundary_points)
+        self.sda_converter = SDAConverter(self.initial_coordinates, numpy.array([self.boundary_points]))
 
     def test_reset_obstacles(self):
         """
         Test the reset_obstacles() method
         """
-        new_obstacle = Location(38.8703041, -77.3214035, 60.950000762939453)
-        self.sda_converter.add_obstacle(new_obstacle, new_obstacle)
+        new_obstacle = interop.StationaryObstacle(38.8703041, -77.3214035, 0, 60.950000762939453)
+        self.sda_converter.add_obstacle(Location(38.8703041, -77.3214035, 60.950000762939453), new_obstacle)
         obstacle_map = self.sda_converter.obstacle_map
 
         self.assertEqual(obstacle_map.obstacles.size, 1)

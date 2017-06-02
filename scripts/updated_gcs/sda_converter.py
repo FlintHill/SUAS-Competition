@@ -10,31 +10,47 @@ class SDAConverter(object):
     algorithm implemented
     """
 
-    def __init__(self, initial_coordinates, boundary_pts):
+    def __init__(self, initial_coordinates, fly_zones):
         """
         Initialize the converter
 
         :param initial_coordinates: The initial GPS coordinates of the UAV
         :type initial_coordinates: GPSCoordinates
+        :param fly_zones: The fly zones where the UAV can be
+        :type fly_zones: Numpy Array
         """
         self.initial_coordinates = initial_coordinates
         self.current_path = numpy.array([])
         self.current_path_index = 1
         self.minimum_change_in_guided_waypoint = 3
 
-        converted_boundary_points = self.convert_boundary_points(boundary_pts)
+        converted_boundary_points = self.convert_fly_zones(fly_zones)
         self.obstacle_map = ObstacleMap(numpy.array([0,0,0]), converted_boundary_points)
 
-    def convert_boundary_points(self, boundary_pts):
+    def convert_fly_zones(self, fly_zones):
+        """
+        Wrapper method for converting a list of fly zones
+        """
+        converted_fly_zones = []
+        for fly_zone in fly_zones:
+            converted_fly_zones.append(self.convert_fly_zone(fly_zone))
+
+        return numpy.array(converted_fly_zones)
+
+    def convert_fly_zone(self, fly_zone):
         """
         Converts a bunch of boundary points to the XY coordinate mapping
 
-        :param boundary_pts: The boundary points that need to be converted
-        :type boundary_pts: List (of Location objects)
+        :param fly_zone: The boundary points that need to be converted
+        :type fly_zone: List (of Location objects)
         """
         converted_boundary_points = []
-        for boundary_point in boundary_pts:
-            converted_boundary_points.append(convert_to_point(self.initial_coordinates, boundary_point)[:2])
+        for index in range(len(fly_zone)):
+            for boundary_point in fly_zone:
+                if boundary_point["order"] == index:
+                    boundary_point_geo = Location(boundary_point["latitude"], boundary_point["longitude"], 0)
+                    converted_boundary_points.append(convert_to_point(self.initial_coordinates, boundary_point_geo)[:2])
+                    break
 
         return numpy.array(converted_boundary_points)
 

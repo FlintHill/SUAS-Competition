@@ -161,55 +161,6 @@ def target_listener(logger_queue, configurer, timestamped_location_data_array):
                     crop_index += 1
                 '''have to submit generated data to interop server'''
 
-def convert_fly_zones(fly_zones):
-    """
-    Wrapper method for converting a list of fly zones
-    """
-    converted_fly_zones = []
-    for fly_zone in fly_zones:
-        converted_fly_zones.append(convert_fly_zone(fly_zone))
-
-    return converted_fly_zones
-
-def convert_fly_zone(fly_zone):
-    """
-    Convert a fly zone (lat, lon) to (x, y)
-    """
-    converted_boundary_points = []
-    for index in range(len(fly_zone)):
-        for boundary_point in fly_zone:
-            if boundary_point["order"] == index:
-                converted_boundary_points.append(Location(boundary_point["latitude"], boundary_point["longitude"], 0))
-                break
-
-    return converted_boundary_points
-
-def calculate_polygon_area(fly_zone):
-    """
-    Calculates the area of the polygon
-    """
-    x = fly_zone[:, 0]
-    y = fly_zone[:, 1]
-
-    return 0.5*numpy.abs(numpy.dot(x,numpy.roll(y,1))-numpy.dot(y,numpy.roll(x,1)))
-
-def find_largest_flight_zone(fly_zones):
-    """
-    Find the largest fly zone out of the fly zones provided. They must be in XY
-    coordinates
-    """
-    largest_fly_zone = fly_zones[0]
-    largest_fly_zone_area = calculate_polygon_area(fly_zones[0])
-
-    for fly_zone in fly_zones[1:]:
-        test_fly_zone_area = calculate_polygon_area(fly_zone)
-
-        if test_fly_zone_area > largest_fly_zone_area:
-            largest_fly_zone_area = test_fly_zone_area
-            largest_fly_zone = fly_zone
-
-    return largest_fly_zone
-
 if __name__ == '__main__':
     manager = multiprocessing.Manager()
     #interop_server_client = InteropClientConverter(MSL_ALT, INTEROP_URL, INTEROP_USERNAME, INTEROP_PASSWORD)
@@ -258,12 +209,8 @@ if __name__ == '__main__':
     obstacles_array = [stationary_obstacles, moving_obstacles]
     mission_data.append(get_mission_json(interop_server_client.get_active_mission(), obstacles_array))
 
-    fly_zones = mission_data[0]["fly_zones"]
-    converted_fly_zones = convert_fly_zones(fly_zones)
-    largest_fly_zone = find_largest_flight_zone(converted_fly_zones)
-
     log(name, "Enabling SDA...")
-    sda_converter = SDAConverter(get_location(vehicle), largest_fly_zone)
+    sda_converter = SDAConverter(get_location(vehicle), mission_data[0]["fly_zones"])
     sda_converter.set_waypoint(Location(waypoints[1].x, waypoints[1].y, waypoints[1].z))
     log(name, "SDA enabled")
 

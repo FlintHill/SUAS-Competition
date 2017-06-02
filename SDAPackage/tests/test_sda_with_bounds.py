@@ -8,7 +8,7 @@ class SDA2TestCase(unittest.TestCase):
         """
         Test the obstacle map to determine
         """
-        flight_boundary_points = np.array([[-10, -10], [250, -10], [250, 250], [-10, 250]])
+        flight_boundary_points = np.array([np.array([[-10, -10], [250, -10], [250, 250], [-10, 250]])])
         obstacle_map = ObstacleMap(np.array([0,0,0]), flight_boundary_points)
         test_obstacle = StationaryObstacle(np.array([100, 0, 0]), 50, 500)
         waypoint = np.array([200, 0, 0])
