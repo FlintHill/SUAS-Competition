@@ -148,17 +148,20 @@ def target_listener(logger_queue, configurer, timestamped_location_data_array):
                 log(name, "Finished processing " + pic_name + " in " + str(default_timer() - start_time) + " seconds")
 
                 for target_crop in target_crops:
-                    log(name, "Identifying target characteristics of target #" + str(crop_index))
-                    #runtime_target = RuntimeTarget(target_crop, letter_categorizer, orientation_solver)
-                    #target_json_output = runtime_target.get_competition_json_output()
+                    try:
+                        log(name, "Identifying target characteristics of target #" + str(crop_index))
+                        runtime_target = RuntimeTarget(target_crop, letter_categorizer, orientation_solver)
+                        target_json_output = runtime_target.get_competition_json_output()
 
-                    log(name, "Saving target characteristics of target #" + str(crop_index))
-                    output_pic_name = os.path.join(GENERATED_DATA_LOCATION, "object_file_format", str(crop_index) + ".png")
-                    output_json_name = os.path.join(GENERATED_DATA_LOCATION, "object_file_format", str(crop_index) + ".json")
-                    save_json_data(output_json_name, {"target_json_output" : "Testing"})#target_json_output)
-                    target_crop.get_crop_img().save(output_pic_name)
+                        log(name, "Saving target characteristics of target #" + str(crop_index))
+                        output_pic_name = os.path.join(GENERATED_DATA_LOCATION, "object_file_format", str(crop_index) + ".png")
+                        output_json_name = os.path.join(GENERATED_DATA_LOCATION, "object_file_format", str(crop_index) + ".json")
+                        save_json_data(output_json_name, {"target_json_output" : "Testing"})#target_json_output)
+                        target_crop.get_crop_img().save(output_pic_name)
 
-                    crop_index += 1
+                        crop_index += 1
+                    except:
+                        log(name, "ERROR: Could not process a target crop")
                 '''have to submit generated data to interop server'''
 
 if __name__ == '__main__':
