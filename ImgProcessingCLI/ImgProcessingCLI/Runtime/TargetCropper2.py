@@ -122,6 +122,11 @@ def get_target_crops_from_img(parent_img, geo_stamps, ppsi, get_centers = False)
     #remove_crops_with_false_crop_catcher(color_target_crops)
     remove_crops_with_width_length_ratio(color_target_crops)
 
+    ''' TO KILL REMAINDER OF FALSE POSITIVES:
+    Train a decision tree or random forest
+    Vector would be an assemblage of responses to various shape algorithm responses
+    i.e. number harris corners, circle response score, etc.
+    Possibly train a model that uses the colors present in the image as well'''
 
 
     print("final len: ", len(color_target_crops))
