@@ -11,7 +11,14 @@ Each folder contains instructions for how to run each individual code component.
 
 ```
 sudo python mavproxy.py --console --master=/dev/tty.usbserial-DN00BATE --out=tcpin:127.0.0.1:14551 --out=tcpin:0.0.0.0:14550
+
+
+
 sudo python mavproxy.py --console --master=/dev/tty.usbserial-DJ00DM78 --out=tcpin:127.0.0.1:14551 --out=tcpin:0.0.0.0:14550
+
+#for Peter to paste
+sudo python mavproxy.py --console --master=/dev/tty.usbserial-A506B4FG --out=tcpin:127.0.0.1:14551 --out=tcpin:0.0.0.0:14550
+
 
 ```
 
