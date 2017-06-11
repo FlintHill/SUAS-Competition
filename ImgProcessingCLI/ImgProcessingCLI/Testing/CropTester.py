@@ -14,7 +14,7 @@ from datetime import datetime
 class CropTester(object):
 
     DEFAULT_PPSI = 6.0#3.567
-    DEFAULT_GEOSTAMPS = GeoStamps([GeoStamp((100, 100), 0), GeoStamp((100, 150), 1)])
+    DEFAULT_GEOSTAMPS = GeoStamps([GeoStamp((100, 100), datetime.now()), GeoStamp((100, 150), datetime.now())])
 
     def __init__(self, set_path, image_type):
         self.init_img_paths(set_path, image_type)
@@ -57,7 +57,7 @@ class CropTester(object):
 
             for j in range(0, len(actual_crops)):
                 #actual_crops[j].get_crop_img().show()
-                actual_crops[j].get_crop_img().save("/Users/phusisian/Dropbox/SUAS/Test sets/Full Synthetic Imgs/Generated_Targets_Full/Test Outputs Multiple Backgrounds 2/" + str(i) + "," + str(j) + ".png")
+                actual_crops[j].get_crop_img().save("/Users/phusisian/Desktop/Dropbox backup/SUAS/Test sets/Full Synthetic Imgs/Generated_Full_Targets_550/Test Outputs/" + str(i) + "," + str(j) + ".png")
 
             print("tot positives: ", tot_positives, ", tot false positives: ", tot_false_positives, ", tot missing: ", tot_missing, ", tot possible: ", tot_possible)
             if iter_false_positives > 0:
