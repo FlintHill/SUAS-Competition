@@ -132,7 +132,7 @@ def get_target_crops_from_img(parent_img, geo_stamps, ppsi, get_centers = False)
 
     target_crops = []
     for i in range(0, len(color_target_crops)):
-        target_crops.append(TargetCrop(parent_img, color_target_crops[i][1], geo_stamps, color_target_crops[i][0], ppsi))
+        target_crops.append(TargetCrop(parent_img, color_target_crops[i][1], image_timestamp, geo_stamps, color_target_crops[i][0], ppsi))
 
     '''target_crop_index = 0
     KMEANS_RUN_TIMES = 4
