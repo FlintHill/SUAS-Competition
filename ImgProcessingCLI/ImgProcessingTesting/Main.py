@@ -52,7 +52,7 @@ import rawpy
 
 from ImgProcessingCLI.Runtime.TargetCrop import TargetCrop
 from ImgProcessingCLI.Runtime.RuntimeTarget import RuntimeTarget
-import ImgProcessingCLI.Runtime.TargetCropper as TargetCropper
+#import ImgProcessingCLI.Runtime.TargetCropper as TargetCropper
 from ImgProcessingCLI.Testing.CropTester import CropTester
 
 
@@ -100,7 +100,7 @@ print("time taken: ", timeit.default_timer() - start_time)
 '''
 
 start_time = timeit.default_timer()
-crop_tester = CropTester("/Users/phusisian/Dropbox/SUAS/Test sets/Full Synthetic Imgs/Big Synthetic Set/Generated_Full_Targets_Updated", ".png")
+crop_tester = CropTester("/Users/phusisian/Desktop/Dropbox backup/SUAS/Test sets/Full Synthetic Imgs/Generated_Full_Targets_550", ".png")
 pos, false_neg, missing = crop_tester.test_set(250)
 print("final scores: \n positives: ", pos, ", false negatives: ", false_neg, ", missing: ", missing)
 print("time taken for crop tester to run: ", timeit.default_timer() - start_time)

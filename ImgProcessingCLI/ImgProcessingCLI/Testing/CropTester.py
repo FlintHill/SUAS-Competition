@@ -2,13 +2,15 @@ import os
 import EigenFit.Load.FileFunctions as FileFunctions
 from PIL import Image
 import json
-import ImgProcessingCLI.Runtime.TargetCropper as TargetCropper
+#import ImgProcessingCLI.Runtime.TargetCropper as TargetCropper
 from ImgProcessingCLI.Runtime.GeoStamps import GeoStamps
 from ImgProcessingCLI.Runtime.GeoStamp import GeoStamp
 from math import sqrt
 import numpy
 from ImgProcessingCLI.Geometry.Rectangle import Rectangle
 import ImgProcessingCLI.Runtime.TargetCropper2 as TargetCropper2
+import ImgProcessingCLI.Runtime.TargetCropper3 as TargetCropper3
+from datetime import datetime
 class CropTester(object):
 
     DEFAULT_PPSI = 6.0#3.567
@@ -40,7 +42,7 @@ class CropTester(object):
         for i in range(0, len(self.image_paths)):
             #try:
             img, answer = self.load_img_and_answers(i)
-            actual_crops, target_centers = TargetCropper2.get_target_crops_from_img(img, CropTester.DEFAULT_GEOSTAMPS, CropTester.DEFAULT_PPSI, get_centers = True)
+            actual_crops, target_centers = TargetCropper3.get_target_crops_from_img_final(img, datetime.now(), CropTester.DEFAULT_GEOSTAMPS, CropTester.DEFAULT_PPSI, get_centers = True)
             #print("json answer is: ", answer[0])
             answer_centers = []
             for j in range(0, len(answer)):
