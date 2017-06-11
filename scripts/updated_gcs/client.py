@@ -34,13 +34,27 @@ INTEROP_URL = "http://10.10.130.2:8000"
 INTEROP_USERNAME = "Flint"
 INTEROP_PASSWORD = "2429875295"
 
-MSL_ALT = 430
+MSL_ALT = 446.42
 MIN_REL_FLYING_ALT = 100
 MAX_REL_FLYING_ALT = 750
 
 GENERATED_DATA_LOCATION = "image_data"
-BASE_LETTER_CATEGORIZER_PCA_PATH = "/Users/vtolpegin/Desktop/GENERATED FORCED WINDOW PCA"
-BASE_ORIENTATION_CLASSIFIER_PCA_PATH = "/Users/vtolpegin/Desktop/GENERATED 180 ORIENTATION PCA"
+'''
+BASE_LETTER_CATEGORIZER_PCA_PATH
+Vale's path: /Users/vtolpegin/Desktop/GENERATED FORCED WINDOW PCA
+Peter's Path: /Users/phusisian/Desktop/Senior year/SUAS/Competition Files/GENERATED FORCED WINDOW PCA
+'''
+VALE_BASE_LETTER_CATEGORIZER_PATH = "/Users/vtolpegin/Desktop/GENERATED FORCED WINDOW PCA"
+PETER_BASE_LETTER_CATEGORIZER_PATH = "/Users/phusisian/Desktop/Senior year/SUAS/Competition Files/GENERATED FORCED WINDOW PCA"
+BASE_LETTER_CATEGORIZER_PCA_PATH = PETER_BASE_LETTER_CATEGORIZER_PATH
+'''
+BASE_ORIENTATION_CLASSIFIER_PCA_PATH:
+Vale's path: /Users/vtolpegin/Desktop/GENERATED 180 ORIENTATION PCA
+Peter's path: /Users/phusisian/Desktop/Senior year/SUAS/Competition Files/GENERATED 180 ORIENTATION PCA
+'''
+VALE_BASE_ORIENTATION_CLASSIFIER_PCA_PATH = "/Users/vtolpegin/Desktop/GENERATED 180 ORIENTATION PCA"
+PETER_BASE_ORIENTATION_CLASSIFIER_PCA_PATH = "/Users/phusisian/Desktop/Senior year/SUAS/Competition Files/GENERATED 180 ORIENTATION PCA"
+BASE_ORIENTATION_CLASSIFIER_PCA_PATH = PETER_BASE_ORIENTATION_CLASSIFIER_PCA_PATH
 
 SD_CARD_NAME = "NX500"
 
@@ -171,7 +185,7 @@ def target_listener(logger_queue, configurer, timestamped_location_data_array):
 
 if __name__ == '__main__':
     manager = multiprocessing.Manager()
-    #interop_server_client = InteropClientConverter(MSL_ALT, INTEROP_URL, INTEROP_USERNAME, INTEROP_PASSWORD)
+    interop_server_client = InteropClientConverter(MSL_ALT, INTEROP_URL, INTEROP_USERNAME, INTEROP_PASSWORD)
 
     logger_queue = multiprocessing.Queue(-1)
     logger_listener_process = multiprocessing.Process(target=listener_process, args=(logger_queue, logger_listener_configurer))
@@ -180,9 +194,9 @@ if __name__ == '__main__':
     timestamped_location_data_array = manager.list()
     target_listener_process = multiprocessing.Process(target=target_listener, args=(logger_queue, logger_worker_configurer, timestamped_location_data_array))
     #target_listener_process.start()
-    target_listener(logger_queue, logger_worker_configurer, timestamped_location_data_array)
-    while True:
-        sleep(0.5)
+    #target_listener(logger_queue, logger_worker_configurer, timestamped_location_data_array)
+    #while True:
+    #    sleep(0.5)
 
     vehicle_state_data = manager.list()
     mission_data = manager.list()
@@ -204,7 +218,7 @@ if __name__ == '__main__':
     log(name, "Downloading waypoints from UAV on: %s" % UAV_CONNECTION_STRING)
     waypoints = vehicle.commands
     waypoints.download()
-    #waypoints.wait_ready()
+    waypoints.wait_ready()
     log(name, "Waypoints successfully downloaded")
 
     gps_update_index = 0
@@ -234,11 +248,11 @@ if __name__ == '__main__':
             sda_converter.set_waypoint(Location(current_uav_waypoint.x, current_uav_waypoint.y, current_uav_waypoint.z * 3.28084))
 
         interop_server_client.post_telemetry(current_location, vehicle.heading)
-        """gps_update_index += 1
+        gps_update_index += 1
         timestamped_location_data_array[0] = {
             "index" : gps_update_index,
             "geo_stamp" : GeoStamp((current_location.get_lat(), current_location.get_lon()), datetime.now())
-        }"""
+        }
         stationary_obstacles, moving_obstacles = interop_server_client.get_obstacles()
         obstacles_array = [stationary_obstacles, moving_obstacles]
         sda_converter.reset_obstacles()
@@ -253,7 +267,7 @@ if __name__ == '__main__':
         sda_converter.set_uav_position(current_location)
         sda_converter.avoid_obstacles()
 
-        if (vehicle.location.global_relative_frame.alt * 3.28084) > 60:
+        """if (vehicle.location.global_relative_frame.alt * 3.28084) > 60:
             if not sda_converter.has_uav_completed_guided_path():
                 log("root", "Avoiding obstacles...")
                 print(sda_converter.get_uav_avoid_coordinates())
@@ -261,7 +275,7 @@ if __name__ == '__main__':
                 vehicle.simple_goto(sda_converter.get_uav_avoid_coordinates())
 
         if vehicle.mode.name == "GUIDED" and sda_converter.has_uav_completed_guided_path() and sda_converter.does_guided_path_exist():
-            vehicle.mode = VehicleMode("AUTO")
+            vehicle.mode = VehicleMode("AUTO")"""
 
         sleep(0.5)
     #except:

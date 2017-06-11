@@ -69,6 +69,7 @@ class ObstacleMap(object):
         """
         for obstacle in self.obstacles.tolist():
             obstacle = obstacle[0]
+            print("obstacle.get_point():", obstacle.get_point())
             dist_to_obstacle = VectorMath.get_vector_magnitude(np.subtract(obstacle.get_point(), self.drone.get_point()))
             if dist_to_obstacle < obstacle.get_radius() + Constants.DETECTION_THRESHOLD:
                 if isinstance(obstacle, StationaryObstacle):
@@ -111,8 +112,8 @@ class ObstacleMap(object):
                                         new_paths.append([new_pos_point, recursive_new_pos_point])
 
                 # Uncomment for DEBUGGING ONLY
-                #for path in new_paths:
-                #    print("Point:", str(path))
+                for path in new_paths:
+                    print("Point:", str(path))
 
                 return new_paths
 
@@ -158,12 +159,12 @@ class ObstacleMap(object):
         rejection_vector_magnitude = VectorMath.get_vector_magnitude(rejection_vector)
 
         # Uncomment for DEBUGGING ONLY
-        #print("Waypoint Vector: " + str(waypoint_vector))
-        #print("Obstacle Vector: " + str(obstacle_vector))
-        #print("Rejection Vector: " + str(rejection_vector))
-        #print("Rejection Vector Magnitude: " + str(rejection_vector_magnitude))
-        #print("Obstacle Radius: " + str(obstacle.get_radius()))
-        #print("Distance From Obstacle: " + str(VectorMath.get_vector_magnitude(np.subtract(uav_point, obstacle.get_point()))))
+        print("Waypoint Vector: " + str(waypoint_vector))
+        print("Obstacle Vector: " + str(obstacle_vector))
+        print("Rejection Vector: " + str(rejection_vector))
+        print("Rejection Vector Magnitude: " + str(rejection_vector_magnitude))
+        print("Obstacle Radius: " + str(obstacle.get_radius()))
+        print("Distance From Obstacle: " + str(VectorMath.get_vector_magnitude(np.subtract(uav_point, obstacle.get_point()))))
 
         if self.is_obstacle_in_path_of_drone(obstacle_vector, waypoint_vector):
             return rejection_vector_magnitude < obstacle.get_radius()
@@ -189,12 +190,12 @@ class ObstacleMap(object):
         rejection_vector_magnitude = VectorMath.get_vector_magnitude(rejection_vector)
 
         # Uncomment for DEBUGGING ONLY
-        #print("Waypoint Vector: " + str(waypoint_vector))
-        #print("Obstacle Vector: " + str(obstacle_vector))
-        #print("Rejection Vector: " + str(rejection_vector))
-        #print("Rejection Vector Magnitude: " + str(rejection_vector_magnitude))
-        #print("Obstacle Radius: " + str(obstacle.get_radius()))
-        #print("Distance From Obstacle: " + str(VectorMath.get_vector_magnitude(np.subtract(drone_point, obstacle.get_point()))))
+        print("Waypoint Vector: " + str(waypoint_vector))
+        print("Obstacle Vector: " + str(obstacle_vector))
+        print("Rejection Vector: " + str(rejection_vector))
+        print("Rejection Vector Magnitude: " + str(rejection_vector_magnitude))
+        print("Obstacle Radius: " + str(obstacle.get_radius()))
+        print("Distance From Obstacle: " + str(VectorMath.get_vector_magnitude(np.subtract(drone_point, obstacle.get_point()))))
 
         if self.is_obstacle_in_path_of_drone(obstacle_vector, waypoint_vector):
             return rejection_vector_magnitude < Constants.STATIONARY_OBSTACLE_SAFETY_RADIUS
