@@ -257,9 +257,9 @@ if __name__ == '__main__':
         obstacles_array = [stationary_obstacles, moving_obstacles]
         sda_converter.reset_obstacles()
         for stationary_obstacle in stationary_obstacles:
-            sda_converter.add_obstacle(get_obstacle_location(stationary_obstacle), stationary_obstacle)
+            sda_converter.add_obstacle(get_obstacle_location(stationary_obstacle, MSL_ALT), stationary_obstacle)
         """for moving_obstacle in moving_obstacles:
-            sda_converter.add_obstacle(get_obstacle_location(moving_obstacle), moving_obstacle)"""
+            sda_converter.add_obstacle(get_obstacle_location(moving_obstacle, MSL_ALT), moving_obstacle)"""
 
         vehicle_state_data[0] = get_vehicle_state(vehicle, sda_converter, MSL_ALT)
         mission_data[0] = get_mission_json(interop_server_client.get_active_mission(), obstacles_array)

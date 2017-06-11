@@ -18,10 +18,14 @@ class SDAIntegrationTestCase(unittest.TestCase):
     def setup_client_converter(self):
         self.initial_coordinates = Location(38.8703041, -77.3214035, 60.950000762939453)
         self.boundary_points = [
-            {"latitude" : 38.867580, "longitude" : -77.330360, "order" : 0},
-            {"latitude" : 38.876535, "longitude" : -77.330060, "order" : 0},
-            {"latitude" : 38.877002, "longitude" : -77.314997, "order" : 0},
-            {"latitude" : 38.867513, "longitude" : -77.315769, "order" : 0}
+            {
+                "boundary_pts" : [
+                    {"latitude" : 38.867580, "longitude" : -77.330360, "order" : 0},
+                    {"latitude" : 38.876535, "longitude" : -77.330060, "order" : 0},
+                    {"latitude" : 38.877002, "longitude" : -77.314997, "order" : 0},
+                    {"latitude" : 38.867513, "longitude" : -77.315769, "order" : 0}
+                ]
+            }
         ]
 
         self.sda_converter = SDAConverter(self.initial_coordinates, numpy.array([self.boundary_points]))

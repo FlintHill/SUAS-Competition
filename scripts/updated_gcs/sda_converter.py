@@ -46,8 +46,7 @@ class SDAConverter(object):
         """
         converted_boundary_points = []
         for index in range(len(fly_zone)):
-            for boundary_point in fly_zone["boundary_pts"]:
-                print(fly_zone)
+            for boundary_point in fly_zone[index]["boundary_pts"]:
                 if boundary_point["order"] == index:
                     boundary_point_geo = Location(boundary_point["latitude"], boundary_point["longitude"], 0)
                     converted_boundary_points.append(convert_to_point(self.initial_coordinates, boundary_point_geo)[:2])
@@ -78,12 +77,11 @@ class SDAConverter(object):
         """
         converted_obstacle_location = convert_to_point(self.initial_coordinates, obstacle_location)
         if isinstance(obstacle, interop.StationaryObstacle):
-            print(obstacle.cylinder_height)
             new_obstacle = StationaryObstacle(converted_obstacle_location, obstacle.cylinder_radius, obstacle.cylinder_height)
         else:
             pass
 
-        self.obstacle_map.add_obstacle(numpy.array([new_obstacle]))
+        self.obstacle_map.add_obstacle(new_obstacle)
 
     def reset_obstacles(self):
         """

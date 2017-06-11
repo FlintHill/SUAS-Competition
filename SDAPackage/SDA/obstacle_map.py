@@ -68,7 +68,6 @@ class ObstacleMap(object):
         Return True if drone should avoid obstacle and False if not
         """
         for obstacle in self.obstacles.tolist():
-            obstacle = obstacle[0]
             print("obstacle.get_point():", obstacle.get_point())
             dist_to_obstacle = VectorMath.get_vector_magnitude(np.subtract(obstacle.get_point(), self.drone.get_point()))
             if dist_to_obstacle < obstacle.get_radius() + Constants.DETECTION_THRESHOLD:

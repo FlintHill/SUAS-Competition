@@ -1,6 +1,7 @@
 from location_data import Location
 from vehicle_state import VehicleState
 import math
+import interop
 import numpy
 
 def get_location(vehicle):
@@ -33,7 +34,7 @@ def get_vehicle_state(vehicle, sda_converter, MSL_ALT):
 
     return VehicleState(latitude, longitude, altitude, direction, groundspeed, velocity, sda_converter.is_obstacle_in_path())
 
-def get_obstacle_location(obstacle):
+def get_obstacle_location(obstacle, MSL_ALT):
     """
     Get an Obstacle's location
 
@@ -42,8 +43,12 @@ def get_obstacle_location(obstacle):
     """
     latitude = obstacle.latitude
     longitude = obstacle.longitude
+    if isinstance(obstacle, interop.StationaryObstacle):
+        altitude = obstacle.cylinder_height
+    else:
+        altitude = obstacle.altitude_msl + obstacle.sphere_radius - MSL_ALT
 
-    return Location(latitude, longitude, 0)
+    return Location(latitude, longitude, altitude)
 
 def get_mission_json(mission, obstacles):
     """
