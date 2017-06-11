@@ -35,8 +35,7 @@ INTEROP_USERNAME = "Flint"
 INTEROP_PASSWORD = "2429875295"
 
 MSL_ALT = 446.42
-MIN_REL_FLYING_ALT = 100
-MAX_REL_FLYING_ALT = 750
+SDA_MIN_ALT = 110
 
 GENERATED_DATA_LOCATION = "image_data"
 '''
@@ -239,7 +238,6 @@ if __name__ == '__main__':
     vehicle_state_data.append(get_vehicle_state(vehicle, sda_converter, MSL_ALT))
 
     log(name, "Everything is instantiated...Beginning operation")
-    #try:
     while True:
         current_location = get_location(vehicle)
         current_waypoint_number = vehicle.commands.next
@@ -267,7 +265,7 @@ if __name__ == '__main__':
         sda_converter.set_uav_position(current_location)
         sda_converter.avoid_obstacles()
 
-        """if (vehicle.location.global_relative_frame.alt * 3.28084) > 60:
+        """if (vehicle.location.global_relative_frame.alt * 3.28084) > SDA_MIN_ALT and (vehicle.mode.name == "GUIDED" or vehicle.mode.name == "AUTO"):
             if not sda_converter.has_uav_completed_guided_path():
                 log("root", "Avoiding obstacles...")
                 print(sda_converter.get_uav_avoid_coordinates())
@@ -278,7 +276,3 @@ if __name__ == '__main__':
             vehicle.mode = VehicleMode("AUTO")"""
 
         sleep(0.5)
-    #except:
-    #    while True:
-    #        sleep(0.5)
-    #    pass#vehicle.close()

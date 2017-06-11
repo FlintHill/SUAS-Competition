@@ -9,5 +9,5 @@ class Constants(object):
     DETECTION_THRESHOLD = 100
     VERTICAL_PATH_WEIGHTING_MULTIPLE = 2
 
-    MAX_ALT = 750
-    MIN_ALT = -100#100
+    MAX_ALT = 740
+    MIN_ALT = -100#110
