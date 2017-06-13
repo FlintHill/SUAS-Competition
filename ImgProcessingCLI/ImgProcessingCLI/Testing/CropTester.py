@@ -13,7 +13,7 @@ import ImgProcessingCLI.Runtime.TargetCropper3 as TargetCropper3
 from datetime import datetime
 class CropTester(object):
 
-    DEFAULT_PPSI = 6.0#3.567
+    DEFAULT_PPSI = 1.5#3.567
     DEFAULT_GEOSTAMPS = GeoStamps([GeoStamp((100, 100), datetime.now()), GeoStamp((100, 150), datetime.now())])
 
     def __init__(self, set_path, image_type):
@@ -48,7 +48,7 @@ class CropTester(object):
             for j in range(0, len(answer)):
                 answer_centers.append(answer[j]["midpoint"])
             #print("answer centers: ", answer_centers)
-            iter_positives, iter_false_positives, iter_missing_targets, iter_possible = self.check_centers(target_centers, answer_centers, max_pixel_distance_to_correct, img, i, actual_crops)
+            iter_positives, iter_false_positives, iter_missing_targets, iter_possible, false_positive_indexes = self.check_centers(target_centers, answer_centers, max_pixel_distance_to_correct, img, i, actual_crops)
             tot_positives += iter_positives
             tot_false_positives += iter_false_positives
             tot_missing += iter_missing_targets
@@ -57,7 +57,8 @@ class CropTester(object):
 
             for j in range(0, len(actual_crops)):
                 #actual_crops[j].get_crop_img().show()
-                actual_crops[j].get_crop_img().save("/Users/phusisian/Desktop/Dropbox backup/SUAS/Test sets/Full Synthetic Imgs/Generated_Full_Targets_550/Test Outputs/" + str(i) + "," + str(j) + ".png")
+                if j in false_positive_indexes:
+                    actual_crops[j].get_crop_img().save("/Users/phusisian/Desktop/Dropbox backup/SUAS/Test sets/Full Synthetic Imgs/Generated_Full_Targets_550/Test Outputs/" + str(i) + "," + str(j) + ".png")
 
             print("tot positives: ", tot_positives, ", tot false positives: ", tot_false_positives, ", tot missing: ", tot_missing, ", tot possible: ", tot_possible)
             if iter_false_positives > 0:
@@ -75,7 +76,7 @@ class CropTester(object):
         missing_targets = 0
         false_positives = 0
         i = 0
-
+        wrong_indexes = []
         tot_possible = len(answer_centers)
         while i < len(target_centers) and len(answer_centers) > 0:
             target_center = target_centers[i]
@@ -88,6 +89,7 @@ class CropTester(object):
                 #del answer_centers[answer_centers.index(answers_sorted_by_proximity[0])]
             else:
                 false_positives += 1
+                wrong_indexes.append(i)
             i += 1
 
 
@@ -112,7 +114,7 @@ class CropTester(object):
         '''
         #img_copy.show()
         #img_copy.show()
-        return positives, false_positives, missing_targets, tot_possible
+        return positives, false_positives, missing_targets, tot_possible, wrong_indexes
 
 
 

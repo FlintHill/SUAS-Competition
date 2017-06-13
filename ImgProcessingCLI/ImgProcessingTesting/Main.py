@@ -55,8 +55,9 @@ from ImgProcessingCLI.Runtime.RuntimeTarget import RuntimeTarget
 #import ImgProcessingCLI.Runtime.TargetCropper as TargetCropper
 from ImgProcessingCLI.Testing.CropTester import CropTester
 
-
-
+import exifread
+import ImgProcessingCLI.Runtime.TargetCropper3 as TargetCropper3
+from datetime import datetime
 
 '''
 
@@ -84,26 +85,31 @@ print("wrong score info: \n" + str(tester.get_wrong_score_info()))
 #cv_img = cv2.imread('/Users/phusisian/Dropbox/SUAS/Test sets/Crisp Real Flight Images/Crisp Img 1.SRW')
 #cv2.imshow('hi', cv_img)
 
+#unedited_rawpy_img = Image.fromarray(rawpy.imread("/Users/phusisian/Desktop/Dropbox backup/SUAS/Test sets/Real Full Flight Images/Flight Images June 8th 17/123_0608 550 ft/06080053.SRW").postprocess())#.postprocess())
+#unedited_rawpy_img.show()
+edited_rawpy_img = None
+
+#srw_file = open("/Users/phusisian/Desktop/Dropbox backup/SUAS/Test sets/Real Full Flight Images/Flight Images June 8th 17/123_0608 550 ft/06080053.SRW", 'rb')
 
 
-'''
-start_time = timeit.default_timer()
-path = '/Users/phusisian/Dropbox/SUAS/Test sets/Crisp Real Flight Images/Crisp Img 1.SRW'
-raw = rawpy.imread(path)
-rgb = raw.postprocess()
+with rawpy.imread("/Users/phusisian/Desktop/Dropbox backup/SUAS/Test sets/Real Full Flight Images/Flight Images June 8th 17/123_0608 550 ft/06080053.SRW") as edited_rawpy:
+    edited_rawpy_img = Image.fromarray(edited_rawpy.postprocess(exp_preserve_highlights = 1.0, exp_shift = 2.0, use_camera_wb = True, use_auto_wb = False, no_auto_bright = True))#Image.fromarray(edited_rawpy.postprocess())#
+edited_rawpy_img.show()
+full_img = edited_rawpy_img
 
 
+targets = TargetCropper3.get_target_crops_from_img_final(full_img, datetime.now(), GeoStamps([GeoStamp((0,0),datetime.now())]), 1.5)
+print("targets: ", targets)
+for i in range(0, len(targets)):
+    targets[i].get_crop_img().show()
 
-img = Image.fromarray(rgb).convert('RGB')#Image.open("/Users/phusisian/Dropbox/SUAS/Test sets/Crisp Real Flight Images/Crisp Img 1.SRW").convert('RGB')
-img.show()
-print("time taken: ", timeit.default_timer() - start_time)
-'''
 
 start_time = timeit.default_timer()
 crop_tester = CropTester("/Users/phusisian/Desktop/Dropbox backup/SUAS/Test sets/Full Synthetic Imgs/Generated_Full_Targets_550", ".png")
 pos, false_neg, missing = crop_tester.test_set(250)
 print("final scores: \n positives: ", pos, ", false negatives: ", false_neg, ", missing: ", missing)
 print("time taken for crop tester to run: ", timeit.default_timer() - start_time)
+
 
 
 
