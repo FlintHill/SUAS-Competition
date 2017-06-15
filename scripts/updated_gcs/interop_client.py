@@ -58,10 +58,10 @@ class InteropClientConverter:
         return self.client
 
 if __name__ == "__main__":
-    test_client = InteropClientConverter(22, "http://10.10.130.101:8000", "Flint", "2429875295")
+    test_client = InteropClientConverter(6, "http://10.10.130.10:80", "flint", "8182105855")
 
     while True:
-        test_client.get_obstacles()
-        test_client.get_active_mission()
-
+        print(test_client.get_obstacles())
+        #print(test_client.get_active_mission())
+        print("Connected...")
         sleep(0.5)

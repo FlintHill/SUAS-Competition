@@ -30,9 +30,9 @@ import exifread
 
 UAV_CONNECTION_STRING = "tcp:127.0.0.1:14551"
 
-INTEROP_URL = "http://10.10.130.2:8000"
-INTEROP_USERNAME = "Flint"
-INTEROP_PASSWORD = "2429875295"
+INTEROP_URL = "http://10.10.130.10:80"
+INTEROP_USERNAME = "flint"
+INTEROP_PASSWORD = "8182105855"
 
 MSL_ALT = 446.42
 SDA_MIN_ALT = 110
@@ -128,7 +128,7 @@ def target_listener(logger_queue, configurer, timestamped_location_data_array):
         print("Waiting for path to exist...")
 
         # Wait for SD card to be loaded
-        if os.path.exists(sd_path):
+        if True:#os.path.exists(sd_path):
             break
 
         sleep(1)
@@ -193,9 +193,9 @@ if __name__ == '__main__':
     timestamped_location_data_array = manager.list()
     target_listener_process = multiprocessing.Process(target=target_listener, args=(logger_queue, logger_worker_configurer, timestamped_location_data_array))
     #target_listener_process.start()
-    #target_listener(logger_queue, logger_worker_configurer, timestamped_location_data_array)
-    #while True:
-    #    sleep(0.5)
+    target_listener(logger_queue, logger_worker_configurer, timestamped_location_data_array)
+    while True:
+        sleep(0.5)
 
     vehicle_state_data = manager.list()
     mission_data = manager.list()
@@ -220,50 +220,50 @@ if __name__ == '__main__':
     waypoints.wait_ready()
     log(name, "Waypoints successfully downloaded")
 
-    gps_update_index = 0
+    #gps_update_index = 0
     current_location = get_location(vehicle)
-    timestamped_location_data_array.append({
+    """timestamped_location_data_array.append({
         "index" : gps_update_index,
         "geo_stamp" : GeoStamp((current_location.get_lat(), current_location.get_lon()), datetime.now().strftime("%h %M %S"))
-    })
+    })"""
     stationary_obstacles, moving_obstacles = interop_server_client.get_obstacles()
     obstacles_array = [stationary_obstacles, moving_obstacles]
     mission_data.append(get_mission_json(interop_server_client.get_active_mission(), obstacles_array))
 
-    log(name, "Enabling SDA...")
+    """log(name, "Enabling SDA...")
     sda_converter = SDAConverter(get_location(vehicle), mission_data[0]["fly_zones"])
     sda_converter.set_waypoint(Location(waypoints[1].x, waypoints[1].y, waypoints[1].z))
-    log(name, "SDA enabled")
+    log(name, "SDA enabled")"""
 
-    vehicle_state_data.append(get_vehicle_state(vehicle, sda_converter, MSL_ALT))
+    vehicle_state_data.append(get_vehicle_state(vehicle, None, MSL_ALT))#sda_converter, MSL_ALT))
 
     log(name, "Everything is instantiated...Beginning operation")
     while True:
         current_location = get_location(vehicle)
-        current_waypoint_number = vehicle.commands.next
+        """current_waypoint_number = vehicle.commands.next
         if current_waypoint_number != 0:
             current_uav_waypoint = waypoints[current_waypoint_number - 1]
-            sda_converter.set_waypoint(Location(current_uav_waypoint.x, current_uav_waypoint.y, current_uav_waypoint.z * 3.28084))
+            sda_converter.set_waypoint(Location(current_uav_waypoint.x, current_uav_waypoint.y, current_uav_waypoint.z * 3.28084))"""
 
         interop_server_client.post_telemetry(current_location, vehicle.heading)
-        gps_update_index += 1
+        """gps_update_index += 1
         timestamped_location_data_array[0] = {
             "index" : gps_update_index,
             "geo_stamp" : GeoStamp((current_location.get_lat(), current_location.get_lon()), datetime.now())
-        }
+        }"""
         stationary_obstacles, moving_obstacles = interop_server_client.get_obstacles()
         obstacles_array = [stationary_obstacles, moving_obstacles]
-        sda_converter.reset_obstacles()
+        """sda_converter.reset_obstacles()
         for stationary_obstacle in stationary_obstacles:
             sda_converter.add_obstacle(get_obstacle_location(stationary_obstacle, MSL_ALT), stationary_obstacle)
-        """for moving_obstacle in moving_obstacles:
+        for moving_obstacle in moving_obstacles:
             sda_converter.add_obstacle(get_obstacle_location(moving_obstacle, MSL_ALT), moving_obstacle)"""
 
-        vehicle_state_data[0] = get_vehicle_state(vehicle, sda_converter, MSL_ALT)
+        vehicle_state_data[0] = get_vehicle_state(vehicle, None, MSL_ALT)#)#sda_converter, MSL_ALT)
         mission_data[0] = get_mission_json(interop_server_client.get_active_mission(), obstacles_array)
 
-        sda_converter.set_uav_position(current_location)
-        sda_converter.avoid_obstacles()
+        #sda_converter.set_uav_position(current_location)
+        #sda_converter.avoid_obstacles()
 
         """if (vehicle.location.global_relative_frame.alt * 3.28084) > SDA_MIN_ALT and (vehicle.mode.name == "GUIDED" or vehicle.mode.name == "AUTO"):
             if not sda_converter.has_uav_completed_guided_path():
@@ -275,4 +275,4 @@ if __name__ == '__main__':
         if vehicle.mode.name == "GUIDED" and sda_converter.has_uav_completed_guided_path() and sda_converter.does_guided_path_exist():
             vehicle.mode = VehicleMode("AUTO")"""
 
-        sleep(0.5)
+        sleep(0.1)

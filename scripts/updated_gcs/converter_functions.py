@@ -32,7 +32,7 @@ def get_vehicle_state(vehicle, sda_converter, MSL_ALT):
     velocity = vehicle.velocity
     direction = vehicle.heading
 
-    return VehicleState(latitude, longitude, altitude, direction, groundspeed, velocity, sda_converter.is_obstacle_in_path())
+    return VehicleState(latitude, longitude, altitude, direction, groundspeed, velocity, False)#sda_converter.is_obstacle_in_path())
 
 def get_obstacle_location(obstacle, MSL_ALT):
     """
