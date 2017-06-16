@@ -6,25 +6,13 @@
 Flint Hill School's code for the Student Unmanned Aerial Systems competition.
 
 ## License Information
-Copyright 2015-2016 Vale Tolpegin
+Copyright 2016-2017 Vale Tolpegin, Peter Hussisian, James Villamerette
 
 Licensed under the MIT License. Please see the LICENSE file for more information
 
 ## Installation
 
 ### Installing Python
-
-Python 3.5.x must be installed. Without it, OpenCV will not install correctly and nothing will work.
-
-### Installing the library
-
-```
-git clone https://github.com/FlintHill/SUAS-Competition.git
-cd SUAS-Competition
-pip3 install . --upgrade
-```
-
-After you have installed the code, install the dependencies.
 
 ### Installing OpenCV -- Raspberry Pi
 
@@ -63,13 +51,7 @@ OpenCV must be installed for this project to work. To install OpenCV's latest re
 brew install opencv3 --with-python3 --with-tbb --with-cuda --with-contrib
 ```
 
-This is a long process. After it is completed, you will have to link the python libraries.
-
-```
-echo /usr/local/opt/opencv3/lib/python2.7/site-packages >> /Library/Python/3.5/site-packages/opencv3.pth
-mkdir -p /Users/{ADD YOUR USERNAME HERE}/Library/Python/2.7/lib/python/site-packages
-echo 'import site; site.addsitedir("/usr/local/lib/python2.7/site-packages")' >> /Users/{ADD YOUR USERNAME HERE}/Library/Python/2.7/lib/python/site-packages/homebrew.pth
-```
+This is a long process. After it is completed, you will have to link the python libraries. Find the generated ```cv2.so``` file, then copy it. Next, identify your local python instance's site-packages repository. Finally, copy the ```cv2.so``` file into the site-packages directory.
 
 To test the installation, simply enter a quick command into terminal
 
@@ -78,82 +60,3 @@ python3 -c 'import cv2; print(cv2.__version__)'
 ```
 
 This should print something like ```3.1.0```. If you get an error, that means that you did not install OpenCV correctly.
-
-## Usage
-
-Sample run:
-
-```
-python3 suasimageparser.py -i images/targets_400.jpg
-```
-
-## Installing & Setting up the Interoperability server
-
-### Installation & Testing
-
-To setup the server, you need to follow this documentation: http://auvsi-suas-competition-interoperability-system.readthedocs.org/en/latest/index.html#
-
-Specifically, if you would like to reduce overhead and simplify the installation process on a VM, follow the below steps:
-
-1. Identify & download appropriate Ubuntu operating system .iso file. Since this is subject to change, you need to look at the above documentation to find the latest
-2. Clone Github repository by running the following commands
-
-```
-$ sudo apt-get -y install git
-$ cd ~/
-$ git clone https://github.com/auvsi-suas/interop.git
-```
-
-3. Setup the installation
-
-```
-$ cd ~/interop/setup
-$ ./setup.sh
-```
-
-4. Attempt to run tests
-
-```
-$ cd ~/interop
-$ ./test.sh
-```
-
-If this fails and the Python clients are the cause of the errors thrown, run the following commands. Following the completeion of these commands, restart the server and rerun the tests (commands located right above).
-
-```
-$ cd ~/interop/server
-$ source venv/bin/activate
-$ python manage.py loaddata fixtures/test_fixture.yaml
-```
-
-### Operation
-
-1. Make sure your local network is configured as is requested in the manual
-
-2. Run the Interop VM (after going through the installation process)
-
-3. Verify the interop server is running
-
-4. Run the local server ```python clientproxy.py --url http://IP_ADDRESS_OF_INTEROP --username USERNAME --password PASSWORD```
-
-5. Finally, run the Mission Planner script through MPI's scripting interface (auvsi_mp.py)
-
-### Exporting database to JSON
-
-```
-$ cd ~/interop/server
-$ source venv/bin/activate
-$ python manage.py dumpdata --indent 2 > out.json
-$ deactivate
-```
-
-### Resetting database
-
-```
-$ cd ~/interop/server
-$ source venv/bin/activate
-$ python manage.py flush
-$ python manage.py syncdb
-$ python manage.py loaddata fixtures/test_fixture.yaml
-$ deactivate
-```
