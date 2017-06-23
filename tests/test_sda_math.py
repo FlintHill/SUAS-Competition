@@ -2,7 +2,7 @@ import unittest
 import numpy as np
 from SDA import *
 
-class VectorMathTestCase(unittest.TestCase):
+class SDAVectorMathTestCase(unittest.TestCase):
 
     def test_multi_vector_magnitude(self):
         """

@@ -28,7 +28,7 @@ class ObstacleMap(object):
         :type obstacle_to_add: StationaryObstacle
         """
         if self.obstacles.size != 0:
-            self.obstacles = np.vstack([self.obstacles, obstacle_to_add])
+            self.obstacles = np.hstack((self.obstacles, obstacle_to_add))
         else:
             self.obstacles = np.array([obstacle_to_add])
 
