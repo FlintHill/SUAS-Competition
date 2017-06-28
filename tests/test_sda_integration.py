@@ -1,7 +1,5 @@
-from converter_functions import *
+from SUASSystem import *
 from SDA import *
-from sda_converter import SDAConverter
-from location_data import *
 import unittest
 import numpy
 import interop

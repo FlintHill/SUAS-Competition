@@ -1,7 +1,6 @@
-from converter_functions import *
+from SUASSystem import *
 import math
 import numpy
-from location_data import Location
 import unittest
 
 class MathFunctionsTestCase(unittest.TestCase):
