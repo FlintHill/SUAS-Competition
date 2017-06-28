@@ -2,8 +2,4 @@
 
 *.pyc
 
-generated_data/
-
-docs/_build/
-
-competition_scripts/gcs/LogFiles
+*.log

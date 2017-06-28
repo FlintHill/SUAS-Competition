@@ -2,15 +2,10 @@ from dronekit import connect, VehicleMode
 import socket
 import multiprocessing
 from datetime import datetime
-from logger import *
+from SUASSystem.logging import *
 from time import sleep
-from interop_client import InteropClientConverter
-from sda_converter import SDAConverter
-from converter_functions import *
-from data_functions import *
-from sda_viewer import SDAViewSocket
+from SUASSystem import *
 from SimpleWebSocketServer import SimpleWebSocketServer
-from vehicle_state import VehicleState
 from SDA import *
 from ImgProcessingCLI.Runtime.RuntimeTarget import RuntimeTarget
 from ImgProcessingCLI.DataMine.OrientationSolver import OrientationSolver
@@ -22,7 +17,6 @@ from ImgProcessingCLI.Runtime.GeoStamps import GeoStamps
 from EigenFit.Load import *
 from ImgProcessingCLI.Runtime.TargetCrop import TargetCrop
 from timeit import default_timer
-from upload_targets import *
 import rawpy
 import shutil
 import PIL
