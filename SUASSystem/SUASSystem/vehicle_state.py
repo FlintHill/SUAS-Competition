@@ -2,7 +2,7 @@ from SUASSystem import Location
 
 class VehicleState(Location):
 
-    def __init__(self, lat, lon, alt, direction, groundspeed, velocity, obstacle_in_path):
+    def __init__(self, lat, lon, alt, direction, groundspeed, velocity, obstacle_in_path, current_waypoint_number):
         """
         Initialize
 
@@ -17,9 +17,11 @@ class VehicleState(Location):
         :param groundspeed: The groundspeed of the vehicle
         :type groundspeed: float
         :param velocity: The velocity of the UAV
-        :type velocity: Float
+        :type velocity: float
         :param obstacle_in_path: Whether an obstacle is in the path of the UAV
         :type obstacle_in_path: Boolean
+        :param current_waypoint_number: The current waypoint the UAV is travelling to
+        :type current_waypoint_number: int
         """
         super(VehicleState, self).__init__(lat, lon, alt)
 
@@ -57,3 +59,16 @@ class VehicleState(Location):
         Return whether an obstacle is in the path of the UAV
         """
         return self.obstacle_in_path
+
+    def get_location(self):
+        """
+        Return the VehicleState object's location
+        """
+        return Location(self.get_lat(), self.get_lon(), self.get_alt())
+
+    def get_current_waypoint_number(self):
+        """
+        Return the current waypoint number (current as of the creation of the
+        VehicleState object)
+        """
+        return self.current_waypoint_number

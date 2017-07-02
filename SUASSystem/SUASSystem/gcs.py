@@ -27,7 +27,7 @@ def gcs_process(sda_status, img_proc_status, interop_position_update_rate):
 
     competition_viewer_process = initialize_competition_viewer_process(vehicle_state_data, mission_information_data)
     img_proc_process = initialize_image_processing_process(img_proc_status, targets_to_submit)
-    sda_process = initialize_sda_process(sda_status, sda_avoid_coords, mission_information_data)
+    sda_process = initialize_sda_process(sda_status, waypoints, sda_avoid_coords, vehicle_state_data, mission_information_data)
     log(gcs_logger_name, "Completed instantiation of all child processes")
 
     while True:
@@ -46,11 +46,14 @@ def initialize_competition_viewer_process(vehicle_state_data, mission_informatio
 
     return competition_viewer_process
 
-def initialize_sda_process(sda_status, sda_avoid_coords, mission_information_data):
+def initialize_sda_process(sda_status, sda_avoid_coords, vehicle_state_data, mission_information_data):
     log(gcs_logger_name, "Instantiating SDA process")
     sda_process = multiprocessing.Process(target=SUASSystem.run_sda_process, args=(
+        logger_queue,
         sda_status,
+        waypoints,
         sda_avoid_coords,
+        vehicle_state_data,
         mission_information_data,
     ))
     sda_process.start()
@@ -61,6 +64,7 @@ def initialize_sda_process(sda_status, sda_avoid_coords, mission_information_dat
 def initialize_image_processing_process(img_proc_status, targets_to_submit):
     log(gcs_logger_name, "Instantiating Image Processing process")
     img_proc_process = multiprocessing.Process(target=SUASSystem.run_img_proc_process, args=(
+        logger_queue,
         img_proc_status,
         targets_to_submit
     ))
