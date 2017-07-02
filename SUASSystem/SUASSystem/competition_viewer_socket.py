@@ -1,7 +1,7 @@
 from SimpleWebSocketServer import SimpleWebSocketServer, WebSocket
 import json
 
-class SDAViewSocket(WebSocket):
+class CompetitionViewerSocket(WebSocket):
 
     def __init__(self, p1, p2, p3, vehicle_state_data, mission_data):
         """

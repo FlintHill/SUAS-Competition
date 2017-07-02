@@ -27,6 +27,10 @@ python -c 'import cv2; print(cv2.__version__)'
 
 This should print something like ```3.1.0```. If you get an error, that means that you did not install OpenCV correctly.
 
+### Installing Other Dependencies
+
+All libraries except SimpleWebSocketServer will install when you run ```bash ./install.sh```. To install SimpleWebSocketServer, clone https://github.com/FlintHill/simple-websocket-server and run a pip install command.
+
 ## Usage
 
 ### Using MAVProxy
@@ -44,7 +48,8 @@ Assuming the ```python``` command references a Python 2.7.13 installation
 To run the Client script, cd into the ```gcs``` directory, then run
 
 ```
-python client.py
+export FLASK_APP=flask_gcs.py
+python -m flask run --with-threads
 ```
 
-Ensure that the version of Python you are using is 2.7.x. If attempting to use Python 3, the program will crash with a Timeout command.
+Ensure that the version of Python you are using is 2.7.x. If attempting to use Python 3, the program will crash with a Timeout exception.

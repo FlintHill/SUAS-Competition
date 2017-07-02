@@ -1,6 +1,7 @@
 from flask import Flask, render_template, redirect, url_for, jsonify
 import multiprocessing
 import SUASSystem
+
 app = Flask(__name__)
 
 @app.route('/')

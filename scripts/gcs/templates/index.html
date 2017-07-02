@@ -11,7 +11,7 @@
   {% if client %}
     <h1> SDA: {{ client.get_sda_status() }}</h1>
     <h1> SDA: {{ client.get_img_proc_status() }}</h1>
-    <h1> Interoperability submission update rate: <span id="interop_position_update_rate"></span></h1>
+    <h1> Interoperability submission update rate (hz): <span id="interop_position_update_rate"></span></h1>
   {% endif %}
   <script type=text/javascript>
     setInterval(
