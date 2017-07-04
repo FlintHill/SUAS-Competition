@@ -2,8 +2,8 @@ import multiprocessing
 import SUASSystem
 import dronekit
 from SUASSystem.logging import log
+from SUASSystem import GCSSettings
 from time import sleep
-from .settings import GCSSettings
 
 # Setup logging information
 logger_queue = multiprocessing.Queue(-1)
@@ -30,8 +30,20 @@ def gcs_process(sda_status, img_proc_status, interop_position_update_rate):
     sda_process = initialize_sda_process(sda_status, waypoints, sda_avoid_coords, vehicle_state_data, mission_information_data)
     log(gcs_logger_name, "Completed instantiation of all child processes")
 
+    guided_waypoint_location = None
     while True:
         interop_position_update_rate.value += 1
+
+        current_location = Location(vehicle.location.global_relative_frame.lat, vehicle.location.global_relative_frame.lon, vehicle.location.global_relative_frame.alt)
+        if (vehicle.location.global_relative_frame.alt * 3.28084) > GCSSettings.SDA_MIN_ALT and (vehicle.mode.name == "GUIDED" or vehicle.mode.name == "AUTO"):
+            log("root", "Avoiding obstacles...")
+            vehicle.mode = VehicleMode("GUIDED")
+            guided_waypoint_location = sda_avoid_coords[0][0]
+            vehicle.simple_goto(guided_waypoint_location.as_global_relative_frame())
+
+        if waypoint_location:
+            if vehicle.mode.name == "GUIDED" and has_uav_reached_waypoint(current_location, guided_waypoint_location):
+                vehicle.mode = VehicleMode("AUTO")
 
         sleep(0.1)
 
@@ -90,3 +102,12 @@ def download_waypoints(vehicle):
     log(gcs_logger_name, "Waypoints successfully downloaded from UAV on: %s" % GCSSettings.UAV_CONNECTION_STRING)
 
     return waypoints
+
+def has_uav_reached_waypoint(current_location, waypoint_location, threshold_dist=2):
+    dx, dy, dz = SUASSystem.haversine(waypoint_location, current_location)
+    euclidean_dist = (dx**2 + dy**2 + dz**2)**0.5
+
+    if euclidean_dist < threshold_dist:
+        return True
+
+    return False

@@ -157,7 +157,7 @@ class SDAConverter(object):
         """
         gps_points = []
         for xy_loc_point in self.current_path:
-            gps_points.append(inverse_haversine(self.initial_coordinates, xy_loc_point).as_global_relative_frame())
+            gps_points.append(inverse_haversine(self.initial_coordinates, xy_loc_point))
 
         return gps_points[self.current_path_index]
 
