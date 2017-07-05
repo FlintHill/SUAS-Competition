@@ -16,7 +16,7 @@ def get_location(vehicle):
 
     return Location(latitude, longitude, altitude)
 
-def get_vehicle_state(vehicle, sda_converter, MSL_ALT):
+def get_vehicle_state(vehicle, MSL_ALT):
     """
     Convert the vehicle's current position and information into a vehicle
     state object
@@ -32,7 +32,7 @@ def get_vehicle_state(vehicle, sda_converter, MSL_ALT):
     velocity = vehicle.velocity
     direction = vehicle.heading
 
-    return VehicleState(latitude, longitude, altitude, direction, groundspeed, velocity, False)#sda_converter.is_obstacle_in_path())
+    return VehicleState(latitude, longitude, altitude, direction, groundspeed, velocity, False, vehicle.commands.next)
 
 def get_obstacle_location(obstacle, MSL_ALT):
     """

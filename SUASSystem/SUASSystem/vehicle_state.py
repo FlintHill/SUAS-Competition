@@ -29,6 +29,7 @@ class VehicleState(Location):
         self.velocity = velocity
         self.groundspeed = groundspeed
         self.obstacle_in_path = obstacle_in_path
+        self.current_waypoint_number = current_waypoint_number
 
     def get_direction(self):
         """

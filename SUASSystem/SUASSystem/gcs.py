@@ -31,10 +31,12 @@ def gcs_process(sda_status, img_proc_status, interop_position_update_rate):
     log(gcs_logger_name, "Completed instantiation of all child processes")
 
     guided_waypoint_location = None
+    vehicle_state_data.append(SUASSystem.get_vehicle_state(vehicle, GCSSettings.MSL_ALT))
     while True:
         interop_position_update_rate.value += 1
+        vehicle_state_data[0] = SUASSystem.get_vehicle_state(vehicle, GCSSettings.MSL_ALT)
 
-        current_location = Location(vehicle.location.global_relative_frame.lat, vehicle.location.global_relative_frame.lon, vehicle.location.global_relative_frame.alt)
+        """current_location = Location(vehicle.location.global_relative_frame.lat, vehicle.location.global_relative_frame.lon, vehicle.location.global_relative_frame.alt)
         if (vehicle.location.global_relative_frame.alt * 3.28084) > GCSSettings.SDA_MIN_ALT and (vehicle.mode.name == "GUIDED" or vehicle.mode.name == "AUTO"):
             log("root", "Avoiding obstacles...")
             vehicle.mode = VehicleMode("GUIDED")
@@ -43,7 +45,7 @@ def gcs_process(sda_status, img_proc_status, interop_position_update_rate):
 
         if waypoint_location:
             if vehicle.mode.name == "GUIDED" and has_uav_reached_waypoint(current_location, guided_waypoint_location):
-                vehicle.mode = VehicleMode("AUTO")
+                vehicle.mode = VehicleMode("AUTO")"""
 
         sleep(0.1)
 
@@ -58,12 +60,12 @@ def initialize_competition_viewer_process(vehicle_state_data, mission_informatio
 
     return competition_viewer_process
 
-def initialize_sda_process(sda_status, sda_avoid_coords, vehicle_state_data, mission_information_data):
+def initialize_sda_process(sda_status, waypoints, sda_avoid_coords, vehicle_state_data, mission_information_data):
     log(gcs_logger_name, "Instantiating SDA process")
     sda_process = multiprocessing.Process(target=SUASSystem.run_sda_process, args=(
         logger_queue,
-        sda_status,
         waypoints,
+        sda_status,
         sda_avoid_coords,
         vehicle_state_data,
         mission_information_data,
