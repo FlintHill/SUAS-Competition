@@ -21,12 +21,13 @@ def gcs_process(sda_status, img_proc_status, interop_position_update_rate):
     mission_information_data = manager.list()
     targets_to_submit = manager.list()
     sda_avoid_coords = manager.list()
+    location_log = manager.list()
 
     vehicle = connect_to_vehicle()
     waypoints = download_waypoints(vehicle)
 
     competition_viewer_process = initialize_competition_viewer_process(vehicle_state_data, mission_information_data)
-    img_proc_process = initialize_image_processing_process(img_proc_status, targets_to_submit)
+    img_proc_process = initialize_image_processing_process(img_proc_status, location_log, targets_to_submit)
     sda_process = initialize_sda_process(sda_status, waypoints, sda_avoid_coords, vehicle_state_data, mission_information_data)
     log(gcs_logger_name, "Completed instantiation of all child processes")
 
@@ -36,8 +37,9 @@ def gcs_process(sda_status, img_proc_status, interop_position_update_rate):
         interop_position_update_rate.value += 1
         vehicle_state_data[0] = SUASSystem.get_vehicle_state(vehicle, GCSSettings.MSL_ALT)
 
-        """current_location = Location(vehicle.location.global_relative_frame.lat, vehicle.location.global_relative_frame.lon, vehicle.location.global_relative_frame.alt)
-        if (vehicle.location.global_relative_frame.alt * 3.28084) > GCSSettings.SDA_MIN_ALT and (vehicle.mode.name == "GUIDED" or vehicle.mode.name == "AUTO"):
+        current_location = SUASSystem.Location(vehicle.location.global_relative_frame.lat, vehicle.location.global_relative_frame.lon, vehicle.location.global_relative_frame.alt)
+        location_log.append(current_location)
+        """if (vehicle.location.global_relative_frame.alt * 3.28084) > GCSSettings.SDA_MIN_ALT and (vehicle.mode.name == "GUIDED" or vehicle.mode.name == "AUTO"):
             log("root", "Avoiding obstacles...")
             vehicle.mode = VehicleMode("GUIDED")
             guided_waypoint_location = sda_avoid_coords[0][0]
@@ -75,11 +77,12 @@ def initialize_sda_process(sda_status, waypoints, sda_avoid_coords, vehicle_stat
 
     return sda_process
 
-def initialize_image_processing_process(img_proc_status, targets_to_submit):
+def initialize_image_processing_process(img_proc_status, location_log, targets_to_submit):
     log(gcs_logger_name, "Instantiating Image Processing process")
     img_proc_process = multiprocessing.Process(target=SUASSystem.run_img_proc_process, args=(
         logger_queue,
         img_proc_status,
+        location_log,
         targets_to_submit
     ))
     img_proc_process.start()
