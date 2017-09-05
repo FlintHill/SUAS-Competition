@@ -38,7 +38,7 @@ The rough instructions on how to start up and configure the viewer are detailed 
 		The folder structure should look like `C:/php/` where the `php` directory contains the `lib` directory, and other PHP associated directories.
 	- [MySQL](https://dev.mysql.com/downloads/mysql/)
 		- Open the installer and choose all the default options.
-			- Remember to save the root account password.
+			- Remember to save the root account password on a piece of paper.
 2. Configure the Apache Server:
 	- Open `Apache24/bin/httpd.conf`
 		- In the `<Directory "C:/Apache24/htdocs">` field, change  `AllowOverride None` to `AllowOverride all`.
@@ -203,5 +203,17 @@ The details of the tile server are detailed below.
 The setup of the tile server is included in the set of instructions above. But, to summarize the instructions: You need to download map tiles from an online resource (such as OpenStreetMap), and import them into a MySQL database.
 
 The tile server is required to serve the map tiles that appear in the background of the viewer offline, because at the competition, an internet connection will not be provided.
+
+### Downloading the tiles ###
+
+TODO.
+
+### Importing the tiles into MySQL ###
+
+TODO.
+
+### Checking the tile server ###
+
+TODO.
 
 ---
