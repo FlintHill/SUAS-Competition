@@ -41,7 +41,8 @@ class InteropClientConverter:
         Get the active mission and return it. If no missions are active, return
         None
 
-        Returned in the format: Mission
+        :return: Active Mission
+        :return type: Mission / None
         """
         missions = self.client.get_missions()
 
@@ -53,15 +54,44 @@ class InteropClientConverter:
 
     def get_client(self):
         """
-        Return's the client
+        Return the client
         """
         return self.client
 
-if __name__ == "__main__":
-    test_client = InteropClientConverter(6, "http://10.10.130.10:80", "flint", "8182105855")
+    def post_standard_target(self, target, image_file_path):
+        """
+        POST a standard ODLC object to the interoperability server.
 
-    while True:
-        print(test_client.get_obstacles())
-        #print(test_client.get_active_mission())
-        print("Connected...")
-        sleep(0.5)
+        :param target: The ODLC target object
+        :type target: JSON, with the form:
+        {
+            "location" : GpsPosition,
+            "orientation" : Orientation.X,
+            "shape" : Shape.X,
+            "background_color" : Color.X,
+            "alphanumeric" : "X",
+            "alphanumeric_color" : Color.X,
+        }
+
+        :param image_file_path: The OLC target image file name
+        :type image_file_path: String
+
+        :return: ID of the posted target
+        """
+        with open(image_file_path) as img_file:
+            target_img = interop.SimpleUploadedFile('target_img.jpg', img_file.read())
+
+        odlc_target = Odlc(
+            odlc_type=interop.OdlcType.standard,
+            location=target["location"],
+            orientation=target["orientation"],
+            shape=target["shape"],
+            background_color=target["background_color"],
+            alphanumeric=target["alphanumeric"],
+            alphanumeric_color=target["alphanumeric_color"],
+            description='Flint Hill School -- ODLC Autonomous Target Submission')
+
+        returned_odlc = self.client.post_odlc(odlc_target)
+        self.client.post_odlc_image(returned_odlc.id, target_img)
+
+        return returned_odlc.id
