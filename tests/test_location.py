@@ -11,3 +11,12 @@ class locationTestCase(unittest.TestCase):
 
     def test_get_lat(self):
         self.assertEquals(5, self.position.get_lat())
+
+    def test_get_lon(self):
+        self.assertEquals(12, self.position.get_lon())
+
+    def test_get_alt(self):
+        self.assertEquals(20, self.position.get_alt())
+
+    def test_repr(self):
+        self.assertEquals('Lat: 5 Lon: 12 Alt: 20', self.position.__repr__())
