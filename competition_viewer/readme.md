@@ -206,11 +206,35 @@ The tile server is required to serve the map tiles that appear in the background
 
 ### Downloading the tiles ###
 
-TODO.
+Map tiles are typically copyrighted, or have some restrictions regarding how many map tiles you can obtain, and how you can use them. Because of these limitations, we chose to use [OpenStreetMap](http://osm.org), a free and open source map project contributed to by many people around the world.
+
+For our two relevant locations—FlintHill School grounds and the Pax River Naval Air Station—there is a rich amount of map data including the location of forests, trails, roads, structures, and other relevant data that makes the OSM map data suitable.
+
+In order to have a functioning map tile server, you of course need the map tiles themselves in order to serve.
+
+We simply use a crude script, `download.py`, within `tile/scripts`, where we input a latitude, longitude, and zoom level, and the script starts downloading the tiles from OSM.
+
+Perhaps there is a more elegant solution to retrieve the map tiles in way that would allow future map tile updates, but this was attempted for several months with no success.
+
+Simply,
+
+1. Run `tile/scripts/download.py`
+	- Input your current latitude and longitude.
+		- You can do this by going to Google Maps, clicking on your current location, and using the lat. and long. that appears at the bottom of the screen.
+	- Input the desired zoomed level.
+		- _If you do not know,_ simply enter `0`.
+	- Ensure that the computer that is running the script will not shut off (either by going into the Power settings of your device), as this will take some time to complete.
 
 ### Importing the tiles into MySQL ###
 
-TODO.
+Now that you have the map tiles downloaded, you will now need to import them into a MySQL database in order for them to be served.
+
+1. Move the `tiles` folder into `htdocs` (Apache Web Root.)
+2. Ensure that the MySQL username and password inside the `tile/scripts/loader.php` script has the same username and password as your MySQL installation by logging into phpmyadmin with those credentials.
+3. Go to a web browser, and enter `localhost/tile/scripts/loader.php`.
+	- You shouldn't see anything happen immediately. It takes awhile to process all the images into the database. After the script is done, it will print out all the images uploaded to the database.
+	- If the script did not work, ensure that the login, ROOT_DIR, or no other variables are incorrect.
+4. You have successfully uploaded the map tiles to the database.
 
 ### Checking the tile server ###
 
