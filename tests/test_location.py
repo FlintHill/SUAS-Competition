@@ -18,5 +18,5 @@ class locationTestCase(unittest.TestCase):
     def test_get_alt(self):
         self.assertEquals(20, self.position.get_alt())
 
-    def test_repr(self):
+    def test__repr__(self):
         self.assertEquals('Lat: 5 Lon: 12 Alt: 20', self.position.__repr__())
