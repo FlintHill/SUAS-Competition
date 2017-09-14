@@ -1,4 +1,5 @@
 from SUASSystem import Location
+from .settings import GCSSettings
 
 class VehicleState(Location):
 
@@ -17,7 +18,7 @@ class VehicleState(Location):
         :param groundspeed: The groundspeed of the vehicle
         :type groundspeed: float
         :param velocity: The velocity of the UAV
-        :type velocity: float
+        :type velocity: Numpy Array
         :param obstacle_in_path: Whether an obstacle is in the path of the UAV
         :type obstacle_in_path: Boolean
         :param current_waypoint_number: The current waypoint the UAV is travelling to
@@ -51,7 +52,8 @@ class VehicleState(Location):
         for component in self.velocity:
             magnitude += component**2
         magnitude = magnitude**0.5
-        magnitude *= 1.94384448
+        #TODO: verify correct units
+        magnitude *= GCSSettings.KNOTS_PER_METERS_PER_SECOND
 
         return magnitude
 

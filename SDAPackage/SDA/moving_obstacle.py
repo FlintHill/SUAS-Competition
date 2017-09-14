@@ -11,7 +11,7 @@ class MovingObstacle(Obstacle):
         :param point: The point for the moving obstacle
         :type point: Numpy Array
         """
-        super(StationaryObstacle, self).__init__(point, Constants.STATIONARY_OBSTACLE_SAFETY_RADIUS)
+        super(MovingObstacle, self).__init__(point, Constants.STATIONARY_OBSTACLE_SAFETY_RADIUS)
 
         self.radius = radius
         self.speed = speed
