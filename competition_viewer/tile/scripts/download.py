@@ -1,5 +1,7 @@
 #!/usr/bin/python
 
+# TODO: cleanup
+
 # imports sorted in order of use
 import os
 import math
@@ -53,7 +55,7 @@ def download_file(url, filepath):
   # NOTE the stream=True parameter
   r = requests.get(url, stream=True)
   with open(filepath + local_filename, 'wb') as f:
-    for chunk in r.iter_content(chunk_size=1024): 
+    for chunk in r.iter_content(chunk_size=1024):
       if chunk: # filter out keep-alive new chunks
         f.write(chunk)
         #f.flush() commented by recommendation from J.F.Sebastian
@@ -70,7 +72,7 @@ def checkDirectory(dir, clip=False):
 print("OSM Tile Downloader v0.1")
 print("========================")
 #user_latitude  = input("LATITUDE:  ") # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-#user_longitude = input("LONGITUDE: ") 
+#user_longitude = input("LONGITUDE: ")
 user_latitude = 38.14923628783763 # 38.8702
 user_longitude = -76.43238529543882 # -77.3157
 zoom_start = input("ZOOM START:    ")
@@ -141,7 +143,7 @@ for phase in reversed(range(0, phase)):
   print("===>===> Tiles to download this round: " + str(calc))
   point = deg2num(float(user_latitude), float(user_longitude), phase)
 
-  # rows and columns, go from topmost row leftmost column towards right, advance into next column 
+  # rows and columns, go from topmost row leftmost column towards right, advance into next column
   i = 0 # point[0] - extend
   k = 0 # point[1] - extend
 

@@ -38,7 +38,7 @@ The rough instructions on how to start up and configure the viewer are detailed 
 		The folder structure should look like `C:/php/` where the `php` directory contains the `lib` directory, and other PHP associated directories.
 	- [MySQL](https://dev.mysql.com/downloads/mysql/)
 		- Open the installer and choose all the default options.
-			- Remember to save the root account password.
+			- Remember to save the root account password on a piece of paper.
 2. Configure the Apache Server:
 	- Open `Apache24/bin/httpd.conf`
 		- In the `<Directory "C:/Apache24/htdocs">` field, change  `AllowOverride None` to `AllowOverride all`.
@@ -203,5 +203,56 @@ The details of the tile server are detailed below.
 The setup of the tile server is included in the set of instructions above. But, to summarize the instructions: You need to download map tiles from an online resource (such as OpenStreetMap), and import them into a MySQL database.
 
 The tile server is required to serve the map tiles that appear in the background of the viewer offline, because at the competition, an internet connection will not be provided.
+
+### Downloading the tiles ###
+
+Map tiles are typically copyrighted, or have some restrictions regarding how many map tiles you can obtain, and how you can use them. Because of these limitations, we chose to use [OpenStreetMap](http://osm.org), a free and open source map project contributed to by many people around the world.
+
+For our two relevant locations—FlintHill School grounds and the Pax River Naval Air Station—there is a rich amount of map data including the location of forests, trails, roads, structures, and other relevant data that makes the OSM map data suitable.
+
+In order to have a functioning map tile server, you of course need the map tiles themselves in order to serve.
+
+We simply use a crude script, `download.py`, within `tile/scripts`, where we input a latitude, longitude, and zoom level, and the script starts downloading the tiles from OSM.
+
+Perhaps there is a more elegant solution to retrieve the map tiles in way that would allow future map tile updates, but this was attempted for several months with no success.
+
+Simply,
+
+1. Run `tile/scripts/download.py`
+	- Input your current latitude and longitude.
+		- You can do this by going to Google Maps, clicking on your current location, and using the lat. and long. that appears at the bottom of the screen.
+	- Input the desired zoomed level.
+		- _If you do not know,_ simply enter `0`.
+	- Ensure that the computer that is running the script will not shut off (either by going into the Power settings of your device), as this will take some time to complete.
+2. A new folder should appear, called `tiles`, within, you should see several sub-folders `0`, `1`, `2`, `3`, and so on and so forth.
+
+Now you need to import the tiles into the database.
+
+### Importing the tiles into MySQL ###
+
+Now that you have the map tiles downloaded, you will now need to import them into a MySQL database in order for the tiles to be properly served.
+
+1. Move the `tiles` folder into `htdocs` (Apache Web Root.)
+	- Check to see that the folder structure is `htdocs/tiles/[several folders, numbers 0-18]`
+2. Ensure that the MySQL username and password inside the `tile/scripts/loader.php` script has the same username and password as your MySQL installation by logging into phpmyadmin with those credentials.
+3. Go to a web browser, and enter `localhost/tile/scripts/loader.php`.
+	- You shouldn't see anything happen immediately. It takes awhile to process all the images into the database. After the script is done, it will print out all the images uploaded to the database.
+	- If the script did not work, ensure that the login, ROOT_DIR, or no other variables are incorrect.
+4. While in your web browser, goto `localhost/phpmyadmin/`, login, and open the `tile` database, and check to see if the `tiles` table is populated with map tiles.
+	- It should be obvious that there are several thousand rows in the table now, while previously, there should have been 0 rows in the table.
+5. You have successfully uploaded the map tiles to the database.
+
+Now all you need to do is complete the final sub-section of steps.
+
+### Checking the tile server ###
+
+This is the last section, congratulations, you made it. Now all you need to do is:
+
+1. Open a web browser.
+2. Navigate to `localhost/competition/viewer/`.
+3. If everything went off without a hitch, you should see a map of the world, Flint Hill School and it's surrounding area, or the Patuxent Naval Airbase.
+	- If the map tiles do not appear, check the previous steps to ensure that you completed them exactly and in the correct order.
+
+You are finished.
 
 ---
