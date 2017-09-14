@@ -46,9 +46,5 @@ class MathFunctionsTestCase(unittest.TestCase):
         new_point_2 = convert_to_point(home_location, location2)
         new_point_3 = convert_to_point(home_location, location3)
         new_point_4 = convert_to_point(home_location, location4)
-        print(new_point_1)
-        print(new_point_2)
-        print(new_point_3)
-        print(new_point_4)
 
         self.assertTrue(True)

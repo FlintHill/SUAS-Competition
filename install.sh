@@ -7,6 +7,11 @@ sudo -H python -m pip install . -U
 cd ../../
 sudo rm -r interop
 
+sudo -H python -m pip install dronekit
+
+sudo -H python -m pip install ./SyntheticDataset -U
+sudo -H python -m pip install ./VectorFieldAvoidance -U
+sudo -H python -m pip install ./VectorNavAvoidanceSimplified -U
 sudo -H python -m pip install ./EigenFit -U
 sudo -H python -m pip install ./ImgProcessingCLI -U
 sudo -H python -m pip install ./SUASSystem -U

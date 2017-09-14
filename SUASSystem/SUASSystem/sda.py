@@ -10,7 +10,7 @@ def run_sda_process(logger_queue, waypoints, sda_status, sda_avoid_coords, vehic
     log(logger_name, "Instantiating SDA converter")
     while True:
         try:
-            sda_converter = SUASSystem.SDAConverter(vehicle_state_data[0].get_location(), None)#mission_information_data[0]["fly_zones"])
+            sda_converter = SUASSystem.SDAConverter(vehicle_state_data[0].get_location(), mission_information_data[0]["fly_zones"])
             break
         except:
             sleep(0.1)
@@ -25,13 +25,13 @@ def run_sda_process(logger_queue, waypoints, sda_status, sda_avoid_coords, vehic
                 current_uav_waypoint = waypoints[current_waypoint_number - 1]
                 sda_converter.set_waypoint(SUASSystem.Location(current_uav_waypoint.x, current_uav_waypoint.y, current_uav_waypoint.z * 3.28084))
             else:
-                pass#sda_converter.set_waypoint(SUASSystem.Location(waypoints[1].x, waypoints[1].y, waypoints[1].z))
+                sda_converter.set_waypoint(SUASSystem.Location(waypoints[1].x, waypoints[1].y, waypoints[1].z))
 
-            """sda_converter.reset_obstacles()
+            sda_converter.reset_obstacles()
             for stationary_obstacle in mission_information_data["stationary_obstacles"]:
                 sda_converter.add_obstacle(get_obstacle_location(stationary_obstacle, MSL_ALT), stationary_obstacle)
             for moving_obstacle in mission_information_data["moving_obstacles"]:
-                sda_converter.add_obstacle(get_obstacle_location(moving_obstacle, MSL_ALT), moving_obstacle)"""
+                sda_converter.add_obstacle(get_obstacle_location(moving_obstacle, MSL_ALT), moving_obstacle)
 
             sda_converter.set_uav_position(current_location)
             sda_converter.avoid_obstacles()
