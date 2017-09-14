@@ -474,7 +474,8 @@ class WebsocketHandler {
 			);
 
 			leafletData.search_grid_line = result[0];
-			leafletData.search_grid_points = result.slice(1);
+			//leafletData.search_grid_points = result.slice(1);
+			//^turning this from line into polygon
 
 			// LINE: fly zone
 			leafletData.fly_zone_line = DataConverters.line(
