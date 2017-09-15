@@ -26,7 +26,6 @@ class SDATestCase(unittest.TestCase):
         target_image_relative_path = "images/target.PNG"
 
         target_id = self.interop_client.post_standard_target(compiled_target_info, target_image_relative_path)
-        self.assertTrue(False)
         self.assertTrue(target_id != None)
 
     def test_submit_position(self):
