@@ -1,3 +1,0 @@
-class Constants:
-
-    TEST = None
