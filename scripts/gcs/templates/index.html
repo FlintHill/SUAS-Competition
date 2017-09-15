@@ -1,36 +1,43 @@
 <html>
-<header>
-  <title>GCS Client</title>
+  <head>
+    
+    <title>GCS Client</title>
 
-  <script type=text/javascript>
-    $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
-  </script>
-  <script type=text/javascript src="{{url_for('static', filename='js/jquery.3.1.1.min.js') }}"></script>
-</header>
-<body>
-  {% if client %}
-    <h1> SDA: {{ client.get_sda_status() }}</h1>
-    <h1> SDA: {{ client.get_img_proc_status() }}</h1>
-    <h1> Interoperability submission update rate (hz): <span id="interop_position_update_rate"></span></h1>
-  {% endif %}
-  <script type=text/javascript>
-    setInterval(
-      function() {
-        $.getJSON($SCRIPT_ROOT + '/interop/get_interop_position_update_rate', {},
-          function(data) {
-            console.log(data.result);
-            $("#interop_position_update_rate").text(data.result);
-      });
-    }, 1);
-  </script>
-  <ul>
-    <li><a href="/post/sda/Enabled">Enable SDA</a></li>
-    <li><a href="/post/sda/Disabled">Disable SDA</a></li>
-  </ul>
-  <br>
-  <ul>
-    <li><a href="/post/img_proc/Enabled">Enable Image Processing</a></li>
-    <li><a href="/post/img_proc/Disabled">Disable Image Processing</a></li>
-  </ul>
-</body>
+    <script type=text/javascript>
+      $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+    </script>
+    
+    <script type=text/javascript src="{{url_for('static', filename='js/jquery.3.1.1.min.js') }}"></script>
+    
+  </head>
+  <body>
+    
+    {% if client %}
+      <h1> SDA: {{ client.get_sda_status() }}</h1>
+      <h1> SDA: {{ client.get_img_proc_status() }}</h1>
+      <h1> Interoperability submission update rate (hz): <span id="interop_position_update_rate"></span></h1>
+    {% endif %}
+    
+    <script type=text/javascript>
+      setInterval(
+        function() {
+          $.getJSON($SCRIPT_ROOT + '/interop/get_interop_position_update_rate', {},
+            function(data) {
+              console.log(data.result);
+              $("#interop_position_update_rate").text(data.result);
+        });
+      }, 1);
+    </script>
+    
+    <ul>
+      <li><a href="/post/sda/Enabled">Enable SDA</a></li>
+      <li><a href="/post/sda/Disabled">Disable SDA</a></li>
+    </ul>
+    <br>
+    <ul>
+      <li><a href="/post/img_proc/Enabled">Enable Image Processing</a></li>
+      <li><a href="/post/img_proc/Disabled">Disable Image Processing</a></li>
+    </ul>
+    
+  </body>
 </html>
