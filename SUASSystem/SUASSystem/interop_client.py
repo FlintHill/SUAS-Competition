@@ -1,7 +1,9 @@
 from __future__ import print_function
 from interop import Client
 from interop import Telemetry
+from interop import Odlc
 from time import sleep
+import cv2
 
 class InteropClientConverter:
 
@@ -65,7 +67,8 @@ class InteropClientConverter:
         :param target: The ODLC target object
         :type target: JSON, with the form:
         {
-            "location" : GpsPosition,
+            "latitude" : float,
+            "longitude" : float,
             "orientation" : Orientation.X,
             "shape" : Shape.X,
             "background_color" : Color.X,
@@ -78,12 +81,10 @@ class InteropClientConverter:
 
         :return: ID of the posted target
         """
-        with open(image_file_path) as img_file:
-            target_img = interop.SimpleUploadedFile('target_img.jpg', img_file.read())
-
         odlc_target = Odlc(
-            odlc_type=interop.OdlcType.standard,
-            location=target["location"],
+            type="standard",
+            latitude=target["latitude"],
+            longitude=target["longitude"],
             orientation=target["orientation"],
             shape=target["shape"],
             background_color=target["background_color"],
@@ -92,6 +93,8 @@ class InteropClientConverter:
             description='Flint Hill School -- ODLC Autonomous Target Submission')
 
         returned_odlc = self.client.post_odlc(odlc_target)
-        self.client.post_odlc_image(returned_odlc.id, target_img)
+
+        with open(image_file_path) as img_file:
+            self.client.post_odlc_image(returned_odlc.id, img_file.read())
 
         return returned_odlc.id

@@ -8,23 +8,25 @@ class SDATestCase(unittest.TestCase):
     def setUp(self):
         self.msl_alt = 6
         self.connection_url = "http://10.10.130.2:8000"
-        self.username = "flint"
-        self.password = "8182105855"
+        self.username = "Flint"
+        self.password = "271824758"
 
         self.interop_client = InteropClientConverter(self.msl_alt, self.connection_url, self.username, self.password)
 
     def test_submit_target(self):
         compiled_target_info = {
-            "location" : interop.GpsPosition(latitude=38, longitude=76),
-            "orientation" : interop.Orientation.s,
-            "shape" : interop.Shape.circle,
-            "background_color" : interop.Color.white,
+            "latitude" : 38,
+            "longitude" : -77,
+            "orientation" : "s",
+            "shape" : "circle",
+            "background_color" : "white",
             "alphanumeric" : "ABC",
-            "alphanumeric_color" : interop.Color.black,
+            "alphanumeric_color" : "black",
         }
-        target_image_relative_path = "tests/images/target.png"
+        target_image_relative_path = "images/target.PNG"
 
         target_id = self.interop_client.post_standard_target(compiled_target_info, target_image_relative_path)
+        self.assertTrue(False)
         self.assertTrue(target_id != None)
 
     def test_submit_position(self):
