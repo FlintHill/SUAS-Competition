@@ -43,4 +43,4 @@ class PointTestCase(unittest.TestCase):
         pivot = Point(0,0)
         spin = math.pi
         self.point.rotate(pivot, spin)
-        self.assertEquals((-2.0,-3.0), (round(self.point.getX(), 1), round(self.point.getY(), 1)))
+        self.assertEquals((-2.000000,-3.000000), (round(self.point.getX(), 6), round(self.point.getY(), 6)))
