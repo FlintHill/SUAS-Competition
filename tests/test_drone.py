@@ -3,7 +3,7 @@ from SDA import WaypointHolder
 from SUASSystem import *
 import unittest
 
-class droneTestCase(unittest.TestCase):
+class DroneTestCase(unittest.TestCase):
 
     def setUp(self):
         self.drone = Drone(np.array([0,0,0]), np.array([[ 7, 10, 13], [21, 24, 27]]))
