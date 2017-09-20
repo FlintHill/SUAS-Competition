@@ -1,4 +1,4 @@
-from SyntheticDataset import *
+from SyntheticDataset import ColorMath
 import unittest
 from math import sqrt
 
