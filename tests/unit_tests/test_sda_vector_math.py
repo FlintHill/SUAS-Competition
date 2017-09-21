@@ -35,24 +35,32 @@ class VectorMathTestCase(unittest.TestCase):
         self.assertEqual(VectorMath.get_vector_magnitude(my_vector), math.sqrt(22.0))
 
     def test_get_vector_projection(self):
-
+        """
         my_vector_one = np.array([2.0, 3.0, 3.0])
         my_vector_two = np.array([6.0, 6.0, 6.0])
+        """
 
         my_vector_three = np.array([-33.0, 0, 66.5])
         my_vector_four = np.array([0, 88.4, -32.6])
-        print(VectorMath.get_vector_projection(my_vector_three, my_vector_four))
-        self.assertTrue(np.array_equal(VectorMath.get_vector_projection(my_vector_one, my_vector_two), np.array([8.0/3.0, 8.0/3.0, 8.0/3.0])))
-        self.assertTrue(np.array_equal(VectorMath.get_vector_projection(my_vector_three, my_vector_four), np.array([-0.0, -21.5879, 7.96113])))
 
+        print(VectorMath.get_vector_projection(my_vector_three, my_vector_four))
+        """
+        self.assertTrue(np.array_equal(VectorMath.get_vector_projection(my_vector_one, my_vector_two), np.array([8.0/3.0, 8.0/3.0, 8.0/3.0])))
+        """
+        self.assertTrue(np.array_equal(VectorMath.get_vector_projection(my_vector_three, my_vector_four), np.array([-0., -21.5878621, 7.96113467])))
+
+        vector_five
 
     def test_get_vector_rejection(self):
-
+        """
         my_vector_one = np.array([2.0, 3.0, 3.0])
         my_vector_two = np.array([6.0, 6.0, 6.0])
-
+        """
         my_vector_three = np.array([-33.0, 0, 66.5])
         my_vector_four = np.array([0, 88.4, -32.6])
+
         print(VectorMath.get_vector_rejection(my_vector_three, my_vector_four))
+        """
         self.assertTrue(np.array_equal(VectorMath.get_vector_rejection(my_vector_one, my_vector_two), np.array([-2.0/3.0, 1.0/3.0, 1.0/3.0])))
-        self.assertTrue(np.array_equal(VectorMath.get_vector_rejection(my_vector_three, my_vector_four), np.array([-33.0, 21.5879, 58.5389])))
+        """
+        self.assertTrue(np.array_equal(VectorMath.get_vector_rejection(my_vector_three, my_vector_four), np.array([-33., 21.5878621, 58.53886533])))
