@@ -14,7 +14,7 @@ class SDAConverter(object):
         Initialize the converter
 
         :param initial_coordinates: The initial GPS coordinates of the UAV
-        :type initial_coordinates: GPSCoordinates
+        :type initial_coordinates: Location
         :param fly_zones: The fly zones where the UAV can be
         :type fly_zones: Numpy Array
         """

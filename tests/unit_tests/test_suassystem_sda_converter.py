@@ -1,10 +1,10 @@
+import unittest
 from SUASSystem import *
 from SDA import *
-import unittest
 import numpy
 import interop
 
-class SDAIntegrationTestCase(unittest.TestCase):
+class TestSDAConverter(unittest.TestCase):
 
     def setUp(self):
         """
@@ -27,6 +27,26 @@ class SDAIntegrationTestCase(unittest.TestCase):
 
         self.sda_converter = SDAConverter(self.initial_coordinates, numpy.array([self.boundary_points]))
 
+    def test_convert_fly_zone(self):
+        
+
+    def test_set_waypoints(self):
+        """
+        Test the set_waypoints() method
+        """
+        test_waypoint = Location(38.8742103, -77.3217697, 91.44000244140625)
+        self.sda_converter.set_waypoint(test_waypoint)
+        obstacle_map = self.sda_converter.obstacle_map
+        waypoint_holder = obstacle_map.drone.get_waypoint_holder()
+        new_gps_point = inverse_haversine(self.sda_converter.initial_coordinates,
+            [waypoint_holder[0][0], waypoint_holder[0][1], 91.44000244140625])
+
+        self.assertTrue(abs(new_gps_point.get_lat() - test_waypoint.get_lat()) < 0.004)
+        self.assertTrue(abs(new_gps_point.get_lon() - test_waypoint.get_lon()) < 0.004)
+
+    def test_add_obstacle(self):
+        #test
+
     def test_reset_obstacles(self):
         """
         Test the reset_obstacles() method
@@ -42,16 +62,20 @@ class SDAIntegrationTestCase(unittest.TestCase):
 
         self.assertEqual(obstacle_map.obstacles.size, 0)
 
-    def test_set_waypoints(self):
-        """
-        Test the set_waypoints() method
-        """
-        test_waypoint = Location(38.8742103, -77.3217697, 91.44000244140625)
-        self.sda_converter.set_waypoint(test_waypoint)
-        obstacle_map = self.sda_converter.obstacle_map
-        waypoint_holder = obstacle_map.drone.get_waypoint_holder()
-        new_gps_point = inverse_haversine(self.sda_converter.initial_coordinates,
-            [waypoint_holder[0][0], waypoint_holder[0][1], 91.44000244140625])
+    def test_set_uav_position(self):
 
-        self.assertTrue(abs(new_gps_point.get_lat() - test_waypoint.get_lat()) < 0.004)
-        self.assertTrue(abs(new_gps_point.get_lon() - test_waypoint.get_lon()) < 0.004)
+    def test_avoid_obstacles(self):
+
+    def test_has_path_changed(self):
+
+    def test_has_uav_completed_guided_path(self):
+
+    def test_does_guided_path_exist(self):
+
+    def test_get_uav_avoid_coordinates(self):
+
+    def test_has_uav_reached_guided_waypoint(self):
+
+    def test_get_distance_to_current_guided_waypoint(self):
+
+    def test_is_obstacle_in_path(self):
