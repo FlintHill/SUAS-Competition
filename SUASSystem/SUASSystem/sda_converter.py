@@ -14,7 +14,7 @@ class SDAConverter(object):
         Initialize the converter
 
         :param initial_coordinates: The initial GPS coordinates of the UAV
-        :type initial_coordinates: GPSCoordinates
+        :type initial_coordinates: Location
         :param fly_zones: The fly zones where the UAV can be
         :type fly_zones: Numpy Array
         """
@@ -72,13 +72,11 @@ class SDAConverter(object):
         :param obstacle_location: The obstacle's GPS location
         :type obstacle_location: Location
         :param obstacle: The obstacle to add
-        :type obstacle: StationaryObstacle or MovingObstacle
+        :type obstacle: StationaryObstacle
         """
         converted_obstacle_location = convert_to_point(self.initial_coordinates, obstacle_location)
-        if isinstance(obstacle, interop.StationaryObstacle):
-            new_obstacle = StationaryObstacle(converted_obstacle_location, obstacle.cylinder_radius, obstacle.cylinder_height)
-        else:
-            pass
+
+        new_obstacle = StationaryObstacle(converted_obstacle_location, obstacle.cylinder_radius, obstacle.cylinder_height)
 
         self.obstacle_map.add_obstacle(new_obstacle)
 
@@ -171,7 +169,11 @@ class SDAConverter(object):
         """
         Returns the distance to the current guided waypoint
         """
-        if self.current_path.shape[0] != 0:
+<<<<<<< HEAD
+        if self.does_guided_path_exist():
+=======
+        if does_guided_path_exist:
+>>>>>>> 7bdc5a99b5762357fdc69011d2b7b8079f554ed9
             distance = VectorMath.get_magnitude(self.current_path[self.current_path_index], self.obstacle_map.get_drone().get_point())
 
             return distance

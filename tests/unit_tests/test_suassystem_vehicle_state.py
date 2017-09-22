@@ -1,7 +1,7 @@
 import unittest
 from SUASSystem import *
 
-class SUASSystemVehicleState(unittest.TestCase):
+class VehicleStateTestCase(unittest.TestCase):
 
     def setUp(self):
         self.lat = 45.0
