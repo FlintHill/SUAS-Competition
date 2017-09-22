@@ -72,13 +72,11 @@ class SDAConverter(object):
         :param obstacle_location: The obstacle's GPS location
         :type obstacle_location: Location
         :param obstacle: The obstacle to add
-        :type obstacle: StationaryObstacle or MovingObstacle
+        :type obstacle: StationaryObstacle
         """
         converted_obstacle_location = convert_to_point(self.initial_coordinates, obstacle_location)
-        if isinstance(obstacle, interop.StationaryObstacle):
-            new_obstacle = StationaryObstacle(converted_obstacle_location, obstacle.cylinder_radius, obstacle.cylinder_height)
-        else:
-            pass
+
+        new_obstacle = StationaryObstacle(converted_obstacle_location, obstacle.cylinder_radius, obstacle.cylinder_height)
 
         self.obstacle_map.add_obstacle(new_obstacle)
 
@@ -171,7 +169,7 @@ class SDAConverter(object):
         """
         Returns the distance to the current guided waypoint
         """
-        if self.current_path.shape[0] != 0:
+        if does_guided_path_exist:
             distance = VectorMath.get_magnitude(self.current_path[self.current_path_index], self.obstacle_map.get_drone().get_point())
 
             return distance
