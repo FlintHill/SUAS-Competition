@@ -37,6 +37,8 @@ def gcs_process(sda_status, img_proc_status, interop_position_update_rate):
         interop_position_update_rate.value += 1
         vehicle_state_data[0] = SUASSystem.get_vehicle_state(vehicle, GCSSettings.MSL_ALT)
 
+        print("LIVE")
+        print(current_location)
         current_location = SUASSystem.Location(vehicle.location.global_relative_frame.lat, vehicle.location.global_relative_frame.lon, vehicle.location.global_relative_frame.alt)
         location_log.append(current_location)
         """if (vehicle.location.global_relative_frame.alt * 3.28084) > GCSSettings.SDA_MIN_ALT and (vehicle.mode.name == "GUIDED" or vehicle.mode.name == "AUTO"):
@@ -72,7 +74,7 @@ def initialize_sda_process(sda_status, waypoints, sda_avoid_coords, vehicle_stat
         vehicle_state_data,
         mission_information_data,
     ))
-    sda_process.start()
+    #sda_process.start()
     log(gcs_logger_name, "SDA process instantiated")
 
     return sda_process
@@ -85,7 +87,7 @@ def initialize_image_processing_process(img_proc_status, location_log, targets_t
         location_log,
         targets_to_submit
     ))
-    img_proc_process.start()
+    #img_proc_process.start()
     log(gcs_logger_name, "Image Processing process instantiated")
 
     return img_proc_process

@@ -7,6 +7,12 @@ sudo -H python -m pip install . -U
 cd ../../
 sudo rm -r interop
 
+git clone https://github.com/FlintHill/simple-websocket-server
+cd simple-websocket-server
+sudo -H python -m pip install . -U
+cd ../
+sudo rm -r simple-websocket-server
+
 sudo -H python -m pip install dronekit
 
 sudo -H python -m pip install ./SyntheticDataset -U
