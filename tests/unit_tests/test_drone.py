@@ -30,7 +30,6 @@ class DroneTestCase(unittest.TestCase):
         self.drone.set_drone_position(numpy.array([21,24,27]))
         self.assertTrue(self.drone.has_reached_waypoint())
 
-
     def test_get_point(self):
         self.drone.set_drone_position(numpy.array([0,0,0]))
         self.assertTrue(numpy.array_equal(numpy.array([0,0,0]), self.drone.get_point()))
