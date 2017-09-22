@@ -2,7 +2,7 @@ import unittest
 from SDA import *
 import numpy
 
-class TestSDAWaypoinHolder(unittest.TestCase):
+class WaypoinHolderTestCase(unittest.TestCase):
 
     def setUp(self):
         self.waypoints = numpy.array([[1,2,3],[4,5,6]]) #Must remain a 2D array

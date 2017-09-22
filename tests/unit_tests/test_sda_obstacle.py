@@ -2,7 +2,7 @@ import unittest
 from SDA import *
 import numpy
 
-class TestSDAObstacle(unittest.TestCase):
+class ObstacleTestCase(unittest.TestCase):
 
     def setUp(self):
         self.point = numpy.array([25,25,25])

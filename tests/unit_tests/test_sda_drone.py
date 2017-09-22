@@ -2,7 +2,7 @@ import unittest
 from SDA import *
 import numpy
 
-class TestSDADrone(unittest.TestCase):
+class DroneTestCase(unittest.TestCase):
 
     def setUp(self):
         self.initial_drone_point = numpy.array([0,0,0])

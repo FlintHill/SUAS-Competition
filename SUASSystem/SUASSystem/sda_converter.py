@@ -169,7 +169,7 @@ class SDAConverter(object):
         """
         Returns the distance to the current guided waypoint
         """
-        if does_guided_path_exist:
+        if self.does_guided_path_exist():
             distance = VectorMath.get_magnitude(self.current_path[self.current_path_index], self.obstacle_map.get_drone().get_point())
 
             return distance

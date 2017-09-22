@@ -4,7 +4,7 @@ from SDA import *
 import numpy
 import interop
 
-class TestSDAConverter(unittest.TestCase):
+class SDAConverterTestCase(unittest.TestCase):
 
     def setUp(self):
         """
@@ -71,6 +71,4 @@ class TestSDAConverter(unittest.TestCase):
         converted_uav_location = convert_to_point(self.initial_coordinates, new_location)
 
 
-        self.assertEqual(self.sda_converter.obstacle_map.drone.point[0], converted_uav_location[0])
-        self.assertEqual(self.sda_converter.obstacle_map.drone.point[1], converted_uav_location[1])
-        self.assertEqual(self.sda_converter.obstacle_map.drone.point[2], converted_uav_location[2])
+        self.assertTrue(numpy.array_equal(self.sda_converter.obstacle_map.drone.point, converted_uav_location))

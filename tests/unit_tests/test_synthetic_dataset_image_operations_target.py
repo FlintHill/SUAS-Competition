@@ -5,7 +5,7 @@ import os
 from PIL import Image
 import numpy
 
-class TestSytheticDatasetImageOperationsTarget(unittest.TestCase):
+class TargetTestCase(unittest.TestCase):
 
     def setUp(self):
         #class constants
