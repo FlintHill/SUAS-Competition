@@ -1,4 +1,4 @@
-import numpy as np
+import numpy
 from SDA import WaypointHolder
 from SUASSystem import *
 import unittest
@@ -6,26 +6,36 @@ import unittest
 class DroneTestCase(unittest.TestCase):
 
     def setUp(self):
-        self.drone = Drone(np.array([0,0,0]), np.array([[ 7, 10, 13], [21, 24, 27]]))
+        self.drone = Drone(numpy.array([0,0,0]), numpy.array([[ 7, 10, 13], [21, 24, 27]]))
 
     def test_set_drone_pos(self):
-        self.drone.set_drone_position(np.array([1,1,1]))
-        self.assertEquals(np.array([1,1,1]).any(), self.drone.point.any())
+        self.drone.set_drone_position(numpy.array([1,1,1]))
+        self.assertTrue(numpy.array_equal(numpy.array([1,1,1]), self.drone.point))
 
     def test_add_waypoint(self):
-        self.drone.add_waypoint(np.array([20,20,20]))
-        self.assertEquals(np.array([[ 7, 10, 13], [21, 24, 27], [20, 20, 20]]).any(), self.drone.waypoint_holder.waypoints.any())
+        self.drone.reset_waypoints()
+        self.drone.add_waypoint(numpy.array([20,20,20]))
+        self.assertTrue(numpy.array_equal(numpy.array([20, 20, 20]), self.drone.waypoint_holder.waypoints[0]))
+        self.drone.add_waypoint(numpy.array([10,10,10]))
+        self.assertTrue(numpy.array_equal(numpy.array([[20, 20, 20], [10, 10, 10]]), self.drone.waypoint_holder.waypoints))
 
     def test_reset_waypoints(self):
         self.drone.reset_waypoints()
-        self.assertEquals(0, self.drone.waypoint_holder.waypoints.shape[0])
+        self.assertTrue(numpy.array_equal(numpy.array([]), self.drone.waypoint_holder.waypoints))
 
     def test_has_reached_waypoint(self):
-        self.drone = Drone(np.array([0,0,0]), np.array([[ 7, 10, 13], [21, 24, 27]]))
+        self.drone.reset_waypoints()
+        self.drone.add_waypoint(numpy.array([21,24,27]))
         self.assertFalse(self.drone.has_reached_waypoint())
+        self.drone.set_drone_position(numpy.array([21,24,27]))
+        self.assertTrue(self.drone.has_reached_waypoint())
+
 
     def test_get_point(self):
-        self.assertEquals(np.array([0,0,0]).all(), self.drone.get_point().all())
+        self.drone.set_drone_position(numpy.array([0,0,0]))
+        self.assertTrue(numpy.array_equal(numpy.array([0,0,0]), self.drone.get_point()))
 
     def test_get_waypoint_holder(self):
-        self.assertEquals(np.array([[ 7, 10, 13], [21, 24, 27]]).any(), self.drone.get_waypoint_holder().waypoints.any())
+        self.drone.reset_waypoints()
+        self.drone.add_waypoint(numpy.array([20,20,20]))
+        self.assertTrue(numpy.array_equal(numpy.array([[20, 20, 20]]), self.drone.get_waypoint_holder().waypoints))
