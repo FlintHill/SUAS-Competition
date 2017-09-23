@@ -31,15 +31,16 @@ def gcs_process(sda_status, img_proc_status, interop_position_update_rate):
     sda_process = initialize_sda_process(sda_status, waypoints, sda_avoid_coords, vehicle_state_data, mission_information_data)
     log(gcs_logger_name, "Completed instantiation of all child processes")
 
+    interop_client = SUASSystem.InteropClientConverter(GCSSettings.MSL_ALT, GCSSettings.INTEROP_URL, GCSSettings.INTEROP_USERNAME, GCSSettings.INTEROP_PASSWORD)
+
     guided_waypoint_location = None
     vehicle_state_data.append(SUASSystem.get_vehicle_state(vehicle, GCSSettings.MSL_ALT))
     while True:
         interop_position_update_rate.value += 1
         vehicle_state_data[0] = SUASSystem.get_vehicle_state(vehicle, GCSSettings.MSL_ALT)
 
-        print("LIVE")
-        print(current_location)
         current_location = SUASSystem.Location(vehicle.location.global_relative_frame.lat, vehicle.location.global_relative_frame.lon, vehicle.location.global_relative_frame.alt)
+        print(current_location)
         location_log.append(current_location)
         """if (vehicle.location.global_relative_frame.alt * 3.28084) > GCSSettings.SDA_MIN_ALT and (vehicle.mode.name == "GUIDED" or vehicle.mode.name == "AUTO"):
             log("root", "Avoiding obstacles...")
@@ -50,6 +51,8 @@ def gcs_process(sda_status, img_proc_status, interop_position_update_rate):
         if waypoint_location:
             if vehicle.mode.name == "GUIDED" and has_uav_reached_waypoint(current_location, guided_waypoint_location):
                 vehicle.mode = VehicleMode("AUTO")"""
+
+        interop_client.post_telemetry(current_location, vehicle_state_data[0].get_direction())
 
         sleep(0.1)
 
