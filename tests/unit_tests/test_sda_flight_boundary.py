@@ -1,4 +1,3 @@
-from matplotlib.path import Path
 from SDA import *
 import unittest
 import numpy
@@ -6,7 +5,6 @@ import numpy
 class FlightBoundaryTestCase(unittest.TestCase):
 
     def setUp(self):
-
         test_min_altitude1 = 50.0
         test_max_altitude1 = 200.0
 
@@ -20,7 +18,6 @@ class FlightBoundaryTestCase(unittest.TestCase):
         self.test_flight_boundary2 = FlightBoundary(test_min_altitude2, test_max_altitude2, test_boundary_waypoints2)
 
     def test_is_point_in_bounds(self):
-
         test_point1 = numpy.array([50, 50, 100])
         test_point2 = numpy.array([1, 1, 51])
         test_point3 = numpy.array([99, 99, 199])
@@ -54,7 +51,6 @@ class FlightBoundaryTestCase(unittest.TestCase):
         self.assertFalse(self.test_flight_boundary2.is_point_in_bounds(test_point14))
 
     def test_path_method(self):
-
         test_point1 = numpy.array([50, 50])
         test_point2 = numpy.array([1, 1])
         test_point3 = numpy.array([99, 99])

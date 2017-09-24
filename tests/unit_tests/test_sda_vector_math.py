@@ -6,33 +6,28 @@ from SDA import VectorMath
 class VectorMathTestCase(unittest.TestCase):
 
     def test_get_magnitude(self):
-
         test_vector1 = numpy.array([2.0, 3.0, 3.0])
         test_vector2 = numpy.array([6.0, 6.0, 6.0])
 
         self.assertEqual(VectorMath.get_magnitude(test_vector1, test_vector2), math.sqrt(34.0))
 
     def test_get_unit_vector_from_two_vectors(self):
-
         test_vector1 = numpy.array([2.0, 3.0, 3.0])
         test_vector2 = numpy.array([6.0, 6.0, 6.0])
 
         self.assertTrue(numpy.array_equal(VectorMath.get_unit_vector_from_two_vectors(test_vector1, test_vector2), numpy.array([4.0/math.sqrt(34.0), 3.0/math.sqrt(34.0), 3.0/math.sqrt(34.0)])))
 
     def test_get_single_unit_vector(self):
-
         test_vector = numpy.array([2.0, 3.0, 3.0])
 
         self.assertTrue(numpy.array_equal(VectorMath.get_single_unit_vector(test_vector), numpy.array([2.0/math.sqrt(22.0), 3.0/math.sqrt(22.0), 3.0/math.sqrt(22.0)])))
 
     def test_get_vector_magnitude(self):
-
         test_vector = numpy.array([2,0, 3.0, 3.0])
 
         self.assertEqual(VectorMath.get_vector_magnitude(test_vector), math.sqrt(22.0))
 
     def test_get_vector_projection(self):
-
         test_vector1 = numpy.array([2, 3, 3])
         test_vector2 = numpy.array([6, 6, 6])
 
@@ -51,7 +46,6 @@ class VectorMathTestCase(unittest.TestCase):
         self.assertTrue(numpy.array_equal(numpy.round(VectorMath.get_vector_projection(test_vector5, test_vector6), decimals = 5, out = None), numpy.round(numpy.array([15.0/7.0, 10.0/7.0, 5.0/7.0]), decimals = 5, out = None)))
 
     def test_get_vector_rejection(self):
-
         test_vector1 = numpy.array([2, 3, 3])
         test_vector2 = numpy.array([6, 6, 6])
 
