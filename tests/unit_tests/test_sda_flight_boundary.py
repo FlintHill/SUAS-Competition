@@ -16,9 +16,6 @@ class FlightBoundaryTestCase(unittest.TestCase):
         test_boundary_waypoints1 = numpy.array([(0,0),(0,100),(100,100),(100,0)])
         test_boundary_waypoints2 = numpy.array([(-25,0),(50,50),(0,100),(-100,150),(100,150),(150,0),(50,-50),(0,-100),(100,-150),(-100,-150)])
 
-        test_bound_path1 = Path(test_boundary_waypoints1)
-        test_bound_path2 = Path(test_boundary_waypoints2)
-
         self.test_flight_boundary1 = FlightBoundary(test_min_altitude1, test_max_altitude1, test_boundary_waypoints1)
         self.test_flight_boundary2 = FlightBoundary(test_min_altitude2, test_max_altitude2, test_boundary_waypoints2)
 
