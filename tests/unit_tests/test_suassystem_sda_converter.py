@@ -25,7 +25,7 @@ class SDAConverterTestCase(unittest.TestCase):
             }
         ]
 
-        self.sda_converter = SDAConverter(self.initial_coordinates, numpy.array([self.boundary_points]))
+        self.sda_converter = SDAConverter(self.initial_coordinates, self.boundary_points)
 
 
     def test_set_waypoints(self):
