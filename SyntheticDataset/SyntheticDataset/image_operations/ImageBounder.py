@@ -5,6 +5,26 @@ class ImageBounder(object):
 
     @staticmethod
     def getBoundsOfColor(img, image, color):
+        """
+        dim = img.size
+
+        list_of_x = []
+        list_of_y = []
+
+        for x in range(0, dim[0]):
+            for y in range(0, dim[1]):
+                if  image[x,y] == color:
+                    list_of_x.extend(x)
+                    list_of_y.extend(y)
+
+        leftX = min(list_of_x)
+        rightX = max(list_of_X)
+        upY = min(list_of_y)
+        lowY = max(list_of_y)
+
+        return Rectangle(leftX, upY, rightX, lowY)
+
+        """
         dim = img.size
         leftX = dim[0]-1
         rightX = 0
