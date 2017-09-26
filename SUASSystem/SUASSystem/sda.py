@@ -1,6 +1,6 @@
 import SUASSystem
 import multiprocessing
-from SUASSystem.logging import log
+from SUASSystem.suas_logging import log
 from time import sleep
 
 def run_sda_process(logger_queue, waypoints, sda_status, sda_avoid_coords, vehicle_state_data, mission_information_data):

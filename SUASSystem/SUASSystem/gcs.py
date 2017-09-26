@@ -1,18 +1,19 @@
 import multiprocessing
 import SUASSystem
 import dronekit
-from SUASSystem.logging import log
-from SUASSystem import GCSSettings
+from .interop_client import InteropClientConverter
+from .suas_logging import *
+from .settings import GCSSettings
 from time import sleep
 
 # Setup logging information
 logger_queue = multiprocessing.Queue(-1)
-logger_listener_process = multiprocessing.Process(target=SUASSystem.logging.listener_process, args=(
+logger_listener_process = multiprocessing.Process(target=listener_process, args=(
     logger_queue,
-    SUASSystem.logging.logger_listener_configurer
+    logger_listener_configurer
 ))
 logger_listener_process.start()
-SUASSystem.logging.logger_worker_configurer(logger_queue)
+logger_worker_configurer(logger_queue)
 gcs_logger_name = multiprocessing.current_process().name
 
 def gcs_process(sda_status, img_proc_status, interop_position_update_rate):
@@ -31,7 +32,7 @@ def gcs_process(sda_status, img_proc_status, interop_position_update_rate):
     sda_process = initialize_sda_process(sda_status, waypoints, sda_avoid_coords, vehicle_state_data, mission_information_data)
     log(gcs_logger_name, "Completed instantiation of all child processes")
 
-    interop_client = SUASSystem.InteropClientConverter(GCSSettings.MSL_ALT, GCSSettings.INTEROP_URL, GCSSettings.INTEROP_USERNAME, GCSSettings.INTEROP_PASSWORD)
+    interop_client = InteropClientConverter(GCSSettings.MSL_ALT, GCSSettings.INTEROP_URL, GCSSettings.INTEROP_USERNAME, GCSSettings.INTEROP_PASSWORD)
 
     guided_waypoint_location = None
     vehicle_state_data.append(SUASSystem.get_vehicle_state(vehicle, GCSSettings.MSL_ALT))

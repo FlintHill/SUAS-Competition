@@ -1,11 +1,8 @@
-from __future__ import print_function
 from interop import Client
 from interop import Telemetry
 from interop import Odlc
-from time import sleep
-import cv2
 
-class InteropClientConverter:
+class InteropClientConverter(object):
 
     def __init__(self, msl_alt, url, username, password):
         self.msl_alt = msl_alt

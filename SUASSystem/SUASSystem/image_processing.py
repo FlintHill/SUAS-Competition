@@ -10,7 +10,7 @@ from datetime import datetime
 from timeit import default_timer
 from time import sleep
 from SUASSystem import GCSSettings
-from SUASSystem.logging import log
+from SUASSystem.suas_logging import log
 from ImgProcessingCLI.Runtime.RuntimeTarget import RuntimeTarget
 from ImgProcessingCLI.DataMine.OrientationSolver import OrientationSolver
 from ImgProcessingCLI.DataMine import KMeansCompare
