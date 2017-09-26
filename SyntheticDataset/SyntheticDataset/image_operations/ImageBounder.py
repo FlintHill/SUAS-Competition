@@ -5,6 +5,7 @@ class ImageBounder(object):
 
     @staticmethod
     def getBoundsOfColor(img, image, color):
+
         dim = img.size
 
         list_of_x = []

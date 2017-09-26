@@ -6,7 +6,7 @@ class ImageBounderTestCase(unittest.TestCase):
 
 
     def test_getBoundsOfColor(self):
-        self.test_img1 = Image.open("images/test_image2.png")
+        self.test_img1 = Image.open("tests/images/test_image2.png")
         self.test_image1 = self.test_img1.load()
         self.test_color1 = (255,255,255,255)
         self.test_img2 = self.test_img1.copy()
@@ -36,7 +36,7 @@ class ImageBounderTestCase(unittest.TestCase):
         self.test_resultant2 = self.test_img2.crop((319, -1, 640, 240))
         self.test_resultant2.show()
 
-        self.test_img3 = Image.open("images/test_image1.jpg")
+        self.test_img3 = Image.open("tests/images/test_image1.jpg")
         self.test_image3 = self.test_img3.load()
         self.test_color3 = (9,81,105)
         self.test_img4 = self.test_img3.copy()
