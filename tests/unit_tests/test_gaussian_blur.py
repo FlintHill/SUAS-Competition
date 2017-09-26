@@ -9,8 +9,8 @@ class GaussianBlurTestCase(unittest.TestCase):
         self.test_img = Image.open("tests/images/blur_test.png")
         self.blurred_img = Image.open("tests/images/blurred_image.png")
 
-    #getGaussianFilteredImg does not use its 2nd parameter, hence the 0
     def test_get_gaussian_filtered_img(self):
+        #getGaussianFilteredImg does not use its 2nd parameter, hence the 0
         #is not 100% correct as the gaussian kernel is incorrect, deemed close enough
         self.filtered_img = GaussianBlur.getGaussianFilteredImg(self.test_img, 0, 3, 1)
         self.filtered_image = self.filtered_img.load()
