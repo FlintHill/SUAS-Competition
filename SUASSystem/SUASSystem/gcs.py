@@ -1,7 +1,6 @@
 import multiprocessing
 import SUASSystem
 import dronekit
-from .interop_client import InteropClientConverter
 from .suas_logging import *
 from .settings import GCSSettings
 from time import sleep
@@ -16,7 +15,7 @@ logger_listener_process.start()
 logger_worker_configurer(logger_queue)
 gcs_logger_name = multiprocessing.current_process().name
 
-def gcs_process(sda_status, img_proc_status, interop_position_update_rate):
+def gcs_process(sda_status, img_proc_status, interop_position_update_rate, interop_client_array):
     manager = multiprocessing.Manager()
     vehicle_state_data = manager.list()
     mission_information_data = manager.list()
@@ -31,8 +30,6 @@ def gcs_process(sda_status, img_proc_status, interop_position_update_rate):
     img_proc_process = initialize_image_processing_process(img_proc_status, location_log, targets_to_submit)
     sda_process = initialize_sda_process(sda_status, waypoints, sda_avoid_coords, vehicle_state_data, mission_information_data)
     log(gcs_logger_name, "Completed instantiation of all child processes")
-
-    interop_client = InteropClientConverter(GCSSettings.MSL_ALT, GCSSettings.INTEROP_URL, GCSSettings.INTEROP_USERNAME, GCSSettings.INTEROP_PASSWORD)
 
     guided_waypoint_location = None
     vehicle_state_data.append(SUASSystem.get_vehicle_state(vehicle, GCSSettings.MSL_ALT))
@@ -53,7 +50,7 @@ def gcs_process(sda_status, img_proc_status, interop_position_update_rate):
             if vehicle.mode.name == "GUIDED" and has_uav_reached_waypoint(current_location, guided_waypoint_location):
                 vehicle.mode = VehicleMode("AUTO")"""
 
-        interop_client.post_telemetry(current_location, vehicle_state_data[0].get_direction())
+        interop_client_array[0].post_telemetry(current_location, vehicle_state_data[0].get_direction())
 
         sleep(0.1)
 
@@ -101,7 +98,7 @@ def connect_to_vehicle():
     vehicle = dronekit.connect(GCSSettings.UAV_CONNECTION_STRING, wait_ready=True)
     vehicle.wait_ready('autopilot_version')
     log(gcs_logger_name, "Connected to UAV on: %s" % GCSSettings.UAV_CONNECTION_STRING)
-    SUASSystem.logging.log_vehicle_state(vehicle, gcs_logger_name)
+    SUASSystem.suas_logging.log_vehicle_state(vehicle, gcs_logger_name)
 
     return vehicle
 

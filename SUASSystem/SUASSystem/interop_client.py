@@ -1,16 +1,12 @@
 from interop import Client
 from interop import Telemetry
 from interop import Odlc
+from .settings import GCSSettings
 
 class InteropClientConverter(object):
 
-    def __init__(self, msl_alt, url, username, password):
-        self.msl_alt = msl_alt
-        self.url = url
-        self.username = username
-        self.password = password
-
-        self.client = Client(url, username, password)
+    def __init__(self):
+        self.client = Client(GCSSettings.INTEROP_URL, GCSSettings.INTEROP_USERNAME, GCSSettings.INTEROP_PASSWORD)
 
     def post_telemetry(self, location, heading):
         """
@@ -21,7 +17,7 @@ class InteropClientConverter(object):
         :param heading: The UAV's heading
         :type heading: Float
         """
-        telem_upload_data = Telemetry(location.get_lat(), location.get_lon(), location.get_alt() + self.msl_alt, heading)
+        telem_upload_data = Telemetry(location.get_lat(), location.get_lon(), location.get_alt() + GCSSettings.MSL_ALT, heading)
 
         self.client.post_telemetry(telem_upload_data)
 
@@ -50,12 +46,6 @@ class InteropClientConverter(object):
                 return mission
 
         return None
-
-    def get_client(self):
-        """
-        Return the client
-        """
-        return self.client
 
     def post_standard_target(self, target, image_file_path):
         """
@@ -93,5 +83,3 @@ class InteropClientConverter(object):
 
         with open(image_file_path) as img_file:
             self.client.post_odlc_image(returned_odlc.id, img_file.read())
-
-        return returned_odlc.id

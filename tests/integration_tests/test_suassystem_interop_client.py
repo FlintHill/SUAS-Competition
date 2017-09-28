@@ -6,12 +6,7 @@ from SUASSystem import Location
 class SDATestCase(unittest.TestCase):
 
     def setUp(self):
-        self.msl_alt = 6
-        self.connection_url = "http://10.10.130.2:8000"
-        self.username = "Flint"
-        self.password = "271824758"
-
-        self.interop_client = InteropClientConverter(self.msl_alt, self.connection_url, self.username, self.password)
+        self.interop_client = InteropClientConverter()
 
     def test_submit_target(self):
         compiled_target_info = {
@@ -23,10 +18,9 @@ class SDATestCase(unittest.TestCase):
             "alphanumeric" : "ABC",
             "alphanumeric_color" : "black",
         }
-        target_image_relative_path = "images/target.PNG"
+        target_image_relative_path = "tests/images/target.PNG"
 
         target_id = self.interop_client.post_standard_target(compiled_target_info, target_image_relative_path)
-        self.assertTrue(target_id != None)
 
     def test_submit_position(self):
         """

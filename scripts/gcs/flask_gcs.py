@@ -33,11 +33,14 @@ class Client(object):
         self.sda_status = self.manager.Value('s', "Disabled")
         self.img_proc_status = self.manager.Value('s', "Disabled")
         self.interop_position_update_rate = self.manager.Value('i', 2.00)
+        self.interop_client = self.manager.list()
+        self.interop_client.append(SUASSystem.InteropClientConverter())
 
         self.gcs_process = multiprocessing.Process(target=SUASSystem.gcs_process, args=(
             self.sda_status,
             self.img_proc_status,
             self.interop_position_update_rate,
+            self.interop_client
         ))
         self.gcs_process.start()
 
