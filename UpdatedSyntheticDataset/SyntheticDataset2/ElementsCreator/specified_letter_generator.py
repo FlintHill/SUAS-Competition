@@ -8,7 +8,13 @@ class SpecifiedLetterGenerator(object):
 
     def __init__(self, letter_input, font_size, color):
         """
-        The font to height ratio of block letters.
+        Construct the SpecifiedLetterGenerator class
+        :param letter_input: the intended letter to create
+        :param font_size: the intended font_size of the letter
+        :param color: the intended color of the letter
+        :type letter_input: string
+        :type font_size: int
+        :type color: (R, G, B, A)
         """
         self.letter_ratio = 10000.0 / 6832.0
         self.letter_input = letter_input
@@ -18,7 +24,12 @@ class SpecifiedLetterGenerator(object):
 
     def specified_letter_generator(self):
         """
-        inputs a letter (string), font_size(int), and color(RGBA values), outputs an image.
+        Generate an image of a specified letter
+        1) Generate a transparent background as raw_image
+        2) Draw a specified letter onto the raw_image
+        3) Mask the raw_image, transforming it into the clean_image
+        4) Crop out the letter from the clean_image as the resultant
+        5) return the resultant
         """
         image_dimention = self.font_size * self.letter_ratio
         raw_image = Image.new("RGBA", (int(image_dimention), int(image_dimention)), self.background_color)

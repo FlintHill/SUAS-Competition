@@ -7,17 +7,29 @@ import random
 class RandomLetterGenerator(object):
 
     def __init__(self, font_size, color):
-        self.letter_list = ["A", "B", "c", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
-                            "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
         """
-        The font to height ratio of block letters.
+        Construct the RandomLetterGenerator class
+        :param font_size: the intended font_size of the letter
+        :param color: the intended color of the letter
+        :type font_size: int
+        :type color: (R, G, B, A)
         """
-        self.letter_ratio = 10000.0 / 6832.0
         self.font_size = font_size
         self.letter_color = color
+        self.letter_list = ["A", "B", "c", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
+                            "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
+        self.letter_ratio = 10000.0 / 6832.0
         self.background_color = (255, 255, 255, 0)
 
     def random_letter_generator(self):
+        """
+        Generate an image of a random letter
+        1) Generate a transparent background as raw_image
+        2) Draw a random letter onto the raw_image
+        3) Mask the raw_image, transforming it into the clean_image
+        4) Crop out the letter from the clean_image as the resultant
+        5) return the resultant
+        """
         image_dimention = self.font_size * self.letter_ratio
         raw_image = Image.new("RGBA", (int(image_dimention), int(image_dimention)), self.background_color)
         draw = ImageDraw.Draw(raw_image)

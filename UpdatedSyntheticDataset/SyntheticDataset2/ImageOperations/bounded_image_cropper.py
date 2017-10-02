@@ -1,11 +1,19 @@
 from PIL import Image
 
 class BoundedImageCropper(object):
-    '''
-    Returning a cropped image, in which only the pixels of the intended color remain.
-    '''
+    """
+    Crop an image, so that only a rectangle with the pixels of the intended color remain
+    """
     @staticmethod
     def cropBoundedImage(image, pixel_data, color):
+        """
+        :param image: an image to be cropped
+        :param pixel_data: the pixel data of the image, obtained by calling image.load()
+        :param color: the color to serve as the criterion of cropping
+        :type image: png, jpg, or other image files
+        :type pixel_data: PIL.PyAccess
+        :type color: (R, G, B, A)
+        """
         dimension = image.size
         list_of_x = []
         list_of_y = []
