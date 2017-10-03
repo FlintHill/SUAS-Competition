@@ -1,0 +1,59 @@
+/**
+ * main style sheet
+ * v0.1
+ */
+
+.home-button-pos-fix {
+	position:absolute;
+	top:9px;
+	left:13px;
+}
+
+.counter-fix {
+	text-align:right;
+	margin-top:0.65em;
+	margin-bottom:0;
+}
+
+.special-container {
+	border-radius:5px;
+	padding:1em;
+	margin-bottom:1em;
+}
+
+.no-margins {
+	margin:0;
+}
+
+.input-text-fix {
+	top:10px;
+	margin-top:25px;
+}
+
+#image-previewer {
+	display:block;
+	margin:auto;
+}
+
+.shift-lock-icon {
+	left:3em;
+}
+
+.noselect {
+	-webkit-touch-callout:none;
+	-webkit-user-select:none;
+	-khtml-user-select:none;
+	-moz-user-select:none;
+	-ms-user-select:none;
+	user-select:none;
+}
+
+.select {
+	-webkit-touch-callout:auto;
+	-webkit-user-select:auto;
+	-khtml-user-select:auto;
+	-moz-user-select:auto;
+	-ms-user-select:auto;
+	user-select:auto;
+}
+
