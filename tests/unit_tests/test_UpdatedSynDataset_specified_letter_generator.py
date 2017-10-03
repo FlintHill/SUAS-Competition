@@ -19,7 +19,9 @@ class SpecifiedLetterGeneratorTestCase(unittest.TestCase):
         self.test_letter_input8 = "F"
         self.test_letter_input9 = "Z"
         self.test_letter_input10 = "Y"
-        self.test_letter_inputX = "O"
+        self.test_letter_input_x = "X"
+
+        self.font_type = "UpdatedSyntheticDataset/data/fonts/Blockletter.otf"
 
         self.test_font_size1 = 121
         self.test_font_size2 = 232
@@ -31,7 +33,7 @@ class SpecifiedLetterGeneratorTestCase(unittest.TestCase):
         self.test_font_size8 = 898
         self.test_font_size9 = 233
         self.test_font_size10 = 666
-        self.test_font_sizeX = 2333
+        self.test_font_size_x = 2333
 
         self.test_color1 = (255, 0, 0, 255)
         self.test_color2 = (0, 255, 0, 255)
@@ -43,32 +45,33 @@ class SpecifiedLetterGeneratorTestCase(unittest.TestCase):
         self.test_color8 = (0, 0, 0, 255)
         self.test_color9 = (123, 123, 123, 255)
         self.test_color10 = (233, 233, 233, 255)
-        self.test_colorX = (66, 66, 66, 255)
+        self.test_color_x = (66, 66, 66, 255)
 
     def test_specified_letter_generator(self):
 
-        test_image1 = SpecifiedLetterGenerator(self.test_letter_input1, self.test_font_size1, self.test_color1).specified_letter_generator()
-        test_image2 = SpecifiedLetterGenerator(self.test_letter_input2, self.test_font_size2, self.test_color2).specified_letter_generator()
-        test_image3 = SpecifiedLetterGenerator(self.test_letter_input3, self.test_font_size3, self.test_color3).specified_letter_generator()
-        test_image4 = SpecifiedLetterGenerator(self.test_letter_input4, self.test_font_size4, self.test_color4).specified_letter_generator()
-        test_image5 = SpecifiedLetterGenerator(self.test_letter_input5, self.test_font_size5, self.test_color5).specified_letter_generator()
-        test_image6 = SpecifiedLetterGenerator(self.test_letter_input6, self.test_font_size6, self.test_color6).specified_letter_generator()
-        test_image7 = SpecifiedLetterGenerator(self.test_letter_input7, self.test_font_size7, self.test_color7).specified_letter_generator()
-        test_image8 = SpecifiedLetterGenerator(self.test_letter_input8, self.test_font_size8, self.test_color8).specified_letter_generator()
-        test_image9 = SpecifiedLetterGenerator(self.test_letter_input9, self.test_font_size9, self.test_color9).specified_letter_generator()
-        test_image10 = SpecifiedLetterGenerator(self.test_letter_input10, self.test_font_size10, self.test_color10).specified_letter_generator()
-        test_imageX = SpecifiedLetterGenerator(self.test_letter_inputX, self.test_font_sizeX, self.test_colorX).specified_letter_generator()
+        test_image1 = SpecifiedLetterGenerator(self.test_letter_input1, self.font_type, self.test_font_size1, self.test_color1).generate_specified_letter()
+        test_image2 = SpecifiedLetterGenerator(self.test_letter_input2, self.font_type, self.test_font_size2, self.test_color2).generate_specified_letter()
+        test_image3 = SpecifiedLetterGenerator(self.test_letter_input3, self.font_type, self.test_font_size3, self.test_color3).generate_specified_letter()
+        test_image4 = SpecifiedLetterGenerator(self.test_letter_input4, self.font_type, self.test_font_size4, self.test_color4).generate_specified_letter()
+        test_image5 = SpecifiedLetterGenerator(self.test_letter_input5, self.font_type, self.test_font_size5, self.test_color5).generate_specified_letter()
+        test_image6 = SpecifiedLetterGenerator(self.test_letter_input6, self.font_type, self.test_font_size6, self.test_color6).generate_specified_letter()
+        test_image7 = SpecifiedLetterGenerator(self.test_letter_input7, self.font_type, self.test_font_size7, self.test_color7).generate_specified_letter()
+        test_image8 = SpecifiedLetterGenerator(self.test_letter_input8, self.font_type, self.test_font_size8, self.test_color8).generate_specified_letter()
+        test_image9 = SpecifiedLetterGenerator(self.test_letter_input9, self.font_type, self.test_font_size9, self.test_color9).generate_specified_letter()
+        test_image10 = SpecifiedLetterGenerator(self.test_letter_input10, self.font_type, self.test_font_size10, self.test_color10).generate_specified_letter()
+        test_image_x = SpecifiedLetterGenerator(self.test_letter_input_x, self.font_type, self.test_font_size_x, self.test_color_x).generate_specified_letter()
 
         self.assertTrue(abs((test_image1.height) - (self.test_font_size1 * 6832.0 / 10000.0)) < 3)
         self.assertTrue(abs((test_image2.height) - (self.test_font_size2 * 6832.0 / 10000.0)) < 3)
-        self.assertTrue(abs((test_image2.height) - (self.test_font_size2 * 6832.0 / 10000.0)) < 3)
-        self.assertTrue(abs((test_image2.height) - (self.test_font_size2 * 6832.0 / 10000.0)) < 3)
-        self.assertTrue(abs((test_image2.height) - (self.test_font_size2 * 6832.0 / 10000.0)) < 3)
-        self.assertTrue(abs((test_image2.height) - (self.test_font_size2 * 6832.0 / 10000.0)) < 3)
-        self.assertTrue(abs((test_image2.height) - (self.test_font_size2 * 6832.0 / 10000.0)) < 3)
-        self.assertTrue(abs((test_image2.height) - (self.test_font_size2 * 6832.0 / 10000.0)) < 3)
-        self.assertTrue(abs((test_image2.height) - (self.test_font_size2 * 6832.0 / 10000.0)) < 3)
-        self.assertTrue(abs((test_image2.height) - (self.test_font_size2 * 6832.0 / 10000.0)) < 3)
+        self.assertTrue(abs((test_image3.height) - (self.test_font_size3 * 6832.0 / 10000.0)) < 3)
+        self.assertTrue(abs((test_image4.height) - (self.test_font_size4 * 6832.0 / 10000.0)) < 3)
+        self.assertTrue(abs((test_image5.height) - (self.test_font_size5 * 6832.0 / 10000.0)) < 3)
+        self.assertTrue(abs((test_image6.height) - (self.test_font_size6 * 6832.0 / 10000.0)) < 3)
+        self.assertTrue(abs((test_image7.height) - (self.test_font_size7 * 6832.0 / 10000.0)) < 3)
+        self.assertTrue(abs((test_image8.height) - (self.test_font_size8 * 6832.0 / 10000.0)) < 3)
+        self.assertTrue(abs((test_image9.height) - (self.test_font_size9 * 6832.0 / 10000.0)) < 3)
+        self.assertTrue(abs((test_image10.height) - (self.test_font_size10 * 6832.0 / 10000.0)) < 3)
+        self.assertTrue(abs((test_image_x.height) - (self.test_font_size_x * 6832.0 / 10000.0)) < 3)
 
         self.assertTrue(test_image1.load()[0, 0] == (self.test_color1))
         self.assertTrue(test_image1.load()[test_image1.width-1, test_image1.height-1] == (self.test_color1))
@@ -110,9 +113,9 @@ class SpecifiedLetterGeneratorTestCase(unittest.TestCase):
         self.assertFalse(test_image10.load()[test_image10.width-1, test_image10.height-1] == (self.test_color10))
         self.assertTrue(test_image10.load()[test_image10.width/2, test_image10.height/2] == (self.test_color10))
 
-        self.assertFalse(test_imageX.load()[0, 0] == (self.test_colorX))
-        self.assertFalse(test_imageX.load()[test_imageX.width-1, test_imageX.height-1] == (self.test_colorX))
-        self.assertFalse(test_imageX.load()[test_imageX.width/2, test_imageX.height/2] == (self.test_colorX))
+        self.assertTrue(test_image_x.load()[0, 0] == (self.test_color_x))
+        self.assertTrue(test_image_x.load()[test_image_x.width-1, test_image_x.height-1] == (self.test_color_x))
+        self.assertTrue(test_image_x.load()[test_image_x.width/2, test_image_x.height/2] == (self.test_color_x))
 
         test_image1.show()
         test_image2.show()
@@ -124,4 +127,4 @@ class SpecifiedLetterGeneratorTestCase(unittest.TestCase):
         test_image8.show()
         test_image9.show()
         test_image10.show()
-        test_imageX.show()
+        test_image_x.show()

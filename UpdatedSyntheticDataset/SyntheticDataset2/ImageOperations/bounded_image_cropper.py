@@ -5,7 +5,7 @@ class BoundedImageCropper(object):
     Crop an image, so that only a rectangle with the pixels of the intended color remain
     """
     @staticmethod
-    def cropBoundedImage(image, pixel_data, color):
+    def crop_bounded_image(image, pixel_data, color):
         """
         :param image: an image to be cropped
         :param pixel_data: the pixel data of the image, obtained by calling image.load()
@@ -13,6 +13,7 @@ class BoundedImageCropper(object):
         :type image: png, jpg, or other image files
         :type pixel_data: PIL.PyAccess
         :type color: (R, G, B, A)
+        :type R, G, B, and A: int from 0 to 255
         """
         dimension = image.size
         list_of_x = []
@@ -24,8 +25,8 @@ class BoundedImageCropper(object):
                     list_of_x.append(x)
                     list_of_y.append(y)
 
-        leftX = min(list_of_x)
-        rightX = max(list_of_x)
-        upY = min(list_of_y)
-        lowY = max(list_of_y)
-        return image.crop((leftX, upY, rightX, lowY))
+        left_x = min(list_of_x)
+        right_x = max(list_of_x)
+        up_y = min(list_of_y)
+        low_y = max(list_of_y)
+        return image.crop((left_x, up_y, right_x, low_y))

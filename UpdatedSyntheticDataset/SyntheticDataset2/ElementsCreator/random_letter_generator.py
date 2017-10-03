@@ -6,14 +6,18 @@ import random
 
 class RandomLetterGenerator(object):
 
-    def __init__(self, font_size, color):
+    def __init__(self, font_type, font_size, color):
         """
         Construct the RandomLetterGenerator class
+        :param font_type: the intended font_type of the letter
         :param font_size: the intended font_size of the letter
         :param color: the intended color of the letter
+        :type font_type: a font file
         :type font_size: int
         :type color: (R, G, B, A)
+        :type R, G, B, and A: int from 0 to 255
         """
+        self.font_type = font_type
         self.font_size = font_size
         self.letter_color = color
         self.letter_list = ["A", "B", "c", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
@@ -21,7 +25,7 @@ class RandomLetterGenerator(object):
         self.letter_ratio = 10000.0 / 6832.0
         self.background_color = (255, 255, 255, 0)
 
-    def random_letter_generator(self):
+    def generate_random_letter(self):
         """
         Generate an image of a random letter
         1) Generate a transparent background as raw_image
@@ -30,11 +34,11 @@ class RandomLetterGenerator(object):
         4) Crop out the letter from the clean_image as the resultant
         5) return the resultant
         """
-        image_dimention = self.font_size * self.letter_ratio
-        raw_image = Image.new("RGBA", (int(image_dimention), int(image_dimention)), self.background_color)
+        image_dimension = self.font_size * self.letter_ratio
+        raw_image = Image.new("RGBA", (int(image_dimension), int(image_dimension)), self.background_color)
         draw = ImageDraw.Draw(raw_image)
-        font = ImageFont.truetype("UpdatedSyntheticDataset/data/fonts/Blockletter.otf", self.font_size)
+        font = ImageFont.truetype(self.font_type, self.font_size)
         draw.text((1, 1), self.letter_list[random.randint(0, 25)], self.letter_color, font = font)
-        clean_image = ImageMasker.maskImage(raw_image, raw_image.load(), self.letter_color, self.background_color)
-        resultant = BoundedImageCropper.cropBoundedImage(clean_image, clean_image.load(), self.letter_color)
+        clean_image = ImageMasker.mask_image(raw_image, raw_image.load(), self.letter_color, self.background_color)
+        resultant = BoundedImageCropper.crop_bounded_image(clean_image, clean_image.load(), self.letter_color)
         return resultant

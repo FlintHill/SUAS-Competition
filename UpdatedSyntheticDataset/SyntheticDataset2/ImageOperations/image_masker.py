@@ -5,7 +5,7 @@ class ImageMasker(object):
     Scan all pixels in an image; if any pixel's color is not the intended color1 nor color2, turn that pixel into color1.
     """
     @staticmethod
-    def maskImage(image, pixel_data, color1, color2):
+    def mask_image(image, pixel_data, color1, color2):
         """
         :param image: an image to be masked
         :param pixel_data: the pixel data of the image, obtained by calling image.load()
@@ -15,6 +15,7 @@ class ImageMasker(object):
         :type pixel_data: PIL.PyAccess
         :type color1: (R, G, B, A)
         :type color2: (R, G, B, A)
+        :type R, G, B, and A: int from 0 to 255
         """
         dimension = image.size
 
