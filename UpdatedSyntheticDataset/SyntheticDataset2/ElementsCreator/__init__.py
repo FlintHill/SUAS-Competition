@@ -1,2 +1,3 @@
+from .letter_generator import LetterGenerator
 from .random_letter_generator import RandomLetterGenerator
 from .specified_letter_generator import SpecifiedLetterGenerator

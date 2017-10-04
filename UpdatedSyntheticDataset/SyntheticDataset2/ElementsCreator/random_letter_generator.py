@@ -1,10 +1,11 @@
+from SyntheticDataset2.ElementsCreator import LetterGenerator
+from SyntheticDataset2.ImageOperations import *
 from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageFont
-from SyntheticDataset2.ImageOperations import *
 import random
 
-class RandomLetterGenerator(object):
+class RandomLetterGenerator(LetterGenerator):
 
     def __init__(self, font_type, font_size, color):
         """
@@ -17,9 +18,9 @@ class RandomLetterGenerator(object):
         :type color: (R, G, B, A)
         :type R, G, B, and A: int from 0 to 255
         """
-        self.font_type = font_type
-        self.font_size = font_size
-        self.letter_color = color
+
+        super(RandomLetterGenerator, self).__init__(font_type, font_size, color)
+
         self.letter_list = ["A", "B", "c", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
                             "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
         self.letter_ratio = 10000.0 / 6832.0
