@@ -16,6 +16,7 @@ class Obstacle(object):
         self.point = point
         self.safety_radius = safety_radius
 
+
     def get_safety_radius(self):
         """
         Return the safety radius
