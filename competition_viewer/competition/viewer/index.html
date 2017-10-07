@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en"> <!-- manifest="rsc/misc/main.appcache" -->
+	<head>
+		<meta charset="utf-8">
+
+		<title>Competition Viewer</title>
+		<link rel="shortcut icon" type="image/png" href="rsc/img/favicon.ico"/>
+		<meta name="robots" content="noindex, no cache">
+		<meta name="description" content="Loads custom map files as demonstration of an offline web-based viewer that displays the position of our drone, obstacles, and the flight zone.">
+		<meta name="author" content="FHS:SUAS">
+
+		<script type="text/javascript" src="rsc/js/jquery.3.1.1.min.js"></script>
+
+		<link rel="stylesheet" href="rsc/css/leaflet.min.css" />
+		<script type="text/javascript" src="rsc/js/leaflet.min.js"></script>
+
+		<link rel="stylesheet" href="rsc/css/main.css" />
+		<script type="text/javascript" src="rsc/js/main.3.js?v=0.2.6"></script>
+
+		<!--[if lt IE 9]>
+			<script src="rsc/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+	<body>
+		<div id="mapid"></div>
+		<script type="text/javascript">
+			var mymap = L.map('mapid').setView([38.870533, -77.321419], 17);
+
+			L.tileLayer('/tile/{z}/{x}/{y}.png', {
+				maxZoom: 18,
+				attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
+					'<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+					'Imagery © <a href="http://mapbox.com">Mapbox</a>',
+				id: 'mapbox.streets'
+			}).addTo(mymap);
+		</script>
+		<!--
+		<div id="warning" class="obstacle shadow hidden">
+			<center>
+				<b><u>! OBSTACLE DETECT !</u></b><br>
+				<span style="font-size:0.75em">Object avoidance now activated.</span>
+			</center>
+		</div>
+		-->
+		<div class="status shadow">
+			<center style="font-size:2.2em"><u>Competition: Viewer</u></center>
+			<center><div class="noselect" id="dropdown" onclick="EssentialsContainer.rips()">Show Description</div></center>
+			<div id="information" style="font-size:1.05em; display:none;">
+				<fieldset>
+			    	<legend><u>Description:</u></legend>
+					This is a web-based, live view of the drone's position and current obstacles. Like Mission Planner, this page displays all the relevant information such as altitude, direction, and speed in multiple directions. But this page also includes obstacle visualization and avoidance trajectories on a 2D plane.
+				</fieldset>
+				<fieldset>
+			    	<legend><u>How it works:</u></legend>
+					<ol style="margin:0 auto">
+						<li>Disregards any obstacle not within 15 feet of our current altitude.</li>
+						<li>Calculates the current, straight trajectory of our drone and any intersections with other obstacles, whether they be stationary or moving.</li>
+						<li>If a collision is imminent, the drone either:
+							<ul>
+								<li>Climbs to a new, higher altitude.</li>
+								<li>Stops and stay in the same position.</li>
+							</ul>
+						</li>
+						<li>Repeats.</li>
+					</ol>
+				</fieldset>
+			</div>
+			<div style="font-size:1.05em">
+				<!-- Websocket UI -->
+				<fieldset style="padding-bottom:6px;">
+			    	<legend><u>GroundControl Websocket:</u></legend>
+					<form name="connect" id="conn">
+						<div style="padding:0 2px">
+							<div class="inline">
+								<label for="url"><span class="noselect">ws://</span><input type="text" id="url" style="width:76%" value="192.168.1.101" placeholder="Websocket IP address">&nbsp;:8000/</label>
+							</div>
+							<input type="button" class="g-button" onclick="WebsocketControls.doConnect()" value="CONNECT">
+						</div>
+						<table style="width:100%">
+							<col width="50%">
+							<col width="50%">
+							<tr>
+								<td>
+									<input type="button" class="g-button" onclick="WebsocketControls.doDisconnect()" value="DISCONNECT">
+								</td>
+								<td>
+									<input type="button" class="g-button" onclick="WebsocketControls.doPause()" value="PAUSE">
+								</td>
+							</tr>
+						</table>
+					</form>
+				</fieldset>
+				<!--/ Websocket UI -->
+			</div>
+			<hr>
+			<center><u>Flight Instruments:</u></center>
+			<table border="1" style="width:100%;text-align:center;margin:8px 0">
+				<col width="50%">
+				<col width="50%">
+				<tr>
+					<td>
+						<b><div class="num" id="alt">N/a</div></b>
+						Altitude (feet)
+					</td>
+					<td>
+						<b><div class="num" id="dir">N/a&deg;</div></b>
+						Magnetic Direction
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<b><div class="num" id="speed">N/a</div></b>
+						Speed (knots)
+					</td>
+					<td>
+						<b><div class="num" id="velocity">N/a</div></b>
+						Velocity (knots)
+					</td>
+				</tr>
+			</table>
+			<div class="notice">v1.1</div>
+		</div>
+	</body>
+</html>

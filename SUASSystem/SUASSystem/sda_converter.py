@@ -14,7 +14,7 @@ class SDAConverter(object):
         Initialize the converter
 
         :param initial_coordinates: The initial GPS coordinates of the UAV
-        :type initial_coordinates: GPSCoordinates
+        :type initial_coordinates: Location
         :param fly_zones: The fly zones where the UAV can be
         :type fly_zones: Numpy Array
         """
@@ -22,17 +22,6 @@ class SDAConverter(object):
         self.current_path = numpy.array([])
         self.current_path_index = 1
         self.minimum_change_in_guided_waypoint = 3
-
-        fly_zones = [
-            {
-                "boundary_pts" : [
-                    {"latitude" : 38.867580, "longitude" : -77.330360, "order" : 0},
-                    {"latitude" : 38.876535, "longitude" : -77.330060, "order" : 0},
-                    {"latitude" : 38.877002, "longitude" : -77.314997, "order" : 0},
-                    {"latitude" : 38.867513, "longitude" : -77.315769, "order" : 0}
-                ]
-            }
-        ]
 
         converted_boundary_points = self.convert_fly_zones(numpy.array([fly_zones]))
         self.obstacle_map = ObstacleMap(numpy.array([0,0,0]), converted_boundary_points)
@@ -83,13 +72,11 @@ class SDAConverter(object):
         :param obstacle_location: The obstacle's GPS location
         :type obstacle_location: Location
         :param obstacle: The obstacle to add
-        :type obstacle: StationaryObstacle or MovingObstacle
+        :type obstacle: StationaryObstacle
         """
         converted_obstacle_location = convert_to_point(self.initial_coordinates, obstacle_location)
-        if isinstance(obstacle, interop.StationaryObstacle):
-            new_obstacle = StationaryObstacle(converted_obstacle_location, obstacle.cylinder_radius, obstacle.cylinder_height)
-        else:
-            pass
+
+        new_obstacle = StationaryObstacle(converted_obstacle_location, obstacle.cylinder_radius, obstacle.cylinder_height)
 
         self.obstacle_map.add_obstacle(new_obstacle)
 
@@ -135,7 +122,7 @@ class SDAConverter(object):
     def has_path_changed(self, path1, path2):
         """
         Compares two paths to see if one has any changed points
-
+        
         :param path1: The first path to compare
         :type path1: Numpy Array
         :param path2: The second path to compare
@@ -182,7 +169,7 @@ class SDAConverter(object):
         """
         Returns the distance to the current guided waypoint
         """
-        if self.current_path.shape[0] != 0:
+        if self.does_guided_path_exist():
             distance = VectorMath.get_magnitude(self.current_path[self.current_path_index], self.obstacle_map.get_drone().get_point())
 
             return distance

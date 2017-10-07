@@ -1,21 +1,21 @@
 import multiprocessing
 import SUASSystem
 import dronekit
-from SUASSystem.logging import log
-from SUASSystem import GCSSettings
+from .suas_logging import *
+from .settings import GCSSettings
 from time import sleep
 
 # Setup logging information
 logger_queue = multiprocessing.Queue(-1)
-logger_listener_process = multiprocessing.Process(target=SUASSystem.logging.listener_process, args=(
+logger_listener_process = multiprocessing.Process(target=listener_process, args=(
     logger_queue,
-    SUASSystem.logging.logger_listener_configurer
+    logger_listener_configurer
 ))
 logger_listener_process.start()
-SUASSystem.logging.logger_worker_configurer(logger_queue)
+logger_worker_configurer(logger_queue)
 gcs_logger_name = multiprocessing.current_process().name
 
-def gcs_process(sda_status, img_proc_status, interop_position_update_rate):
+def gcs_process(sda_status, img_proc_status, interop_position_update_rate, interop_client_array):
     manager = multiprocessing.Manager()
     vehicle_state_data = manager.list()
     mission_information_data = manager.list()
@@ -38,6 +38,7 @@ def gcs_process(sda_status, img_proc_status, interop_position_update_rate):
         vehicle_state_data[0] = SUASSystem.get_vehicle_state(vehicle, GCSSettings.MSL_ALT)
 
         current_location = SUASSystem.Location(vehicle.location.global_relative_frame.lat, vehicle.location.global_relative_frame.lon, vehicle.location.global_relative_frame.alt)
+        print(current_location)
         location_log.append(current_location)
         """if (vehicle.location.global_relative_frame.alt * 3.28084) > GCSSettings.SDA_MIN_ALT and (vehicle.mode.name == "GUIDED" or vehicle.mode.name == "AUTO"):
             log("root", "Avoiding obstacles...")
@@ -48,6 +49,8 @@ def gcs_process(sda_status, img_proc_status, interop_position_update_rate):
         if waypoint_location:
             if vehicle.mode.name == "GUIDED" and has_uav_reached_waypoint(current_location, guided_waypoint_location):
                 vehicle.mode = VehicleMode("AUTO")"""
+
+        interop_client_array[0].post_telemetry(current_location, vehicle_state_data[0].get_direction())
 
         sleep(0.1)
 
@@ -72,7 +75,7 @@ def initialize_sda_process(sda_status, waypoints, sda_avoid_coords, vehicle_stat
         vehicle_state_data,
         mission_information_data,
     ))
-    sda_process.start()
+    #sda_process.start()
     log(gcs_logger_name, "SDA process instantiated")
 
     return sda_process
@@ -85,7 +88,7 @@ def initialize_image_processing_process(img_proc_status, location_log, targets_t
         location_log,
         targets_to_submit
     ))
-    img_proc_process.start()
+    #img_proc_process.start()
     log(gcs_logger_name, "Image Processing process instantiated")
 
     return img_proc_process
@@ -95,7 +98,7 @@ def connect_to_vehicle():
     vehicle = dronekit.connect(GCSSettings.UAV_CONNECTION_STRING, wait_ready=True)
     vehicle.wait_ready('autopilot_version')
     log(gcs_logger_name, "Connected to UAV on: %s" % GCSSettings.UAV_CONNECTION_STRING)
-    SUASSystem.logging.log_vehicle_state(vehicle, gcs_logger_name)
+    SUASSystem.suas_logging.log_vehicle_state(vehicle, gcs_logger_name)
 
     return vehicle
 

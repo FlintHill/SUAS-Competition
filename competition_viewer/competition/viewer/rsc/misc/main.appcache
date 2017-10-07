@@ -1,0 +1,16 @@
+CACHE MANIFEST
+# 2017-02-22:v1
+
+# Explicitly cached 'master entries'
+CACHE:
+viewer2.html
+rsc/js/jquery.3.1.1.min.js
+https://unpkg.com/leaflet@1.0.3/dist/leaflet.css
+https://unpkg.com/leaflet@1.0.3/dist/leaflet.js
+rsc/js/PBFParser.js
+
+# Resources that require the user to be online
+NETWORK:
+*
+
+# FALLBACK:

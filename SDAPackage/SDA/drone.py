@@ -46,7 +46,7 @@ class Drone(object):
         """
         Return True if the drone has hit the current waypoint
         """
-        return self.waypoint_holder.has_reached_waypoint(self.point)
+        return self.waypoint_holder.reached_current_waypoint(self.point)
 
     def get_point(self):
         """
