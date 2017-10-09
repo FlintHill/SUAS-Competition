@@ -30,52 +30,53 @@ class ObstacleMap(object):
         final_obstacles = np.array([])
         if self.obstacles.size != 0:
             final_obstacles = np.hstack((self.obstacles, obstacle_to_add))
-            final_obstacles = overlapping_obstacles(final_obstacles)
-            self.obstacles = np.hstack((self.obstacles, final_obstacles))
+            self.obstacles = self.replace_overlapping_obstacles(final_obstacles)
         else:
             self.obstacles = np.array([obstacle_to_add])
 
-    def overlapping_obstacles(self, final_obstacles):
+    def replace_overlapping_obstacles(self, final_obstacles):
+        '''
+
+        If obstacles intersect, delete overlapping obstacles and create a the new most efficient obstacle in its place.
+        Uses recursion in order to cover each obstacle in the given list
+        '''
         for first_obstacle_index in range(len(final_obstacles)):
             for second_obstacle_index in range(first_obstacle_index + 1, len(final_obstacles)):
-                if (overlap_obstancles_boolean(first_obstacle_index, second_obstacle_index, final_obstacles) is False)
-                    obstacle_for_adding = make_encompassing_circle(first_obstacle_index, second_obstacle_index, final_obstacles)
+                if (self.do_obstacles_overlap(final_obstacles[first_obstacle_index], final_obstacles[second_obstacle_index], final_obstacles) is True)
+                    encompassing_obstacle = self.make_encompassing_circle(final_obstacles[first_obstacle_index], final_obstacles[second_obstacle_index], final_obstacles)
                     np.delete(final_obstacles, first_obstacle_index)
                     np.delete(final_obstacles, second_obstacle_index)
-                    np.hstack(final_obstacles, obstacle_for_adding)
-                    return overlapping_obstacles(final_obstacles)
+                    final_obstacles = np.hstack([final_obstacles, encompassing_obstacle])
+                    return self.replace_overlapping_obstacles(final_obstacles)
+
         return final_obstacles
 
+    def do_obstacles_overlap(self, first_obstacle, second_obstacle, final_obstacles):
+        '''
 
-    def overlap_obstancles_boolean(self, first_obstacle_index, second_obstacle_index, final_obstacles):
-        #do obstacle squares intersect, returns True if they do not intersect
-        first_obstacle_points = final_obstacles[first_obstacle_index].make_avoidance_points()
-        second_obstacle_points = final_obstacles[second_obstacle_index].make_avoidance_points()
+        Check if obstacle squares intersect, returns True if they do intersect
+        '''
+        first_obstacle_points = first_obstacle.make_avoidance_points(self.drone.get_point()[2])
+        second_obstacle_points = second_obstacle.make_avoidance_points(self.drone.get_point()[2])
         if (first_obstacle_points[3][0] > second_obstacle_points[2][0])
             if(first_obstacle_points[2][0] <  second_obstacle_points[3][0])
                 if(first_obstacle_points[3][1] > second_obstacle_points[2][1])
                     if(first_obstacle_points[2][1] <  second_obstacle_points[3][1])
-                        return True
+                        return False
 
-        return False
+        return True
 
-    def make_encompassing_circle(self, first_obstacle_index, second_obstacle_index, final_obstacles):
-        circle1_x = final_obstacles[first_obstacle_index].getpoint()[0]
-        circle1_y = final_obstacles[first_obstacle_index].getpoint()[1]
-        circle2_x = final_obstacles[second_obstacle_index].getpoint()[0]
-        circle2_y = final_obstacles[second_obstacle_index].getpoint()[1]
+    def make_encompassing_circle(self, first_obstacle, second_obstacle, final_obstacles):
+        circle1_x = first_obstacle.getpoint()[0]
+        circle1_y = first_obstacle.getpoint()[1]
+        circle2_x = second_obstacle.getpoint()[0]
+        circle2_y = second_obstacle.getpoint()[1]
         dx = circle1_x - circle2_x
         dy = circle1_y - circle2_y
         dc = sqrt(dx**2 + dy**2)
-        new_radius = 0.5 * (final_obstacles[first_obstacle_index].get_safety_radius() + final_obstacles[second_obstacle_index].get_safety_radius() + dc)
-        new_x = circle1_x + (new_radius - final_obstacles[first_obstacle_index].get_safety_radius()) * (dx / dc)
-        new_y = circle1_y + (new_radius - final_obstacles[second_obstacle_index].get_safety_radius()) * (dy / dc)
-
-
-
-
-
-
+        new_radius = 0.5 * (first_obstacle.get_safety_radius() + second_obstacle.get_safety_radius() + dc)
+        new_x = circle1_x + (new_radius - first_obstacle.get_safety_radius()) * (dx / dc)
+        new_y = circle1_y + (new_radius - second_obstacle.get_safety_radius()) * (dy / dc)
 
     def add_waypoint(self, waypoint):
         """
@@ -140,10 +141,10 @@ class ObstacleMap(object):
                     [obstacle.get_point()[0] - obstacle.get_radius(), obstacle.get_point()[1] - obstacle.get_radius(), self.drone.get_point()[2]],
                     [obstacle.get_point()[0] + obstacle.get_radius(), obstacle.get_point()[1] - obstacle.get_radius(), self.drone.get_point()[2]],
                     [obstacle.get_point()[0] - obstacle.get_radius(), obstacle.get_point()[1] + obstacle.get_radius(), self.drone.get_point()[2]],
-                    [obstacle.get_point()[0], obstacle.get_point()[1] + obstacle.get_radius(), obstacle.get_height() + (Constants.STATIONARY_OBSTACLE_SAFETY_RADIUS * 2)],
-                    [obstacle.get_point()[0], obstacle.get_point()[1] - obstacle.get_radius(), obstacle.get_height() + (Constants.STATIONARY_OBSTACLE_SAFETY_RADIUS * 2)],
-                    [obstacle.get_point()[0] + obstacle.get_radius(), obstacle.get_point()[1], obstacle.get_height() + (Constants.STATIONARY_OBSTACLE_SAFETY_RADIUS * 2)],
-                    [obstacle.get_point()[0] - obstacle.get_radius(), obstacle.get_point()[1], obstacle.get_height() + (Constants.STATIONARY_OBSTACLE_SAFETY_RADIUS * 2)]
+                    [obstacle.get_point()[0], obstacle.get_point()[1] + obstacle.get_radius(), obstacle.get_height() + (Constants.STATIONARY_OBSTACLE_SAFETY_RADIUS)],
+                    [obstacle.get_point()[0], obstacle.get_point()[1] - obstacle.get_radius(), obstacle.get_height() + (Constants.STATIONARY_OBSTACLE_SAFETY_RADIUS)],
+                    [obstacle.get_point()[0] + obstacle.get_radius(), obstacle.get_point()[1], obstacle.get_height() + (Constants.STATIONARY_OBSTACLE_SAFETY_RADIUS)],
+                    [obstacle.get_point()[0] - obstacle.get_radius(), obstacle.get_point()[1], obstacle.get_height() + (Constants.STATIONARY_OBSTACLE_SAFETY_RADIUS)]
                 ]
 
                 new_paths = []
