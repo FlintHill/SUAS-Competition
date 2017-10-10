@@ -20,5 +20,5 @@ class CompassAngler(object):
 
     @staticmethod
     def getRandomCompassAngle():
-        randIndex = random.randint(0, len(CompassAngler.compassAngles) - 1)
-        return CompassAngler.compassAngles[randIndex][1]
+        randIndex = random.randint(0, len(CompassAngler.COMPASS_ANGLES) - 1)
+        return CompassAngler.COMPASS_ANGLES[randIndex][1]
