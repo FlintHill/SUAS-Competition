@@ -1,12 +1,14 @@
-from pysony import SonyAPI
+from pysony import SonyAPI, payload_header
+import urllib2
+import thread
+import time
+import shutil
+import os
 
-class ClassName(threading.Thread):
-    """docstring for ."""
-    def __init__(self, arg):
-        super(, self).__init__()
-        self.arg = arg
+class ClassName(object):
 
     def run(self):
+        camera = SonyAPI()
         if options.debug:
             print "searching for camera"
 
@@ -19,6 +21,6 @@ class ClassName(threading.Thread):
             print "No camera found, aborting"
             return
 
-        setContShootingSpeet("")
-
-        camera.setSelfTimer("5")
+        while true :
+            picture_url = camera.actTakePicture()
+            sleep(5)
