@@ -3,6 +3,7 @@ from .letter_generator import LetterGenerator
 from .random_letter_generator import RandomLetterGenerator
 from .specified_letter_generator import SpecifiedLetterGenerator
 from .noised_image_generator import NoisedImageGenerator
+from .shape import Shape
 from .rectangle import Rectangle
 from .triangle import Triangle
 from .circle import Circle
@@ -11,3 +12,8 @@ from .square import Square
 from .trapezoid import Trapezoid
 from .quarter_circle import QuarterCircle
 from .cross import Cross
+from .pentagon import Pentagon
+from .star import Star
+from .hexagon import Hexagon
+from .heptagon import Heptagon
+from .octagon import Octagon
