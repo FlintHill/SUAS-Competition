@@ -83,8 +83,8 @@ def get_mission_json(mission, obstacles):
         } for mission_waypoint in mission.mission_waypoints
     ]
     mission_in_json["off_axis_target_pos"] = {
-        "latitude" : mission.off_axis_target_pos.latitude,
-        "longitude" : mission.off_axis_target_pos.longitude
+        "latitude" : mission.off_axis_odlc_pos.latitude,
+        "longitude" : mission.off_axis_odlc_pos.longitude
     }
     mission_in_json["emergent_last_known_pos"] = {
         "latitude" : mission.emergent_last_known_pos.latitude,
