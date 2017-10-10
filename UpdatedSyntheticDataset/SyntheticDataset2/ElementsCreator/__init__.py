@@ -1,3 +1,5 @@
+from .raw_image_generator import RawImageGenerator
 from .letter_generator import LetterGenerator
 from .random_letter_generator import RandomLetterGenerator
 from .specified_letter_generator import SpecifiedLetterGenerator
+from .noised_image_generator import NoisedImageGenerator

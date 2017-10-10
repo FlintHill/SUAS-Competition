@@ -1,4 +1,4 @@
-from SyntheticDataset2.ElementsCreator import LetterGenerator
+from SyntheticDataset2.ElementsCreator import *
 from SyntheticDataset2.ImageOperations import *
 from PIL import Image
 from PIL import ImageDraw
@@ -36,7 +36,7 @@ class RandomLetterGenerator(LetterGenerator):
         5) return the resultant
         """
         image_dimension = self.font_size * self.letter_ratio
-        raw_image = Image.new("RGBA", (int(image_dimension), int(image_dimension)), self.background_color)
+        raw_image = RawImageGenerator.generate_raw_image(int(image_dimension), int(image_dimension), self.background_color)
         draw = ImageDraw.Draw(raw_image)
         font = ImageFont.truetype(self.font_type, self.font_size)
         draw.text((1, 1), self.letter_list[random.randint(0, 25)], self.letter_color, font = font)
