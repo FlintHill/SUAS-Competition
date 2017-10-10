@@ -1,9 +1,5 @@
 from PIL import Image
-from PIL import ImageDraw
-from PIL import ImageFont
-from SyntheticDataset2.ImageOperations import *
 from SyntheticDataset2.ElementsCreator import *
-import random
 import unittest
 
 class SpecifiedLetterGeneratorTestCase(unittest.TestCase):
