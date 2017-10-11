@@ -1,6 +1,6 @@
+import unittest
 from PIL import Image
 from SyntheticDataset2.ElementsCreator import *
-import unittest
 
 class SpecifiedLetterGeneratorTestCase(unittest.TestCase):
 

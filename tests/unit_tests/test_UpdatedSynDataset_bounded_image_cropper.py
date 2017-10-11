@@ -1,6 +1,6 @@
 import unittest
-from SyntheticDataset2.ImageOperations import *
 from PIL import Image
+from SyntheticDataset2.ImageOperations import *
 
 class BoundedImageCropperTestCase(unittest.TestCase):
 

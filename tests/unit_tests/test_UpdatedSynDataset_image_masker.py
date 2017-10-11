@@ -1,7 +1,6 @@
 import unittest
-from SyntheticDataset2.ElementsCreator import *
-from SyntheticDataset2.ImageOperations import *
 from PIL import Image
+from SyntheticDataset2.ImageOperations import *
 
 class ImageMaskerTestCase(unittest.TestCase):
 
