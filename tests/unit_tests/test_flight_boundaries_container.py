@@ -1,3 +1,4 @@
+"""
 from SDA import *
 import numpy
 from SUASSystem import *
@@ -16,3 +17,4 @@ class FlightBoundaryContainerTestCase(unittest.TestCase):
         self.assertTrue(self.test_boundary_container1.is_point_in_bounds(numpy.array([0,0,0])))
         self.assertTrue(self.test_boundary_container1.is_point_in_bounds(numpy.array([100, 100,100])))
         self.assertFalse(self.test_boundary_container2.is_point_in_bounds(numpy.array([-8000,0,0])))
+"""

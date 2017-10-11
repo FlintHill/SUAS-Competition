@@ -1,3 +1,4 @@
+"""
 from SUASSystem import *
 import math
 import numpy
@@ -6,9 +7,9 @@ import unittest
 class MathFunctionsTestCase(unittest.TestCase):
 
     def test_haversine(self):
-        """
-        Test the haversine math
-        """
+
+        #Test the haversine math
+
         location1 = Location(38.8703041, -77.3214035, 100)
         location2 = Location(38.8739395, -77.3245697, 100)
 
@@ -19,9 +20,9 @@ class MathFunctionsTestCase(unittest.TestCase):
         self.assertEqual(dz, 0)
 
     def test_inverse_haversine(self):
-        """
-        Test the inverse haversine math
-        """
+
+        #Test the inverse haversine math
+
         location1 = Location(38.8703041, -77.3214035, 100)
         actual_location2 = Location(38.8739395, -77.3245697, 100)
         dx, dy, dz = haversine(location1, actual_location2, units="US")
@@ -33,9 +34,9 @@ class MathFunctionsTestCase(unittest.TestCase):
         self.assertTrue(abs(inverse_haversine_gps.get_lon() - actual_location2.get_lon()) < 0.001)
 
     def test_convert_to_point(self):
-        """
-        Test the convert to point math
-        """
+
+        #Test the convert to point math
+
         home_location = Location(38.8703041, -77.3214035, 100)
         location1 = Location(38.8739395, -77.3245697, 100)
         location2 = Location(38.8702000, -77.3214035, 100)
@@ -48,3 +49,4 @@ class MathFunctionsTestCase(unittest.TestCase):
         new_point_4 = convert_to_point(home_location, location4)
 
         self.assertTrue(True)
+"""

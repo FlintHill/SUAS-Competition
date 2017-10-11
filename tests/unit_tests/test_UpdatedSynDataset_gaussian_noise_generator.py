@@ -34,10 +34,6 @@ class GaussianNoiseGeneratorTestCase(unittest.TestCase):
         self.test_image8 = GaussianNoiseGenerator.generate_gaussian_noise_by_radius(self.test_image2, 10)
         self.test_image9 = GaussianNoiseGenerator.generate_gaussian_noise_by_radius(self.test_image3, 15)
 
-        self.test_image7.show()
-        self.test_image8.show()
-        self.test_image9.show()
-
         self.assertFalse(self.test_image7.load()[1, 1] == (0, 255, 255, 255))
         self.assertFalse(self.test_image8.load()[1, 1] == (255, 0, 255, 255))
         self.assertTrue(self.test_image9.load()[1, 1] == (255, 255, 0, 255))

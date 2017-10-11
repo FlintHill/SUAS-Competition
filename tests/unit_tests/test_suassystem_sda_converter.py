@@ -1,3 +1,4 @@
+"""
 import unittest
 from SUASSystem import *
 from SDA import *
@@ -7,9 +8,9 @@ import interop
 class SDAConverterTestCase(unittest.TestCase):
 
     def setUp(self):
-        """
-        Initialize
-        """
+
+        #Initialize
+
         self.setup_client_converter()
 
     def setup_client_converter(self):
@@ -29,9 +30,9 @@ class SDAConverterTestCase(unittest.TestCase):
 
 
     def test_set_waypoints(self):
-        """
-        Test the set_waypoints() method
-        """
+
+        #Test the set_waypoints() method
+
         test_waypoint = Location(38.8742103, -77.3217697, 91.44000244140625)
         self.sda_converter.set_waypoint(test_waypoint)
         obstacle_map = self.sda_converter.obstacle_map
@@ -50,9 +51,9 @@ class SDAConverterTestCase(unittest.TestCase):
         self.assertEqual(obstacle_map.obstacles.size, 1)
 
     def test_reset_obstacles(self):
-        """
-        Test the reset_obstacles() method
-        """
+
+        #Test the reset_obstacles() method
+
         new_obstacle = interop.StationaryObstacle(38.8703041, -77.3214035, 0, 60.950000762939453)
         self.sda_converter.add_obstacle(Location(38.8703041, -77.3214035, 60.950000762939453), new_obstacle)
         obstacle_map = self.sda_converter.obstacle_map
@@ -71,3 +72,4 @@ class SDAConverterTestCase(unittest.TestCase):
         converted_uav_location = convert_to_point(self.initial_coordinates, new_location)
 
         self.assertTrue(numpy.array_equal(self.sda_converter.obstacle_map.drone.point, converted_uav_location))
+"""
