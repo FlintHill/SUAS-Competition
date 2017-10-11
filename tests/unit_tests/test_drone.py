@@ -1,4 +1,3 @@
-"""
 import numpy
 from SDA import WaypointHolder
 from SUASSystem import *
@@ -39,4 +38,3 @@ class DroneTestCase(unittest.TestCase):
         self.drone.reset_waypoints()
         self.drone.add_waypoint(numpy.array([20,20,20]))
         self.assertTrue(numpy.array_equal(numpy.array([[20, 20, 20]]), self.drone.get_waypoint_holder().waypoints))
-"""

@@ -1,4 +1,3 @@
-"""
 from SUASSystem import *
 import math
 import numpy
@@ -21,4 +20,3 @@ class locationTestCase(unittest.TestCase):
 
     def test__repr__(self):
         self.assertEquals('Lat: 5 Lon: 12 Alt: 20', self.position.__repr__())
-"""

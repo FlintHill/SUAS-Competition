@@ -1,4 +1,3 @@
-"""
 import unittest
 from SUASSystem import *
 from SDA import *
@@ -72,4 +71,3 @@ class SDAConverterTestCase(unittest.TestCase):
         converted_uav_location = convert_to_point(self.initial_coordinates, new_location)
 
         self.assertTrue(numpy.array_equal(self.sda_converter.obstacle_map.drone.point, converted_uav_location))
-"""

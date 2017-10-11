@@ -1,4 +1,3 @@
-"""
 import unittest
 from SUASSystem import *
 
@@ -48,4 +47,3 @@ class VehicleStateTestCase(unittest.TestCase):
         test_vehicle_state = VehicleState(self.lat, self.lon, self.alt, self.direction, self.groundspeed, self.velocity, self.obstacle_in_path, self.current_waypoint_number)
 
         self.assertEqual(test_vehicle_state.current_waypoint_number, self.current_waypoint_number)
-"""

@@ -1,4 +1,3 @@
-"""
 from SUASSystem import *
 import math
 import numpy
@@ -49,4 +48,3 @@ class MathFunctionsTestCase(unittest.TestCase):
         new_point_4 = convert_to_point(home_location, location4)
 
         self.assertTrue(True)
-"""
