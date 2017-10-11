@@ -42,10 +42,10 @@ class StationaryObstacle(Obstacle):
             [self.get_point()[0] - self.get_radius(), self.get_point()[1] - self.get_radius(), drone_altitude],
             [self.get_point()[0] + self.get_radius(), self.get_point()[1] - self.get_radius(), drone_altitude],
             [self.get_point()[0] - self.get_radius(), self.get_point()[1] + self.get_radius(), drone_altitude],
-            [self.get_point()[0], self.get_point()[1] + self.get_radius(), self.get_height() + (Constants.STATIONARY_OBSTACLE_SAFETY_RADIUS)],
-            [self.get_point()[0], self.get_point()[1] - self.get_radius(), self.get_height() + (Constants.STATIONARY_OBSTACLE_SAFETY_RADIUS)],
-            [self.get_point()[0] + self.get_radius(), self.get_point()[1], self.get_height() + (Constants.STATIONARY_OBSTACLE_SAFETY_RADIUS)],
-            [self.get_point()[0] - self.get_radius(), self.get_point()[1], self.get_height() + (Constants.STATIONARY_OBSTACLE_SAFETY_RADIUS)]
+            [self.get_point()[0], self.get_point()[1] + self.get_radius(), self.get_height() + Constants.STATIONARY_OBSTACLE_SAFETY_RADIUS],
+            [self.get_point()[0], self.get_point()[1] - self.get_radius(), self.get_height() + Constants.STATIONARY_OBSTACLE_SAFETY_RADIUS],
+            [self.get_point()[0] + self.get_radius(), self.get_point()[1], self.get_height() + Constants.STATIONARY_OBSTACLE_SAFETY_RADIUS],
+            [self.get_point()[0] - self.get_radius(), self.get_point()[1], self.get_height() + Constants.STATIONARY_OBSTACLE_SAFETY_RADIUS]
         ]
 
         return new_avoidance_pos_points

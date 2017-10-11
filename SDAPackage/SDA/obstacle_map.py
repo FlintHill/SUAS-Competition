@@ -27,7 +27,6 @@ class ObstacleMap(object):
         :param obstacle_to_add: The obstacle to add to the map
         :type obstacle_to_add: StationaryObstacle
         """
-        final_obstacles = np.array([])
         if self.obstacles.size != 0:
             final_obstacles = np.hstack((self.obstacles, obstacle_to_add))
             self.obstacles = self.replace_overlapping_obstacles(final_obstacles)
@@ -37,21 +36,21 @@ class ObstacleMap(object):
     def replace_overlapping_obstacles(self, final_obstacles):
         '''
 
-        If obstacles intersect, delete overlapping obstacles and create a the new most efficient obstacle in its place.
+        If obstacles intersect, delete overlapping obstacles and create the most efficient obstacle in its place.
         Uses recursion in order to cover each obstacle in the given list
         '''
         for first_obstacle_index in range(len(final_obstacles)):
             for second_obstacle_index in range(first_obstacle_index + 1, len(final_obstacles)):
-                if (self.do_obstacles_overlap(final_obstacles[first_obstacle_index], final_obstacles[second_obstacle_index], final_obstacles) is True)
+                if self.do_obstacles_overlap(final_obstacles[first_obstacle_index], final_obstacles[second_obstacle_index])
                     encompassing_obstacle = self.make_encompassing_circle(final_obstacles[first_obstacle_index], final_obstacles[second_obstacle_index], final_obstacles)
-                    np.delete(final_obstacles, first_obstacle_index)
-                    np.delete(final_obstacles, second_obstacle_index)
+                    final_obstacles = np.delete(final_obstacles, first_obstacle_index)
+                    final_obstacles = np.delete(final_obstacles, second_obstacle_index)
                     final_obstacles = np.hstack([final_obstacles, encompassing_obstacle])
                     return self.replace_overlapping_obstacles(final_obstacles)
 
         return final_obstacles
 
-    def do_obstacles_overlap(self, first_obstacle, second_obstacle, final_obstacles):
+    def do_obstacles_overlap(self, first_obstacle, second_obstacle):
         '''
 
         Check if obstacle squares intersect, returns True if they do intersect
@@ -77,6 +76,12 @@ class ObstacleMap(object):
         new_radius = 0.5 * (first_obstacle.get_safety_radius() + second_obstacle.get_safety_radius() + dc)
         new_x = circle1_x + (new_radius - first_obstacle.get_safety_radius()) * (dx / dc)
         new_y = circle1_y + (new_radius - second_obstacle.get_safety_radius()) * (dy / dc)
+        new_z = 0
+        if first_obstacle.get_point()[2] >= second_obstacle.get_point()[2]:
+            new_z = first_obstacle.get_point()[2]
+        else:
+            new_z = second_obstacle.get_point()[2]
+        return Obstacle(np.array([new_x, new_y, new_z]), new_radius)
 
     def add_waypoint(self, waypoint):
         """
