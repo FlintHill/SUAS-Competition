@@ -14,6 +14,7 @@ cd ../
 sudo rm -r simple-websocket-server
 
 sudo -H python -m pip install dronekit
+Sudo -H python -m pip install wxpython
 
 sudo -H python -m pip install ./SyntheticDataset -U
 sudo -H python -m pip install ./EigenFit -U
