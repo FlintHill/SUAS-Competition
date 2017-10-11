@@ -2,7 +2,5 @@
 ./SUASSystem
 ./SDAPackage
 ./UpdatedSyntheticDataset
-./EigenFit
-./ImgProcessingCLI
 nose
 dronekit
