@@ -1,10 +1,6 @@
-from PIL import Image
-from PIL import ImageDraw
-from PIL import ImageFont
-from SyntheticDataset2.ImageOperations import *
-from SyntheticDataset2.ElementsCreator import *
-import random
 import unittest
+from PIL import Image
+from SyntheticDataset2.ElementsCreator import *
 
 class SpecifiedLetterGeneratorTestCase(unittest.TestCase):
 
@@ -116,15 +112,3 @@ class SpecifiedLetterGeneratorTestCase(unittest.TestCase):
         self.assertTrue(test_image_x.load()[0, 0] == (self.test_color_x))
         self.assertTrue(test_image_x.load()[test_image_x.width-1, test_image_x.height-1] == (self.test_color_x))
         self.assertTrue(test_image_x.load()[test_image_x.width/2, test_image_x.height/2] == (self.test_color_x))
-
-        test_image1.show()
-        test_image2.show()
-        test_image3.show()
-        test_image4.show()
-        test_image5.show()
-        test_image6.show()
-        test_image7.show()
-        test_image8.show()
-        test_image9.show()
-        test_image10.show()
-        test_image_x.show()
