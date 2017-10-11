@@ -4,16 +4,13 @@ import abc
 class Shape(object):
     __metaclass__ = abc.ABCMeta
 
-    @abc.abstractmethod
     def __init__(self, color, rotation):
-
         """
         :param color: color of shape - RGB
         :type color: 3-tuple
         :param rotation: degrees counterclockwise shape will be rotated
         :type rotation: int
         """
-
         self.color = color
         self.rotation = rotation
 

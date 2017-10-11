@@ -4,7 +4,6 @@ from PIL import Image
 
 class UpdatedSyntheticDatasetShapesTestCase(unittest.TestCase):
 
-
     def test_rectangle(self):
         width = 100
         height = 50
@@ -15,9 +14,11 @@ class UpdatedSyntheticDatasetShapesTestCase(unittest.TestCase):
 
         test_rectangle = Rectangle(width, height, color, rotation)
         self.assertEqual(test_rectangle.draw().getpixel((50,25)), (255,0,0,255))
+        self.assertEqual(test_rectangle.draw().getpixel((80,40)), (255,0,0,255))
 
         test_rectangle.overlay(midpoint, test_background)
         self.assertEqual(test_background.getpixel(midpoint), (255,0,0,255))
+        self.assertEqual(test_background.getpixel((265,210)), (255,0,0,255))
 
     def test_triangle(self):
         base = 100
@@ -29,9 +30,11 @@ class UpdatedSyntheticDatasetShapesTestCase(unittest.TestCase):
 
         test_triangle = Triangle(base,height,color,rotation)
         self.assertEqual(test_triangle.draw().getpixel((100,100)), (255,0,0,255))
+        self.assertEqual(test_triangle.draw().getpixel((75,130)), (255,0,0,255))
 
         test_triangle.overlay(midpoint, test_background)
         self.assertEqual(test_background.getpixel(midpoint), (255,0,0,255))
+        self.assertEqual(test_background.getpixel((250,250)), (255,0,0,255))
 
     def test_circle(self):
         radius = 100
@@ -41,9 +44,11 @@ class UpdatedSyntheticDatasetShapesTestCase(unittest.TestCase):
 
         test_circle = Circle(radius,color)
         self.assertEqual(test_circle.draw().getpixel((50,25)), (255,0,0,255))
+        self.assertEqual(test_circle.draw().getpixel((60,50)), (255,0,0,255))
 
         test_circle.overlay(midpoint, test_background)
         self.assertEqual(test_background.getpixel(midpoint), (255,0,0,255))
+        self.assertEqual(test_background.getpixel((260,160)), (255,0,0,255))
 
     def test_half_circle(self):
         radius = 100
@@ -54,9 +59,11 @@ class UpdatedSyntheticDatasetShapesTestCase(unittest.TestCase):
 
         test_half_cirlce = HalfCircle(radius,color,rotation)
         self.assertEqual(test_half_cirlce.draw().getpixel((100,100)), (255,0,0,255))
+        self.assertEqual(test_half_cirlce.draw().getpixel((75,200)), (255,0,0,255))
 
         test_half_cirlce.overlay(midpoint, test_background)
         self.assertEqual(test_background.getpixel(midpoint), (255,0,0,255))
+        self.assertEqual(test_background.getpixel((215,340)), (255,0,0,255))
 
     def test_square(self):
         base = 100
@@ -67,9 +74,11 @@ class UpdatedSyntheticDatasetShapesTestCase(unittest.TestCase):
 
         test_square = Square(base,color,rotation)
         self.assertEqual(test_square.draw().getpixel((50,25)), (255,0,0,255))
+        self.assertEqual(test_square.draw().getpixel((20,70)), (255,0,0,255))
 
         test_square.overlay(midpoint, test_background)
         self.assertEqual(test_background.getpixel(midpoint), (255,0,0,255))
+        self.assertEqual(test_background.getpixel((250,195)), (255,0,0,255))
 
     def test_trapezoid(self):
         base1 = 75
@@ -82,9 +91,11 @@ class UpdatedSyntheticDatasetShapesTestCase(unittest.TestCase):
 
         test_trapezoid = Trapezoid(base1,base2,height,color,rotation)
         self.assertEqual(test_trapezoid.draw().getpixel((50,25)), (255,0,0,255))
+        self.assertEqual(test_trapezoid.draw().getpixel((70,30)), (255,0,0,255))
 
         test_trapezoid.overlay(midpoint, test_background)
         self.assertEqual(test_background.getpixel(midpoint), (255,0,0,255))
+        self.assertEqual(test_background.getpixel((300,250)), (255,0,0,255))
 
     def test_quarter_circle(self):
         radius = 100
@@ -95,9 +106,11 @@ class UpdatedSyntheticDatasetShapesTestCase(unittest.TestCase):
 
         test_quarter_circle = QuarterCircle(radius,color,rotation)
         self.assertEqual(test_quarter_circle.draw().getpixel((100,100)), (255,0,0,255))
+        self.assertEqual(test_quarter_circle.draw().getpixel((70,20)), (255,0,0,255))
 
         test_quarter_circle.overlay(midpoint, test_background)
         self.assertEqual(test_background.getpixel(midpoint), (255,0,0,255))
+        self.assertEqual(test_background.getpixel((250,300)), (255,0,0,255))
 
     def test_cross(self):
         height = 100
@@ -108,9 +121,11 @@ class UpdatedSyntheticDatasetShapesTestCase(unittest.TestCase):
 
         test_cross = Cross(height,color,rotation)
         self.assertEqual(test_cross.draw().getpixel((100,100)), (255,0,0,255))
+        self.assertEqual(test_cross.draw().getpixel((45,40)), (255,0,0,255))
 
         test_cross.overlay(midpoint, test_background)
         self.assertEqual(test_background.getpixel(midpoint), (255,0,0,255))
+        self.assertEqual(test_background.getpixel((225,285)), (255,0,0,255))
 
     def test_pentagon(self):
         radius = 100
@@ -121,9 +136,11 @@ class UpdatedSyntheticDatasetShapesTestCase(unittest.TestCase):
 
         test_pentagon = Pentagon(radius,color,rotation)
         self.assertEqual(test_pentagon.draw().getpixel((150,150)), (255,0,0,255))
+        self.assertEqual(test_pentagon.draw().getpixel((125,60)), (255,0,0,255))
 
         test_pentagon.overlay(midpoint, test_background)
         self.assertEqual(test_background.getpixel(midpoint), (255,0,0,255))
+        self.assertEqual(test_background.getpixel((210,330)), (255,0,0,255))
 
     def test_star(self):
         radius = 100
@@ -134,9 +151,11 @@ class UpdatedSyntheticDatasetShapesTestCase(unittest.TestCase):
 
         test_star = Star(radius,color,rotation)
         self.assertEqual(test_star.draw().getpixel((150,150)), (255,0,0,255))
+        self.assertEqual(test_star.draw().getpixel((170,100)), (255,0,0,255))
 
         test_star.overlay(midpoint, test_background)
         self.assertEqual(test_background.getpixel(midpoint), (255,0,0,255))
+        self.assertEqual(test_background.getpixel((230,200)), (255,0,0,255))
 
     def test_hexagon(self):
         radius = 100
@@ -147,9 +166,11 @@ class UpdatedSyntheticDatasetShapesTestCase(unittest.TestCase):
 
         test_hexagon = Hexagon(radius,color,rotation)
         self.assertEqual(test_hexagon.draw().getpixel((150,150)), (255,0,0,255))
+        self.assertEqual(test_hexagon.draw().getpixel((90,100)), (255,0,0,255))
 
         test_hexagon.overlay(midpoint, test_background)
         self.assertEqual(test_background.getpixel(midpoint), (255,0,0,255))
+        self.assertEqual(test_background.getpixel((260,200)), (255,0,0,255))
 
     def test_heptagon(self):
         radius = 100
@@ -160,9 +181,11 @@ class UpdatedSyntheticDatasetShapesTestCase(unittest.TestCase):
 
         test_heptagon = Heptagon(radius,color,rotation)
         self.assertEqual(test_heptagon.draw().getpixel((150,150)), (255,0,0,255))
+        self.assertEqual(test_heptagon.draw().getpixel((70,150)), (255,0,0,255))
 
         test_heptagon.overlay(midpoint, test_background)
         self.assertEqual(test_background.getpixel(midpoint), (255,0,0,255))
+        self.assertEqual(test_background.getpixel((235,185)), (255,0,0,255))
 
     def test_octagon(self):
         radius = 100
@@ -173,6 +196,8 @@ class UpdatedSyntheticDatasetShapesTestCase(unittest.TestCase):
 
         test_octagon = Octagon(radius,color,rotation)
         self.assertEqual(test_octagon.draw().getpixel((150,150)), (255,0,0,255))
+        self.assertEqual(test_octagon.draw().getpixel((100,170)), (255,0,0,255))
 
         test_octagon.overlay(midpoint, test_background)
         self.assertEqual(test_background.getpixel(midpoint), (255,0,0,255))
+        self.assertEqual(test_background.getpixel((240,200)), (255,0,0,255))
