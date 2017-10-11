@@ -1,5 +1,4 @@
 #!/bin/bash
-#sudo -H python -m pip install -r requirements.txt
 
 git clone https://github.com/auvsi-suas/interop
 cd interop/client
@@ -15,10 +14,16 @@ cd ../
 sudo rm -r simple-websocket-server
 
 sudo -H python -m pip install dronekit
+<<<<<<< 3f57579e8ce111e474e5bd2555479dafb82eda83
 sudo -H python -m pip install wxpython
 
 sudo -H python -m pip install ./SyntheticDataset -U
 sudo -H python -m pip install ./UpdatedSyntheticDataset -U
+=======
+Sudo -H python -m pip install wxpython
+
+sudo -H python -m pip install ./SyntheticDataset -U
+>>>>>>> fixed syntax errors found by travis
 sudo -H python -m pip install ./EigenFit -U
 sudo -H python -m pip install ./ImgProcessingCLI -U
 sudo -H python -m pip install ./SUASSystem -U
