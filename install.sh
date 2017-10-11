@@ -1,4 +1,5 @@
 #!/bin/bash
+#sudo -H python -m pip install -r requirements.txt
 
 git clone https://github.com/auvsi-suas/interop
 cd interop/client
@@ -14,7 +15,7 @@ cd ../
 sudo rm -r simple-websocket-server
 
 sudo -H python -m pip install dronekit
-Sudo -H python -m pip install wxpython
+sudo -H python -m pip install wxpython
 
 sudo -H python -m pip install ./SyntheticDataset -U
 sudo -H python -m pip install ./UpdatedSyntheticDataset -U
