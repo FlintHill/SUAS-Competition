@@ -90,10 +90,10 @@ class BoundedImageCropperTestCase(unittest.TestCase):
         self.assertTrue(self.test_image14.load()[self.test_image14.width/2+1, self.test_image14.height/2-1] == self.color1)
         self.assertTrue(self.test_image14.load()[self.test_image14.width-1, self.test_image14.height-1] == self.color3)
 
-        self.assertTrue(self.test_image15.load()[self.test_image15.width/2+1, self.test_image15.height/2-1] == self.color4)
+        self.assertTrue(self.test_image15.load()[self.test_image15.width/2, self.test_image15.height/2] == self.color4)
 
-        self.assertTrue(self.test_image16.load()[self.test_image16.width/2+1, self.test_image16.height/2-1] == self.color4)
+        self.assertTrue(self.test_image16.load()[self.test_image16.width/2, self.test_image16.height/2] == self.color4)
 
-        self.assertTrue(self.test_image17.load()[self.test_image17.width/2+1, self.test_image17.height/2-1] == self.color4)
+        self.assertTrue(self.test_image17.load()[self.test_image17.width/2, self.test_image17.height/2] == self.color4)
 
-        self.assertTrue(self.test_image18.load()[self.test_image18.width/2+1, self.test_image18.height/2-1] == self.color4)
+        self.assertTrue(self.test_image18.load()[self.test_image18.width/2, self.test_image18.height/2] == self.color4)
