@@ -1,6 +1,5 @@
 from SDA import *
 import numpy
-from SUASSystem import *
 import unittest
 
 class FlightBoundaryContainerTestCase(unittest.TestCase):
