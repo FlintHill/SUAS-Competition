@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 
-sh ./install_external.sh
+sh ./install_external_travis.sh
 
-nosetests --with-coverage tests/unit_tests
+nosetests tests/unit_tests
