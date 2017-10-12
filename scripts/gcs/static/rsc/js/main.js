@@ -179,6 +179,11 @@ function updateDirectionalButtons() {
 		$("a[name='right-button']").removeClass('disabled');
 }
 
+/**
+ * loadCropPreview()
+ *
+ * Triggered by the "Crop and Submit" button.
+ */
 function loadCropPreview() {
 	// load cropped image
 	/*
@@ -197,12 +202,130 @@ function loadCropPreview() {
 		orientation: 1
 	});*/
 
+	// display crop preview
+	$("#view").css({
+		"height": length + "px", 
+		"width": length + "px",
+
+		"background-image": "url('imgs/demo-1.jpg')",
+		"background-repeat": "no-repeat",
+		"background-attachment": "scroll", // fixed
+
+		"background-size": ((imageW/extrude) * length) + "px " + ((imageH/extrude) * length) + "px",
+		"background-position": "-" + topLeftX + "px -" + topLeftY + "px" // "0px 0px"
+	});
+
 	// load table data
 	$("#preview-filename").html(imgs[currentImage]);
 	$("#preview-x1").html(selectionPoints[0][0]);
 	$("#preview-y1").html(selectionPoints[0][1]);
 	$("#preview-x2").html(selectionPoints[1][0]);
 	$("#preview-y2").html(selectionPoints[1][1]);
+}
+
+/**
+ * submitCropPreview()
+ *
+ *
+ */
+function submitCropPreview() {
+
+	$.ajax({
+
+	});
+
+}
+
+// control panel code
+
+/**
+ * switchControlPanelRefresh()
+ *
+ * Enable or disable the automatic control panel refresh.
+ */
+function switchControlPanelRefresh() {
+	if($("#switch-control-panel-icon").hasClass("fa-spin"))
+		$("#switch-control-panel-icon").removeClass("fa-spin");
+	else
+		$("#switch-control-panel-icon").addClass("fa-spin");
+}
+
+/**
+ * statusPush(String process, String cmd)
+ *
+ * Turn on or off a subprocess, either:
+ *	- "interop-connection"
+ *	- "sda"
+ *	- "image-processing"
+ *
+ * 
+ */
+function statusPush(process, cmd) {
+	toastDuration = 4000;
+
+	// precondition: cmd valid
+	if(cmd != "off" && cmd != "on")
+		throw "statusChange(process, cmd ): Unknown String cmd '" + process + "'";
+
+	var program = "", friendlyProgramName = "";
+	switch(process) {
+		case "interop-connection":
+			program = "interop";
+			friendlyProgramName = "Interop. script";
+
+			break;
+		case "sda":
+			program = "sda";
+			friendlyProgramName = "SDA script";
+
+			break;
+		case "image-processing":
+			program = "img_proc";
+			friendlyProgramName = "Image Processing script"
+			
+			break;
+		default:
+			// precondiiton: process requested valid
+			throw "statusChange(process, cmd): Unknown String process '" + process + "'";
+	}
+
+	var urlCommand = "", shortCommand = "", command = "";
+
+	if("off" == cmd) {
+		// turn off
+		urlCommand = "Disabled";
+		shortCommand = "stop";
+		command = "stopped"
+	} else {
+		// turn on
+		urlCommand = "Enabled";
+		shortCommand = "start";
+		command = "started";
+	}
+
+	Materialize.toast('Sent ' + shortCommand.toUpperCase() + ' command to Interop. script.', toastDuration);
+
+	$.ajax({
+		url: "/post/" + program + "/" + urlCommand,
+		method: "POST",
+		timeout: 1000,
+
+		dataType: "json",
+
+		success: function(data) {
+			// interop was enabled
+			Materialize.toast(friendlyProgramName + ' was ' + command.toUpperCase() + '.', toastDuration);
+			console.log(friendlyProgramName + 'successfully ' + command + ', see data: ');
+			console.log(data);
+		},
+
+		error: function(data) {
+			// server side error
+			Materialize.toast('Failed to ' + shortCommand + ' ' + friendlyProgramName + '; See console.', toastDuration);
+			console.log(friendlyProgramName + ' failed to be ' + command + ', see data: ');
+			console.log(data);
+		}
+	});
 }
 
 // init code

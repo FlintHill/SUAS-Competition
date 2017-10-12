@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+
+		<meta name="creativity" content="">
+
+		<script src="rsc/js/jquery-3.2.1.min.js"></script>
+
+		<!--[if lt IE 9]>
+			<script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+	<body>
+		<script type="text/javascript">
+			var imageW = 3000;
+			var imageH = 2000;
+
+			var length = 400; 
+
+			var topLeftX = 0, topLeftY = 0, extrude = 1330;
+
+			$(document).ready(function() {
+				// calculate
+
+
+				// apply
+				$("#view").css({
+					"height": length + "px", 
+					"width": length + "px",
+
+					"background-image": "url('imgs/demo-1.jpg')",
+					"background-repeat": "no-repeat",
+					"background-attachment": "scroll", // fixed
+
+					"background-size": ((imageW/extrude) * length) + "px " + ((imageH/extrude) * length) + "px",
+					"background-position": "-" + topLeftX + "px -" + topLeftY + "px" // "0px 0px"
+				})
+			});
+		</script>
+
+		<div id="view" style="border:3px solid black"></div>
+
+		<!--<img id="view" src="imgs/demo-1.jpg" height="1000vh" width="100%"></div>-->
+	</body>
+</html>

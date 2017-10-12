@@ -39,6 +39,25 @@
 	left:3em;
 }
 
+.power-button-parent {
+	position:relative;
+}
+
+.power-button-anchor {
+	position:absolute;
+	right:0;
+}
+
+.power-button {
+	width:0px;
+	padding-left:14px;
+}
+
+small {
+	font-style:italic;
+	color:rgb(180,180,180);
+}
+
 .noselect {
 	-webkit-touch-callout:none;
 	-webkit-user-select:none;

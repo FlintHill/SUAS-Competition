@@ -19,61 +19,14 @@
 		<script src="rsc/libs/jquery.imgareaselect-0.9.10/scripts/jquery.imgareaselect.pack.js"></script>
 
 		<!-- Material Components -->
-		<link rel="stylesheet" type="text/css" href="rsc/css/materialize.min.css" />
+		<link rel="stylesheet" type="text/css" href="rsc/css/materialize.min.css">
 		<script src="rsc/js/materialize.min.js"></script>
 
 		<!-- Material Icon Font -->
 		<link rel="stylesheet" href="rsc/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
 
 		<!-- Custom -->
-		<style type="text/css">
-			.home-button-pos-fix {
-				position:absolute;
-				top:9px;
-				left:13px;
-			}
-			.counter-fix {
-				text-align:right;
-				margin-top:0.65em;
-				margin-bottom:0;
-			}
-			.special-container {
-				border-radius:5px;
-				padding:1em;
-				margin-bottom:1em;
-			}
-			.no-margins {
-				margin:0;
-			}
-			.input-text-fix {
-				top:10px;
-				margin-top:25px;
-			}
-			#image-previewer {
-				display:block;
-				margin:auto;
-			}
-			.shift-lock-icon {
-				left:3em;
-			}
-			.noselect {
-				-webkit-touch-callout:none;
-				-webkit-user-select:none;
-				-khtml-user-select:none;
-				-moz-user-select:none;
-				-ms-user-select:none;
-				user-select:none;
-			}
-			.select {
-				-webkit-touch-callout:auto;
-				-webkit-user-select:auto;
-				-khtml-user-select:auto;
-				-moz-user-select:auto;
-				-ms-user-select:auto;
-				user-select:auto;
-			}
-		</style>
-
+		<link rel="stylesheet" href="rsc/css/main.css">
 		<script src="rsc/js/main.js"></script>
 
 		<!--[if lt IE 9]>
@@ -105,7 +58,7 @@
 				<div class="row">
 					<div class="col s6">
 						<h5 style="margin-top:0;">Crop Preview</h5>
-						<img id="crop-previewer"></img>
+						<div id="crop-previewer"></div>
 					</div>
 					<div class="col s6">
 						<div class="special-container grey lighten-2">
@@ -165,18 +118,142 @@
 		<!-- Slide 1: Control Panel -->
 		<div id="test-swipe-1" class="col s12">
 			<div class="container">
-				<h3>Control Panel</h3>
+				<h3>
+					Control Panel
+					<a class="waves-effect waves-light btn power-button right tooltipped" style="margin-top:4px;" data-position="left" data-delay="50" data-tooltip="Enable automatic status refresh (1hz)" onclick="switchControlPanelRefresh()">
+						<i class="fa fa-refresh" id="switch-control-panel-icon" aria-hidden="true"></i>
+					</a>
+				</h3>
 				<div class="row">
-					<div class="col s4 special-container grey lighten-3">
-						<h5>Interoperability Connection</h5>
+					<div class="col s4">
+						<div class="special-container grey lighten-3 z-depth-1">
+							<div class="special-container red lighten-2" id="status-interop-connection">
+								<p class="center white-text no-margins">
+									<b>Disconnected</b>
+								</p>
+							</div>
+							<div class="power-button-parent">
+								<div class="power-button-anchor">
+									<a class="waves-effect waves-light btn power-button tooltipped green" data-position="left" data-tooltip="Turn on" onclick="statusPush('interop-connection', 'on')">
+										<i class="fa fa-power-off" aria-hidden="true"></i>
+									</a>
+								</div>
+
+								<h5 style="margin-top:0">Interop. Connection <!--<small>running</small>--></h5>
+								<table>
+									<thead>
+										<tr>
+											<th>Property</th>
+											<th>Value</th>
+										</tr>
+									</thead>
+
+									<tbody>
+										<tr>
+											<td>Status</td>
+											<td>unknown.jpg</td>
+										</tr>
+										<tr>
+											<td>Emergent position</td>
+											<td>
+												[38.783, -77.312]
+											</td>
+										</tr>
+										<tr>
+											<td>Airdrop position</td>
+											<td>
+												[38.783, -77.312]
+											</td>
+										</tr>
+										<tr>
+											<td>Off-axis position</td>
+											<td>
+												[38.783, -77.312]
+											</td>
+									</tbody>
+								</table>
+							</div>
+						</div>
 					</div>
-					<div class="col s4 special-container grey lighten-3">
-						<h5>SDA</h5>
+					<div class="col s4">
+						<div class="special-container grey lighten-3 z-depth-1">
+							<div class="special-container red lighten-2" id="status-sda">
+								<p class="center white-text no-margins">
+									<b>Disconnected</b>
+								</p>
+							</div>
+							<div class="power-button-parent">
+								<div class="power-button-anchor">
+									<a class="waves-effect waves-light btn power-button tooltipped green" data-position="left" data-tooltip="Turn on" onclick="statusPush('sda', 'on')">
+										<i class="fa fa-power-off" aria-hidden="true"></i>
+									</a>
+								</div>
+								<h5 style="margin-top:0">SDA</h5>
+								<table>
+									<thead>
+										<tr>
+											<th>Property</th>
+											<th>Value</th>
+										</tr>
+									</thead>
+
+									<tbody>
+										<tr>
+											<td>Status</td>
+											<td>unknown.jpg</td>
+										</tr>
+										<tr>
+											<td>Runtime</td>
+											<td>
+												4 minutes
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
 					</div>
-					<div class="col s4 special-container grey lighten-3">
-						<h5>Image Processing</h5>
+					<div class="col s4">
+						<div class="special-container grey lighten-3 z-depth-1">
+							<div class="special-container red lighten-2" id="status-image-processing">
+								<p class="center white-text no-margins">
+									<b>Disconnected</b>
+								</p>
+							</div>
+							<div class="power-button-parent">
+								<div class="power-button-anchor">
+									<a class="waves-effect waves-light btn power-button tooltipped green" data-position="left" data-tooltip="Turn on" onclick="statusPush('image-processing', 'on')">
+										<i class="fa fa-power-off" aria-hidden="true"></i>
+									</a>
+								</div>
+								<h5 style="margin-top:0">Image Processing</h5>
+								<table>
+									<thead>
+										<tr>
+											<th>Property</th>
+											<th>Value</th>
+										</tr>
+									</thead>
+
+									<tbody>
+										<tr>
+											<td>Status</td>
+											<td>unknown.jpg</td>
+										</tr>
+										<tr>
+											<td>Runtime</td>
+											<td>
+												[38.783, -77.312]
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
 					</div>
 				</div>
+				<hr>
+				<p class="grey-text">v0.1 /// Flinthill SUAS /// Last modified: October 5th, 2017</p>
 			</div>
 
 		</div>
