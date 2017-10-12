@@ -19,7 +19,6 @@ class ImageBounderTestCase(unittest.TestCase):
         self.assertEqual(ImageBounder.getBoundsOfColor(self.test_img1, self.test_image1, self.test_color1).getHeight(), 242)
 
         self.test_resultant1 = self.test_img1.crop((-1, -1, -1+322, -1+242))
-        self.test_resultant1.show()
 
         self.test_color2 = (255,0,0,255)
 
@@ -31,7 +30,6 @@ class ImageBounderTestCase(unittest.TestCase):
         self.assertEqual(ImageBounder.getBoundsOfColor(self.test_img2, self.test_image2, self.test_color2).getHeight(), 242)
 
         self.test_resultant2 = self.test_img2.crop((319, -1, 319+322, -1+242))
-        self.test_resultant2.show()
 
         self.test_img3 = Image.open("tests/images/image2_test_image_bounder.jpg")
         self.test_image3 = self.test_img3.load()
@@ -47,7 +45,6 @@ class ImageBounderTestCase(unittest.TestCase):
         self.assertEqual(ImageBounder.getBoundsOfColor(self.test_img3, self.test_image3, self.test_color3).getHeight(), 418)
 
         self.test_resultant3 = self.test_img3.crop((111, -1, 111+98, -1+418))
-        self.test_resultant3.show()
 
         self.test_color4 = (83,186,131)
 
@@ -59,4 +56,3 @@ class ImageBounderTestCase(unittest.TestCase):
         self.assertEqual(ImageBounder.getBoundsOfColor(self.test_img4, self.test_image4, self.test_color4).getHeight(), 418)
 
         self.test_resultant4 = self.test_img4.crop((335, -1, 335+98, -1+418))
-        self.test_resultant4.show()
