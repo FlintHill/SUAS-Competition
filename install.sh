@@ -17,6 +17,7 @@ sudo -H python -m pip install dronekit
 Sudo -H python -m pip install wxpython
 
 sudo -H python -m pip install ./SyntheticDataset -U
+sudo -H python -m pip install ./UpdatedSyntheticDataset -U
 sudo -H python -m pip install ./EigenFit -U
 sudo -H python -m pip install ./ImgProcessingCLI -U
 sudo -H python -m pip install ./SUASSystem -U
