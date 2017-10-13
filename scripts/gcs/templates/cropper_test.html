@@ -13,28 +13,47 @@
 	</head>
 	<body>
 		<script type="text/javascript">
-			var imageW = 3000;
-			var imageH = 2000;
+			var cropperW = 625.219;
+			var cropperH = 416.812;
+
+			var imageW = 6480;
+			var imageH = 4320;
 
 			var length = 400; 
 
-			var topLeftX = 0, topLeftY = 0, extrude = 1330;
+			var topLeftX = 467, topLeftY = 104, extrude = 33;
 
 			$(document).ready(function() {
 				// calculate
+				var transformedW = ((length/extrude) * imageW)/(imageW/cropperW);
+				//((length/extrude) * imageW)/4; //(extrude/cropperW) * imageW
+				var transformedH = ((length/extrude) * imageH)/(imageH/cropperH);
+				//((length/extrude) * imageH)/4;
 
+				var actual_topLeftX = (topLeftX/cropperW) * imageW;
+				var actual_topLeftY = (topLeftY/cropperH) * imageH;
+
+				var transformed_topLeftX = (transformedW/imageW) * actual_topLeftX;
+				var transformed_topLeftY = (transformedH/imageH) * actual_topLeftY;
 
 				// apply
 				$("#view").css({
 					"height": length + "px", 
 					"width": length + "px",
 
-					"background-image": "url('imgs/demo-1.jpg')",
+					"background-image": "url('imgs/04200534.jpg')",
 					"background-repeat": "no-repeat",
 					"background-attachment": "scroll", // fixed
 
-					"background-size": ((imageW/extrude) * length) + "px " + ((imageH/extrude) * length) + "px",
-					"background-position": "-" + topLeftX + "px -" + topLeftY + "px" // "0px 0px"
+					// output: 					11538							7692
+					"background-size": transformedW + "px " + transformedH + "px",
+					// output:  				7163					2081
+					"background-position": 
+						"-" + 
+						transformed_topLeftX + 
+						"px -" + 
+						transformed_topLeftY + 
+						"px" // "0px 0px"
 				})
 			});
 		</script>

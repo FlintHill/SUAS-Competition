@@ -58,6 +58,11 @@ small {
 	color:rgb(180,180,180);
 }
 
+#crop-previewer {
+	height:300px;
+	width:300px;
+}
+
 .noselect {
 	-webkit-touch-callout:none;
 	-webkit-user-select:none;

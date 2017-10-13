@@ -179,6 +179,8 @@ function updateDirectionalButtons() {
 		$("a[name='right-button']").removeClass('disabled');
 }
 
+//var imageW = 0;
+
 /**
  * loadCropPreview()
  *
@@ -203,24 +205,80 @@ function loadCropPreview() {
 	});*/
 
 	// display crop preview
-	$("#view").css({
-		"height": length + "px", 
-		"width": length + "px",
+	$(document).ready(function() {
 
-		"background-image": "url('imgs/demo-1.jpg')",
-		"background-repeat": "no-repeat",
-		"background-attachment": "scroll", // fixed
+		// var tmpImg = new Image();
 
-		"background-size": ((imageW/extrude) * length) + "px " + ((imageH/extrude) * length) + "px",
-		"background-position": "-" + topLeftX + "px -" + topLeftY + "px" // "0px 0px"
+		var imageW = $('#image-previewer')[0].naturalWidth; 
+		var imageH = $('#image-previewer')[0].naturalHeight;
+
+		var cropperW = $("#image-previewer").width();
+		var cropperH = $("#image-previewer").height();
+
+		//var imageURL = window.location.protocol + "//" + window.location.hostname + ":" + window.location.port + window.location.pathname + "imgs/" + imgs[currentImage];
+		//console.log("imageURL: " + imageURL);
+
+		/*tmpImg.src = (imageURL);
+
+		$.when(
+			$(tmpImg).one('load', function(){
+				imageW = tmpImg.width;
+				imageH = tmpImg.height;
+			})
+		).done(console.log("got imageW & imageH: " + imageW + " " + imageH));*/
+
+		console.log("continue");
+
+		var length = $("#crop-detail-panel").height();
+		var topLeftX = selectionPoints[0][0];
+		var topLeftY = selectionPoints[0][1];
+		var extrude = selectionPoints[1][0] - selectionPoints[0][0];
+
+		var transformedW = ((length/extrude) * imageW)/(imageW/cropperW);
+		var transformedH = ((length/extrude) * imageH)/(imageH/cropperH);
+
+		var actual_topLeftX = (topLeftX/cropperW) * imageW;
+		var actual_topLeftY = (topLeftY/cropperH) * imageH;
+
+		var transformed_topLeftX = (transformedW/imageW) * actual_topLeftX;
+		var transformed_topLeftY = (transformedH/imageH) * actual_topLeftY;
+
+		$("#crop-previewer").css({
+			//"height": length + "px", 
+			//"width": length + "px",
+
+			"border": "1px solid black",
+
+			"background-image": "url('imgs/" + imgs[currentImage] + "')",
+			"background-repeat": "no-repeat",
+			"background-attachment": "scroll", // fixed
+
+			"background-size": transformedW + "px " + transformedH + "px",
+			"background-position": 
+				"-" + 
+				transformed_topLeftX + 
+				"px -" + 
+				transformed_topLeftY + 
+				"px" // "0px 0px"
+		});
+
+		console.log("imageW: " + imageW);
+		console.log("length: " + length);
+		console.log("extrude: " + extrude);
+
+		// load table data
+		var actual_extrude = (extrude/cropperW) * imageW;
+
+		$("#preview-filename").html(imgs[currentImage]);
+		$("#preview-x1").html(Math.round(actual_topLeftX));
+		$("#preview-y1").html(Math.round(actual_topLeftY));
+		$("#preview-x2").html(Math.round(actual_topLeftX + actual_extrude));
+		$("#preview-y2").html(Math.round(actual_topLeftY + actual_extrude));
+		$("#preview-extrusion").html(Math.round(actual_extrude));
+
 	});
 
-	// load table data
-	$("#preview-filename").html(imgs[currentImage]);
-	$("#preview-x1").html(selectionPoints[0][0]);
-	$("#preview-y1").html(selectionPoints[0][1]);
-	$("#preview-x2").html(selectionPoints[1][0]);
-	$("#preview-y2").html(selectionPoints[1][1]);
+	
 }
 
 /**
@@ -268,21 +326,19 @@ function statusPush(process, cmd) {
 		throw "statusChange(process, cmd ): Unknown String cmd '" + process + "'";
 
 	var program = "", friendlyProgramName = "";
+	
 	switch(process) {
 		case "interop-connection":
 			program = "interop";
 			friendlyProgramName = "Interop. script";
-
 			break;
 		case "sda":
 			program = "sda";
 			friendlyProgramName = "SDA script";
-
 			break;
 		case "image-processing":
 			program = "img_proc";
 			friendlyProgramName = "Image Processing script"
-			
 			break;
 		default:
 			// precondiiton: process requested valid
