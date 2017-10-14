@@ -3,7 +3,8 @@
  * v0.1
  */
 
-// init
+// page init
+
 $(document).ready(function(){
 
 	// materialize ui starts
@@ -28,6 +29,7 @@ $(document).ready(function(){
 });
 
 // key combo watchdog
+
 $(document).keydown(function(event) {
 
 	if(event.ctrlKey == true) {
@@ -199,6 +201,18 @@ function updateDirectionalButtons() {
 
 }
 
+var cropData = {
+
+	targetTopLeftX: 0,
+	targetTopLeftY: 0,
+
+	targetBottomRightX: 0,
+	targetBottomRightY: 0,
+
+	imageFilename: "",
+
+};
+
 /**
  * loadCropPreview()
  *
@@ -254,9 +268,17 @@ function loadCropPreview() {
 		console.log("length: " + length);
 		console.log("extrude: " + extrude);
 
-		// load table data
+		// store
 		var actual_extrude = (extrude/cropperW) * imageW;
 
+		cropData.targetTopLeftX = Math.round(actual_topLeftX);
+		cropData.targetTopLeftY = Math.round(actual_topLeftY);
+		cropData.targetBottomRightX = Math.round(actual_topLeftX + actual_extrude);
+		cropData.targetBottomRightY = Math.round(actual_topLeftY + actual_extrude);
+
+		cropData.imageFilename = imgs[currentImage];
+
+		// load table data
 		$("#preview-filename").html(imgs[currentImage]);
 		$("#preview-x1").html(Math.round(actual_topLeftX));
 		$("#preview-y1").html(Math.round(actual_topLeftY));
@@ -269,14 +291,45 @@ function loadCropPreview() {
 }
 
 /**
- * submitCropPreview()
+ * submitTarget()
  *
  *
  */
-function submitCropPreview() {
+function submitTarget() {
 
 	$.ajax({
+		url: "/post/target",
+		method: "POST",
+		timeout: 1000,
 
+		data: {
+			targetTopLeftX: cropData.targetTopLeftX,
+			targetTopLeftY: cropData.targetTopLeftY,
+
+			targetBottomRightX: cropData.targetBottomRightX,
+			targetBottomRightY: cropData.targetBottomRightY,
+
+			imageFilename: cropData.imageFilename
+		},
+
+		dataType: "json",
+
+		success: function(data) {
+			// interop was enabled
+			Materialize.toast("SUCCESS: Sent target to backend script.");
+
+			console.log(data);
+
+			submittedImages++;
+			updateCounters();
+		},
+
+		error: function(data) {
+			// server side error
+			Materialize.toast("FAILURE: Unable to send target; See console.");
+
+			console.log(data);
+		}
 	});
 
 }
@@ -296,6 +349,8 @@ function switchControlPanelRefresh() {
 		$("#switch-control-panel-icon").addClass("fa-spin");
 
 }
+
+// front-to-backend code
 
 /**
  * statusPush(String process, String cmd)
