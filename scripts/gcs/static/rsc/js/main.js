@@ -5,6 +5,7 @@
 
 // init
 $(document).ready(function(){
+
 	// materialize ui starts
 	$('ul.tabs').tabs();
 	$('select').material_select();
@@ -17,14 +18,18 @@ $(document).ready(function(){
 		if(!$("#size-lock-icon").hasClass("fa-unlock"))
 			$("#size-lock-icon").removeClass("fa-lock").addClass("fa-unlock-alt");
 	}, function() {
+
 		// hover leave
 		if(!$("#size-lock-icon").hasClass("fa-unlock"))
 			$("#size-lock-icon").removeClass("fa-unlock-alt").addClass("fa-lock");
+
 	});
+
 });
 
 // key combo watchdog
 $(document).keydown(function(event) {
+
 	if(event.ctrlKey == true) {
 		console.log("control keyed ");
 		// all key bindings use control key, first
@@ -46,6 +51,7 @@ $(document).keydown(function(event) {
 				break;
 		}
 	};
+
 });
 
 // image height and width adjust
@@ -53,7 +59,9 @@ $(document).keydown(function(event) {
 var imageHeightLocked = true, establishedLockHeight = 0;
 
 $(document).ready(function() {
+
 	establishedLockHeight = $("#image-previewer-parent-container").height();
+
 });
 
 /**
@@ -72,6 +80,7 @@ $(document).ready(function() {
  * within the viewer box.
  */
 function switchImageHeightLock() {
+
 	if(imageHeightLocked) {
 		$("#image-previewer").removeAttr("height");
 		$("#image-previewer").attr("width", $("#image-previewer-container").width() + "px");
@@ -87,6 +96,7 @@ function switchImageHeightLock() {
 		$("#size-lock-icon").removeClass("fa-unlock").addClass("fa-lock");
 		$("#size-lock-button").removeClass("shift-lock-icon");
 	}
+
 }
 
 var currentImage = 0, totalImages = 0, submittedImages = 0;
@@ -98,9 +108,11 @@ var currentImage = 0, totalImages = 0, submittedImages = 0;
  * page.
  */
 function updateCounters() {
+
 	$("#current-image").html(currentImage + 1);
 	$("#total-images").html(totalImages);
 	$("#submitted-images").html(submittedImages);
+
 }
 
 /**
@@ -112,8 +124,10 @@ function updateCounters() {
  * returns true if an index, i, exists within array, arr.
  */
 function indexExistsIn(arr, i) {
+
 	if(i < arr.length && i >= 0)
 		return true;
+
 }
 
 /**
@@ -126,6 +140,7 @@ function indexExistsIn(arr, i) {
  * returns nothing.
  */
 function showImage(index) {
+
 	if(!indexExistsIn(imgs, index))
 		throw "showImage(index): Index out of bounds error: " + index + ".";
 
@@ -135,6 +150,7 @@ function showImage(index) {
 	$("#current-image").html(currentImage);
 
 	updateCounters();
+
 }
 
 /**
@@ -144,6 +160,7 @@ function showImage(index) {
  *		  ^			^
  */
 function imageSelect(direction) {
+
 	var change = 0;
 
 	if(direction == "left")
@@ -157,6 +174,7 @@ function imageSelect(direction) {
 		showImage(currentImage + change);
 
 	updateDirectionalButtons();
+
 }
 
 /**
@@ -166,6 +184,7 @@ function imageSelect(direction) {
  * appropriately.
  */
 function updateDirectionalButtons() {
+
 	// left button
 	if(currentImage == 0)
 		$("a[name='left-button']").addClass('disabled');
@@ -177,9 +196,8 @@ function updateDirectionalButtons() {
 		$("a[name='right-button']").addClass('disabled');
 	else
 		$("a[name='right-button']").removeClass('disabled');
-}
 
-//var imageW = 0;
+}
 
 /**
  * loadCropPreview()
@@ -187,22 +205,6 @@ function updateDirectionalButtons() {
  * Triggered by the "Crop and Submit" button.
  */
 function loadCropPreview() {
-	// load cropped image
-	/*
-	$("#crop-previewer").croppie({
-		url: "imgs/" + imgs[currentImage],
-		enableZoom: true,
-		showZoomer: true
-	});
-
-	$("#crop-previewer").bind({
-		url: "imgs/" + imgs[currentImage],
-		points: [
-			selectionPoints[0][0], selectionPoints[0][1],
-			selectionPoints[1][0], selectionPoints[1][1]
-		],
-		orientation: 1
-	});*/
 
 	// display crop preview
 	$(document).ready(function() {
@@ -214,20 +216,6 @@ function loadCropPreview() {
 
 		var cropperW = $("#image-previewer").width();
 		var cropperH = $("#image-previewer").height();
-
-		//var imageURL = window.location.protocol + "//" + window.location.hostname + ":" + window.location.port + window.location.pathname + "imgs/" + imgs[currentImage];
-		//console.log("imageURL: " + imageURL);
-
-		/*tmpImg.src = (imageURL);
-
-		$.when(
-			$(tmpImg).one('load', function(){
-				imageW = tmpImg.width;
-				imageH = tmpImg.height;
-			})
-		).done(console.log("got imageW & imageH: " + imageW + " " + imageH));*/
-
-		console.log("continue");
 
 		var length = $("#crop-detail-panel").height();
 		var topLeftX = selectionPoints[0][0];
@@ -278,7 +266,6 @@ function loadCropPreview() {
 
 	});
 
-	
 }
 
 /**
@@ -302,10 +289,12 @@ function submitCropPreview() {
  * Enable or disable the automatic control panel refresh.
  */
 function switchControlPanelRefresh() {
+
 	if($("#switch-control-panel-icon").hasClass("fa-spin"))
 		$("#switch-control-panel-icon").removeClass("fa-spin");
 	else
 		$("#switch-control-panel-icon").addClass("fa-spin");
+
 }
 
 /**
@@ -319,6 +308,7 @@ function switchControlPanelRefresh() {
  * 
  */
 function statusPush(process, cmd) {
+
 	toastDuration = 4000;
 
 	// precondition: cmd valid
@@ -407,6 +397,7 @@ var imgs = [], ias = null, selectionPoints = [];
  * returns nothing.
  */
 function loadImages() {
+
 	$.ajax({
 		url: "imgs/get.php",
 		
@@ -424,7 +415,13 @@ function loadImages() {
 				if($(imgs).index(Object.values(data)[i]) == -1)
 					imgs.push(Object.values(data)[i])
 
-			showImage(0); // presumed always present
+			if(currentImage != 0)
+				if(currentImage < Object.values(data).length) // if image index still exists (b/c images will be deleted)
+					showImage(currentImage); // maintain image index
+				else
+					showImage(0); // presumed always present
+			else
+				showImage(0);
 
 			// initialize image area selector
 			ias = $('#image-previewer').imgAreaSelect({ 
@@ -462,5 +459,6 @@ function loadImages() {
 			console.log(data);
 		}
 	});
+
 }
 
