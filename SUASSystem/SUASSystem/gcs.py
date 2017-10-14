@@ -28,12 +28,15 @@ def gcs_process(sda_status, img_proc_status, interop_position_update_rate, inter
     vehicle = connect_to_vehicle()
     waypoints = download_waypoints(vehicle)
 
-    mission_information_data.append(get_mission_json(interop_client_array[0].get_active_mission(), interop_client_array[0].get_obstacles()))
+    if len(interop_client_array) != 0:
+        mission_information_data.append(get_mission_json(interop_client_array[0].get_active_mission(), interop_client_array[0].get_obstacles()))
+    else:
+        mission_information_data.append({})
     vehicle_state_data.append(SUASSystem.get_vehicle_state(vehicle, GCSSettings.MSL_ALT))
 
     competition_viewer_process = initialize_competition_viewer_process(vehicle_state_data, mission_information_data)
-    img_proc_process = initialize_image_processing_process(img_proc_status, location_log, targets_to_submit)
-    sda_process = initialize_sda_process(sda_status, waypoints, sda_avoid_coords, vehicle_state_data, mission_information_data)
+    img_proc_process = initialize_image_processing_process(logger_queue, img_proc_status, location_log, targets_to_submit)
+    sda_process = initialize_sda_process(logger_queue, sda_status, waypoints, sda_avoid_coords, vehicle_state_data, mission_information_data)
     log(gcs_logger_name, "Completed instantiation of all child processes")
 
     guided_waypoint_location = None
@@ -43,8 +46,9 @@ def gcs_process(sda_status, img_proc_status, interop_position_update_rate, inter
 
         interop_position_update_rate.value += 1
         vehicle_state_data[0] = SUASSystem.get_vehicle_state(vehicle, GCSSettings.MSL_ALT)
-        interop_client_array[0].post_telemetry(current_location, vehicle_state_data[0].get_direction())
-        mission_information_data[0] = get_mission_json(interop_client_array[0].get_active_mission(), interop_client_array[0].get_obstacles())
+        if len(interop_client_array) != 0:
+            interop_client_array[0].post_telemetry(current_location, vehicle_state_data[0].get_direction())
+            mission_information_data[0] = get_mission_json(interop_client_array[0].get_active_mission(), interop_client_array[0].get_obstacles())
 
         if sda_status.value.lower() == "enabled":
             if (vehicle.location.global_relative_frame.alt * 3.28084) > GCSSettings.SDA_MIN_ALT and (vehicle.mode.name == "GUIDED" or vehicle.mode.name == "AUTO"):
@@ -71,7 +75,7 @@ def initialize_competition_viewer_process(vehicle_state_data, mission_informatio
 
     return competition_viewer_process
 
-def initialize_sda_process(sda_status, waypoints, sda_avoid_coords, vehicle_state_data, mission_information_data):
+def initialize_sda_process(logger_queue, sda_status, waypoints, sda_avoid_coords, vehicle_state_data, mission_information_data):
     log(gcs_logger_name, "Instantiating SDA process")
     sda_process = multiprocessing.Process(target=SUASSystem.run_sda_process, args=(
         logger_queue,
@@ -86,7 +90,7 @@ def initialize_sda_process(sda_status, waypoints, sda_avoid_coords, vehicle_stat
 
     return sda_process
 
-def initialize_image_processing_process(img_proc_status, location_log, targets_to_submit):
+def initialize_image_processing_process(logger_queue, img_proc_status, location_log, targets_to_submit):
     log(gcs_logger_name, "Instantiating Image Processing process")
     img_proc_process = multiprocessing.Process(target=SUASSystem.run_img_proc_process, args=(
         logger_queue,
