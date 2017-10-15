@@ -12,16 +12,24 @@ def index():
 @app.route('/post/sda/<string:status>')
 def update_sda_status(status):
     global client
-    client.set_sda_status(status)
 
-    return redirect(url_for('index'))
+    try:
+        client.set_sda_status(status)
+
+        return jsonify({"status" : "success"})
+    except:
+        return jsonify({"status" : "failure"})
 
 @app.route('/post/img_proc/<string:status>')
 def update_img_proc_status(status):
     global client
-    client.set_img_proc_status(status)
 
-    return redirect(url_for('index'))
+    try:
+        client.set_img_proc_status(status)
+
+        return jsonify({"status" : "success"})
+    except:
+        return jsonify({"status" : "failure"})
 
 @app.route('/interop/get_interop_position_update_rate')
 def get_interop_position_update_rate():
@@ -50,7 +58,7 @@ class Client(object):
         self.img_proc_status = self.manager.Value('s', "Disabled")
         self.interop_position_update_rate = self.manager.Value('i', 2.00)
         self.interop_client = self.manager.list()
-        self.interop_client.append(SUASSystem.InteropClientConverter())
+        #self.interop_client.append(SUASSystem.InteropClientConverter())
 
         self.gcs_process = multiprocessing.Process(target=SUASSystem.gcs_process, args=(
             self.sda_status,
@@ -58,7 +66,7 @@ class Client(object):
             self.interop_position_update_rate,
             self.interop_client
         ))
-        self.gcs_process.start()
+        #self.gcs_process.start()
 
     def set_sda_status(self, status):
         self.sda_status.value = status
