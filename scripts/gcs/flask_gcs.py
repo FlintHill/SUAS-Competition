@@ -1,8 +1,9 @@
-from flask import Flask, render_template, redirect, url_for, jsonify
+from flask import Flask, render_template, redirect, url_for, jsonify, send_from_directory
 import multiprocessing
 import SUASSystem
+import os
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='')
 
 @app.route('/')
 def index():
@@ -25,6 +26,21 @@ def update_img_proc_status(status):
 @app.route('/interop/get_interop_position_update_rate')
 def get_interop_position_update_rate():
     return jsonify(result=client.get_interop_position_update_rate())
+
+@app.route('/imgs/<path:path>')
+def get_image(path):
+    return send_from_directory('static/imgs', path)
+
+@app.route('/get/imgs')
+def get_image_list():
+    pictures = {}
+    picture_index = 0
+    for file_name in os.listdir('static/imgs'):
+        if file_name.endswith(".jpg"):
+            pictures[picture_index] = file_name
+            picture_index = picture_index + 1
+
+    return jsonify(pictures)
 
 class Client(object):
 
