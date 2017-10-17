@@ -223,7 +223,7 @@ function loadCropPreview() {
 	// display crop preview
 	$(document).ready(function() {
 
-		// var tmpImg = new Image();
+		// TODO: concatenate code.
 
 		var imageW = $('#image-previewer')[0].naturalWidth; 
 		var imageH = $('#image-previewer')[0].naturalHeight;
@@ -293,7 +293,7 @@ function loadCropPreview() {
 /**
  * submitTarget()
  *
- *
+ * TODO: Expand doc when tested in real/artificial environment.
  */
 function submitTarget() {
 
@@ -348,6 +348,8 @@ function switchControlPanelRefresh() {
 	else
 		$("#switch-control-panel-icon").addClass("fa-spin");
 
+	// TODO: make refresh code actually refresh. write this in real env.
+
 }
 
 // front-to-backend code
@@ -360,7 +362,7 @@ function switchControlPanelRefresh() {
  *	- "sda"
  *	- "image-processing"
  *
- * 
+ * TODO: Expand doc when tested in real/artificial environment.
  */
 function statusPush(process, cmd) {
 
