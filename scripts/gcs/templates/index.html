@@ -1,44 +1,372 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 	<head>
+		<meta charset="utf-8">
 
-		<title>GCS Client</title>
+		<title>GCS: Web UI</title>
 
-		<script type=text/javascript>
-			$SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
-		</script>
+		<link href="rsc/icons/favicon.ico" rel="icon" type="image/x-icon">
 
-		<script type=text/javascript src="{{url_for('static', filename='js/jquery.3.1.1.min.js') }}"></script>
+		<meta name="description" content="">
+		<meta name="author" content="James Villemarette">
+		<meta name="software" content="custom">
 
+		<meta name="creativity" content="">
+
+		<script src="rsc/js/jquery-3.2.1.min.js"></script>
+
+		<!-- Image Area Select for Manual Target Submission -->
+		<link rel="stylesheet" type="text/css" href="rsc/libs/jquery.imgareaselect-0.9.10/css/imgareaselect-default.css" />
+		<script src="rsc/libs/jquery.imgareaselect-0.9.10/scripts/jquery.imgareaselect.pack.js"></script>
+
+		<!-- Material Components -->
+		<link rel="stylesheet" type="text/css" href="rsc/css/materialize.min.css">
+		<script src="rsc/js/materialize.min.js"></script>
+
+		<!-- Material Icon Font -->
+		<link rel="stylesheet" href="rsc/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+
+		<!-- Custom -->
+		<link rel="stylesheet" href="rsc/css/main.css">
+		<script src="rsc/js/main.js"></script>
+
+		<!--[if lt IE 9]>
+			<script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.js"></script>
+		<![endif]-->
 	</head>
 	<body>
+		<!-- Verification Modal -->
+		<div id="verification" class="modal">
+			<div class="modal-content">
+				<h4>Image Submission Verification</h4>
+				<p>Are you sure that you want to submit this image? Look it over before you press submit.</p>
+				<div class="row">
+					<div class="col s6">
+						<h5 style="margin-top:0;">Crop Preview</h5>
+						<div id="crop-previewer"></div>
+					</div>
+					<div class="col s6" id="crop-detail-panel">
+						<div class="special-container grey lighten-2">
+							<h5 style="margin-top:0;">Crop Details</h5>
+							<table>
+								<thead>
+									<tr>
+										<th>Field Name</th>
+										<th>Value</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td>Filename</td>
+										<td><span id="preview-filename"><i>unknown</i>.jpg</span></td>
+									</tr>
+									<tr>
+										<td>Top Left Point (x1, y1)</td>
+										<td>
+											[<span id="preview-x1">0</span>, <span id="preview-y1">0</span>]
+										</td>
+									</tr>
+									<tr>
+										<td>Bottom Right Point (x2, y2)</td>
+										<td>
+											[<span id="preview-x2">0</span>, <span id="preview-y2">0</span>]
+										</td>
+									</tr>
+									<tr>
+										<td><i>Extrusion</i></td>
+										<td>
+											<span id="preview-extrusion">0</span> pixels
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<a class="waves-effect waves-light btn left red" onclick="$('#verification').modal('close');">Cancel</a>
+				<a href="#!" onclick="submitTarget();" class="modal-action modal-close waves-effect waves-green btn-flat">Submit</a>
+			</div>
+		</div>
 
-		{% if client %}
-			<h1> SDA: {{ client.get_sda_status() }}</h1>
-			<h1> SDA: {{ client.get_img_proc_status() }}</h1>
-			<h1> Interoperability submission update rate (hz): <span id="interop_position_update_rate"></span></h1>
-		{% endif %}
-
-		<script type=text/javascript>
-			setInterval(
-				function() {
-					$.getJSON($SCRIPT_ROOT + '/interop/get_interop_position_update_rate', {},
-						function(data) {
-							console.log(data.result);
-							$("#interop_position_update_rate").text(data.result);
-						});
-				},
-			1);
-		</script>
-
-		<ul>
-			<li><a href="/post/sda/Enabled">Enable SDA</a></li>
-			<li><a href="/post/sda/Disabled">Disable SDA</a></li>
+		<!-- Navbar -->
+		<nav>
+			<div class="nav-wrapper purple darken-1">
+				<a href="#" class="brand-logo">&nbsp;&nbsp;Ground Control Station</a>
+				<ul id="nav-mobile" class="right hide-on-med-and-down" style="height:64px;">
+					<li>
+						<a href="https://google.com/">
+							<i class="fa fa-close fa-2x" aria-hidden="true" style="line-height:60px"></i>
+						</a>
+					</li>
+				</ul>
+				
+			</div>
+		</nav>
+		<ul id="tabs-swipe-demo" class="tabs grey lighten-5">
+			<li class="tab col s3"><a href="#test-swipe-1"><i class="fa fa-home fa-2x home-button-pos-fix" aria-hidden="true"></i></a></li>
+			<li class="tab col s3"><a class="active" href="#test-swipe-2">Manual Target Submission</a></li>
 		</ul>
-		<br>
-		<ul>
-			<li><a href="/post/img_proc/Enabled">Enable Image Processing</a></li>
-			<li><a href="/post/img_proc/Disabled">Disable Image Processing</a></li>
-		</ul>
 
+		<!-- Slide 1: Control Panel -->
+		<div id="test-swipe-1" class="col s12">
+			<div class="container">
+				<h3>
+					Control Panel
+					<a class="waves-effect waves-light btn power-button right tooltipped" style="margin-top:4px;" data-position="left" data-delay="50" data-tooltip="Enable automatic status refresh (1hz)" onclick="switchControlPanelRefresh()">
+						<i class="fa fa-refresh" id="switch-control-panel-icon" aria-hidden="true"></i>
+					</a>
+				</h3>
+				<div class="row">
+					<div class="col s4">
+						<div class="special-container grey lighten-3 z-depth-1">
+							<div class="special-container red lighten-2" id="status-interop-connection">
+								<p class="center white-text no-margins">
+									<b>Disconnected</b>
+								</p>
+							</div>
+							<div class="power-button-parent">
+								<div class="power-button-anchor">
+									<a class="waves-effect waves-light btn power-button tooltipped green" data-position="left" data-tooltip="Turn on" onclick="statusPush('interop-connection', 'on')">
+										<i class="fa fa-power-off" aria-hidden="true"></i>
+									</a>
+								</div>
+
+								<h5 style="margin-top:0">Interop. Connection <!--<small>running</small>--></h5>
+								<table>
+									<thead>
+										<tr>
+											<th>Property</th>
+											<th>Value</th>
+										</tr>
+									</thead>
+
+									<tbody>
+										<tr>
+											<td>Status</td>
+											<td>unknown.jpg</td>
+										</tr>
+										<tr>
+											<td>Emergent position</td>
+											<td>
+												[38.783, -77.312]
+											</td>
+										</tr>
+										<tr>
+											<td>Airdrop position</td>
+											<td>
+												[38.783, -77.312]
+											</td>
+										</tr>
+										<tr>
+											<td>Off-axis position</td>
+											<td>
+												[38.783, -77.312]
+											</td>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+					<div class="col s4">
+						<div class="special-container grey lighten-3 z-depth-1">
+							<div class="special-container red lighten-2" id="status-sda">
+								<p class="center white-text no-margins">
+									<b>Disconnected</b>
+								</p>
+							</div>
+							<div class="power-button-parent">
+								<div class="power-button-anchor">
+									<a class="waves-effect waves-light btn power-button tooltipped green" data-position="left" data-tooltip="Turn on" onclick="statusPush('sda', 'on')">
+										<i class="fa fa-power-off" aria-hidden="true"></i>
+									</a>
+								</div>
+								<h5 style="margin-top:0">SDA</h5>
+								<table>
+									<thead>
+										<tr>
+											<th>Property</th>
+											<th>Value</th>
+										</tr>
+									</thead>
+
+									<tbody>
+										<tr>
+											<td>Status</td>
+											<td>unknown.jpg</td>
+										</tr>
+										<tr>
+											<td>Runtime</td>
+											<td>
+												4 minutes
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+					<div class="col s4">
+						<div class="special-container grey lighten-3 z-depth-1">
+							<div class="special-container red lighten-2" id="status-image-processing">
+								<p class="center white-text no-margins">
+									<b>Disconnected</b>
+								</p>
+							</div>
+							<div class="power-button-parent">
+								<div class="power-button-anchor">
+									<a class="waves-effect waves-light btn power-button tooltipped green" data-position="left" data-tooltip="Turn on" onclick="statusPush('image-processing', 'on')">
+										<i class="fa fa-power-off" aria-hidden="true"></i>
+									</a>
+								</div>
+								<h5 style="margin-top:0">Image Processing</h5>
+								<table>
+									<thead>
+										<tr>
+											<th>Property</th>
+											<th>Value</th>
+										</tr>
+									</thead>
+
+									<tbody>
+										<tr>
+											<td>Status</td>
+											<td>unknown.jpg</td>
+										</tr>
+										<tr>
+											<td>Runtime</td>
+											<td>
+												[38.783, -77.312]
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+				<hr>
+				<p class="grey-text">v0.1 /// Flinthill SUAS /// Last modified: October 5th, 2017</p>
+			</div>
+
+		</div>
+		<!-- Slide 2: Image Preview and Cropper -->
+		<div id="test-swipe-2" class="col s12">
+			<div class="row">
+				<div class="col s1"></div>
+				<div class="col s10 noselect">
+					<div class="row no-margins">
+						<div class="col s6">
+							<h3>Image Preview and Cropper</h3>
+						</div>
+						<div class="col s6">
+							<h5 class="right grey-text counter-fix">
+								(<span id="current-image">?</span>/<span id="total-images">?</span>) images<br>
+								0 submitted targets
+							</h5>
+						</div>
+					</div>
+					
+					<div class="special-container grey lighten-2">
+						<div class="row" style="margin-bottom:0">
+							<div class="col s8">
+								<a class="waves-effect waves-light btn tooltipped" name="load-images-button" data-position="right" data-tooltip="Command + Up" onclick="loadImages()">
+									<i class="fa fa-upload left"></i> load images
+								</a>
+								<!-- functionality not supported by ImageAreaSelect -->
+								<!--<a class="waves-effect waves-light btn disabled tooltipped" name="remove-crop-button" data-position="right" data-tooltip="Command + Delete" onclick="ias.cancelSelection();">
+									<i class="fa fa-ban left"></i> remove crop
+								</a>-->
+								<a class="waves-effect waves-light btn green modal-trigger disabled tooltipped" name="crop-and-submit-button" data-position="right" data-delay="800" data-tooltip="Command + Enter" href="#verification" onclick="loadCropPreview()">
+									<i class="fa fa-sign-in left"></i> crop and submit
+								</a>
+							</div>
+							<div class="col s4">
+								<div class="right">
+									<a class="waves-effect waves-light btn tooltipped light-blue disabled" name="left-button" data-position="left" data-delay="760" data-tooltip="Command + Left" onclick="imageSelect('left')">
+										<i class="fa fa-arrow-left"></i>
+									</a>
+									<a class="waves-effect waves-light btn tooltipped light-blue disabled" name="right-button" data-position="left" data-delay="760" data-tooltip="Command + Right" onclick="imageSelect('right')">
+										<i class="fa fa-arrow-right"></i>
+									</a>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="special-container grey lighten-3">
+						<div class="row" id="image-previewer-parent-container">
+							<div class="col s9" id="image-previewer-container">
+								<!-- Image Previewer -->
+								<a class="waves-effect waves-light btn tooltipped" style="position:absolute" id="size-lock-button" data-position="right" data-tooltip="Lock height of image to height of box: Command + L" onclick="switchImageHeightLock()">
+									<i class="fa fa-lock" id="size-lock-icon" aria-hidden="true"></i>
+								</a>
+								<img id="image-previewer" src="">
+							</div>
+							<div class="col s3">
+								<div class="special-container white lighten-4">
+									<h5 style="margin-top:0">Specifications</h5>
+									<select>
+										<option value="" disabled selected>Shape</option>
+										<option value="circle">Circle</option>
+										<option value="cross">Cross</option>
+										<option value="heptagon">Heptagon</option>
+										<option value="hexagon">Hexagon</option>
+										<option value="octagon">Octagon</option>
+										<option value="pentagon">Pentagon</option>
+										<option value="quarter_circle">Quarter circle</option>
+										<option value="rectangle">Rectangle</option>
+										<option value="semicircle">Semicircle</option>
+										<option value="square">Square</option>
+										<option value="star">Star</option>
+										<option value="trapezoid">Trapezoid</option>
+										<option value="triangle">Triangle</option>
+									</select>
+									<select style="margin-bottom:4em">
+										<option value="" disabled selected>Shape Color</option>
+										<option class="red-text" value="red">Red</option>
+										<option value="orange">Orange</option>
+										<option value="yellow">Yellow</option>
+										<option value="green">Green</option>
+										<option value="blue">Blue</option>
+										<option value="indigo">Indigo</option>
+										<option value="violet">Violet</option>
+										<option value="white">White</option>
+									</select>
+									<div class="input-field input-text-fix">
+										<input placeholder="A letter or number" id="first_name" type="text" class="validate">
+										<label for="first_name">Alphanumeric Content</label>
+									</div>
+									<select name="color">
+										<option value="" disabled selected>Alphanumeric Color</option>
+										<option class="red-text" value="red">Red</option>
+										<option value="orange">Orange</option>
+										<option value="yellow">Yellow</option>
+										<option value="green">Green</option>
+										<option value="blue">Blue</option>
+										<option value="indigo">Indigo</option>
+										<option value="violet">Violet</option>
+										<option value="white">White</option>
+									</select>
+									<select name="orientation">
+										<option value="" disabled selected>Orientation</option>
+										<option value="N">North</option>
+										<option value="NE">North-East</option>
+										<option value="E">East</option>
+										<option value="SE">South-East</option>
+										<option value="S">South</option>
+										<option value="SW">South-West</option>
+										<option value="W">West</option>
+										<option value="NW">North-West</option>
+									</select>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col s1"></div>
+			</div>
+		</div>
 	</body>
 </html>
+
