@@ -87,5 +87,3 @@ class Client(object):
         return self.interop_position_update_rate.value
 
 client = Client()
-
-
