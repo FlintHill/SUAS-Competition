@@ -309,7 +309,13 @@ function submitTarget() {
 			targetBottomRightX: cropData.targetBottomRightX,
 			targetBottomRightY: cropData.targetBottomRightY,
 
-			imageFilename: cropData.imageFilename
+			imageFilename: cropData.imageFilename,
+
+			targetShape: $("#target-shape").val(),
+			targetColor: $("#target-color").val(),
+			targetContent: $("#target-content").val(),
+			contentColor: $("#content-color").val(),
+			targetOrientation: $("#target-orientation").val()
 		},
 
 		dataType: "json",
