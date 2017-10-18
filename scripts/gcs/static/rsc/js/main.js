@@ -402,12 +402,12 @@ function statusPush(process, cmd) {
 
 	if("off" == cmd) {
 		// turn off
-		urlCommand = "Disabled";
+		urlCommand = "disconnected";
 		shortCommand = "stop";
 		command = "stopped"
 	} else {
 		// turn on
-		urlCommand = "Enabled";
+		urlCommand = "connected";
 		shortCommand = "start";
 		command = "started";
 	}
