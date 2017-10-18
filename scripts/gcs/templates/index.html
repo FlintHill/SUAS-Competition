@@ -105,7 +105,11 @@
 			</div>
 		</nav>
 		<ul id="tabs-swipe-demo" class="tabs grey lighten-5">
-			<li class="tab col s3"><a href="#test-swipe-1"><i class="fa fa-home fa-2x home-button-pos-fix" aria-hidden="true"></i></a></li>
+			<li class="tab col s3">
+				<a href="#test-swipe-1" onclick="statusGet()">
+					<i class="fa fa-home fa-2x home-button-pos-fix" aria-hidden="true"></i>
+				</a>
+			</li>
 			<li class="tab col s3"><a class="active" href="#test-swipe-2">Manual Target Submission</a></li>
 		</ul>
 
@@ -121,9 +125,9 @@
 				<div class="row">
 					<div class="col s4">
 						<div class="special-container grey lighten-3 z-depth-1">
-							<div class="special-container red lighten-2" id="status-interop-connection">
+							<div id="interop-light" class="special-container red lighten-2">
 								<p class="center white-text no-margins">
-									<b>Disconnected</b>
+									<b id="interop-light-text">Disconnected</b>
 								</p>
 							</div>
 							<div class="power-button-parent">
@@ -145,24 +149,24 @@
 									<tbody>
 										<tr>
 											<td>Status</td>
-											<td>unknown.jpg</td>
+											<td id="interop-status"><i>Unknown</i></td>
 										</tr>
 										<tr>
 											<td>Emergent position</td>
-											<td>
-												[38.783, -77.312]
+											<td id="interop-emergent_position">
+												[0.0, 0.0]
 											</td>
 										</tr>
 										<tr>
 											<td>Airdrop position</td>
-											<td>
-												[38.783, -77.312]
+											<td id="interop-airdrop_position">
+												[0.0, 0.0]
 											</td>
 										</tr>
 										<tr>
 											<td>Off-axis position</td>
-											<td>
-												[38.783, -77.312]
+											<td id="interop-off-axis_position">
+												[0.0, 0.0]
 											</td>
 									</tbody>
 								</table>
@@ -171,9 +175,9 @@
 					</div>
 					<div class="col s4">
 						<div class="special-container grey lighten-3 z-depth-1">
-							<div class="special-container red lighten-2" id="status-sda">
+							<div id="sda-light" class="special-container red lighten-2" id="status-sda">
 								<p class="center white-text no-margins">
-									<b>Disconnected</b>
+									<b id="sda-light-text">Disconnected</b>
 								</p>
 							</div>
 							<div class="power-button-parent">
@@ -194,12 +198,12 @@
 									<tbody>
 										<tr>
 											<td>Status</td>
-											<td>unknown.jpg</td>
+											<td id="sda-status"><i>Unknown</i></td>
 										</tr>
 										<tr>
 											<td>Runtime</td>
-											<td>
-												4 minutes
+											<td id="sda-runtime">
+												0 mins, 0 secs
 											</td>
 										</tr>
 									</tbody>
@@ -209,9 +213,9 @@
 					</div>
 					<div class="col s4">
 						<div class="special-container grey lighten-3 z-depth-1">
-							<div class="special-container red lighten-2" id="status-image-processing">
+							<div id="img_proc-light" class="special-container red lighten-2" id="status-image-processing">
 								<p class="center white-text no-margins">
-									<b>Disconnected</b>
+									<b id="img_proc-light-text">Disconnected</b>
 								</p>
 							</div>
 							<div class="power-button-parent">
@@ -232,12 +236,12 @@
 									<tbody>
 										<tr>
 											<td>Status</td>
-											<td>unknown.jpg</td>
+											<td id="img_proc-status"><i>Unknown</i></td>
 										</tr>
 										<tr>
 											<td>Runtime</td>
-											<td>
-												[38.783, -77.312]
+											<td id="img_proc-runtime">
+												0 mins, 0 secs
 											</td>
 										</tr>
 									</tbody>
@@ -306,7 +310,7 @@
 							<div class="col s3">
 								<div class="special-container white lighten-4">
 									<h5 style="margin-top:0">Specifications</h5>
-									<select>
+									<select id="target-shape">
 										<option value="" disabled selected>Shape</option>
 										<option value="circle">Circle</option>
 										<option value="cross">Cross</option>
@@ -322,7 +326,7 @@
 										<option value="trapezoid">Trapezoid</option>
 										<option value="triangle">Triangle</option>
 									</select>
-									<select style="margin-bottom:4em">
+									<select id="target-color" style="margin-bottom:4em">
 										<option value="" disabled selected>Shape Color</option>
 										<option class="red-text" value="red">Red</option>
 										<option value="orange">Orange</option>
@@ -334,10 +338,10 @@
 										<option value="white">White</option>
 									</select>
 									<div class="input-field input-text-fix">
-										<input placeholder="A letter or number" id="first_name" type="text" class="validate">
+										<input placeholder="A letter or number" id="target-content" type="text" class="validate">
 										<label for="first_name">Alphanumeric Content</label>
 									</div>
-									<select name="color">
+									<select id="content-color" name="color">
 										<option value="" disabled selected>Alphanumeric Color</option>
 										<option class="red-text" value="red">Red</option>
 										<option value="orange">Orange</option>
@@ -348,7 +352,7 @@
 										<option value="violet">Violet</option>
 										<option value="white">White</option>
 									</select>
-									<select name="orientation">
+									<select id="target-orientation" name="orientation">
 										<option value="" disabled selected>Orientation</option>
 										<option value="N">North</option>
 										<option value="NE">North-East</option>

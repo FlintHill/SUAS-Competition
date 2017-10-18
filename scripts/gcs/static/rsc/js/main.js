@@ -342,6 +342,8 @@ function submitTarget() {
 
 // control panel code
 
+var refresh = null;
+
 /**
  * switchControlPanelRefresh()
  *
@@ -349,12 +351,17 @@ function submitTarget() {
  */
 function switchControlPanelRefresh() {
 
-	if($("#switch-control-panel-icon").hasClass("fa-spin"))
+	if($("#switch-control-panel-icon").hasClass("fa-spin")) {
+		// stop auto refreshing
 		$("#switch-control-panel-icon").removeClass("fa-spin");
-	else
+
+		clearInterval(refresh);
+	} else {
+		// start auto refreshing
 		$("#switch-control-panel-icon").addClass("fa-spin");
 
-	// TODO: make refresh code actually refresh. write this in real env.
+		refresh = setInterval(function() { statusGet(); }, 1000); // 1000ms = 1s
+	}
 
 }
 
@@ -435,6 +442,66 @@ function statusPush(process, cmd) {
 			console.log(data);
 		}
 	});
+
+}
+
+/**
+ * statusGet()
+ *
+ * Retrieves the status informaition of the different subprocesses for the 
+ * control panel.
+ */
+function statusGet() {
+
+	// TODO: make refresh code actually refresh. write this in real env.
+
+	const programs = ["interop", "img_proc", "sda"];
+
+	programs.forEach(function(program_name) {
+
+		$.ajax({
+			url: "/get/" + program_name,
+			method: "POST",
+			timeout: 1000,
+			async: true,
+
+			dataType: "json",
+
+			success: function(data) {
+				// interop was enabled
+				console.log("/get/" + program_name + " successful, displaying data.");
+
+				var ref = "#" + program_name;
+
+				if(program_name = "interop") {
+					$(ref + "-status").html(data["status"]);
+					$(ref + "-emergent_position").html(data["emergent_position"]);
+					$(ref + "-airdrop_position").html(data["airdrop_position"]);
+					$(ref + "-off-axis_position").html(data["off-axis_position"]);
+				} else {
+					$(ref + "-status").html(data["status"]);
+					$(ref + "-runtime").html(data["runtime"]);
+				}
+
+				if(data["status"] == "connnected") {
+					if(!$(ref + "-light").hasClass("green"))
+						$(ref + "-light").removeClass("red").addClass("green");
+				} else if(data["status"] == "disconnected") {
+					if(!$(ref + "-light").hasClass("red"))
+						$(ref + "-light").removeClass("green").addClass("red");
+				}
+			},
+
+			error: function(data) {
+				// server side error
+				Materialize.toast('See console: /get/' +  program_name + ' failed.', 1000);
+				console.log("/get/" + program_name + ' failed, see data: ');
+				console.log(data);
+			}
+		});
+
+	});
+
 }
 
 // init code
