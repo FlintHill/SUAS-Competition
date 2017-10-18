@@ -9,7 +9,7 @@ app = Flask(__name__, static_url_path='')
 def index():
     return render_template('index.html', client=client)
 
-@app.route('/post/sda/<string:status>')
+@app.route('/post/sda/<string:status>', methods=["POST"])
 def update_sda_status(status):
     global client
 
@@ -20,7 +20,27 @@ def update_sda_status(status):
     except:
         return jsonify({"status" : "failure"})
 
-@app.route('/post/img_proc/<string:status>')
+@app.route('/get/sda', methods=["GET"])
+def get_sda_status():
+    global client
+
+    data = {
+        "status" : client.get_sda_status()
+    }
+
+    return jsonify(data)
+
+@app.route('/get/img_proc', methods=["GET"])
+def get_img_proc_status():
+    global client
+
+    data = {
+        "status" : client.get_img_proc_status()
+    }
+
+    return jsonify(data)
+
+@app.route('/post/img_proc/<string:status>', methods=["POST"])
 def update_img_proc_status(status):
     global client
 
@@ -31,15 +51,17 @@ def update_img_proc_status(status):
     except:
         return jsonify({"status" : "failure"})
 
-@app.route('/interop/get_interop_position_update_rate')
+@app.route('/get/interop', methods=["GET"])
 def get_interop_position_update_rate():
-    return jsonify(result=client.get_interop_position_update_rate())
+    global client
 
-@app.route('/imgs/<path:path>')
+    return jsonify(client.interop_data[0])
+
+@app.route('/imgs/<path:path>', methods=["GET"])
 def get_image(path):
     return send_from_directory('static/imgs', path)
 
-@app.route('/get/imgs')
+@app.route('/get/imgs', methods=["GET"])
 def get_image_list():
     pictures = {}
     picture_index = 0
@@ -54,19 +76,51 @@ class Client(object):
 
     def __init__(self):
         self.manager = multiprocessing.Manager()
-        self.sda_status = self.manager.Value('s', "Disabled")
-        self.img_proc_status = self.manager.Value('s', "Disabled")
-        self.interop_position_update_rate = self.manager.Value('i', 2.00)
+        self.sda_status = self.manager.Value('s', "disconnected")
+        self.img_proc_status = self.manager.Value('s', "disconnected")
+
         self.interop_client = self.manager.list()
         #self.interop_client.append(SUASSystem.InteropClientConverter())
+        self.interop_data = self.manager.list()
+        self.interop_data.append(self.get_interop_data())
 
         self.gcs_process = multiprocessing.Process(target=SUASSystem.gcs_process, args=(
             self.sda_status,
             self.img_proc_status,
-            self.interop_position_update_rate,
             self.interop_client
         ))
         #self.gcs_process.start()
+
+    def get_interop_data(self):
+        try:
+            active_interop_mission = self.interop_client[0].get_active_mission()
+            obtstacles = self.interop_client[0].get_obstacles()
+            active_interop_mission_json = SUASSystem.get_mission_json(active_interop_mission, obstacles)
+
+            data = {
+                "status": "connected",
+                "emergent_position": [
+                    active_interop_mission_json["emergent_last_known_pos"]["latitude"],
+                    active_interop_mission_json["emergent_last_known_pos"]["longitude"]
+                ],
+                "airdrop_position": [
+                    active_interop_mission_json["air_drop_pos"]["latitude"],
+                    active_interop_mission_json["air_drop_pos"]["longitude"]
+                ],
+                "off-axis_position": [
+                    active_interop_mission_json["off_axis_target_pos"]["latitude"],
+                    active_interop_mission_json["off_axis_target_pos"]["longitude"]
+                ]
+            }
+        except:
+            data = {
+                "status": "disconnected",
+                "emergent_position": [0, 0],
+                "airdrop_position": [0, 0],
+                "off-axis_position": [0, 0]
+            }
+
+        return data
 
     def set_sda_status(self, status):
         self.sda_status.value = status
@@ -79,11 +133,5 @@ class Client(object):
 
     def get_img_proc_status(self):
         return self.img_proc_status.value
-
-    def set_interop_position_update_rate(self, rate):
-        self.interop_position_update_rate.value = rate
-
-    def get_interop_position_update_rate(self):
-        return self.interop_position_update_rate.value
 
 client = Client()

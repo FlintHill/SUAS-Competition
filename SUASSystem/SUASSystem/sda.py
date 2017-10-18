@@ -17,7 +17,7 @@ def run_sda_process(logger_queue, waypoints, sda_status, sda_avoid_coords, vehic
     log(logger_name, "SDA converter instantiated")
 
     while True:
-        if "enabled" in str(sda_status.value).lower():
+        if sda_status.value == "connected":
             current_location = vehicle_state_data[0].get_location()
 
             current_waypoint_number = vehicle_state_data[0].get_current_waypoint_number()

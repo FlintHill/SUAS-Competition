@@ -8,7 +8,7 @@ from .converter_functions import *
 
 gcs_logger_name = multiprocessing.current_process().name
 
-def gcs_process(sda_status, img_proc_status, interop_position_update_rate, interop_client_array):
+def gcs_process(sda_status, img_proc_status, interop_client_array):
     # Setup logging information
     logger_queue = multiprocessing.Queue(-1)
     logger_listener_process = multiprocessing.Process(target=listener_process, args=(
@@ -44,13 +44,12 @@ def gcs_process(sda_status, img_proc_status, interop_position_update_rate, inter
         current_location = SUASSystem.Location(vehicle.location.global_relative_frame.lat, vehicle.location.global_relative_frame.lon, vehicle.location.global_relative_frame.alt)
         location_log.append(current_location)
 
-        interop_position_update_rate.value += 1
         vehicle_state_data[0] = SUASSystem.get_vehicle_state(vehicle, GCSSettings.MSL_ALT)
         if len(interop_client_array) != 0:
             interop_client_array[0].post_telemetry(current_location, vehicle_state_data[0].get_direction())
             mission_information_data[0] = get_mission_json(interop_client_array[0].get_active_mission(), interop_client_array[0].get_obstacles())
 
-        if sda_status.value.lower() == "enabled":
+        if sda_status.value.lower() == "connected":
             if (vehicle.location.global_relative_frame.alt * 3.28084) > GCSSettings.SDA_MIN_ALT and (vehicle.mode.name == "GUIDED" or vehicle.mode.name == "AUTO"):
                 log("root", "Avoiding obstacles...")
                 vehicle.mode = VehicleMode("GUIDED")

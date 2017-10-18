@@ -1,5 +1,5 @@
-from SUASSystem import Location
-from SUASSystem import VehicleState
+from .location import Location
+from .vehicle_state import VehicleState
 import math
 import interop
 import numpy
