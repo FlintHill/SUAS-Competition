@@ -17,3 +17,4 @@ from .star import Star
 from .hexagon import Hexagon
 from .heptagon import Heptagon
 from .octagon import Octagon
+from .background import BackgroundGenerator
