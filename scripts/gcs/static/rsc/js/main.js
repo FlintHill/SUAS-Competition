@@ -368,6 +368,43 @@ function switchControlPanelRefresh() {
 // front-to-backend code
 
 /**
+ * statusDisplay(String programName, String status)
+ *
+ *
+ */
+function statusDisplay(programName, data) {
+
+	var ref = "#" + programName;
+
+	if(program_name = "interop") {
+		$(ref + "-status").html(data["status"]);
+		$(ref + "-emergent_position").html(data["emergent_position"]);
+		$(ref + "-airdrop_position").html(data["airdrop_position"]);
+		$(ref + "-off-axis_position").html(data["off-axis_position"]);
+	} else {
+		$(ref + "-status").html(data["status"]);
+		$(ref + "-runtime").html(data["runtime"]);
+	}
+
+	if(data["status"] == "connected") { // connected
+		if(!$(ref + "-light").hasClass("green")) {
+			$(ref + "-light").removeClass("red").addClass("green");
+			$(ref + "-light-text").html("Connected");
+
+			$(ref + "-power-button").removeClass("green").addClass("red");
+		}
+	} else if(data["status"] == "disconnected") { // disconnected
+		if(!$(ref + "-light").hasClass("red")) {
+			$(ref + "-light").removeClass("green").addClass("red");
+			$(ref + "-light-text").html("Disconnected");
+
+			$(ref + "-power-button").removeClass("red").addClass("green");
+		}
+	}
+
+}
+
+/**
  * statusPush(String process, String cmd)
  *
  * Turn on or off a subprocess, either:
@@ -433,6 +470,8 @@ function statusPush(process, cmd) {
 			Materialize.toast(friendlyProgramName + ' was ' + command.toUpperCase() + '.', toastDuration);
 			console.log(friendlyProgramName + 'successfully ' + command + ', see data: ');
 			console.log(data);
+
+			statusDisplay(program, data);
 		},
 
 		error: function(data) {
@@ -469,31 +508,9 @@ function statusGet() {
 
 			success: function(data) {
 				// interop was enabled
-				console.log("/get/" + program_name + " successful, displaying data.");
+				console.log("statusGet(): /get/" + program_name + " successful, displaying data: " + data["status"]);
 
-				var ref = "#" + program_name;
-
-				if(program_name = "interop") {
-					$(ref + "-status").html(data["status"]);
-					$(ref + "-emergent_position").html(data["emergent_position"]);
-					$(ref + "-airdrop_position").html(data["airdrop_position"]);
-					$(ref + "-off-axis_position").html(data["off-axis_position"]);
-				} else {
-					$(ref + "-status").html(data["status"]);
-					$(ref + "-runtime").html(data["runtime"]);
-				}
-
-				if(data["status"] == "connnected") {
-					if(!$(ref + "-light").hasClass("green")) {
-						$(ref + "-light").removeClass("red").addClass("green");
-						$(ref + "-light-text").html("Connected");
-					}
-				} else if(data["status"] == "disconnected") {
-					if(!$(ref + "-light").hasClass("red")) {
-						$(ref + "-light").removeClass("green").addClass("red");
-						$(ref + "-light-text").html("Disconnected");
-					}
-				}
+				statusDisplay(program_name, data);
 			},
 
 			error: function(data) {
@@ -536,7 +553,7 @@ function loadImages() {
 		url: "get/imgs", // "imgs/get.php"
 		
 		success:function(data) {
-			console.log("Images Loaded:");
+			console.log("loadImages(): Images Loaded:");
 			console.log(data);
 
 			// parse available image info
@@ -548,6 +565,16 @@ function loadImages() {
 			for(var i = 0; i < length; i++)
 				if($(imgs).index(Object.values(data)[i]) == -1)
 					imgs.push(Object.values(data)[i])
+
+			// if no images exist
+			if(length == 0) {
+				console.log("loadImages(): No images available.");
+
+				$("#current-image").html(0);
+				Materialize.toast("LOAD IMAGES SUCESS: No images available.", 3700);
+				
+				return;
+			}
 
 			if(currentImage != 0)
 				if(currentImage < Object.values(data).length) // if image index still exists (b/c images will be deleted)
