@@ -3,4 +3,3 @@
 ./SDAPackage
 ./UpdatedSyntheticDataset
 nose
-dronekit

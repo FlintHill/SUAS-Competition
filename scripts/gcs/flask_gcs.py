@@ -1,6 +1,7 @@
 from flask import Flask, render_template, redirect, url_for, jsonify, send_from_directory, request
 import multiprocessing
 import SUASSystem
+from SUASSystem import utils
 import os
 
 app = Flask(__name__, static_url_path='')
@@ -20,7 +21,7 @@ def update_sda_status(status):
     except:
         return jsonify({"status" : "failure"})
 
-@app.route('/get/sda', methods=["GET"])
+@app.route('/get/sda', methods=["GET", "POST"])
 def get_sda_status():
     global client
 
@@ -30,7 +31,7 @@ def get_sda_status():
 
     return jsonify(data)
 
-@app.route('/get/img_proc', methods=["GET"])
+@app.route('/get/img_proc', methods=["GET", "POST"])
 def get_img_proc_status():
     global client
 
@@ -51,17 +52,17 @@ def update_img_proc_status(status):
     except:
         return jsonify({"status" : "failure"})
 
-@app.route('/get/interop', methods=["GET"])
+@app.route('/get/interop', methods=["GET", "POST"])
 def get_interop_position_update_rate():
     global client
 
     return jsonify(client.interop_data[0])
 
-@app.route('/get/imgs/<path:path>', methods=["GET"])
+@app.route('/get/imgs/<path:path>', methods=["GET", "POST"])
 def get_image(path):
     return send_from_directory('static/imgs', path)
 
-@app.route('/get/imgs', methods=["GET"])
+@app.route('/get/imgs', methods=["GET", "POST"])
 def get_image_list():
     pictures = {}
     picture_index = 0
@@ -74,6 +75,8 @@ def get_image_list():
 
 @app.route('/post/target', methods=["POST"])
 def post_target():
+    global client
+
     try:
         # @TODO: Need to implement autnomous GPS coordinate detection here, cropping
         target_characteristics = {
@@ -89,7 +92,12 @@ def post_target():
             "longitude" : 0
         }
 
-        print(target_characteristics)
+        # @TODO: This needs to be tested once the web UI has been completed for this API
+        original_image_path = "static/imgs/" + target_characteristics["base_image_filename"]
+        cropped_target_path = "static/crops/" + str(len(os.listdir('static/crops'))) + ".jpg"
+        utils.crop_target(original_image_path, cropped_target_path, target_characteristics["target_top_left"], target_characteristics["target_bottom_right"])
+
+        #client.interop_client[0].post_standard_target(target_characteristics, cropped_target_path)
 
         return jsonify({"status" : "success"})
     except:
