@@ -148,7 +148,7 @@ function showImage(index) {
 
 	currentImage = index;
 
-	$("#image-previewer").attr("src", "imgs/" + imgs[index]);
+	$("#image-previewer").attr("src", "get/imgs/" + imgs[index]);
 	$("#current-image").html(currentImage);
 
 	updateCounters();
@@ -388,10 +388,10 @@ function statusPush(process, cmd) {
 	var program = "", friendlyProgramName = "";
 	
 	switch(process) {
-		case "interop-connection":
+		/*case "interop-connection":
 			program = "interop";
 			friendlyProgramName = "Interop. script";
-			break;
+			break;*/
 		case "sda":
 			program = "sda";
 			friendlyProgramName = "SDA script";
@@ -484,11 +484,15 @@ function statusGet() {
 				}
 
 				if(data["status"] == "connnected") {
-					if(!$(ref + "-light").hasClass("green"))
+					if(!$(ref + "-light").hasClass("green")) {
 						$(ref + "-light").removeClass("red").addClass("green");
+						$(ref + "-light-text").html("Connected");
+					}
 				} else if(data["status"] == "disconnected") {
-					if(!$(ref + "-light").hasClass("red"))
+					if(!$(ref + "-light").hasClass("red")) {
 						$(ref + "-light").removeClass("green").addClass("red");
+						$(ref + "-light-text").html("Disconnected");
+					}
 				}
 			},
 
@@ -529,7 +533,7 @@ var imgs = [], ias = null, selectionPoints = [];
 function loadImages() {
 
 	$.ajax({
-		url: "imgs/get.php",
+		url: "get/imgs", // "imgs/get.php"
 		
 		success:function(data) {
 			console.log("Images Loaded:");
