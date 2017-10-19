@@ -2,6 +2,7 @@ from flask import Flask, render_template, redirect, url_for, jsonify, send_from_
 import multiprocessing
 import SUASSystem
 from SUASSystem import utils
+from datetime import datetime
 import os
 
 app = Flask(__name__, static_url_path='')
@@ -25,8 +26,14 @@ def update_sda_status(status):
 def get_sda_status():
     global client
 
+    sda_runtime = int(datetime.utcnow().strftime("%s")) - client.sda_start_time.value
+    minutes = sda_runtime / 60
+    seconds = sda_runtime % 60
+    sda_runtime_string = str(minutes) + " mins, " + str(seconds) + " secs"
+
     data = {
-        "status" : client.get_sda_status()
+        "status" : client.get_sda_status(),
+        "runtime" : sda_runtime_string
     }
 
     return jsonify(data)
@@ -35,8 +42,14 @@ def get_sda_status():
 def get_img_proc_status():
     global client
 
+    img_proc_runtime = int(datetime.utcnow().strftime("%s")) - client.img_proc_start_time.value
+    minutes = img_proc_runtime / 60
+    seconds = img_proc_runtime % 60
+    img_proc_runtime_string = str(minutes) + " mins, " + str(seconds) + " secs"
+
     data = {
-        "status" : client.get_img_proc_status()
+        "status" : client.get_img_proc_status(),
+        "runtime" : img_proc_runtime_string
     }
 
     return jsonify(data)
@@ -109,6 +122,8 @@ class Client(object):
         self.manager = multiprocessing.Manager()
         self.sda_status = self.manager.Value('s', "disconnected")
         self.img_proc_status = self.manager.Value('s', "disconnected")
+        self.sda_start_time = self.manager.Value('i', int(datetime.utcnow().strftime("%s")))
+        self.img_proc_start_time = self.manager.Value('i', int(datetime.utcnow().strftime("%s")))
 
         self.interop_client = self.manager.list()
         #self.interop_client.append(SUASSystem.InteropClientConverter())
@@ -154,12 +169,18 @@ class Client(object):
         return data
 
     def set_sda_status(self, status):
+        if status == "connected":
+            self.sda_start_time.value = int(datetime.utcnow().strftime("%s"))
+
         self.sda_status.value = status
 
     def get_sda_status(self):
         return self.sda_status.value
 
     def set_img_proc_status(self, status):
+        if status == "connected":
+            self.img_proc_start_time.value = int(datetime.utcnow().strftime("%s"))
+
         self.img_proc_status.value = status
 
     def get_img_proc_status(self):
