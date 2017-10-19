@@ -5,7 +5,10 @@ This is Flint Hill School's code for the Student Unmanned Aerial Systems competi
 ---
 
 ## License Information
+Copyright 2015 Vale Tolpegin
+Copyright 2016 Vale Tolpegin
 Copyright 2017 Vale Tolpegin, Peter Hussisian, James Villemarette.
+Copyright 2017-2018 Vale Tolpegin, James Villemarette, John Moxley, Zachary Yin, Rod Aryan, Leo Li, Nathan Spivy
 
 Licensed under the MIT License.
 
