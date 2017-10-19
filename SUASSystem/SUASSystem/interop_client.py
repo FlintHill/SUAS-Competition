@@ -56,11 +56,11 @@ class InteropClientConverter(object):
         {
             "latitude" : float,
             "longitude" : float,
-            "orientation" : Orientation.X,
-            "shape" : Shape.X,
-            "background_color" : Color.X,
-            "alphanumeric" : "X",
-            "alphanumeric_color" : Color.X,
+            "orientation" : string,
+            "shape" : string,
+            "background_color" : string,
+            "alphanumeric" : string,
+            "alphanumeric_color" : string,
         }
 
         :param image_file_path: The OLC target image file name
@@ -70,6 +70,7 @@ class InteropClientConverter(object):
         """
         odlc_target = Odlc(
             type="standard",
+            autonomous=False,
             latitude=target["latitude"],
             longitude=target["longitude"],
             orientation=target["orientation"],

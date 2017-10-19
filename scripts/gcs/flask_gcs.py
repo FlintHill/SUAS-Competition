@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for, jsonify, send_from_directory
+from flask import Flask, render_template, redirect, url_for, jsonify, send_from_directory, request
 import multiprocessing
 import SUASSystem
 import os
@@ -57,7 +57,7 @@ def get_interop_position_update_rate():
 
     return jsonify(client.interop_data[0])
 
-@app.route('/imgs/<path:path>', methods=["GET"])
+@app.route('/get/imgs/<path:path>', methods=["GET"])
 def get_image(path):
     return send_from_directory('static/imgs', path)
 
@@ -71,6 +71,29 @@ def get_image_list():
             picture_index = picture_index + 1
 
     return jsonify(pictures)
+
+@app.route('/post/target', methods=["POST"])
+def post_target():
+    try:
+        # @TODO: Need to implement autnomous GPS coordinate detection here, cropping
+        target_characteristics = {
+            "alphanumeric" : request.form["targetContent"],
+            "alphanumeric_color" : request.form["targetColor"],
+            "shape" : request.form["targetShape"],
+            "orientation" : request.form["targetOrientation"],
+            "base_image_filename" : request.form["imageFilename"],
+            "background_color" : request.form["contentColor"],
+            "target_top_left" : [request.form["targetTopLeftX"], request.form["targetTopLeftX"]],
+            "target_bottom_right" : [request.form["targetBottomRightX"], request.form["targetBottomRightY"]],
+            "latitude" : 0,
+            "longitude" : 0
+        }
+
+        print(target_characteristics)
+
+        return jsonify({"status" : "success"})
+    except:
+        return jsonify({"status" : "failure"})
 
 class Client(object):
 

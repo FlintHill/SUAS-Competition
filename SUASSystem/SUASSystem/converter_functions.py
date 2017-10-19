@@ -1,5 +1,6 @@
 from .location import Location
 from .vehicle_state import VehicleState
+from interop import Odlc
 import math
 import interop
 import numpy
@@ -186,3 +187,21 @@ def bearing(location1, location2):
     initial_bearing = math.atan2(dx, dy)
 
     return initial_bearing
+
+def convert_target(target_characteristics):
+    """
+    Converts a target from the JSON data from the web UI to the interop
+    compatible version.
+
+    :param target_characteristics: dictionary
+    :type target_characteristics: {
+            "alphanumeric" : String,
+            "alphanumeric_color" : String,
+            "target_shape" : String,
+            "orientation" : String,
+            "base_image_filename" : String,
+            "latitude" : float,
+            "longitude" : float
+        }
+    """
+    return Odlc(target_characteristics)
