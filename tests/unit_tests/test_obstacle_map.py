@@ -106,7 +106,7 @@ class Test_Obstacle_map(unittest.TestCase):
 		self.obstacle_map1.add_obstacle(self.test_obstacle2)
 		self.obstacle_map1.add_obstacle(self.test_obstacle3)
 		self.length = len(self.obstacle_map1.get_obstacles())
-		self.assertEqual(self.length,3)
+		self.assertEqual(self.length,1)
 
 	def test_has_uav_reached_current_waypoint(self):
 		self.obstacle_map1.reset_waypoints()

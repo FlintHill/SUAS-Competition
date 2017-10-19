@@ -43,8 +43,9 @@ class ObstacleMap(object):
             for second_obstacle_index in range(first_obstacle_index + 1, len(final_obstacles)):
                 if self.do_obstacles_overlap(final_obstacles[first_obstacle_index], final_obstacles[second_obstacle_index]):
                     encompassing_obstacle = self.make_encompassing_circle(final_obstacles[first_obstacle_index], final_obstacles[second_obstacle_index], final_obstacles)
-                    final_obstacles = np.delete(final_obstacles, final_obstacles[first_obstacle_index])
-                    final_obstacles = np.delete(final_obstacles, final_obstacles[second_obstacle_index])
+                    ind2remove = [first_obstacle_index, second_obstacle_index]
+                    final_obstacles = np.delete(final_obstacles, ind2remove)
+                    #final_obstacles.append(encompassing_obstacle)
                     final_obstacles = np.hstack([final_obstacles, encompassing_obstacle])
                     return self.replace_overlapping_obstacles(final_obstacles)
 
@@ -68,20 +69,31 @@ class ObstacleMap(object):
     def make_encompassing_circle(self, first_obstacle, second_obstacle, final_obstacles):
         circle1_x = first_obstacle.get_point()[0]
         circle1_y = first_obstacle.get_point()[1]
+        circle1_z = first_obstacle.get_point()[2]
         circle2_x = second_obstacle.get_point()[0]
         circle2_y = second_obstacle.get_point()[1]
+        circle2_z = second_obstacle.get_point()[2]
         dx = circle1_x - circle2_x
         dy = circle1_y - circle2_y
-        dc = float(sqrt(dx**2 + dy**2))
+        dc = (sqrt(dx**2 + dy**2))
+        new_height = 0
+        if first_obstacle.get_height() >= second_obstacle.get_height():
+            new_height = first_obstacle.get_height()
+        else:
+            new_height = second_obstacle.get_height()
+        if dc == 0:
+            if first_obstacle.get_safety_radius() >= second_obstacle.get_safety_radius():
+                return StationaryObstacle(np.array([circle1_x, circle1_y, circle1_z]), first_obstacle.get_radius(), new_height)
+            return StationaryObstacle(np.array([circle2_x, circle2_y, circle2_z]), second_obstacle.get_radius(), new_height)
         new_radius = 0.5 * (first_obstacle.get_safety_radius() + second_obstacle.get_safety_radius() + dc)
-        new_x = circle1_x + (new_radius - first_obstacle.get_safety_radius()) * float(dx/dc)
-        new_y = circle1_y + (new_radius - second_obstacle.get_safety_radius()) * float(dy/dc)
+        new_x = circle1_x + (new_radius - first_obstacle.get_safety_radius()) * (dx/dc)
+        new_y = circle1_y + (new_radius - second_obstacle.get_safety_radius()) * (dy/dc)
         new_z = 0
         if first_obstacle.get_point()[2] >= second_obstacle.get_point()[2]:
             new_z = first_obstacle.get_point()[2]
         else:
             new_z = second_obstacle.get_point()[2]
-        return Obstacle(np.array([new_x, new_y, new_z]), new_radius)
+        return StationaryObstacle(np.array([new_x, new_y, new_z]), new_radius, new_height)
 
     def add_waypoint(self, waypoint):
         """
