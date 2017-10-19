@@ -33,7 +33,8 @@ $(document).ready(function(){
 $(document).keydown(function(event) {
 
 	if(event.ctrlKey == true) {
-		console.log("control keyed ");
+		console.log("keydownWatchdog: Control keyed.");
+
 		// all key bindings use control key, first
 
 		switch(event.keyCode) {
@@ -264,9 +265,9 @@ function loadCropPreview() {
 				"px" // "0px 0px"
 		});
 
-		console.log("imageW: " + imageW);
-		console.log("length: " + length);
-		console.log("extrude: " + extrude);
+		console.log("loadCropPreview(): imageW: " + imageW);
+		console.log("loadCropPreview(): length: " + length);
+		console.log("loadCropPreview(): extrude: " + extrude);
 
 		// store
 		var actual_extrude = (extrude/cropperW) * imageW;
@@ -324,6 +325,7 @@ function submitTarget() {
 			// interop was enabled
 			Materialize.toast("SUCCESS: Sent target to backend script.");
 
+			console.log("submitTarget(): ajax data:")
 			console.log(data);
 
 			submittedImages++;
@@ -334,6 +336,7 @@ function submitTarget() {
 			// server side error
 			Materialize.toast("FAILURE: Unable to send target; See console.");
 
+			console.log("submitTarget(): ajax data:");
 			console.log(data);
 		}
 	});
@@ -370,35 +373,51 @@ function switchControlPanelRefresh() {
 /**
  * statusDisplay(String programName, String status)
  *
- *
+ * 
  */
 function statusDisplay(programName, data) {
 
 	var ref = "#" + programName;
 
-	if(program_name = "interop") {
-		$(ref + "-status").html(data["status"]);
-		$(ref + "-emergent_position").html(data["emergent_position"]);
-		$(ref + "-airdrop_position").html(data["airdrop_position"]);
-		$(ref + "-off-axis_position").html(data["off-axis_position"]);
+	$(ref + "-status").html(data["status"]);
+
+	if(programName == "interop") {
+		var interopProperties = ["emergent_position", "airdrop_position", "off-axis_position"];
+
+		interopProperties.forEach(function(element) {
+			$(ref + "-" + element).html("[" + data[element][0] + ", " + data[element][1] + "]");
+		});
+
+		//$(ref + "-emergent_position").html(data["emergent_position"]);
+		//$(ref + "-airdrop_position").html(data["airdrop_position"]);
+		//$(ref + "-off-axis_position").html(data["off-axis_position"]);
 	} else {
-		$(ref + "-status").html(data["status"]);
 		$(ref + "-runtime").html(data["runtime"]);
 	}
+
+	//console.log("statusDisplay(): data['runtime']: " + data["runtime"]);
 
 	if(data["status"] == "connected") { // connected
 		if(!$(ref + "-light").hasClass("green")) {
 			$(ref + "-light").removeClass("red").addClass("green");
 			$(ref + "-light-text").html("Connected");
 
+			console.log("HELP1 " + ref + "-power-button");
+
 			$(ref + "-power-button").removeClass("green").addClass("red");
+			$(ref + "-power-button").attr("data-tooltip", "Turn off");
+			$(ref + "-power-button").attr("onclick", "statusPush('" + programName + "', 'off');");
 		}
 	} else if(data["status"] == "disconnected") { // disconnected
 		if(!$(ref + "-light").hasClass("red")) {
 			$(ref + "-light").removeClass("green").addClass("red");
 			$(ref + "-light-text").html("Disconnected");
 
+			console.log("HELP2 " + ref + "-power-button");
+
 			$(ref + "-power-button").removeClass("red").addClass("green");
+			$(ref + "-power-button").attr("data-tooltip", "Turn on");
+			$(ref + "-power-button").attr("onclick", "statusPush('" + programName + "', 'on');");
 		}
 	}
 
@@ -468,7 +487,7 @@ function statusPush(process, cmd) {
 		success: function(data) {
 			// interop was enabled
 			Materialize.toast(friendlyProgramName + ' was ' + command.toUpperCase() + '.', toastDuration);
-			console.log(friendlyProgramName + 'successfully ' + command + ', see data: ');
+			console.log("statusPush():" + friendlyProgramName + 'successfully ' + command + ', see data: ');
 			console.log(data);
 
 			statusDisplay(program, data);
@@ -477,7 +496,7 @@ function statusPush(process, cmd) {
 		error: function(data) {
 			// server side error
 			Materialize.toast('Failed to ' + shortCommand + ' ' + friendlyProgramName + '; See console.', toastDuration);
-			console.log(friendlyProgramName + ' failed to be ' + command + ', see data: ');
+			console.log("statusPush(): " + friendlyProgramName + ' failed to be ' + command + ', see data: ');
 			console.log(data);
 		}
 	});
@@ -508,7 +527,7 @@ function statusGet() {
 
 			success: function(data) {
 				// interop was enabled
-				console.log("statusGet(): /get/" + program_name + " successful, displaying data: " + data["status"]);
+				//console.log("statusGet(): /get/" + program_name + " successful, displaying data: " + data["status"]);
 
 				statusDisplay(program_name, data);
 			},
@@ -516,7 +535,7 @@ function statusGet() {
 			error: function(data) {
 				// server side error
 				Materialize.toast('See console: /get/' +  program_name + ' failed.', 1000);
-				console.log("/get/" + program_name + ' failed, see data: ');
+				console.log("statusGet(): /get/" + program_name + ' failed, see data: ');
 				console.log(data);
 			}
 		});
@@ -593,8 +612,6 @@ function loadImages() {
 					$("a[name='remove-crop-button']").removeClass("disabled");
 					$("a[name='crop-and-submit-button']").removeClass("disabled");
 
-					//console.log("x1: " + selection.x1 + " , y1: " + selection.y1); 
-
 					var s = selection;
 
 					selectionPoints = [
@@ -616,7 +633,7 @@ function loadImages() {
 			// indicate
 			Materialize.toast('Failed to load images, check console.', 4000);
 
-			console.log("Unknown connection error, see:");
+			console.log("loadImages(): Unknown connection error, see:");
 			console.log(data);
 		}
 	});
