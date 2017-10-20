@@ -1,7 +1,5 @@
 from PIL import Image
 import math
-from SyntheticDataset2.ElementsCreator import *
-from SyntheticDataset2.ImageOperations import *
 
 class ImagePaster(object):
 

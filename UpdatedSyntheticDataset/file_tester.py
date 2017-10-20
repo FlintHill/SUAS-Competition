@@ -6,7 +6,7 @@ from PIL import ImageDraw
 from PIL import ImageFont
 import random
 
-"""
+
 test_specified_letter_generator = SpecifiedLetterGenerator("X", "UpdatedSyntheticDataset/data/fonts/Blockletter.otf", int(500*(10000.0 / 6832.0)), (0, 0, 0, 255))
 image1 = test_specified_letter_generator.generate_specified_letter()
 
@@ -15,7 +15,7 @@ image2.show()
 
 image3 = GaussianNoiseGenerator.generate_gaussian_noise_by_level(image2, 5.5, image1.width)
 image3.show()
-
+"""
 image4 = BoundedImageCropper.crop_bounded_image_inverse(image3, image3.load(), (255,255,255,0))
 image4.show()
 
@@ -38,17 +38,3 @@ image4.show()
 """
 image5 = TargetCreator.create_specified_single_target("quarter_circle", "N", "C", 500, 2, (255, 255, 255, 255), (0, 0, 0, 255))
 image5.show()
-image6 = TargetCreator.create_specified_single_target("quarter_circle", "NE", "C", 500, 2, (255, 255, 255, 255), (0, 0, 0, 255))
-image6.show()
-image7 = TargetCreator.create_specified_single_target("quarter_circle", "E", "C", 500, 2, (255, 255, 255, 255), (0, 0, 0, 255))
-image7.show()
-image8 = TargetCreator.create_specified_single_target("quarter_circle", "SE", "C", 500, 2, (255, 255, 255, 255), (0, 0, 0, 255))
-image8.show()
-image9 = TargetCreator.create_specified_single_target("quarter_circle", "S", "C", 500, 2, (255, 255, 255, 255), (0, 0, 0, 255))
-image9.show()
-image10 = TargetCreator.create_specified_single_target("quarter_circle", "SW", "C", 500, 2, (255, 255, 255, 255), (0, 0, 0, 255))
-image10.show()
-image11 = TargetCreator.create_specified_single_target("quarter_circle", "W", "C", 500, 2, (255, 255, 255, 255), (0, 0, 0, 255))
-image11.show()
-image12 = TargetCreator.create_specified_single_target("quarter_circle", "NW", "C", 500, 2, (255, 255, 255, 255), (0, 0, 0, 255))
-image12.show()
