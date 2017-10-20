@@ -9,6 +9,8 @@ class ImagePaster(object):
     def paste_images(image1, image2):
         """
         Paste image2 onto image1 with image2 centered at the center of image1.
+        image2 is the image of the letter.
+        image1 is the image of the shape.
         """
         image1.paste(image2, (((image1.width/2)-(image2.width/2)), ((image1.height/2)-(image2.height/2))), image2)
         return image1

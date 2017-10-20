@@ -17,8 +17,7 @@ class SpecifiedLetterGenerator(LetterGenerator):
         :type letter_input: string
         :type font_type: a font file
         :type font_size: int
-        :type color: (R, G, B, A)
-        :type R, G, B, and A: int from 0 to 255
+        :type color: (R, G, B, A) (:type R, G, B, and A: int from 0 to 255)
         """
 
         super(SpecifiedLetterGenerator, self).__init__(font_type, font_size, color)

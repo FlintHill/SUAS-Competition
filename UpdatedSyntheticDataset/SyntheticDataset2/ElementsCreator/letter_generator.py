@@ -12,8 +12,7 @@ class LetterGenerator(object):
         :param color: the intended color of the letter
         :type font_type: a font file
         :type font_size: int
-        :type color: (R, G, B, A)
-        :type R, G, B, and A: int from 0 to 255
+        :type color: (R, G, B, A) (:type R, G, B, and A: int from 0 to 255)
         """
         self.font_type = font_type
         self.font_size = font_size

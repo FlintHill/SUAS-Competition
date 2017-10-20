@@ -26,9 +26,8 @@ class TargetCreator(object):
         :type letter: string
         :type size: an int (representing pixel)
         :type proportionality: float
-        :type shape_color: (R, G, B, A)
-        :type letter_color: (R, G, B, A)
-        :type R, G, B, and A: int from 0 to 255
+        :type shape_color: (R, G, B, A) (:type R, G, B, and A: int from 0 to 255)
+        :type letter_color: (R, G, B, A) (:type R, G, B, and A: int from 0 to 255)
         """
 
         font_type = "UpdatedSyntheticDataset/data/fonts/Blockletter.otf"
