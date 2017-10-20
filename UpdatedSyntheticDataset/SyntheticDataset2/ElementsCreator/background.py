@@ -18,18 +18,19 @@ class BackgroundGenerator(object):
         self.height=height
         self.path_to_backrounds=path_to_backrounds
 
-
     def generate_background(self):
-
+        try:
+            os.remove(self.path_to_backrounds + "/.DS_Store")
+        except:
+            pass
         background = Image.open(self.path_to_backrounds + "/" + random.choice(os.listdir(self.path_to_backrounds)))
-        crop_cords = self.get_random_cords(background.width,background.height)
-        background = background.crop(crop_cords)
+        crop_coordinates = self.get_random_coordinates(background.width,background.height)
+        background = background.crop(crop_coordinates)
         return background
 
-    def get_random_cords(self,background_width,background_height):
+    def get_random_coordinates(self,background_width,background_height):
         x1 = random.randint(0,background_width-self.width)
         y1 = random.randint(0,background_height-self.height)
         x2 = x1+self.width
         y2 = y1+self.height
-
         return (x1,y1,x2,y2)
