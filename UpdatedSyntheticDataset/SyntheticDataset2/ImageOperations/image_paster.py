@@ -20,7 +20,7 @@ class ImagePaster(object):
     @staticmethod
     def paste_images_triangle_angle_north(image1, image2):
         """
-        For pasting a letter onto an equilateral triangle with one of its angles pointing up.
+        For pasting a letter onto an equilateral triangle with one of its angles facing north.
         :param image1: the image of the shape.
         :param image2: the image of the letter.
         :type image1: an image file
@@ -32,7 +32,7 @@ class ImagePaster(object):
     @staticmethod
     def paste_images_triangle_angle_south(image1, image2):
         """
-        For pasting a letter onto an equilateral triangle with one of its sides pointing up.
+        For pasting a letter onto an equilateral triangle with one of its angles facing south.
         :param image1: the image of the shape.
         :param image2: the image of the letter.
         :type image1: an image file
@@ -44,8 +44,7 @@ class ImagePaster(object):
     @staticmethod
     def paste_images_pentagon_angle_north(image1, image2):
         """
-        For pasting a letter onto a star with one of its convexes pointing up,
-        or an equilateral pentagon with one of its angles pointing up.
+        For pasting a letter onto a star or pentagon with one of its angles facing north.
         :param image1: the image of the shape.
         :param image2: the image of the letter.
         :type image1: an image file
@@ -57,8 +56,7 @@ class ImagePaster(object):
     @staticmethod
     def paste_images_pentagon_angle_south(image1, image2):
         """
-        For pasting a letter onto a star with one of its concaves pointing up,
-        or an equilateral pentagon with one of its sides pointing up.
+        For pasting a letter onto a star or pentagon with one of its angles facing south.
         :param image1: the image of the shape.
         :param image2: the image of the letter.
         :type image1: an image file
@@ -70,7 +68,7 @@ class ImagePaster(object):
     @staticmethod
     def paste_images_quarter_circle_northeast(image1, image2):
         """
-        For pasting a letter onto a quarter-circle with its angle pointing up-right.
+        For pasting a letter onto a quarter-circle with its angle facing northeast.
         :param image1: the image of the shape.
         :param image2: the image of the letter.
         :type image1: an image file
@@ -82,7 +80,7 @@ class ImagePaster(object):
     @staticmethod
     def paste_images_quarter_circle_southeast(image1, image2):
         """
-        For pasting a letter onto a quarter-circle with its angle pointing down-right.
+        For pasting a letter onto a quarter-circle with its angle facing southeast.
         :param image1: the image of the shape.
         :param image2: the image of the letter.
         :type image1: an image file
@@ -94,7 +92,7 @@ class ImagePaster(object):
     @staticmethod
     def paste_images_quarter_circle_southwest(image1, image2):
         """
-        For pasting a letter onto a quarter-circle with its angle pointing down-left.
+        For pasting a letter onto a quarter-circle with its angle facing southwest.
         :param image1: the image of the shape.
         :param image2: the image of the letter.
         :type image1: an image file
@@ -106,7 +104,7 @@ class ImagePaster(object):
     @staticmethod
     def paste_images_quarter_circle_northwest(image1, image2):
         """
-        For pasting a letter onto a quarter-circle with its angle pointing up-left.
+        For pasting a letter onto a quarter-circle with its angle facing northwest.
         :param image1: the image of the shape.
         :param image2: the image of the letter.
         :type image1: an image file
