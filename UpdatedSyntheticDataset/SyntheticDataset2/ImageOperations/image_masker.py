@@ -13,9 +13,8 @@ class ImageMasker(object):
         :param color2: a criterion of masking
         :type image: png, jpg, or other image files
         :type pixel_data: PIL.PyAccess
-        :type color1: (R, G, B, A)
-        :type color2: (R, G, B, A)
-        :type R, G, B, and A: int from 0 to 255
+        :type color1: (R, G, B, A) (:type R, G, B, and A: int from 0 to 255)
+        :type color2: (R, G, B, A) (:type R, G, B, and A: int from 0 to 255)
         """
         dimension = image.size
 

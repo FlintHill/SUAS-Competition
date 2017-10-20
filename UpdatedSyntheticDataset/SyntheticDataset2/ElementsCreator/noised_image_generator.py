@@ -1,4 +1,6 @@
-from SyntheticDataset2.ImageOperations import *
+from SyntheticDataset2.ImageOperations.image_extender import ImageExtender
+from SyntheticDataset2.ImageOperations.gaussian_noise_generator import GaussianNoiseGenerator
+from SyntheticDataset2.ImageOperations.bounded_image_cropper import BoundedImageCropper
 
 class NoisedImageGenerator(object):
 

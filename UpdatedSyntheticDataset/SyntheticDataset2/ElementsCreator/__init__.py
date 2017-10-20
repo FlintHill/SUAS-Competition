@@ -4,6 +4,8 @@ from .random_letter_generator import RandomLetterGenerator
 from .specified_letter_generator import SpecifiedLetterGenerator
 from .noised_image_generator import NoisedImageGenerator
 from .shape import Shape
+from .shape_types import ShapeTypes
+from .shape_orientations import ShapeOrientations
 from .rectangle import Rectangle
 from .triangle import Triangle
 from .circle import Circle

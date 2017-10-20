@@ -1,0 +1,15 @@
+class ShapeTypes(object):
+
+    CIRCLE = "circle"
+    QUARTERCIRCLE = "quarter_circle"
+    HALFCIRCLE = "half_circle"
+    CROSS = "cross"
+    TRIANGLE = "triangle"
+    SQUARE = "square"
+    RECTANGLE = "rectangle"
+    TRAPEZOID = "trapezoid"
+    PENTAGON = "pentagon"
+    HEXAGON = "hexagon"
+    HEPTAGON = "heptagon"
+    OCTAGON = "octagon"
+    STAR = "star"

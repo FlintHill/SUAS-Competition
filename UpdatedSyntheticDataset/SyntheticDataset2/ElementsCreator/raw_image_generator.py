@@ -12,7 +12,6 @@ class RawImageGenerator(object):
         :param color: the intended color of the image
         :type width: int (representing pixels)
         :type height: int (representing pixels)
-        :type color: (R, G, B, A)
-        :type R, G, B, and A: int from 0 to 255
+        :type color: (R, G, B, A) (:type R, G, B, and A: int from 0 to 255)
         """
         return Image.new("RGBA", (width, height), color)

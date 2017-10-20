@@ -12,8 +12,7 @@ class BoundedImageCropper(object):
         :param color: the color to serve as the criterion of cropping
         :type image: png, jpg, or other image files
         :type pixel_data: PIL.PyAccess
-        :type color: (R, G, B, A)
-        :type R, G, B, and A: int from 0 to 255
+        :type color: (R, G, B, A) (:type R, G, B, and A: int from 0 to 255)
         """
         dimension = image.size
         list_of_x = []
@@ -39,8 +38,7 @@ class BoundedImageCropper(object):
         :param color: the color to serve as the criterion of cropping
         :type image: png, jpg, or other image files
         :type pixel_data: PIL.PyAccess
-        :type color: (R, G, B, A)
-        :type R, G, B, and A: int from 0 to 255
+        :type color: (R, G, B, A) (:type R, G, B, and A: int from 0 to 255)
         """
         dimension = image.size
         list_of_x = []

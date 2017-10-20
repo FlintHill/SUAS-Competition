@@ -1,5 +1,7 @@
-from SyntheticDataset2.ElementsCreator import *
-from SyntheticDataset2.ImageOperations import *
+from .letter_generator import LetterGenerator
+from .raw_image_generator import RawImageGenerator
+from SyntheticDataset2.ImageOperations.image_masker import ImageMasker
+from SyntheticDataset2.ImageOperations.bounded_image_cropper import BoundedImageCropper
 from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageFont
@@ -15,8 +17,7 @@ class RandomLetterGenerator(LetterGenerator):
         :param color: the intended color of the letter
         :type font_type: a font file
         :type font_size: int
-        :type color: (R, G, B, A)
-        :type R, G, B, and A: int from 0 to 255
+        :type color: (R, G, B, A) (:type R, G, B, and A: int from 0 to 255)
         """
 
         super(RandomLetterGenerator, self).__init__(font_type, font_size, color)

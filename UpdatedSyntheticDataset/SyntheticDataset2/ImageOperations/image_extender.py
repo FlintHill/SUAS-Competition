@@ -1,7 +1,7 @@
 from PIL import Image
 from PIL import ImageDraw
-from SyntheticDataset2.ElementsCreator import *
-from SyntheticDataset2.ImageOperations import *
+from SyntheticDataset2.ElementsCreator.raw_image_generator import RawImageGenerator
+
 
 class ImageExtender(object):
 
