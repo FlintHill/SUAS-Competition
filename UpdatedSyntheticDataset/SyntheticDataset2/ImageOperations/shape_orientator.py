@@ -1,5 +1,6 @@
 from PIL import Image
 from SyntheticDataset2.ElementsCreator.shape_types import ShapeTypes
+from SyntheticDataset2.ElementsCreator.shape_orientations import ShapeOrientations
 
 class ShapeOrientator(object):
     """
@@ -50,109 +51,109 @@ class ShapeOrientator(object):
     @staticmethod
     def orientate_shape(shape_type, shape_orientation):
         if shape_type == ShapeTypes.QUARTERCIRCLE:
-            if shape_orientation == "N":
+            if shape_orientation == ShapeOrientations.NORTH:
                 return 135
 
-            if shape_orientation == "NE":
+            if shape_orientation == ShapeOrientations.NORTHEAST:
                 return 90
 
-            if shape_orientation == "E":
+            if shape_orientation == ShapeOrientations.EAST:
                 return 45
 
-            if shape_orientation == "SE":
+            if shape_orientation == ShapeOrientations.SOUTHEAST:
                 return 0
 
-            if shape_orientation == "S":
+            if shape_orientation == ShapeOrientations.SOUTH:
                 return -45
 
-            if shape_orientation == "SW":
+            if shape_orientation == ShapeOrientations.SOUTHWEST:
                 return -90
 
-            if shape_orientation == "W":
+            if shape_orientation == ShapeOrientations.WEST:
                 return -135
 
-            if shape_orientation == "NW":
+            if shape_orientation == ShapeOrientations.NORTHWEST:
                 return 180
 
         if shape_type == ShapeTypes.HALFCIRCLE:
-            if shape_orientation == "N":
+            if shape_orientation == ShapeOrientations.NORTH:
                 return 180
 
-            if shape_orientation == "E":
+            if shape_orientation == ShapeOrientations.EAST:
                 return 90
 
-            if shape_orientation == "S":
+            if shape_orientation == ShapeOrientations.SOUTH:
                 return 0
 
-            if shape_orientation == "W":
+            if shape_orientation == ShapeOrientations.WEST:
                 return -90
 
         if shape_type == ShapeTypes.CROSS:
-            if shape_orientation == "N":
+            if shape_orientation == ShapeOrientations.NORTH:
                 return 0
 
-            if shape_orientation == "D":
+            if shape_orientation == ShapeOrientations.DIAGONAL:
                 return 45
 
         if shape_type == ShapeTypes.TRIANGLE:
-            if shape_orientation == "N":
+            if shape_orientation == ShapeOrientations.NORTH:
                 return 0
 
-            if shape_orientation == "S":
+            if shape_orientation == ShapeOrientations.SOUTH:
                 return 60
 
         if shape_type == ShapeTypes.SQUARE:
-            if shape_orientation == "N":
+            if shape_orientation == ShapeOrientations.NORTH:
                 return 45
 
-            if shape_orientation == "D":
+            if shape_orientation == ShapeOrientations.DIAGONAL:
                 return 0
 
         if shape_type == ShapeTypes.RECTANGLE:
-            if shape_orientation == "NS":
+            if shape_orientation == ShapeOrientations.NORTHSOUTH:
                 return 0
 
-            if shape_orientation == "EW":
+            if shape_orientation == ShapeOrientations.EASTWEST:
                 return 90
 
         if shape_type == ShapeTypes.TRAPEZOID:
-            if shape_orientation == "N":
+            if shape_orientation == ShapeOrientations.NORTH:
                 return 0
 
-            if shape_orientation == "S":
+            if shape_orientation == ShapeOrientations.SOUTH:
                 return 180
 
         if shape_type == ShapeTypes.PENTAGON:
-            if shape_orientation == "N":
+            if shape_orientation == ShapeOrientations.NORTH:
                 return 36
 
-            if shape_orientation == "S":
+            if shape_orientation == ShapeOrientations.SOUTH:
                 return 0
 
         if shape_type == ShapeTypes.HEXAGON:
-            if shape_orientation == "N":
+            if shape_orientation == ShapeOrientations.NORTH:
                 return 0
 
-            if shape_orientation == "D":
+            if shape_orientation == ShapeOrientations.DIAGONAL:
                 return 30
 
         if shape_type == ShapeTypes.HEPTAGON:
-            if shape_orientation == "N":
+            if shape_orientation == ShapeOrientations.NORTH:
                 return 180
 
-            if shape_orientation == "S":
+            if shape_orientation == ShapeOrientations.SOUTH:
                 return 0
 
         if shape_type == ShapeTypes.OCTAGON:
-            if shape_orientation == "N":
+            if shape_orientation == ShapeOrientations.NORTH:
                 return 0
 
-            if shape_orientation == "D":
+            if shape_orientation == ShapeOrientations.DIAGONAL:
                 return 22.5
 
         if shape_type == ShapeTypes.STAR:
-            if shape_orientation == "N":
+            if shape_orientation == ShapeOrientations.NORTH:
                 return 180
 
-            if shape_orientation == "S":
+            if shape_orientation == ShapeOrientations.SOUTH:
                 return 0

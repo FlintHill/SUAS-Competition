@@ -1,5 +1,5 @@
-from SyntheticDataset2.ElementsCreator.letter_generator import LetterGenerator
-from SyntheticDataset2.ElementsCreator.raw_image_generator import RawImageGenerator
+from .letter_generator import LetterGenerator
+from .raw_image_generator import RawImageGenerator
 from SyntheticDataset2.ImageOperations.image_masker import ImageMasker
 from SyntheticDataset2.ImageOperations.bounded_image_cropper import BoundedImageCropper
 from PIL import Image

@@ -77,30 +77,30 @@ class TargetCreator(object):
         letter_image = SpecifiedLetterGenerator(letter, font_type, int(size*(10000.0 / 6832.0) / proportionality), letter_color).generate_specified_letter()
 
         if shape_type == ShapeTypes.TRIANGLE:
-            if shape_orientation == "N":
+            if shape_orientation == ShapeOrientations.NORTH:
                 return ImagePaster.paste_images_triangle_angle_north(cropped_shape_image, letter_image)
 
-            if shape_orientation == "S":
+            if shape_orientation == ShapeOrientations.SOUTH:
                 return ImagePaster.paste_images_triangle_angle_south(cropped_shape_image, letter_image)
 
         if shape_type == ShapeTypes.PENTAGON or shape_type == ShapeTypes.STAR:
-            if shape_orientation == "N":
+            if shape_orientation == ShapeOrientations.NORTH:
                 return ImagePaster.paste_images_pentagon_angle_north(cropped_shape_image, letter_image)
 
-            if shape_orientation == "S":
+            if shape_orientation == ShapeOrientations.SOUTH:
                 return ImagePaster.paste_images_pentagon_angle_south(cropped_shape_image, letter_image)
 
         if shape_type == ShapeTypes.QUARTERCIRCLE:
-            if shape_orientation == "NE":
+            if shape_orientation == ShapeOrientations.NORTHEAST:
                 return ImagePaster.paste_images_quarter_circle_northeast(cropped_shape_image, letter_image)
 
-            if shape_orientation == "SE":
+            if shape_orientation == ShapeOrientations.SOUTHEAST:
                 return ImagePaster.paste_images_quarter_circle_southeast(cropped_shape_image, letter_image)
 
-            if shape_orientation == "SW":
+            if shape_orientation == ShapeOrientations.SOUTHWEST:
                 return ImagePaster.paste_images_quarter_circle_southwest(cropped_shape_image, letter_image)
 
-            if shape_orientation == "NW":
+            if shape_orientation == ShapeOrientations.NORTHWEST:
                 return ImagePaster.paste_images_quarter_circle_northwest(cropped_shape_image, letter_image)
 
             else:
