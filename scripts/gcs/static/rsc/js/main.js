@@ -26,6 +26,13 @@ $(document).ready(function(){
 
 	});
 
+	// lockdown mts interface
+	MTSFields.forEach(function(element) {
+		$("[value='" + element + "']").attr("disabled", "");
+	});
+
+	$("#target-content").attr("disabled", "")
+
 });
 
 // key combo watchdog
@@ -373,6 +380,8 @@ function switchControlPanelRefresh() {
 /**
  * statusDisplay(String programName, String status)
  *
+ * Front-end update function that's used by statusPush() and statusGet().
+ *
  * 
  */
 function statusDisplay(programName, data) {
@@ -381,7 +390,7 @@ function statusDisplay(programName, data) {
 
 	$(ref + "-status").html(data["status"]);
 
-	if(programName == "interop") {
+	if(programName == "interop" && data["request_status"] != "failure") {
 		var interopProperties = ["emergent_position", "airdrop_position", "off-axis_position"];
 
 		interopProperties.forEach(function(element) {
@@ -405,7 +414,7 @@ function statusDisplay(programName, data) {
 			console.log("HELP1 " + ref + "-power-button");
 
 			$(ref + "-power-button").removeClass("green").addClass("red");
-			$(ref + "-power-button").attr("data-tooltip", "Turn off");
+			//$(ref + "-power-button").attr("data-tooltip", "Turn off");
 			$(ref + "-power-button").attr("onclick", "statusPush('" + programName + "', 'off');");
 		}
 	} else if(data["status"] == "disconnected") { // disconnected
@@ -416,7 +425,7 @@ function statusDisplay(programName, data) {
 			console.log("HELP2 " + ref + "-power-button");
 
 			$(ref + "-power-button").removeClass("red").addClass("green");
-			$(ref + "-power-button").attr("data-tooltip", "Turn on");
+			//$(ref + "-power-button").attr("data-tooltip", "Turn on");
 			$(ref + "-power-button").attr("onclick", "statusPush('" + programName + "', 'on');");
 		}
 	}
@@ -452,7 +461,7 @@ function statusPush(process, cmd) {
 			program = "sda";
 			friendlyProgramName = "SDA script";
 			break;
-		case "image-processing":
+		case "img_proc":
 			program = "img_proc";
 			friendlyProgramName = "Image Processing script"
 			break;
@@ -487,10 +496,12 @@ function statusPush(process, cmd) {
 		success: function(data) {
 			// interop was enabled
 			Materialize.toast(friendlyProgramName + ' was ' + command.toUpperCase() + '.', toastDuration);
-			console.log("statusPush():" + friendlyProgramName + 'successfully ' + command + ', see data: ');
+			console.log("statusPush():" + friendlyProgramName + ' successfully ' + command + ', see data: ');
 			console.log(data);
 
 			statusDisplay(program, data);
+
+			statusGet(program);
 		},
 
 		error: function(data) {
@@ -509,37 +520,39 @@ function statusPush(process, cmd) {
  * Retrieves the status informaition of the different subprocesses for the 
  * control panel.
  */
-function statusGet() {
+function statusGet(programName) {
 
-	// TODO: make refresh code actually refresh. write this in real env.
+	if(typeof programName == "undefined") {
+		const programs = ["interop", "img_proc", "sda"];
 
-	const programs = ["interop", "img_proc", "sda"];
-
-	programs.forEach(function(program_name) {
-
-		$.ajax({
-			url: "/get/" + program_name,
-			method: "POST",
-			timeout: 1000,
-			async: true,
-
-			dataType: "json",
-
-			success: function(data) {
-				// interop was enabled
-				//console.log("statusGet(): /get/" + program_name + " successful, displaying data: " + data["status"]);
-
-				statusDisplay(program_name, data);
-			},
-
-			error: function(data) {
-				// server side error
-				Materialize.toast('See console: /get/' +  program_name + ' failed.', 1000);
-				console.log("statusGet(): /get/" + program_name + ' failed, see data: ');
-				console.log(data);
-			}
+		programs.forEach(function(program) {
+			statusGet(program);
 		});
 
+		return;
+	}
+
+	$.ajax({
+		url: "/get/" + programName,
+		method: "POST",
+		timeout: 1000,
+		async: true,
+
+		dataType: "json",
+
+		success: function(data) {
+			// interop was enabled
+			//console.log("statusGet(): /get/" + program_name + " successful, displaying data: " + data["status"]);
+
+			statusDisplay(programName, data);
+		},
+
+		error: function(data) {
+			// server side error
+			Materialize.toast('See console: /get/' +  programName + ' failed.', 1000);
+			console.log("statusGet(): /get/" + programName + ' failed, see data: ');
+			console.log(data);
+		}
 	});
 
 }
@@ -593,6 +606,8 @@ function loadImages() {
 				Materialize.toast("LOAD IMAGES SUCESS: No images available.", 3700);
 				
 				return;
+			} else {
+				enableMTSButtons();
 			}
 
 			if(currentImage != 0)
@@ -637,6 +652,25 @@ function loadImages() {
 			console.log(data);
 		}
 	});
+
+}
+
+const MTSFields = ["Shape", "Shape Color", "Alphanumeric Color", "Orientation"];
+
+/**
+ * enableMTSButtons()
+ *
+ * Only executes once. Opens up MTS screen buttons and fields.
+ */
+function enableMTSButtons() {
+
+	$("#size-lock-button").removeClass("disabled");
+
+	MTSFields.forEach(function(element) {
+		$("[value='" + element + "']").removeAttr("disabled");
+	});
+
+	$("#target-content").removeAttr("disabled");
 
 }
 

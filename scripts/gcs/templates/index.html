@@ -40,7 +40,7 @@
 			<div class="modal-content">
 				<h4>Image Submission Verification</h4>
 				<p>Are you sure that you want to submit this image? Look it over before you press submit.</p>
-				<div class="row">
+				<div class="row" style="margin-bottom:-90px;">
 					<div class="col s6">
 						<h5 style="margin-top:0;">Crop Preview</h5>
 						<div id="crop-previewer"></div>
@@ -49,25 +49,29 @@
 						<div class="special-container grey lighten-2">
 							<h5 style="margin-top:0;">Crop Details</h5>
 							<table>
+								<col width="45%">
+								<col width="55%">
+
 								<thead>
 									<tr>
 										<th>Field Name</th>
 										<th>Value</th>
 									</tr>
 								</thead>
+
 								<tbody>
 									<tr>
 										<td>Filename</td>
 										<td><span id="preview-filename"><i>unknown</i>.jpg</span></td>
 									</tr>
 									<tr>
-										<td>Top Left Point (x1, y1)</td>
+										<td>Top Left Point<br>(x1, y1)</td>
 										<td>
 											[<span id="preview-x1">0</span>, <span id="preview-y1">0</span>]
 										</td>
 									</tr>
 									<tr>
-										<td>Bottom Right Point (x2, y2)</td>
+										<td>Bottom Right Point<br>(x2, y2)</td>
 										<td>
 											[<span id="preview-x2">0</span>, <span id="preview-y2">0</span>]
 										</td>
@@ -133,6 +137,9 @@
 							<div class="power-button-parent">
 								<h5 style="margin-top:0">Interop. Connection <!--<small>running</small>--></h5>
 								<table>
+									<col width="25%">
+									<col width="75%">
+
 									<thead>
 										<tr>
 											<th>Property</th>
@@ -176,12 +183,15 @@
 							</div>
 							<div class="power-button-parent">
 								<div class="power-button-anchor">
-									<a id="sda-power-button" class="waves-effect waves-light btn power-button tooltipped green" data-position="left" data-tooltip="Turn on" onclick="statusPush('sda', 'on')">
+									<a id="sda-power-button" class="waves-effect waves-light btn power-button tooltipped green" data-position="left" data-tooltip="Turn off/on" onclick="statusPush('sda', 'on')">
 										<i class="fa fa-power-off" aria-hidden="true"></i>
 									</a>
 								</div>
 								<h5 style="margin-top:0">SDA</h5>
 								<table>
+									<col width="25%">
+									<col width="75%">
+
 									<thead>
 										<tr>
 											<th>Property</th>
@@ -214,12 +224,15 @@
 							</div>
 							<div class="power-button-parent">
 								<div class="power-button-anchor">
-									<a id="img_proc-power-button" class="waves-effect waves-light btn power-button tooltipped green" data-position="left" data-tooltip="Turn on" onclick="statusPush('image-processing', 'on')">
+									<a id="img_proc-power-button" class="waves-effect waves-light btn power-button tooltipped green" data-position="left" data-tooltip="Turn off/on" onclick="statusPush('img_proc', 'on')">
 										<i class="fa fa-power-off" aria-hidden="true"></i>
 									</a>
 								</div>
 								<h5 style="margin-top:0">Image Processing</h5>
 								<table>
+									<col width="25%">
+									<col width="75%">
+
 									<thead>
 										<tr>
 											<th>Property</th>
@@ -296,7 +309,7 @@
 						<div class="row" id="image-previewer-parent-container">
 							<div class="col s9" id="image-previewer-container">
 								<!-- Image Previewer -->
-								<a class="waves-effect waves-light btn tooltipped" style="position:absolute" id="size-lock-button" data-position="right" data-tooltip="Lock height of image to height of box: Command + L" onclick="switchImageHeightLock()">
+								<a class="waves-effect waves-light btn tooltipped disabled" style="position:absolute" id="size-lock-button" data-position="right" data-tooltip="Lock height of image to height of box: Command + L" onclick="switchImageHeightLock()">
 									<i class="fa fa-lock" id="size-lock-icon" aria-hidden="true"></i>
 								</a>
 								<img id="image-previewer" src="">
