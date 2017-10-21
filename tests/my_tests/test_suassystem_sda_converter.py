@@ -27,6 +27,53 @@ class SDAConverterTestCase(unittest.TestCase):
 
         self.sda_converter = SDAConverter(self.initial_coordinates, self.boundary_points)
 
+    def test_convert_fly_zones(self):
+
+        result_from_the_program=self.sda_converter.convert_fly_zones(numpy.array([self.boundary_points]))
+        test_location1=Location(self.boundary_points[0]["boundary_pts"][0]["latitude"],self.boundary_points[0]["boundary_pts"][0]["longitude"],0)
+        expected_result=(convert_to_point(self.initial_coordinates,test_location1)[:2])
+        self.assertEqual(expected_result[0],result_from_the_program[0][0][0])
+        self.assertEqual(expected_result[1],result_from_the_program[0][0][1])
+
+    def test_convert_fly_zone(self):
+
+        result_fly_zone=self.sda_converter.convert_fly_zone(self.boundary_points)
+        print(result_fly_zone)
+        test_location1=Location(self.boundary_points[0]["boundary_pts"][0]["latitude"],self.boundary_points[0]["boundary_pts"][0]["longitude"],0)
+        expected_fly_zone=(convert_to_point(self.initial_coordinates,test_location1)[:2])
+        print(expected_fly_zone)
+        self.assertEqual(expected_fly_zone[0],result_fly_zone[0][0])
+        self.assertEqual(expected_fly_zone[1],result_fly_zone[0][1])
+
+    def test_is_obstacel_in_path(self):
+        test_waypoint = Location(38.8742103, -77.3217697, 91.44000244140625)
+        test_waypoint2 = Location(38.8762103, -77.3217697, 91.44000244140625)
+        self.sda_converter.set_waypoint(test_waypoint)
+        new_obstacle = interop.StationaryObstacle(38.8753041, -77.3217697, 0, 91.44000244140625)
+        self.sda_converter.add_obstacle(Location(38.8753041, -77.3217697, 91.44000244140625), new_obstacle)
+        self.assertEqual(False,self.sda_converter.is_obstacle_in_path())
+
+    def test_does_guided_path_exist(self):
+        # self.assertTrue(self.sda_converter.does_guided_path_exist())
+        self.sda_converter.avoid_obstacles()
+        self.assertEqual(False,self.sda_converter.does_guided_path_exist())
+
+    # def test_has_uav_completed_guided_path(self):
+    #     self.
+
+
+    def test_has_path_changed(self):
+        path1=numpy.array([numpy.array([1,2,3]),numpy.array([2,2,3])])
+        path2=numpy.array([numpy.array([1,2,3]),numpy.array([2,2,3]),numpy.array([3,2,3])])
+
+        self.assertTrue(self.sda_converter.has_path_changed(path1,path2))
+
+    def test_has_uav_completed_guided_path(self):
+        test_waypoint = Location(38.8742103, -77.3217697, 91.44000244140625)
+        self.sda_converter.add_waypoint(test_waypoint)
+
+
+
 
     def test_set_waypoints(self):
 
