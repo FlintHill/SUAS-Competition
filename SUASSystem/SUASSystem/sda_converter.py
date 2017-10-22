@@ -23,6 +23,7 @@ class SDAConverter(object):
         self.current_path_index = 1
         self.minimum_change_in_guided_waypoint = 3
 
+
         converted_boundary_points = self.convert_fly_zones(numpy.array([fly_zones]))
         self.obstacle_map = ObstacleMap(numpy.array([0,0,0]), converted_boundary_points)
 
@@ -64,6 +65,17 @@ class SDAConverter(object):
 
         self.obstacle_map.reset_waypoints()
         self.obstacle_map.add_waypoint(converted_waypoint)
+
+    def add_waypoint(self, new_waypoint):
+        """
+        Add the new waypoint
+
+        :param new_waypoint: The new waypoint
+        :type new_waypoint: Location
+        """
+        converted_waypoint = convert_to_point(self.initial_coordinates, new_waypoint)
+        self.obstacle_map.add_waypoint(converted_waypoint)
+
 
     def add_obstacle(self, obstacle_location, obstacle):
         """
@@ -111,14 +123,15 @@ class SDAConverter(object):
         print("Obstacle in path:", obstacle_in_path_boolean)
         if obstacle_in_path_boolean:
             min_path = self.obstacle_map.get_min_path(paths)
-
+            print(min_path)
             if self.current_path.shape[0] == 0:
                 self.current_path_index = 0
                 self.current_path = min_path
+                print(current_path)
             elif self.has_path_changed(self.current_path, min_path):
                 self.current_path_index = 0
                 self.current_path = min_path
-
+                print(current_path)
     def has_path_changed(self, path1, path2):
         """
         Compares two paths to see if one has any changed points
@@ -136,12 +149,28 @@ class SDAConverter(object):
                 return True
 
         return False
+    def set_path_index(self, index):
+        """
+        For testing purpose
+        :param index: Integer
+        """
+        self.current_path_index=index;
 
     def has_uav_completed_guided_path(self):
         """
         Returns True if the UAV has completed the guided path, False if not
         """
         return self.current_path_index >= len(self.current_path)
+
+    def set_guided_path(self, path):
+        """
+        For testing purpose
+        :param path: Numpy Array
+        """
+        self.current_path=path
+
+    def get_current_path(self):
+        return self.current_path
 
     def does_guided_path_exist(self):
         """
