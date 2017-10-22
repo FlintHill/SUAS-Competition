@@ -41,7 +41,7 @@ def gcs_process(sda_status, img_proc_status, interop_client_array):
 
     guided_waypoint_location = None
     while True:
-        current_location = SUASSystem.Location(vehicle.location.global_relative_frame.lat, vehicle.location.global_relative_frame.lon, vehicle.location.global_relative_frame.alt)
+        current_location = get_location(vehicle)
         location_log.append(current_location)
 
         vehicle_state_data[0] = SUASSystem.get_vehicle_state(vehicle, GCSSettings.MSL_ALT)
@@ -50,7 +50,7 @@ def gcs_process(sda_status, img_proc_status, interop_client_array):
             mission_information_data[0] = get_mission_json(interop_client_array[0].get_active_mission(), interop_client_array[0].get_obstacles())
 
         if sda_status.value.lower() == "connected":
-            if (vehicle.location.global_relative_frame.alt * 3.28084) > GCSSettings.SDA_MIN_ALT and (vehicle.mode.name == "GUIDED" or vehicle.mode.name == "AUTO"):
+            """if (vehicle.location.global_relative_frame.alt * 3.28084) > GCSSettings.SDA_MIN_ALT and (vehicle.mode.name == "GUIDED" or vehicle.mode.name == "AUTO"):
                 log("root", "Avoiding obstacles...")
                 vehicle.mode = VehicleMode("GUIDED")
                 guided_waypoint_location = sda_avoid_coords[0][0]
@@ -58,7 +58,8 @@ def gcs_process(sda_status, img_proc_status, interop_client_array):
 
             if waypoint_location:
                 if vehicle.mode.name == "GUIDED" and has_uav_reached_waypoint(current_location, guided_waypoint_location):
-                    vehicle.mode = VehicleMode("AUTO")
+                    vehicle.mode = VehicleMode("AUTO")"""
+            print("SDA is Enabled")
 
         print(current_location)
         sleep(0.1)

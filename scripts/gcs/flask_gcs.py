@@ -122,13 +122,22 @@ def get_image_list():
         pictures = {}
         picture_index = 0
         for file_name in os.listdir('static/imgs'):
-            if file_name.endswith(".jpg"):
+            if is_file_an_image(file_name):
                 pictures[picture_index] = file_name
                 picture_index = picture_index + 1
 
         return jsonify(pictures)
     except:
         traceback.print_exc()
+
+def is_file_an_image(file_name):
+    image_file_types = [".JPG", ".JPEG", ".jpg"]
+
+    for file_type in image_file_types:
+        if file_type in file_name:
+            return True
+
+    return False
 
 @app.route('/post/target', methods=["POST"])
 def post_target():
@@ -143,7 +152,7 @@ def post_target():
             "orientation" : request.form["targetOrientation"],
             "base_image_filename" : request.form["imageFilename"],
             "background_color" : request.form["contentColor"],
-            "target_top_left" : [int(request.form["targetTopLeftX"]), int(request.form["targetTopLeftX"])],
+            "target_top_left" : [int(request.form["targetTopLeftX"]), int(request.form["targetTopLeftY"])],
             "target_bottom_right" : [int(request.form["targetBottomRightX"]), int(request.form["targetBottomRightY"])],
             "latitude" : 0,
             "longitude" : 0
