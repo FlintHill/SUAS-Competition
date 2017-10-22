@@ -1,5 +1,5 @@
 /**
- * main script file
+ * main script file for gcs:WEBui
  * v0.1
  */
 
@@ -225,6 +225,8 @@ var cropData = {
  * loadCropPreview()
  *
  * Triggered by the "Crop and Submit" button.
+ *
+ * Generates 
  */
 function loadCropPreview() {
 
@@ -239,7 +241,7 @@ function loadCropPreview() {
 		var cropperW = $("#image-previewer").width();
 		var cropperH = $("#image-previewer").height();
 
-		var length = $("#crop-detail-panel").height();
+		var length = Math.round($("#crop-detail-panel").height());
 		var topLeftX = selectionPoints[0][0];
 		var topLeftY = selectionPoints[0][1];
 		var extrude = selectionPoints[1][0] - selectionPoints[0][0];
@@ -252,6 +254,21 @@ function loadCropPreview() {
 
 		var transformed_topLeftX = (transformedW/imageW) * actual_topLeftX;
 		var transformed_topLeftY = (transformedH/imageH) * actual_topLeftY;
+
+		console.log("imageW: " + imageW);
+		console.log("imageH: " + imageH);
+		console.log("cropperW: " + cropperW);
+		console.log("cropperH: " + cropperH);
+		console.log("length: " + length);
+		console.log("topLeftX: " + topLeftX);
+		console.log("topLeftY: " + topLeftY);
+		console.log("extrude: " + extrude);
+		console.log("transformedW: " + transformedW);
+		console.log("transformedH: " + transformedH);
+		console.log("actual_topLeftX: " + actual_topLeftX);
+		console.log("actual_topLeftY: " + actual_topLeftY);
+		console.log("transformed_topLeftX: " + transformed_topLeftX);
+		console.log("transformed_topLeftY: " + transformed_topLeftY);
 
 		$("#crop-previewer").css({
 			//"height": length + "px", 
@@ -266,10 +283,10 @@ function loadCropPreview() {
 			"background-size": transformedW + "px " + transformedH + "px",
 			"background-position": 
 				"-" + 
-				transformed_topLeftX + 
+				(transformed_topLeftX + (50)) + // 17
 				"px -" + 
-				transformed_topLeftY + 
-				"px" // "0px 0px"
+				(transformed_topLeftY + (34)) + // 17
+				"px"
 		});
 
 		console.log("loadCropPreview(): imageW: " + imageW);
@@ -382,7 +399,7 @@ function switchControlPanelRefresh() {
  *
  * Front-end update function that's used by statusPush() and statusGet().
  *
- * 
+ * Updates the Control Panel slide with 
  */
 function statusDisplay(programName, data) {
 
@@ -396,17 +413,12 @@ function statusDisplay(programName, data) {
 		interopProperties.forEach(function(element) {
 			$(ref + "-" + element).html("[" + data[element][0] + ", " + data[element][1] + "]");
 		});
-
-		//$(ref + "-emergent_position").html(data["emergent_position"]);
-		//$(ref + "-airdrop_position").html(data["airdrop_position"]);
-		//$(ref + "-off-axis_position").html(data["off-axis_position"]);
 	} else {
 		$(ref + "-runtime").html(data["runtime"]);
 	}
 
-	//console.log("statusDisplay(): data['runtime']: " + data["runtime"]);
-
 	if(data["status"] == "connected") { // connected
+
 		if(!$(ref + "-light").hasClass("green")) {
 			$(ref + "-light").removeClass("red").addClass("green");
 			$(ref + "-light-text").html("Connected");
@@ -414,10 +426,11 @@ function statusDisplay(programName, data) {
 			console.log("HELP1 " + ref + "-power-button");
 
 			$(ref + "-power-button").removeClass("green").addClass("red");
-			//$(ref + "-power-button").attr("data-tooltip", "Turn off");
 			$(ref + "-power-button").attr("onclick", "statusPush('" + programName + "', 'off');");
 		}
+
 	} else if(data["status"] == "disconnected") { // disconnected
+
 		if(!$(ref + "-light").hasClass("red")) {
 			$(ref + "-light").removeClass("green").addClass("red");
 			$(ref + "-light-text").html("Disconnected");
@@ -428,6 +441,7 @@ function statusDisplay(programName, data) {
 			//$(ref + "-power-button").attr("data-tooltip", "Turn on");
 			$(ref + "-power-button").attr("onclick", "statusPush('" + programName + "', 'on');");
 		}
+
 	}
 
 }
@@ -472,7 +486,7 @@ function statusPush(process, cmd) {
 
 	var urlCommand = "", shortCommand = "", command = "";
 
-	if("off" == cmd) {
+	if(cmd == "off") {
 		// turn off
 		urlCommand = "disconnected";
 		shortCommand = "stop";
@@ -523,6 +537,7 @@ function statusPush(process, cmd) {
 function statusGet(programName) {
 
 	if(typeof programName == "undefined") {
+
 		const programs = ["interop", "img_proc", "sda"];
 
 		programs.forEach(function(program) {
@@ -530,6 +545,7 @@ function statusGet(programName) {
 		});
 
 		return;
+
 	}
 
 	$.ajax({
@@ -541,9 +557,6 @@ function statusGet(programName) {
 		dataType: "json",
 
 		success: function(data) {
-			// interop was enabled
-			//console.log("statusGet(): /get/" + program_name + " successful, displaying data: " + data["status"]);
-
 			statusDisplay(programName, data);
 		},
 

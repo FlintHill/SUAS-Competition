@@ -23,10 +23,10 @@
 		<link rel="stylesheet" type="text/css" href="rsc/css/materialize.min.css">
 		<script src="rsc/js/materialize.min.js"></script>
 
-		<!-- Material Icon Font -->
+		<!-- Font Awesome Icons -->
 		<link rel="stylesheet" href="rsc/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
 
-		<!-- Custom -->
+		<!-- Custom Styling and Scripting -->
 		<link rel="stylesheet" href="rsc/css/main.css">
 		<script src="rsc/js/main.js"></script>
 
@@ -94,11 +94,235 @@
 			</div>
 		</div>
 
+		<!-- About Modal -->
+		<div id="about" class="modal">
+			<div class="modal-content">
+				<h3>About Page</h4>
+				<p>
+					This modal gives you a simple explanation and breakdown of the two main components of the GCS:WEBui, the Control Panel and the Manual Target Submission. This site, itself, is used by the Flint Hill Animus Ferus team for the AUVSI SUAS competition in Maryland. This page should be displayed on the Ground Control Station laptop.
+				</p>
+				<hr style="margin-bottom:1em">
+				<h4>Control Panel</h4>
+				<p>
+					The control panel slide is to let us view and/or control our subproccesses, the Interoperability connection (to the competition server), SDA (Sense, Detect, and Avoid,) and Image Processing. From the panes, you can see the status, runtime, and the power on/off buttons for SDA and Image Processing. From the Interop. pane, you can the status, and position of the single targets, such as off-axis, emergent, and airdrop.
+				</p>
+				<p>
+					<b>The controls</b> for the control panel are not difficult or extensive. There is only the simple power on/off power buttons for SDA and Image Processing. When a power button is red, clicking it means that you will turn it off. And when a power button is greed, clicking it means that you will it on
+				</p>
+				<p>
+					A demo of these buttons can be seen below:
+				</p>
+				<div class="row">
+					<div class="col s6">
+						<a class="waves-effect waves-light btn power-button tooltipped green center" data-position="bototm" data-tooltip="This would turn on a subprocess" href="#" style="margin:0 auto; display:block">
+							<i class="fa fa-power-off" aria-hidden="true"></i>
+						</a>
+					</div>
+					<div class="col s6">
+						<a class="waves-effect waves-light btn power-button tooltipped red center" data-position="bottom" data-tooltip="This would turn off a subprocess" href="#" style="margin:0 auto; display:block;">
+							<i class="fa fa-power-off" aria-hidden="true"></i>
+						</a>
+					</div>
+				</div>
+				<h4>Manual Target Submission</h4>
+				<p>
+					The manual target submitter (abbreviated MTS) slide is a far more complex slide than the control panel one. As the name states, this slide allows us to manual crop and submit ground targets to the Interoperability server. You will notice that the subprocess Image Processing exists on the Control Panel. In the event that we do not complete autonomous Image Processing before the competition, or for any other related reason, we will use MTS to submit the targets. We also plan to use MTS in conjunction with autonomous Image Processing, as there is no point penalty for it.
+				</p>
+				<h5>The Controls</h5>
+				<p>
+					The controls are, clearly, more complex, but they have simplified as much as possible in order to be immediately accessible to those that have not previously operated the MTS, as it might be necessary for the competition. 
+				</p>
+				<h5><b><i>The Toolbar</i></b></h5>
+				<p>
+					Here is the toolbar as it appears on the Image Processing slide:
+				</p>
+				<div class="special-container grey lighten-2">
+					<div class="row" style="margin-bottom:0">
+						<div class="col s8">
+							<a class="waves-effect waves-light btn tooltipped" name="load-images-button" data-position="right" data-tooltip="Command + Up" href="#">
+								<i class="fa fa-upload left"></i> load images
+							</a>
+							<a class="waves-effect waves-light btn green modal-trigger disabled tooltipped" name="crop-and-submit-button" data-position="right" data-delay="800" data-tooltip="Command + Enter" href="#verification" href="#">
+								<i class="fa fa-sign-in left"></i> crop and submit
+							</a>
+						</div>
+						<div class="col s4">
+							<div class="right">
+								<a class="waves-effect waves-light btn tooltipped light-blue disabled" name="left-button" data-position="left" data-delay="760" data-tooltip="Command + Left" href="#">
+									<i class="fa fa-arrow-left"></i>
+								</a>
+								<a class="waves-effect waves-light btn tooltipped light-blue disabled" name="right-button" data-position="left" data-delay="760" data-tooltip="Command + Right" href="#">
+									<i class="fa fa-arrow-right"></i>
+								</a>
+							</div>
+						</div>
+					</div>
+				</div>
+				<p>
+					Notice that the &nbsp;<code><i class="fa fa-sign-in"></i> Crop and Submit</code>, <i class="fa fa-arrow-left"></i>, and <i class="fa fa-arrow-right"></i> buttons are disabled. These buttons are disabled because Crop and Submit requires that a crop be selected on an image, and the <i class="fa fa-arrow-left"></i> and <i class="fa fa-arrow-right"></i> arrow buttons are for selecting between images. But, since no images are loaded by default on startup, these buttons are not clickable.
+				</p>
+				<p>
+					The buttons being disabled also, by design, teaches the user to press the &nbsp;<code><i class="fa fa-upload"></i> Load Images</code> to retrieve new images if new images are taken by the drone.
+				</p>
+				<p>
+					Here is what the toolbar looks like without any of the buttons being disabled:
+				</p>
+				<div class="special-container grey lighten-2">
+					<div class="row" style="margin-bottom:0">
+						<div class="col s8">
+							<a class="waves-effect waves-light btn tooltipped" name="load-images-button" data-position="right" data-tooltip="Command + Up" href="#">
+								<i class="fa fa-upload left"></i> load images
+							</a>
+							<a class="waves-effect waves-light btn green modal-trigger tooltipped" name="crop-and-submit-button" data-position="right" data-delay="800" data-tooltip="Command + Enter" href="#verification" href="#">
+								<i class="fa fa-sign-in left"></i> crop and submit
+							</a>
+						</div>
+						<div class="col s4">
+							<div class="right">
+								<a class="waves-effect waves-light btn tooltipped light-blue" name="left-button" data-position="left" data-delay="760" data-tooltip="Command + Left" href="#">
+									<i class="fa fa-arrow-left"></i>
+								</a>
+								<a class="waves-effect waves-light btn tooltipped light-blue" name="right-button" data-position="left" data-delay="760" data-tooltip="Command + Right" href="#">
+									<i class="fa fa-arrow-right"></i>
+								</a>
+							</div>
+						</div>
+					</div>
+				</div>
+				<p>Here is formal breakdown of the buttons:</p>
+				<ul class="collection">
+					<li class="collection-item">
+						<a class="waves-effect waves-light btn tooltipped" name="load-images-button" data-position="right" data-tooltip="Command + Up" href="#">
+							<i class="fa fa-upload left"></i> load images
+						</a>
+						<p style="margin-bottom:0">
+							Press to load images. If new ones are being taken and made available, then clicking load images will maintain your current index, and simply add the new images to the ones available. If the new list of images is shorter than your current image index (because images have been deleted,) then your current image index will reset to zero.
+						</p>
+					</li>
+					<li class="collection-item">
+						<a class="waves-effect waves-light btn green modal-trigger tooltipped" name="crop-and-submit-button" data-position="right" data-delay="800" data-tooltip="Command + Enter" href="#verification" href="#">
+							<i class="fa fa-sign-in left"></i> crop and submit
+						</a>
+						<p style="margin-bottom:0">
+							This button becomes clickable once you have created a crop on the image. This opens up a modal which lets you verify the cropped target before finally submitting.
+						</p>
+					</li>
+					<li class="collection-item">
+						<a class="waves-effect waves-light btn tooltipped light-blue" name="left-button" data-position="left" data-delay="760" data-tooltip="Command + Left" href="#">
+							<i class="fa fa-arrow-left"></i>
+						</a>
+						<p style="margin-bottom:0">
+							Decrease current image index by one. Only selectable if your current image index does not equal zero.
+						</p>
+					</li>
+					<li class="collection-item">
+						<a class="waves-effect waves-light btn tooltipped light-blue" name="right-button" data-position="left" data-delay="760" data-tooltip="Command + Right" href="#">
+							<i class="fa fa-arrow-right"></i>
+						</a>
+						<p style="margin-bottom:0">
+							Increase current image index by one. Only selectable if your current image index does not equal the total number of available images.
+						</p>
+					</li>
+				</ul>
+				<h5 style="margin-top:1em"><b><i>The Specification's Pane</i></b></h5>
+				<p>
+					It's imperative that the target's description be accurate. To accomplish this, there is the specification's pane that allows you to input the details of the target.
+				</p>
+				<div class="row">
+					<div class="col s6">
+						<div class="special-container white lighten-4">
+							<h5 style="margin-top:0">Specifications</h5>
+							<select>
+								<option value="" selected>Shape&nbsp;</option>
+								<option value="circle">Circle</option>
+								<option value="cross">Cross</option>
+								<option value="heptagon">Heptagon</option>
+								<option value="hexagon">Hexagon</option>
+								<option value="octagon">Octagon</option>
+								<option value="pentagon">Pentagon</option>
+								<option value="quarter_circle">Quarter circle</option>
+								<option value="rectangle">Rectangle</option>
+								<option value="semicircle">Semicircle</option>
+								<option value="square">Square</option>
+								<option value="star">Star</option>
+								<option value="trapezoid">Trapezoid</option>
+								<option value="triangle">Triangle</option>
+							</select>
+							<select style="margin-bottom:4em">
+								<option value="" selected>Shape Color&nbsp;</option>
+								<option value="red">Red</option>
+								<option value="orange">Orange</option>
+								<option value="yellow">Yellow</option>
+								<option value="green">Green</option>
+								<option value="blue">Blue</option>
+								<option value="indigo">Indigo</option>
+								<option value="violet">Violet</option>
+								<option value="white">White</option>
+							</select>
+							<div class="input-field input-text-fix">
+								<input placeholder="A letter or number" type="text" class="validate">
+								<label for="first_name">Alphanumeric Content&nbsp;</label>
+							</div>
+							<select name="color">
+								<option value="" selected>Alphanumeric Color&nbsp;</option>
+								<option class="red-text" value="red">Red</option>
+								<option value="orange">Orange</option>
+								<option value="yellow">Yellow</option>
+								<option value="green">Green</option>
+								<option value="blue">Blue</option>
+								<option value="indigo">Indigo</option>
+								<option value="violet">Violet</option>
+								<option value="white">White</option>
+							</select>
+							<select name="orientation">
+								<option value="" selected>Orientation&nbsp;</option>
+								<option value="N">North</option>
+								<option value="NE">North-East</option>
+								<option value="E">East</option>
+								<option value="SE">South-East</option>
+								<option value="S">South</option>
+								<option value="SW">South-West</option>
+								<option value="W">West</option>
+								<option value="NW">North-West</option>
+							</select>
+						</div>
+					</div>
+					<div class="col s6">
+						<ul class="collection">
+							<li class="collection-item">
+								<b>Shape:</b> The target's shape.
+							</li>
+							<li class="collection-item">
+								<b>Shape Color:</b> The target's background color.
+							</li>
+							<li class="collection-item">
+								<b>Alphanumeric Content:</b> The single alphanumeric symbol that appears (A-Z, 0-9).
+							</li>
+							<li class="collection-item">
+								<b>Alphanumeric Color:</b> The color of the alphanumeric symbol, itself.
+							</li>
+							<li class="collection-item">
+								<b>Orientation:</b> What cardinal map direction that the symbol is parallel with. For example, this text here, if it appeared on an image, as is, this would be considered "North."
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Exit</a>
+			</div>
+		</div>
+
 		<!-- Navbar -->
 		<nav>
 			<div class="nav-wrapper purple darken-1">
 				<a href="#" class="brand-logo">&nbsp;&nbsp;Ground Control Station</a>
 				<ul id="nav-mobile" class="right hide-on-med-and-down" style="height:64px;">
+					<li>
+						<a class="modal-trigger" href="#about">
+							<i class="fa fa-question-circle fa-2x" aria-hidden="true" style="line-height:60px"></i>
+						</a>
+					</li>
 					<li>
 						<a href="https://google.com/">
 							<i class="fa fa-close fa-2x" aria-hidden="true" style="line-height:60px"></i>
@@ -135,7 +359,7 @@
 								</p>
 							</div>
 							<div class="power-button-parent">
-								<h5 style="margin-top:0">Interop. Connection <!--<small>running</small>--></h5>
+								<h5 style="margin-top:0">Interop. Connection</h5>
 								<table>
 									<col width="25%">
 									<col width="75%">
@@ -258,10 +482,10 @@
 					</div>
 				</div>
 				<hr>
-				<p class="grey-text">v0.1 /// Flinthill SUAS /// Last modified: October 19th, 2017</p>
+				<p class="grey-text">v0.1 /// Flinthill SUAS /// Last modified: October 22nd, 2017</p>
 			</div>
-
 		</div>
+
 		<!-- Slide 2: Image Preview and Cropper -->
 		<div id="test-swipe-2" class="col s12">
 			<div class="row">
@@ -285,10 +509,6 @@
 								<a class="waves-effect waves-light btn tooltipped" name="load-images-button" data-position="right" data-tooltip="Command + Up" onclick="loadImages()">
 									<i class="fa fa-upload left"></i> load images
 								</a>
-								<!-- functionality not supported by ImageAreaSelect -->
-								<!--<a class="waves-effect waves-light btn disabled tooltipped" name="remove-crop-button" data-position="right" data-tooltip="Command + Delete" onclick="ias.cancelSelection();">
-									<i class="fa fa-ban left"></i> remove crop
-								</a>-->
 								<a class="waves-effect waves-light btn green modal-trigger disabled tooltipped" name="crop-and-submit-button" data-position="right" data-delay="800" data-tooltip="Command + Enter" href="#verification" onclick="loadCropPreview()">
 									<i class="fa fa-sign-in left"></i> crop and submit
 								</a>
