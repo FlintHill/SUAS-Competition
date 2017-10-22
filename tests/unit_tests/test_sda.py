@@ -102,14 +102,12 @@ class SDATestCase(unittest.TestCase):
         """
         self.obstacle_map.reset_obstacles()
         self.obstacle_map.reset_waypoints()
-        self.obstacle_map.set_drone_position(np.array([0,0,0]))
+        self.obstacle_map.set_drone_position(np.array([0,0,25]))
         obstacle_in_path = StationaryObstacle(np.array([50, 0, 0]), 5, 15)
         waypoint = np.array([100, 0, 25])
-        new_uav_position = np.array([0, 0, 25])
 
         self.obstacle_map.add_obstacle(obstacle_in_path)
         self.obstacle_map.add_waypoint(waypoint)
-        self.obstacle_map.set_drone_position(new_uav_position)
 
         obstacle_in_path_boolean, avoid_paths = self.obstacle_map.is_obstacle_in_path()
         self.assertEqual(obstacle_in_path_boolean, True)
@@ -131,7 +129,7 @@ class SDATestCase(unittest.TestCase):
         self.obstacle_map.add_waypoint(waypoint)
         self.obstacle_map.set_drone_position(new_uav_position)
         obstacle_in_path_boolean, avoid_paths = self.obstacle_map.is_obstacle_in_path()
-        self.assertEqual(obstacle_in_path_boolean, True)
+        self.assertEqual(obstacle_in_path_boolean, False)
 
     def test_flight_boundary_simple(self):
         """
