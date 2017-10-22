@@ -13,14 +13,14 @@ class SDAConverterTestCase(unittest.TestCase):
         self.setup_client_converter()
 
     def setup_client_converter(self):
-        self.initial_coordinates = Location(38.8703041, -77.3214035, 91.44000244140625)
+        self.initial_coordinates = Location(38.8703041, -77.3214035, 0)
         self.boundary_points = [
             {
                 "boundary_pts" : [
-                    {"latitude" : 38.867580, "longitude" : -77.330360, "order" : 0},
-                    {"latitude" : 38.876535, "longitude" : -77.330060, "order" : 0},
-                    {"latitude" : 38.877002, "longitude" : -77.314997, "order" : 0},
-                    {"latitude" : 38.867513, "longitude" : -77.315769, "order" : 0}
+                    {"latitude" : 38.8697558739, "longitude" : -77.3221076688, "order" : 0},
+                    {"latitude" : 38.8708523261, "longitude" : -77.3221076743, "order" : 0},
+                    {"latitude" : 38.8697558739, "longitude" : -77.3206993312, "order" : 0},
+                    {"latitude" : 38.8708523261, "longitude" : -77.3206993257, "order" : 0}
                 ]
             }
         ]
@@ -28,53 +28,41 @@ class SDAConverterTestCase(unittest.TestCase):
         self.sda_converter = SDAConverter(self.initial_coordinates, self.boundary_points)
 
     def test_convert_fly_zones(self):
-
         result_from_the_program=self.sda_converter.convert_fly_zones(numpy.array([self.boundary_points]))
         test_location1=Location(self.boundary_points[0]["boundary_pts"][0]["latitude"],self.boundary_points[0]["boundary_pts"][0]["longitude"],0)
         expected_result=(convert_to_point(self.initial_coordinates,test_location1)[:2])
-        self.assertEqual(expected_result[0],result_from_the_program[0][0][0])
-        self.assertEqual(expected_result[1],result_from_the_program[0][0][1])
+        self.assertEqual(expected_result[0], result_from_the_program[0][0][0])
+        self.assertEqual(expected_result[1], result_from_the_program[0][0][1])
 
     def test_convert_fly_zone(self):
-
         result_fly_zone=self.sda_converter.convert_fly_zone(self.boundary_points)
         test_location1=Location(self.boundary_points[0]["boundary_pts"][0]["latitude"],self.boundary_points[0]["boundary_pts"][0]["longitude"],0)
         expected_fly_zone=(convert_to_point(self.initial_coordinates,test_location1)[:2])
-        self.assertEqual(expected_fly_zone[0],result_fly_zone[0][0])
-        self.assertEqual(expected_fly_zone[1],result_fly_zone[0][1])
-
-    def test_is_obstacel_in_path(self):
-        test_waypoint = Location(38.8705508017, -77.3210866223, 91.44000244140625)
-        self.sda_converter.add_waypoint(test_waypoint)
-        new_obstacle = interop.StationaryObstacle(38.8704274509, -77.3210866223, 60, 91.44000244140625)
-        self.sda_converter.add_obstacle(Location(38.8704274509, -77.3210866223, 91.44000244140625), new_obstacle)
-        self.assertEqual(False,self.sda_converter.is_obstacle_in_path())
-
+        self.assertEqual(expected_fly_zone[0], result_fly_zone[0][0])
+        self.assertEqual(expected_fly_zone[1], result_fly_zone[0][1])
 
     def test_does_guided_path_exist(self):
         self.sda_converter.set_guided_path(numpy.array([numpy.array([1,2,3]),numpy.array([2,2,3])]))
         self.assertTrue(self.sda_converter.does_guided_path_exist())
        
-    def test_avoid_obstacles(self):
-        self.sda_converter.avoid_obstacles()
-       
     def test_has_path_changed(self):
-        path1=numpy.array([numpy.array([1,2,3]),numpy.array([2,2,3])])
-        path2=numpy.array([numpy.array([1,2,3]),numpy.array([2,2,3]),numpy.array([3,2,3])])
-
+        path1=numpy.array([numpy.array([1,2,3]), numpy.array([2,2,3])])
+        path2=numpy.array([numpy.array([1,2,3]), numpy.array([2,2,3]),numpy.array([3,2,3])])
+        path3=numpy.array([numpy.array([1,2,3]), numpy.array([2,2,3]),numpy.array([4,2,4])])
         self.assertTrue(self.sda_converter.has_path_changed(path1,path2))
+        self.assertEqual(False,self.sda_converter.has_path_changed(path2,path3))
 
     def test_has_uav_completed_guided_path(self):
-        test_waypoint = Location(38.8742103, -77.3217697, 91.44000244140625)
-        self.sda_converter.add_waypoint(test_waypoint)
         self.sda_converter.set_path_index(3)
         self.assertTrue(self.sda_converter.has_uav_completed_guided_path())
 
     def test_get_uav_avoid_coordinates(self):
         self.sda_converter.set_guided_path([numpy.array([45,45,50]),numpy.array([90,90,50])])
-        self.sda_converter.get_uav_avoid_coordinates()
-        self.assertEqual(Location(38.870550801732293,-77.321086622253759,15.2399995123).get_lat(),self.sda_converter.get_uav_avoid_coordinates().get_lat())
-        self.assertEqual(Location(38.870550801732293,-77.321086622253759,15.2399995123).get_lon(),self.sda_converter.get_uav_avoid_coordinates().get_lon())        
+        actual_location = Location(38.870550801732293,-77.321086622253759,15.2399995123)
+        test_location = self.sda_converter.get_uav_avoid_coordinates()
+        self.assertTrue(abs(actual_location.get_lat() - test_location.get_lat()) < 0.0001)
+        self.assertTrue(abs(actual_location.get_lon() - test_location.get_lon()) < 0.0001)
+        self.assertTrue(abs(actual_location.get_alt() - test_location.get_alt()) < 0.0001)        
 
     def test_get_distance_to_current_guided_waypoint(self):
         self.sda_converter.set_guided_path(numpy.array([numpy.array([45,45,50]),numpy.array([90,90,50])]))

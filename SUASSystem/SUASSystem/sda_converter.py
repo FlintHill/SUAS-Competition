@@ -27,6 +27,9 @@ class SDAConverter(object):
         converted_boundary_points = self.convert_fly_zones(numpy.array([fly_zones]))
         self.obstacle_map = ObstacleMap(numpy.array([0,0,0]), converted_boundary_points)
 
+    def get_obstacle_map(self):
+        return self.obstacle_map
+
     def convert_fly_zones(self, fly_zones):
         """
         Wrapper method for converting a list of fly zones
@@ -132,6 +135,9 @@ class SDAConverter(object):
                 self.current_path_index = 0
                 self.current_path = min_path
                 print(current_path)
+
+
+
     def has_path_changed(self, path1, path2):
         """
         Compares two paths to see if one has any changed points

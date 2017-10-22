@@ -102,9 +102,13 @@ class ObstacleMap(object):
                 ]
 
                 new_paths = []
+                print("before new_pos_point")
                 for new_pos_point in new_attempt_pos_points:
+                    print("IN new_pos_point")
                     if not self.does_path_intersect_obstacle_3d(obstacle, self.drone.get_point(), new_pos_point) and self.flight_boundary.is_point_in_bounds(new_pos_point):
+                        print("does_path_intersect_obstacle_3d")
                         for recursive_new_pos_point in new_attempt_pos_points:
+                            print("recursive_new_pos_point")
                             if self.flight_boundary.is_point_in_bounds(recursive_new_pos_point) and abs(recursive_new_pos_point[2] - new_pos_point[2]) < 5:
                                 if recursive_new_pos_point[0] != new_pos_point[0] or recursive_new_pos_point[1] != new_pos_point[1]:
                                     if not self.does_path_intersect_obstacle_3d(obstacle, new_pos_point, recursive_new_pos_point) and not self.does_path_intersect_obstacle_3d(obstacle, recursive_new_pos_point, self.drone.get_waypoint_holder().get_current_waypoint()):
@@ -114,8 +118,10 @@ class ObstacleMap(object):
                 for path in new_paths:
                     print("Point:", str(path))
 
+                print("RETURNING NEW PATHS")
                 return new_paths
 
+        print("RETURNING NOTHING")
         return []
 
     def does_uav_intersect_obstacle_vertically(self, obstacle, drone_point, waypoint):

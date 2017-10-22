@@ -16,9 +16,9 @@ class StationaryObstacle(Obstacle):
         :type height: Float
         """
         super(StationaryObstacle, self).__init__(point, Constants.STATIONARY_OBSTACLE_SAFETY_RADIUS)
-
         self.radius = radius
         self.height = height
+        self.point = point
 
     def get_radius(self):
         """
@@ -31,3 +31,6 @@ class StationaryObstacle(Obstacle):
         The height of the obstacle
         """
         return self.height
+
+    def get_point(self):
+        return self.point
