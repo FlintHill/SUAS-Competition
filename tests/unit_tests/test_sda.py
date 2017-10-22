@@ -113,18 +113,15 @@ class SDATestCase(unittest.TestCase):
         self.assertEqual(obstacle_in_path_boolean, True)
 
     def test_obstacle_avoid_coords_1(self):
-        #take another look at this
         """
         Test ObstacleMap's ability to generate correct avoidance coordinates
         """
         self.obstacle_map.reset_obstacles()
         self.obstacle_map.reset_waypoints()
-        self.obstacle_map.set_drone_position(np.array([0,0,0]))
         obstacle_in_path = StationaryObstacle(np.array([-837.24189827,700.1041422,500]), 150, 500)
         waypoint = np.array([-1027.15210095,168.51612707,200.0000034 ])
         new_uav_position = np.array(np.array([-668.95868657,1051.56233827,200.0000064]))
 
-        self.obstacle_map.add_obstacle(obstacle_in_path)
         self.obstacle_map.add_obstacle(StationaryObstacle(np.array([0,0,0]), 150, 500))
         self.obstacle_map.add_waypoint(waypoint)
         self.obstacle_map.set_drone_position(new_uav_position)

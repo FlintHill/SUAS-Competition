@@ -35,7 +35,6 @@ class ObstacleMap(object):
 
     def replace_overlapping_obstacles(self, final_obstacles):
         '''
-
         If obstacles intersect, delete overlapping obstacles and create the most efficient obstacle in its place.
         Uses recursion in order to cover each obstacle in the given list
         '''
@@ -52,7 +51,6 @@ class ObstacleMap(object):
 
     def do_obstacles_overlap(self, first_obstacle, second_obstacle):
         '''
-
         Check if obstacle squares intersect, returns True if they do intersect
         '''
         first_obstacle_points = first_obstacle.make_avoidance_points(self.drone.get_point()[2])
@@ -132,12 +130,10 @@ class ObstacleMap(object):
         for obstacle in self.obstacles.tolist():
             print("obstacle.get_point():", obstacle.get_point())
             dist_to_obstacle = VectorMath.get_vector_magnitude(np.subtract(obstacle.get_point(), self.drone.get_point()))
-            print(dist_to_obstacle)
             if dist_to_obstacle < obstacle.get_radius() + Constants.DETECTION_THRESHOLD:
                 if isinstance(obstacle, StationaryObstacle):
                     paths = self.generate_possible_paths(obstacle)
 
-                    print(paths)
                     if len(paths) != 0:
                         return True, np.array(paths)
                 #elif isinstance(obstacle, MovingObstacle):
