@@ -72,7 +72,7 @@ class SDAConverter(object):
         :param obstacle_location: The obstacle's GPS location
         :type obstacle_location: Location
         :param obstacle: The obstacle to add
-        :type obstacle: StationaryObstacle
+        :type obstacle: interop.StationaryObstacle
         """
         converted_obstacle_location = convert_to_point(self.initial_coordinates, obstacle_location)
 
@@ -122,7 +122,7 @@ class SDAConverter(object):
     def has_path_changed(self, path1, path2):
         """
         Compares two paths to see if one has any changed points
-        
+
         :param path1: The first path to compare
         :type path1: Numpy Array
         :param path2: The second path to compare

@@ -1,5 +1,5 @@
 import numpy as np
-from math import atan2, cos, sin, pi
+from math import atan2, cos, sin, pi, sqrt
 from SDA import *
 
 class ObstacleMap(object):
@@ -28,9 +28,69 @@ class ObstacleMap(object):
         :type obstacle_to_add: StationaryObstacle
         """
         if self.obstacles.size != 0:
-            self.obstacles = np.hstack((self.obstacles, obstacle_to_add))
+            final_obstacles = np.hstack((self.obstacles, obstacle_to_add))
+            self.obstacles = self.replace_overlapping_obstacles(final_obstacles)
         else:
             self.obstacles = np.array([obstacle_to_add])
+
+    def replace_overlapping_obstacles(self, final_obstacles):
+        '''
+        If obstacles intersect, delete overlapping obstacles and create the most efficient obstacle in its place.
+        Uses recursion in order to cover each obstacle in the given list
+        '''
+        for first_obstacle_index in range(len(final_obstacles)):
+            for second_obstacle_index in range(first_obstacle_index + 1, len(final_obstacles)):
+                if self.do_obstacles_overlap(final_obstacles[first_obstacle_index], final_obstacles[second_obstacle_index]):
+                    encompassing_obstacle = self.make_encompassing_circle(final_obstacles[first_obstacle_index], final_obstacles[second_obstacle_index], final_obstacles)
+                    ind2remove = [first_obstacle_index, second_obstacle_index]
+                    final_obstacles = np.delete(final_obstacles, ind2remove)
+                    final_obstacles = np.hstack([final_obstacles, encompassing_obstacle])
+                    return self.replace_overlapping_obstacles(final_obstacles)
+
+        return final_obstacles
+
+    def do_obstacles_overlap(self, first_obstacle, second_obstacle):
+        '''
+        Check if obstacle squares intersect, returns True if they do intersect
+        '''
+        first_obstacle_points = first_obstacle.make_avoidance_points(self.drone.get_point()[2])
+        second_obstacle_points = second_obstacle.make_avoidance_points(self.drone.get_point()[2])
+        if (first_obstacle_points[3][0] > second_obstacle_points[2][0] or second_obstacle_points[3][0] > first_obstacle_points[2][0]):
+            return False
+        if (first_obstacle_points[3][1] < second_obstacle_points[2][1] or second_obstacle_points[3][1] < first_obstacle_points[2][1]):
+            return False
+        return True
+
+    def make_encompassing_circle(self, first_obstacle, second_obstacle, final_obstacles):
+        circle1_x = first_obstacle.get_point()[0]
+        circle1_y = first_obstacle.get_point()[1]
+        circle1_z = first_obstacle.get_point()[2]
+        circle2_x = second_obstacle.get_point()[0]
+        circle2_y = second_obstacle.get_point()[1]
+        circle2_z = second_obstacle.get_point()[2]
+        circle1_r = first_obstacle.get_radius() - first_obstacle.get_safety_radius()
+        circle2_r = second_obstacle.get_radius() - second_obstacle.get_safety_radius()
+        dx = circle2_x - circle1_x
+        dy = circle2_y - circle1_y
+        dc = (sqrt(dx**2 + dy**2))
+        new_height = 0
+        if first_obstacle.get_height() >= second_obstacle.get_height():
+            new_height = first_obstacle.get_height()
+        else:
+            new_height = second_obstacle.get_height()
+        if dc == 0:
+            if circle1_r >= circle2_r:
+                return StationaryObstacle(np.array([circle1_x, circle1_y, circle1_z]), circle1_r, new_height)
+            return StationaryObstacle(np.array([circle2_x, circle2_y, circle2_z]), circle2_r, new_height)
+        new_radius = 0.5 * (circle1_r + circle2_r + dc)
+        new_x = circle1_x + (new_radius - circle1_r) * (dx/dc)
+        new_y = circle1_y + (new_radius - circle2_r) * (dy/dc)
+        new_z = 0
+        if first_obstacle.get_point()[2] >= second_obstacle.get_point()[2]:
+            new_z = first_obstacle.get_point()[2]
+        else:
+            new_z = second_obstacle.get_point()[2]
+        return StationaryObstacle(np.array([new_x, new_y, new_z]), new_radius, new_height)
 
     def add_waypoint(self, waypoint):
         """
@@ -76,8 +136,8 @@ class ObstacleMap(object):
 
                     if len(paths) != 0:
                         return True, np.array(paths)
-                elif isinstance(obstacle, MovingObstacle):
-                    pass
+                #elif isinstance(obstacle, MovingObstacle):
+                #    pass
 
         return False, None
 
@@ -95,10 +155,10 @@ class ObstacleMap(object):
                     [obstacle.get_point()[0] - obstacle.get_radius(), obstacle.get_point()[1] - obstacle.get_radius(), self.drone.get_point()[2]],
                     [obstacle.get_point()[0] + obstacle.get_radius(), obstacle.get_point()[1] - obstacle.get_radius(), self.drone.get_point()[2]],
                     [obstacle.get_point()[0] - obstacle.get_radius(), obstacle.get_point()[1] + obstacle.get_radius(), self.drone.get_point()[2]],
-                    [obstacle.get_point()[0], obstacle.get_point()[1] + obstacle.get_radius(), obstacle.get_height() + (Constants.STATIONARY_OBSTACLE_SAFETY_RADIUS * 2)],
-                    [obstacle.get_point()[0], obstacle.get_point()[1] - obstacle.get_radius(), obstacle.get_height() + (Constants.STATIONARY_OBSTACLE_SAFETY_RADIUS * 2)],
-                    [obstacle.get_point()[0] + obstacle.get_radius(), obstacle.get_point()[1], obstacle.get_height() + (Constants.STATIONARY_OBSTACLE_SAFETY_RADIUS * 2)],
-                    [obstacle.get_point()[0] - obstacle.get_radius(), obstacle.get_point()[1], obstacle.get_height() + (Constants.STATIONARY_OBSTACLE_SAFETY_RADIUS * 2)]
+                    [obstacle.get_point()[0], obstacle.get_point()[1] + obstacle.get_radius(), obstacle.get_height() + (Constants.STATIONARY_OBSTACLE_SAFETY_RADIUS)],
+                    [obstacle.get_point()[0], obstacle.get_point()[1] - obstacle.get_radius(), obstacle.get_height() + (Constants.STATIONARY_OBSTACLE_SAFETY_RADIUS)],
+                    [obstacle.get_point()[0] + obstacle.get_radius(), obstacle.get_point()[1], obstacle.get_height() + (Constants.STATIONARY_OBSTACLE_SAFETY_RADIUS)],
+                    [obstacle.get_point()[0] - obstacle.get_radius(), obstacle.get_point()[1], obstacle.get_height() + (Constants.STATIONARY_OBSTACLE_SAFETY_RADIUS)]
                 ]
 
                 new_paths = []
