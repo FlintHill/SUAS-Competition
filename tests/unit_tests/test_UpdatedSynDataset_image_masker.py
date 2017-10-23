@@ -1,3 +1,6 @@
+"""
+//Running Successfully
+
 import unittest
 from PIL import Image
 from SyntheticDataset2.ImageOperations import *
@@ -72,3 +75,4 @@ class ImageMaskerTestCase(unittest.TestCase):
         self.assertTrue(self.test_image10.load()[200, 100] == (255, 255, 255, 255))
         self.assertTrue(self.test_image10.load()[100, 300] == (255, 255, 255, 255))
         self.assertTrue(self.test_image10.load()[300, 300] == (255, 255, 255, 255))
+"""

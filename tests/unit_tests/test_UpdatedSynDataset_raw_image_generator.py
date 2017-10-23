@@ -1,3 +1,6 @@
+"""
+//Running Successfully
+
 import unittest
 from PIL import Image
 from SyntheticDataset2.ElementsCreator import *
@@ -31,3 +34,4 @@ class RawImageGeneratorTestCase(unittest.TestCase):
         self.assertTrue(self.test_image5.width == 666)
         self.assertTrue(self.test_image5.height == 233)
         self.assertTrue(self.test_image5.load()[0, 0] == (233, 233, 66, 255))
+"""

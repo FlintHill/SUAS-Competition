@@ -1,3 +1,6 @@
+"""
+//Running Successfully
+
 import unittest
 from PIL import Image
 from SyntheticDataset2.ElementsCreator import *
@@ -45,3 +48,4 @@ class GaussianNoiseGeneratorTestCase(unittest.TestCase):
         self.assertFalse(self.test_image7.load()[self.test_image7.width-1, self.test_image7.height-1] == (0, 255, 255, 255))
         self.assertFalse(self.test_image8.load()[self.test_image8.width-1, self.test_image8.height-1] == (255, 0, 255, 255))
         self.assertTrue(self.test_image9.load()[self.test_image9.width-1, self.test_image9.height-1] == (255, 255, 0, 255))
+"""

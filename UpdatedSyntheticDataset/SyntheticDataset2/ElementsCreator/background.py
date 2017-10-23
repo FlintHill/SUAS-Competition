@@ -6,7 +6,6 @@ class BackgroundGenerator(object):
     def __init__(self,path_to_backrounds):
         """
         Create a background for a Target or TargetField
-
         :param path_to_backrounds: location of backgrounds directory
         """
         self.path_to_backrounds=path_to_backrounds
@@ -24,7 +23,6 @@ class BackgroundGenerator(object):
     def generate_specific_background(self,specified_width,specified_height):
         """
         Return a background with a specified size
-
         :param width: width of background in pixels
         :type width: int
         :param height: height of background in pixels

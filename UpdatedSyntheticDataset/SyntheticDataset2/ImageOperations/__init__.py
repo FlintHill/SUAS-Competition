@@ -4,3 +4,4 @@ from .gaussian_noise_generator import GaussianNoiseGenerator
 from .image_extender import ImageExtender
 from .shape_orientator import ShapeOrientator
 from .image_paster import ImagePaster
+from .shape_rotator import ShapeRotator
