@@ -6,7 +6,7 @@ from SyntheticDataset2.ImageCreator.target_with_background_creator import Target
 class TargetWithBackgroundCreatorTestCase(unittest.TestCase):
 
     def setUp(self):
-        self.path_to_background = "UpdatedSyntheticDataset/backgrounds/competition_grass_1.JP"
+        self.path_to_background = "tests/images/competition_grass_1.JPG"
         self.test_image1 = TargetWithBackgroundCreator.create_specified_target_with_specified_background("circle", "?", "A", 300, 1.5, (255, 255, 255, 255), (255, 0, 0, 255), self.path_to_background, 0)
         self.test_image2 = TargetWithBackgroundCreator.create_specified_target_with_specified_background("half_circle", "E", "E", 400, 1.75, (0, 255, 0, 255), (0, 0, 255, 255), self.path_to_background, 45)
         self.test_image3 = TargetWithBackgroundCreator.create_specified_target_with_specified_background("cross", "D", "I", 500, 2.0, (255, 255, 0, 255), (255, 0, 255, 255), self.path_to_background, 90)

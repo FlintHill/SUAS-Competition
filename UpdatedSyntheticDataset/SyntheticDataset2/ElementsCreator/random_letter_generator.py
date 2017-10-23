@@ -40,7 +40,7 @@ class RandomLetterGenerator(LetterGenerator):
         raw_image = RawImageGenerator.generate_raw_image(int(image_dimension), int(image_dimension), self.background_color)
         draw = ImageDraw.Draw(raw_image)
         font = ImageFont.truetype(self.font_type, self.font_size)
-        draw.text((1, 1), self.letter_list[random.randint(0, 26)], self.letter_color, font = font)
+        draw.text((1, 1), self.letter_list[random.randint(0, 25)], self.letter_color, font = font)
         clean_image = ImageMasker.mask_image(raw_image, raw_image.load(), self.letter_color, self.background_color)
         resultant = BoundedImageCropper.crop_bounded_image(clean_image, clean_image.load(), self.letter_color)
         return resultant
