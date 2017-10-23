@@ -1,3 +1,6 @@
+"""
+//Running Successfully
+
 import unittest
 import math
 from PIL import Image
@@ -41,41 +44,6 @@ class TargetCreatorTestCase(unittest.TestCase):
         self.test_image32 = SpecifiedTargetCreator.create_specified_target("star", "S", "F", 1000, 2.5, (0, 255, 255, 255), (255, 0, 255, 255), 0)
 
     def test_create_specified_single_target(self):
-        """
-        self.test_image0.show()
-        self.test_image1.show()
-        self.test_image2.show()
-        self.test_image3.show()
-        self.test_image4.show()
-        self.test_image5.show()
-        self.test_image6.show()
-        self.test_image7.show()
-        self.test_image8.show()
-        self.test_image9.show()
-        self.test_image10.show()
-        self.test_image11.show()
-        self.test_image12.show()
-        self.test_image13.show()
-        self.test_image14.show()
-        self.test_image15.show()
-        self.test_image16.show()
-        self.test_image17.show()
-        self.test_image18.show()
-        self.test_image19.show()
-        self.test_image20.show()
-        self.test_image21.show()
-        self.test_image22.show()
-        self.test_image23.show()
-        self.test_image24.show()
-        self.test_image25.show()
-        self.test_image26.show()
-        self.test_image27.show()
-        self.test_image28.show()
-        self.test_image29.show()
-        self.test_image30.show()
-        self.test_image31.show()
-        self.test_image32.show()
-        """
         self.assertTrue(abs(self.test_image0.width - 300) < 3)
         self.assertTrue(abs(self.test_image0.height - 300) < 3)
         self.assertTrue(self.test_image0.load()[1, 1] != (255, 255, 255, 255))
@@ -273,3 +241,4 @@ class TargetCreatorTestCase(unittest.TestCase):
         self.assertTrue(self.test_image32.load()[1, 1] != (0, 255, 255, 255))
         self.assertTrue(self.test_image32.load()[self.test_image32.width-1, self.test_image32.height-1] != (0, 255, 255, 255))
         self.assertTrue(self.test_image32.load()[self.test_image32.width/2, self.test_image32.height/2] == (0, 255, 255, 255))
+"""
