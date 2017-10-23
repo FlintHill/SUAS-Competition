@@ -467,10 +467,6 @@ function statusPush(process, cmd) {
 	var program = "", friendlyProgramName = "";
 	
 	switch(process) {
-		/*case "interop-connection":
-			program = "interop";
-			friendlyProgramName = "Interop. script";
-			break;*/
 		case "sda":
 			program = "sda";
 			friendlyProgramName = "SDA script";

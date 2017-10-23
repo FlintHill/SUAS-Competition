@@ -124,6 +124,7 @@
 						</a>
 					</div>
 				</div>
+				<hr style="margin-bottom:1em">
 				<h4>Manual Target Submission</h4>
 				<p>
 					The manual target submitter (abbreviated MTS) slide is a far more complex slide than the control panel one. As the name states, this slide allows us to manual crop and submit ground targets to the Interoperability server. You will notice that the subprocess Image Processing exists on the Control Panel. In the event that we do not complete autonomous Image Processing before the competition, or for any other related reason, we will use MTS to submit the targets. We also plan to use MTS in conjunction with autonomous Image Processing, as there is no point penalty for it.
@@ -132,7 +133,7 @@
 				<p>
 					The controls are, clearly, more complex, but they have simplified as much as possible in order to be immediately accessible to those that have not previously operated the MTS, as it might be necessary for the competition. 
 				</p>
-				<h5><b><i>The Toolbar</i></b></h5>
+				<h5><i>The Toolbar</i></h5>
 				<p>
 					Here is the toolbar as it appears on the Image Processing slide:
 				</p>
@@ -142,7 +143,7 @@
 							<a class="waves-effect waves-light btn tooltipped" name="load-images-button" data-position="right" data-tooltip="Command + Up" href="#">
 								<i class="fa fa-upload left"></i> load images
 							</a>
-							<a class="waves-effect waves-light btn green modal-trigger disabled tooltipped" name="crop-and-submit-button" data-position="right" data-delay="800" data-tooltip="Command + Enter" href="#verification" href="#">
+							<a class="waves-effect waves-light btn green disabled tooltipped" name="crop-and-submit-button" data-position="right" data-delay="800" data-tooltip="Command + Enter" href="#">
 								<i class="fa fa-sign-in left"></i> crop and submit
 							</a>
 						</div>
@@ -173,7 +174,7 @@
 							<a class="waves-effect waves-light btn tooltipped" name="load-images-button" data-position="right" data-tooltip="Command + Up" href="#">
 								<i class="fa fa-upload left"></i> load images
 							</a>
-							<a class="waves-effect waves-light btn green modal-trigger tooltipped" name="crop-and-submit-button" data-position="right" data-delay="800" data-tooltip="Command + Enter" href="#verification" href="#">
+							<a class="waves-effect waves-light btn green tooltipped" name="crop-and-submit-button" data-position="right" data-delay="800" data-tooltip="Command + Enter" href="#">
 								<i class="fa fa-sign-in left"></i> crop and submit
 							</a>
 						</div>
@@ -224,7 +225,7 @@
 						</p>
 					</li>
 				</ul>
-				<h5 style="margin-top:1em"><b><i>The Specification's Pane</i></b></h5>
+				<h5 style="margin-top:1em"><i>The Specification's Pane</i></h5>
 				<p>
 					It's imperative that the target's description be accurate. To accomplish this, there is the specification's pane that allows you to input the details of the target.
 				</p>
@@ -307,6 +308,9 @@
 						</ul>
 					</div>
 				</div>
+				<p>
+					The details of the cropped target do not appear in the Image Submission Verification modal, as there is not enough space screen space in the modal. You can, however, click out of the modal, and compare the crop preview in the modal with the details of the target that you specificied in the specification pane. 
+				</p>
 			</div>
 			<div class="modal-footer">
 				<a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Exit</a>
@@ -482,7 +486,7 @@
 					</div>
 				</div>
 				<hr>
-				<p class="grey-text">v0.1 /// Flinthill SUAS /// Last modified: October 22nd, 2017</p>
+				<p class="grey-text">v0.1 /// Flinthill SUAS /// Last modified: October 23rd, 2017</p>
 			</div>
 		</div>
 
@@ -498,7 +502,7 @@
 						<div class="col s6">
 							<h5 class="right grey-text counter-fix">
 								(<span id="current-image">?</span>/<span id="total-images">?</span>) images<br>
-								0 submitted targets
+								<span id="submitted-images">0</span> submitted targets
 							</h5>
 						</div>
 					</div>
