@@ -1,6 +1,9 @@
 /**
- * main script file for gcs:WEBui
- * v0.1
+ * main script file for gcs:web ui
+ *
+ * @author		James Villemarette
+ * @version 	0.1
+ * @since		2017-10-23
  */
 
 // page init
@@ -88,6 +91,8 @@ $(document).ready(function() {
  * IF it is NOT locked, the image will only be as wide as possible,
  * and there by as tall (within the aspect ratio) as it can be
  * within the viewer box.
+ *
+ * returns nothing.
  */
 function switchImageHeightLock() {
 
@@ -109,7 +114,7 @@ function switchImageHeightLock() {
 
 }
 
-var currentImage = 0, totalImages = 0, submittedImages = 0;
+var currentImage = 0, totalImages = 0, zoomLevel = 1;
 
 /**
  * updateCounters()
@@ -121,7 +126,7 @@ function updateCounters() {
 
 	$("#current-image").html(currentImage + 1);
 	$("#total-images").html(totalImages);
-	$("#submitted-images").html(submittedImages);
+	$("#zoom-level").html(zoomLevel);
 
 }
 
@@ -226,7 +231,8 @@ var cropData = {
  *
  * Triggered by the "Crop and Submit" button.
  *
- * Generates 
+ * Adds CSS stylings to a #image-preview div box that displays a rough preview
+ * of the crop that was selected in MTS.
  */
 function loadCropPreview() {
 
@@ -255,6 +261,7 @@ function loadCropPreview() {
 		var transformed_topLeftX = (transformedW/imageW) * actual_topLeftX;
 		var transformed_topLeftY = (transformedH/imageH) * actual_topLeftY;
 
+		// TODO: delete when crop preview solved
 		console.log("imageW: " + imageW);
 		console.log("imageH: " + imageH);
 		console.log("cropperW: " + cropperW);
@@ -271,8 +278,8 @@ function loadCropPreview() {
 		console.log("transformed_topLeftY: " + transformed_topLeftY);
 
 		$("#crop-previewer").css({
-			//"height": length + "px", 
-			//"width": length + "px",
+			"height": length + "px", 
+			"width": length + "px",
 
 			"border": "1px solid black",
 
@@ -280,6 +287,7 @@ function loadCropPreview() {
 			"background-repeat": "no-repeat",
 			"background-attachment": "scroll", // fixed
 
+			// TODO: crop preview relation
 			"background-size": transformedW + "px " + transformedH + "px",
 			"background-position": 
 				"-" + 
@@ -318,7 +326,12 @@ function loadCropPreview() {
 /**
  * submitTarget()
  *
- * TODO: Expand doc when tested in real/artificial environment.
+ * Triggered by Crop Image Previewer modal in MTS.
+ *
+ * Posts an AJAX request to back-end flask script the details of the crop, not
+ * the actual crop itself. This also pushes the crop data (shape, color, etc.)
+ *
+ * returns nothing.
  */
 function submitTarget() {
 
@@ -352,7 +365,6 @@ function submitTarget() {
 			console.log("submitTarget(): ajax data:")
 			console.log(data);
 
-			submittedImages++;
 			updateCounters();
 		},
 
@@ -375,6 +387,8 @@ var refresh = null;
  * switchControlPanelRefresh()
  *
  * Enable or disable the automatic control panel refresh.
+ *
+ * returns nothing.
  */
 function switchControlPanelRefresh() {
 
@@ -399,7 +413,10 @@ function switchControlPanelRefresh() {
  *
  * Front-end update function that's used by statusPush() and statusGet().
  *
- * Updates the Control Panel slide with 
+ * Updates the Control Panel slide with the data that was received by the back-
+ * end script.
+ *
+ * returns nothing.
  */
 function statusDisplay(programName, data) {
 
@@ -449,12 +466,13 @@ function statusDisplay(programName, data) {
 /**
  * statusPush(String process, String cmd)
  *
- * Turn on or off a subprocess, either:
- *	- "interop-connection"
- *	- "sda"
+ * Turn on or off a subprocess, with the subprocessesing being:
+ *	- "interop-connection",
+ *	- "sda", and
  *	- "image-processing"
+ * by posting an AJAX request to the back-end script.
  *
- * TODO: Expand doc when tested in real/artificial environment.
+ * returns nothing.
  */
 function statusPush(process, cmd) {
 
@@ -476,7 +494,7 @@ function statusPush(process, cmd) {
 			friendlyProgramName = "Image Processing script"
 			break;
 		default:
-			// precondiiton: process requested valid
+			// precondition: process requested valid
 			throw "statusChange(process, cmd): Unknown String process '" + process + "'";
 	}
 
@@ -529,6 +547,8 @@ function statusPush(process, cmd) {
  *
  * Retrieves the status informaition of the different subprocesses for the 
  * control panel.
+ *
+ * returns nothing.
  */
 function statusGet(programName) {
 
@@ -670,6 +690,8 @@ const MTSFields = ["Shape", "Shape Color", "Alphanumeric Color", "Orientation"];
  * enableMTSButtons()
  *
  * Only executes once. Opens up MTS screen buttons and fields.
+ *
+ * returns nothing.
  */
 function enableMTSButtons() {
 
