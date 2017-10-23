@@ -311,6 +311,11 @@
 				<p>
 					The details of the cropped target do not appear in the Image Submission Verification modal, as there is not enough space screen space in the modal. You can, however, click out of the modal, and compare the crop preview in the modal with the details of the target that you specificied in the specification pane. 
 				</p>
+				<h5><i>The Zoom Buttons</i></h5>
+				<p>
+					TODO: correct
+					Along side the lock icon is 
+				</p>
 			</div>
 			<div class="modal-footer">
 				<a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Exit</a>
@@ -532,10 +537,11 @@
 					<div class="special-container grey lighten-3">
 						<div class="row" id="image-previewer-parent-container">
 							<div class="col s9" id="image-previewer-container">
-								<!-- Image Previewer -->
+								<!-- Lock Button -->
 								<a class="waves-effect waves-light btn tooltipped disabled" style="position:absolute" id="size-lock-button" data-position="right" data-tooltip="Lock height of image to height of box: Command + L" onclick="switchImageHeightLock()">
 									<i class="fa fa-lock" id="size-lock-icon" aria-hidden="true"></i>
 								</a>
+								<!-- Image Previewer -->
 								<img id="image-previewer" src="">
 							</div>
 							<div class="col s3">
@@ -594,6 +600,19 @@
 										<option value="W">West</option>
 										<option value="NW">North-West</option>
 									</select>
+								</div>
+								<div class="row">
+									<!-- Zoom Buttons -->
+									<div class="col s6">
+										<a class="waves-effect waves-light btn tooltipped" style="left:32px" id="size-lock-button" data-position="left" data-tooltip="Zoom in. Command: +" id="zoom-in-btn" onclick="zoom('in')">
+											<i class="fa fa-plus" aria-hidden="true"></i>
+										</a>
+									</div>
+									<div class="col s6">
+										<a class="waves-effect waves-light btn tooltipped" style="right:0" id="size-lock-button" data-position="left" data-tooltip="Zoom out. Command: -" id="zoom-out-btn" onclick="zoom('out')">
+											<i class="fa fa-minus" aria-hidden="true"></i>
+										</a>
+									</div>
 								</div>
 							</div>
 						</div>

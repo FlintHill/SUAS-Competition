@@ -173,6 +173,8 @@ function showImage(index) {
  *
  * Moves "left" or "right" (direction) by one image.
  *		  ^			^
+ *
+ * returns nothing.
  */
 function imageSelect(direction) {
 
@@ -197,6 +199,8 @@ function imageSelect(direction) {
  *
  * Updates the directional buttons for switching between images
  * appropriately.
+ *
+ * returns nothing.
  */
 function updateDirectionalButtons() {
 
@@ -213,6 +217,59 @@ function updateDirectionalButtons() {
 		$("a[name='right-button']").removeClass('disabled');
 
 }
+
+// image zoom
+
+var zoomLevel = 1, zoomLimit = 10;
+
+/**
+ * updateZoomButtons()
+ *
+ * Enables/disables the zoom in buttons, depending upon the zoomLevel.
+ *
+ * returns nothing.
+ */
+function updateZoomButtons() {
+
+	// zoom in
+	if(zoomLevel == zoomLimit)
+		$("#zoom-in-btn").addClass("disabled");
+	else
+		$("#zoom-in-btn").removeClass("disabled");
+
+	// zoom out
+	if(zoomLevel == 1)
+		$("#zoom-out-btn").addClass("disabled");
+	else
+		$("#zoom-out-btn").removeClass("disabled");;
+
+	updateCounters();
+
+}
+
+/**
+ * zoom(String dir)
+ *
+ * dir in this function stands for direction.
+ *
+ * Zooms in on the image-preview by 1x.
+ *
+ * TODO: define zoom magnification lvl.
+ *
+ * returns nothing.
+ */
+function zoom(dir) {
+
+	if(dir == "in") {
+		if(zoomLevel < zoomLimit)
+			zoomLevel++;
+	}
+
+	updateZoomButtons();
+
+}
+
+// target submission
 
 var cropData = {
 
