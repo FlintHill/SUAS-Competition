@@ -535,7 +535,7 @@
 						</div>
 					</div>
 					<div class="special-container grey lighten-3">
-						<div class="row" id="image-previewer-parent-container">
+						<div class="row" id="image-previewer-parent-container" style="margin-bottom:0">
 							<div class="col s9" id="image-previewer-container">
 								<!-- Lock Button -->
 								<a class="waves-effect waves-light btn tooltipped disabled" style="position:absolute" id="size-lock-button" data-position="right" data-tooltip="Lock height of image to height of box: Command + L" onclick="switchImageHeightLock()">
@@ -601,15 +601,18 @@
 										<option value="NW">North-West</option>
 									</select>
 								</div>
+								<p class="center grey-text">
+									<b>ZOOM</b>
+								</p>
 								<div class="row">
 									<!-- Zoom Buttons -->
 									<div class="col s6">
-										<a class="waves-effect waves-light btn tooltipped" style="left:32px" id="size-lock-button" data-position="left" data-tooltip="Zoom in. Command: +" id="zoom-in-btn" onclick="zoom('in')">
+										<a class="waves-effect waves-light btn tooltipped disabled" style="left:32px" data-position="left" data-tooltip="Command: +" data-delay="1000" id="zoom-in-btn" onclick="zoom('in')">
 											<i class="fa fa-plus" aria-hidden="true"></i>
 										</a>
 									</div>
 									<div class="col s6">
-										<a class="waves-effect waves-light btn tooltipped" style="right:0" id="size-lock-button" data-position="left" data-tooltip="Zoom out. Command: -" id="zoom-out-btn" onclick="zoom('out')">
+										<a class="waves-effect waves-light btn tooltipped disabled" style="right:0" data-position="left" data-tooltip="Command: -" data-delay="1000" id="zoom-out-btn" onclick="zoom('out')">
 											<i class="fa fa-minus" aria-hidden="true"></i>
 										</a>
 									</div>

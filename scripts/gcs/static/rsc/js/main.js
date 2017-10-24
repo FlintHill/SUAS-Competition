@@ -254,7 +254,7 @@ function updateZoomButtons() {
  *
  * Zooms in on the image-preview by 1x.
  *
- * TODO: define zoom magnification lvl.
+ * TODO: define zoom magnification lvl.	
  *
  * returns nothing.
  */
@@ -263,6 +263,9 @@ function zoom(dir) {
 	if(dir == "in") {
 		if(zoomLevel < zoomLimit)
 			zoomLevel++;
+	} else if(dir == "out") {
+		if(zoomLevel > 0)
+			zoomLevel--;
 	}
 
 	updateZoomButtons();
@@ -335,8 +338,8 @@ function loadCropPreview() {
 		console.log("transformed_topLeftY: " + transformed_topLeftY);
 
 		$("#crop-previewer").css({
-			"height": length + "px", 
-			"width": length + "px",
+			//"height": length + "px", 
+			//"width": length + "px",
 
 			"border": "1px solid black",
 
@@ -759,6 +762,9 @@ function enableMTSButtons() {
 	});
 
 	$("#target-content").removeAttr("disabled");
+
+	$("#zoom-in-btn").removeClass("disabled");
+	$("#zoom-out-btn").removeClass("disabled");
 
 }
 
