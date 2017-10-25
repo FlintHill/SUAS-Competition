@@ -3,3 +3,4 @@ from .random_target_creator import RandomTargetCreator
 from .target_with_background_creator import TargetWithBackgroundCreator
 from .noised_target_with_background_creator import NoisedTargetWithBackgroundCreator
 from .target_map_creator import TargetMapCreator
+from .resized_target_with_background_creator import ResizedTargetWithBackgroundCreator

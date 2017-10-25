@@ -14,13 +14,6 @@ class TargetWithBackgroundCreatorTestCase(unittest.TestCase):
         self.test_image5 = TargetWithBackgroundCreator.create_specified_target_with_specified_background("star", "N", "U", 700, 2.5, (66, 66, 66, 255), (233, 233, 233, 255), self.path_to_background, 180)
 
     def test_create_specified_target_with_specified_background(self):
-
-        self.test_image1.show()
-        self.test_image2.show()
-        self.test_image3.show()
-        self.test_image4.show()
-        self.test_image5.show()
-
         self.assertTrue(abs(self.test_image1.width - (300 + 20)) < 3)
         self.assertTrue(abs(self.test_image1.height - (300 + 20)) < 3)
         self.assertTrue(self.test_image1.load()[1, 1] != (255, 255, 255))
