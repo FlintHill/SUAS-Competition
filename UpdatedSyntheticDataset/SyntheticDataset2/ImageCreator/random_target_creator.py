@@ -52,12 +52,13 @@ class RandomTargetCreator(object):
         else:
             random_shape_orientation = shape_orientation_list[random.randint(1, 2)]
 
-        random_color = (random.randint(0, 256), random.randint(0, 256), random.randint(0, 256), 255)
         color_list = [(255, 255, 255, 255), (0, 0, 0, 255), (255, 0, 0, 255), (0, 255, 0, 255), (0, 0, 255, 255),
-                      (255, 255, 0, 255), (255, 0, 255, 255), (0, 255, 255, 255), random_color]
-        random_color1 = color_list[random.randint(0, 8)]
+                      (255, 255, 0, 255), (255, 0, 255, 255), (0, 255, 255, 255), (192, 192, 192, 255), (128, 128, 128, 255),
+                      (128, 0, 0, 255), (0, 128, 0, 255), (0, 0, 128, 255), (128, 128, 0, 255), (128, 0, 128, 255),
+                      (0, 128, 128, 255)]
+        random_color1 = color_list[random.randint(0, 15)]
         color_list.remove(random_color1)
-        random_color2 = color_list[random.randint(0, 7)]
+        random_color2 = color_list[random.randint(0, 14)]
 
         letter_list = ["A", "B", "c", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
                        "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
