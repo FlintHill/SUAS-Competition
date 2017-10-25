@@ -1,3 +1,4 @@
+from .settings import Settings
 from .specified_target_creator import SpecifiedTargetCreator
 from .random_target_creator import RandomTargetCreator
 from .target_with_background_creator import TargetWithBackgroundCreator

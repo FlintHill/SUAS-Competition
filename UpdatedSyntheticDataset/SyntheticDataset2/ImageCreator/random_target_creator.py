@@ -1,22 +1,26 @@
 from PIL import Image
 import math
 import random
-from SyntheticDataset2.ElementsCreator import *
-from SyntheticDataset2.ImageOperations.shape_orientator import ShapeOrientator
-from SyntheticDataset2.ImageOperations.bounded_image_cropper import BoundedImageCropper
-from SyntheticDataset2.ImageOperations.image_paster import ImagePaster
+from SyntheticDataset2.ElementsCreator.shape_types import ShapeTypes
+from SyntheticDataset2.ElementsCreator.shape_orientations import ShapeOrientations
 from .specified_target_creator import SpecifiedTargetCreator
 
 class RandomTargetCreator(object):
 
     @staticmethod
-    def create_random_target(size_range, proportionality_range):
+    def create_random_target(size_range, proportionality_range, pixelization_level, noise_level):
         """
         Create a random target using SpecifiedTargetCreator with random parameters.
+        
         :param size_range: the range of sizes that are to be selected randomly
         :param proportionality_range: the range of proportionality levels that are to be selected randomly
+        :param pixelization_level: the level of pixelization, see the first method of ImageResizer
+        :param noise_level: the intended level of noise. (See gaussian_noise_generator for detail.)
+
         :type size_range: [min_size, max_size] //:type min_size and max_size: int
         :type proportionality_range: [min_proportionality, max_proportionality] //:type min_proportionality and max_proportionality: double
+        :type pixelization_level: float (preferably below 20.0)
+        :type noise_level: float (0.0 to 100.0)
         """
         shape_type_list = [ShapeTypes.CIRCLE, ShapeTypes.QUARTERCIRCLE, ShapeTypes.HALFCIRCLE,
                            ShapeTypes.CROSS, ShapeTypes.TRIANGLE, ShapeTypes.SQUARE,
@@ -70,4 +74,4 @@ class RandomTargetCreator(object):
 
         random_rotation = random.randint(0, 180)
 
-        return SpecifiedTargetCreator.create_specified_target(random_shape_type, random_shape_orientation, random_letter, random_size, random_proportionality, random_color1, random_color2, random_rotation)
+        return SpecifiedTargetCreator.create_specified_target(random_shape_type, random_shape_orientation, random_letter, random_size, random_proportionality, random_color1, random_color2, random_rotation, pixelization_level, noise_level)

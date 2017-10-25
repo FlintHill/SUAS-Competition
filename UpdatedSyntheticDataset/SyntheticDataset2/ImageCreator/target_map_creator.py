@@ -1,15 +1,16 @@
 from PIL import Image
 import random
-from SyntheticDataset2.ElementsCreator.background import BackgroundGenerator
+from .settings import Settings
 from .random_target_creator import RandomTargetCreator
 from SyntheticDataset2.ImageOperations.shape_rotator import ShapeRotator
 from SyntheticDataset2.ImageOperations.image_resizer import ImageResizer
+from SyntheticDataset2.ElementsCreator.background import BackgroundGenerator
 from SyntheticDataset2.ElementsCreator.noised_image_generator import NoisedImageGenerator
 
 class TargetMapCreator(object):
 
     @staticmethod
-    def create_random_target_map(number_of_targets, size_range, proportionality_range, path_to_backgrounds, pixelization_level, noise_level):
+    def create_random_target_map(number_of_targets):
         """
         Create a map with a specified number of random targets.
 
@@ -27,21 +28,14 @@ class TargetMapCreator(object):
         7. Output the actually targets created and the background itself.
 
         :param number_of_targets: the number of targets to be created.
-        :param size_range: the range of sizes that are to be selected randomly
-        :param proportionality_range: the range of proportionality levels that are to be selected randomly
-        :param path_to_backgrounds: the directory of images of background
-        :param pixelization_level: the level of pixelization, see the first method of ImageResizer
-        :param noise_level: the intended level of noise. (See gaussian_noise_generator for detail.)
 
         :type number_of_targets: int
-        :type size_range: [min_size, max_size] //:type min_size and max_size: int
-        :type proportionality_range: [min_proportionality, max_proportionality] //:type min_proportionality and max_proportionality: double
-        :type path_to_backgrounds: directory
-        :type pixelization_level: float (preferably below 20.0)
-        :type noise_level: float (0.0 to 100.0)
         """
-
-        background = BackgroundGenerator(path_to_backgrounds).generate_full_background()
+        background = BackgroundGenerator(Settings.BACKGROUND_DIRECTORY).generate_full_background()
+        size_range = [Settings.TARGET_GENERATION_SIZE_IN_PIXELS, Settings.TARGET_GENERATION_SIZE_IN_PIXELS]
+        proportionality_range = Settings.PROPORTIONALITY_RANGE
+        pixelization_level = Settings.PIXELIZATION_LEVEL
+        noise_level = Settings.NOISE_LEVEL
 
         occupied_spaces = []
 
@@ -49,10 +43,19 @@ class TargetMapCreator(object):
         total_targets_output = 0
 
         while index_number_of_targets <= number_of_targets:
-            raw_target_image = RandomTargetCreator.create_random_target(size_range, proportionality_range)
-            resized_target_image = ImageResizer.resize_image_conserved(raw_target_image, pixelization_level)
-            noised_target_image = NoisedImageGenerator.generate_noised_image_by_level(resized_target_image, noise_level)
-            target_image = noised_target_image
+
+            raw_target_image = RandomTargetCreator.create_random_target(size_range, proportionality_range, pixelization_level, noise_level)
+
+            new_target_dimension = random.randint(Settings.TARGET_SIZE_RANGE_IN_PIXELS[0], Settings.TARGET_SIZE_RANGE_IN_PIXELS[1])
+
+            if raw_target_image.width >= raw_target_image.height:
+                new_target_width = new_target_dimension
+                new_target_height = new_target_dimension * raw_target_image.height / raw_target_image.width
+            else:
+                new_target_height = new_target_dimension
+                new_target_width = new_target_dimension * raw_target_image.width / raw_target_image.height
+
+            target_image = raw_target_image.resize((new_target_width, new_target_height))
 
             reroll_needed = True
             attempts_to_reroll = 0
@@ -140,3 +143,9 @@ class TargetMapCreator(object):
 
         print "Total Number of Actual Target Output: " + str(total_targets_output)
         return background
+
+    def create_multiple_random_target_map(number_of_maps, number_of_targets):
+        i = 0
+        while i < number_of_maps:
+            return create_random_target_map(number_of_targets)
+            i = i + 1

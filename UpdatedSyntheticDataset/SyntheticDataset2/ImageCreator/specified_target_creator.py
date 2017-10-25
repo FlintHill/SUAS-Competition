@@ -1,15 +1,17 @@
 from PIL import Image
 import math
+from .settings import Settings
 from SyntheticDataset2.ElementsCreator import *
 from SyntheticDataset2.ImageOperations.shape_orientator import ShapeOrientator
 from SyntheticDataset2.ImageOperations.bounded_image_cropper import BoundedImageCropper
 from SyntheticDataset2.ImageOperations.image_paster import ImagePaster
 from SyntheticDataset2.ImageOperations.shape_rotator import ShapeRotator
+from SyntheticDataset2.ImageOperations.image_resizer import ImageResizer
 
 class SpecifiedTargetCreator(object):
 
     @staticmethod
-    def create_specified_target(shape_type, shape_orientation, letter, size, proportionality_level, shape_color, letter_color, rotation):
+    def create_specified_target(shape_type, shape_orientation, letter, size, proportionality_level, shape_color, letter_color, rotation, pixelization_level, noise_level):
         """
         :param shape_type: the type of the shape to be created.
         :param shape_orientation: the intended orientation of the shape, modified with ShapeOrientator.
@@ -25,6 +27,9 @@ class SpecifiedTargetCreator(object):
         :param shape_color: the color of the shape.
         :param letter_color: the color of the letter.
         :param rotation: the intended rotation of the combined image of shape and letter.
+        :param pixelization_level: the level of pixelization, see the first method of ImageResizer
+        :param noise_level: the intended level of noise. (See gaussian_noise_generator for detail.)
+
         :type shape_type: string (see ShapeTypes)
         :type shape_orientation: string (see ShapeOrientator)
         :type letter: string
@@ -33,9 +38,10 @@ class SpecifiedTargetCreator(object):
         :type shape_color: (R, G, B, A) (:type R, G, B, and A: int from 0 to 255)
         :type letter_color: (R, G, B, A) (:type R, G, B, and A: int from 0 to 255)
         :type rotation: float
+        :type pixelization_level: float (preferably below 20.0)
+        :type noise_level: float (0.0 to 100.0)
         """
-
-        font_type = "UpdatedSyntheticDataset/data/fonts/Blockletter.otf"
+        font_type = Settings.FONT_TYPE
 
         if shape_type == ShapeTypes.CIRCLE:
             shape_image = Circle(size / 2, shape_color).draw()
@@ -112,8 +118,11 @@ class SpecifiedTargetCreator(object):
         else:
             shape_with_letter = ImagePaster.paste_images(cropped_shape_image, letter_image)
 
-        if rotation == 0 or rotation == 180 or rotation == 360:
-            return shape_with_letter
+        if rotation != 0 or rotation != 180 or rotation != 360:
+            rotated_image = ShapeRotator.rotate_shape(shape_with_letter, rotation, shape_color)
 
         else:
-            return ShapeRotator.rotate_shape(shape_with_letter, rotation, shape_color)
+            rotated_image = shape_with_letter
+
+        resized_image = ImageResizer.resize_image_conserved(rotated_image, pixelization_level)
+        return NoisedImageGenerator.generate_noised_image_by_level(resized_image, noise_level)

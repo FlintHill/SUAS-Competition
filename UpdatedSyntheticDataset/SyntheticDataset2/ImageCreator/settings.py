@@ -1,0 +1,23 @@
+class Settings(object):
+    FONT_TYPE = "UpdatedSyntheticDataset/data/fonts/Blockletter.otf"
+    BACKGROUND_DIRECTORY = "/Users/zyin/Desktop/Competition Backgrounds"
+
+    PPSI = 10
+
+    SINGLE_TARGET_SIZE_IN_INCHES = 24
+    SINGLE_TARGET_SIZE_IN_PIXELS = SINGLE_TARGET_SIZE_IN_INCHES*PPSI
+
+    TARGET_SIZE_RANGE_IN_INCHES = [12, 48]
+    TARGET_SIZE_RANGE_IN_PIXELS = [TARGET_SIZE_RANGE_IN_INCHES[0]*PPSI, TARGET_SIZE_RANGE_IN_INCHES[1]*PPSI]
+
+    TARGET_GENERATION_SIZE_IN_PIXELS = 1000
+
+    SINGLE_TARGET_PROPORTIONALITY = 2
+    """See SpecifiedTargetCreator"""
+
+    PROPORTIONALITY_RANGE = [1.5, 2.5]
+
+    PIXELIZATION_LEVEL = 10
+    """See ImageResizer"""
+
+    NOISE_LEVEL = 2
