@@ -39,7 +39,7 @@ class TargetWithBackgroundCreator(object):
         target_image = SpecifiedTargetCreator.create_specified_target(shape_type, shape_orientation, letter, size, proportionality, shape_color, letter_color, rotation)
         resized_target_image = ImageResizer.resize_image_conserved(target_image, pixelization_level)
         noised_target_image = NoisedImageGenerator.generate_noised_image_by_level(resized_target_image, noise_level)
-        background = BackgroundGenerator(noised_target_image.width, noised_target_image.height, path_to_backgrounds).generate_background()
+        background = BackgroundGenerator(path_to_backgrounds).generate_specific_background(noised_target_image.width, noised_target_image.height)
 
         random_x_min = random.randint(10, background.width - noised_target_image.width - 20)
         random_y_min = random.randint(10, background.height - noised_target_image.height - 20)
@@ -83,7 +83,7 @@ class TargetWithBackgroundCreator(object):
         target_image = RandomTargetCreator.create_random_target(size_range, proportionality_range)
         resized_target_image = ImageResizer.resize_image_conserved(target_image, pixelization_level)
         noised_target_image = NoisedImageGenerator.generate_noised_image_by_level(resized_target_image, noise_level)
-        background = BackgroundGenerator(noised_target_image.width, noised_target_image.height, path_to_backgrounds).generate_background()
+        background = BackgroundGenerator(path_to_backgrounds).generate_specific_background(noised_target_image.width, noised_target_image.height)
 
         random_x_min = random.randint(10, background.width - noised_target_image.width - 20)
         random_y_min = random.randint(10, background.height - noised_target_image.height - 20)

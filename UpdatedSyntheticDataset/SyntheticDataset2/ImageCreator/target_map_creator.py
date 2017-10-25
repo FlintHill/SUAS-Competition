@@ -41,9 +41,7 @@ class TargetMapCreator(object):
         :type noise_level: float (0.0 to 100.0)
         """
 
-        #background = BackgroundGenerator(max(size_range) * number_of_targets * 2, max(size_range) * number_of_targets * 2, path_to_backgrounds).generate_background()
-
-        background = Image.open(path_to_backgrounds)
+        background = BackgroundGenerator(path_to_backgrounds).generate_full_background()
 
         occupied_spaces = []
 
@@ -140,5 +138,5 @@ class TargetMapCreator(object):
             else:
                 index_number_of_targets = index_number_of_targets + 1
 
-        print "Total Number of Target Output: " + str(total_targets_output)
+        print "Total Number of Actual Target Output: " + str(total_targets_output)
         return background
