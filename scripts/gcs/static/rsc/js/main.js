@@ -22,7 +22,6 @@ $(document).ready(function(){
 		if(!$("#size-lock-icon").hasClass("fa-unlock"))
 			$("#size-lock-icon").removeClass("fa-lock").addClass("fa-unlock-alt");
 	}, function() {
-
 		// hover leave
 		if(!$("#size-lock-icon").hasClass("fa-unlock"))
 			$("#size-lock-icon").removeClass("fa-unlock-alt").addClass("fa-lock");
@@ -98,9 +97,10 @@ function switchImageHeightLock() {
 
 	if(imageHeightLocked) {
 		$("#image-previewer").removeAttr("height");
-		$("#image-previewer").attr("width", $("#image-previewer-container").width() + "px");
+		$("#image-previewer").attr("width", $("#image-previewer-holder").width() + "px");
 
 		imageHeightLocked = false;
+
 		$("#size-lock-icon").removeClass("fa-lock fa-unlock-alt").addClass("fa-unlock");
 		$("#size-lock-button").addClass("shift-lock-icon");
 	} else {
@@ -108,11 +108,12 @@ function switchImageHeightLock() {
 		$("#image-previewer").attr("height", establishedLockHeight + "px");
 
 		imageHeightLocked = true;
+
 		$("#size-lock-icon").removeClass("fa-unlock").addClass("fa-lock");
 		$("#size-lock-button").removeClass("shift-lock-icon");
 	}
 
-}
+};
 
 var currentImage = 0, totalImages = 0, zoomLevel = 1;
 
@@ -128,7 +129,7 @@ function updateCounters() {
 	$("#total-images").html(totalImages);
 	$("#zoom-level").html(zoomLevel);
 
-}
+};
 
 /**
  * indexExistsIn(array arr, int i)
@@ -143,7 +144,7 @@ function indexExistsIn(arr, i) {
 	if(i < arr.length && i >= 0)
 		return true;
 
-}
+};
 
 /**
  * showImage(int index)
@@ -166,7 +167,7 @@ function showImage(index) {
 
 	updateCounters();
 
-}
+};
 
 /**
  * imageSelect(string direction)
@@ -192,7 +193,7 @@ function imageSelect(direction) {
 
 	updateDirectionalButtons();
 
-}
+};
 
 /**
  * updateDirectionalButtons()
@@ -216,9 +217,48 @@ function updateDirectionalButtons() {
 	else
 		$("a[name='right-button']").removeClass('disabled');
 
-}
+};
 
 // image zoom
+
+/**
+ * updateImagePreviewDimensions(String dir)
+ *
+ * eeweweewweewef
+ *
+ * Maintains the correct height and width pixel measurements for the 
+ * #image-previewer-container div before and after unlocking or locking
+ * the image size ratio.
+ *
+ * returns nothing.
+ */
+function updateImagePreviewDimensions(dir) {
+
+	// fix container
+	$("#image-previewer-holder").css({
+		"height": $("#specifications-pane-container").height(),
+		"width": $("#image-previewer-container").width()
+	});
+
+	// fix image itself
+	console.log("zoomLevel: " + zoomLevel + " , dir: " + dir);
+	if(zoomLevel == 1 && dir == "out")
+		console.log("HIIITITT");
+
+	if(zoomLevel == 1 && dir == "out")
+		$("#image-previewer").css(
+			{
+				"height": establishedLockHeight,
+				"width": 'auto'
+			}
+		);
+	else
+		$("#image-previewer").css({
+			"height": $('#image-previewer')[0].naturalHeight * (zoomLevel/3),
+			"width": $('#image-previewer')[0].naturalWidth * (zoomLevel/3)
+		});
+
+};
 
 var zoomLevel = 1, zoomLimit = 10;
 
@@ -245,7 +285,16 @@ function updateZoomButtons() {
 
 	updateCounters();
 
-}
+	// disable image aspect ratio lock
+	if(zoomLevel > 1 && zoomLevel <= zoomLimit) {
+		$("#size-lock-button").addClass("disabled");
+		$("#size-lock-button").addClass("shift-lock-icon");
+	} else {
+		$("#size-lock-button").removeClass("disabled");
+		$("#size-lock-button").removeClass("shift-lock-icon");
+	}
+
+};
 
 /**
  * zoom(String dir)
@@ -260,17 +309,39 @@ function updateZoomButtons() {
  */
 function zoom(dir) {
 
+	// hide overflow when zooming back in to original
+	if(zoomLevel == 2 && dir == "out")
+		$("#image-previewer-container").css(
+			{
+				"overflow": 'scroll',
+				"height": establishedLockHeight,
+				"width": 'auto'
+			}
+		);
+
+	// add overflow when zooming out from original
+	if(zoomLevel == 1 && dir == "in")
+		$("#image-previewer-container").css({"overflow": 'auto'});
+
 	if(dir == "in") {
-		if(zoomLevel < zoomLimit)
+		if(zoomLevel < zoomLimit) {
+			// zoom in
 			zoomLevel++;
+
+			updateImagePreviewDimensions(dir);			
+		}
 	} else if(dir == "out") {
-		if(zoomLevel > 0)
+		if(zoomLevel > 0) {
+			// zoom out
 			zoomLevel--;
+
+			updateImagePreviewDimensions(dir);
+		}
 	}
 
 	updateZoomButtons();
 
-}
+};
 
 // target submission
 
@@ -381,7 +452,7 @@ function loadCropPreview() {
 
 	});
 
-}
+};
 
 /**
  * submitTarget()
@@ -398,7 +469,7 @@ function submitTarget() {
 	$.ajax({
 		url: "/post/target",
 		method: "POST",
-		timeout: 1000,
+		timeout: 3000,
 
 		data: {
 			targetTopLeftX: cropData.targetTopLeftX,
@@ -437,7 +508,7 @@ function submitTarget() {
 		}
 	});
 
-}
+};
 
 // control panel code
 
@@ -464,7 +535,7 @@ function switchControlPanelRefresh() {
 		refresh = setInterval(function() { statusGet(); }, 1000); // 1000ms = 1s
 	}
 
-}
+};
 
 // front-to-backend code
 
@@ -521,7 +592,7 @@ function statusDisplay(programName, data) {
 
 	}
 
-}
+};
 
 /**
  * statusPush(String process, String cmd)
@@ -600,7 +671,7 @@ function statusPush(process, cmd) {
 		}
 	});
 
-}
+};
 
 /**
  * statusGet()
@@ -644,7 +715,7 @@ function statusGet(programName) {
 		}
 	});
 
-}
+};
 
 // init code
 
@@ -742,7 +813,7 @@ function loadImages() {
 		}
 	});
 
-}
+};
 
 const MTSFields = ["Shape", "Shape Color", "Alphanumeric Color", "Orientation"];
 
@@ -766,5 +837,7 @@ function enableMTSButtons() {
 	$("#zoom-in-btn").removeClass("disabled");
 	$("#zoom-out-btn").removeClass("disabled");
 
-}
+	updateZoomButtons();
+
+};
 

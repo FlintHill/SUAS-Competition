@@ -149,10 +149,10 @@
 						</div>
 						<div class="col s4">
 							<div class="right">
-								<a class="waves-effect waves-light btn tooltipped light-blue disabled" name="left-button" data-position="left" data-delay="760" data-tooltip="Command + Left" href="#">
+								<a class="waves-effect waves-light btn tooltipped light-blue disabled" data-position="left" data-delay="760" data-tooltip="Command + Left" href="#">
 									<i class="fa fa-arrow-left"></i>
 								</a>
-								<a class="waves-effect waves-light btn tooltipped light-blue disabled" name="right-button" data-position="left" data-delay="760" data-tooltip="Command + Right" href="#">
+								<a class="waves-effect waves-light btn tooltipped light-blue disabled" data-position="left" data-delay="760" data-tooltip="Command + Right" href="#">
 									<i class="fa fa-arrow-right"></i>
 								</a>
 							</div>
@@ -180,10 +180,10 @@
 						</div>
 						<div class="col s4">
 							<div class="right">
-								<a class="waves-effect waves-light btn tooltipped light-blue" name="left-button" data-position="left" data-delay="760" data-tooltip="Command + Left" href="#">
+								<a class="waves-effect waves-light btn tooltipped light-blue" data-position="left" data-delay="760" data-tooltip="Command + Left" href="#">
 									<i class="fa fa-arrow-left"></i>
 								</a>
-								<a class="waves-effect waves-light btn tooltipped light-blue" name="right-button" data-position="left" data-delay="760" data-tooltip="Command + Right" href="#">
+								<a class="waves-effect waves-light btn tooltipped light-blue" data-position="left" data-delay="760" data-tooltip="Command + Right" href="#">
 									<i class="fa fa-arrow-right"></i>
 								</a>
 							</div>
@@ -209,7 +209,7 @@
 						</p>
 					</li>
 					<li class="collection-item">
-						<a class="waves-effect waves-light btn tooltipped light-blue" name="left-button" data-position="left" data-delay="760" data-tooltip="Command + Left" href="#">
+						<a class="waves-effect waves-light btn tooltipped light-blue" data-position="left" data-delay="760" data-tooltip="Command + Left" href="#">
 							<i class="fa fa-arrow-left"></i>
 						</a>
 						<p style="margin-bottom:0">
@@ -217,7 +217,7 @@
 						</p>
 					</li>
 					<li class="collection-item">
-						<a class="waves-effect waves-light btn tooltipped light-blue" name="right-button" data-position="left" data-delay="760" data-tooltip="Command + Right" href="#">
+						<a class="waves-effect waves-light btn tooltipped light-blue" data-position="left" data-delay="760" data-tooltip="Command + Right" href="#">
 							<i class="fa fa-arrow-right"></i>
 						</a>
 						<p style="margin-bottom:0">
@@ -491,7 +491,7 @@
 					</div>
 				</div>
 				<hr>
-				<p class="grey-text">v0.1 /// Flinthill SUAS /// Last modified: October 23rd, 2017</p>
+				<p class="grey-text">v0.1 /// Flinthill SUAS /// Last modified: October 25th, 2017</p>
 			</div>
 		</div>
 
@@ -542,9 +542,11 @@
 									<i class="fa fa-lock" id="size-lock-icon" aria-hidden="true"></i>
 								</a>
 								<!-- Image Previewer -->
-								<img id="image-previewer" src="">
+								<div id="image-previewer-holder">
+									<img id="image-previewer" src="">
+								</div>
 							</div>
-							<div class="col s3">
+							<div class="col s3" id="specifications-pane-container">
 								<div class="special-container white lighten-4">
 									<h5 style="margin-top:0">Specifications</h5>
 									<select id="target-shape">
