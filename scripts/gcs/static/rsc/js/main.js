@@ -236,31 +236,78 @@ function updateImagePreviewDimensions(dir) {
 
 	// fix container
 	$("#image-previewer-holder").css({
-		"height": $("#specifications-pane-container").height(),
-		"width": $("#image-previewer-container").width()
+		"width": $("#image-previewer-container").width(),
+		"height": $("#specifications-pane-container").height()
 	});
 
 	// fix image itself
-	console.log("zoomLevel: " + zoomLevel + " , dir: " + dir);
-	if(zoomLevel == 1 && dir == "out")
-		console.log("HIIITITT");
-
-	if(zoomLevel == 1 && dir == "out")
+	if(zoomLevel == 1 && dir == "out") {
 		$("#image-previewer").css(
 			{
-				"height": establishedLockHeight,
-				"width": 'auto'
+				"width": 'auto',
+				"height": establishedLockHeight
 			}
 		);
-	else
+	} else {
+		var deltaZ = (zoomLevel/(zoomLimit/zoomFactor));
+
+		var Wa = $('#image-previewer')[0].naturalWidth;
+		var Ha = $('#image-previewer')[0].naturalHeight;
+
+		var Wc = $("#image-previewer-container").width();
+		var Hc = $("#image-previewer-container").height();
+
+		var Sl = $("#image-previewer-container").scrollLeft();
+		var St = $("#image-previewer-container").scrollTop();
+
+		var Wnew = $('#image-previewer')[0].naturalWidth * deltaZ;
+		var Wold = $('#image-previewer').width();
+
+		var Hnew = $('#image-previewer')[0].naturalHeight * deltaZ;
+		var Hold = $('#image-previewer').height();
+
 		$("#image-previewer").css({
-			"height": $('#image-previewer')[0].naturalHeight * (zoomLevel/3),
-			"width": $('#image-previewer')[0].naturalWidth * (zoomLevel/3)
+			"width": Wnew,
+			"height": Hnew
 		});
+
+		var MPx = (Sl + (Wc/2));
+		var MPy = (St + (Hc/2));
+
+		var Sx = Wnew/Wold;
+		var Sy = Hnew/Hold;
+
+		var MPxn = Sx * MPx;
+		var MPyn = Sy * MPy;
+
+		$("#image-previewer-container").scrollTop(
+			MPyn - (Hc/2)
+		);
+
+		$("#image-previewer-container").scrollLeft(
+			MPxn - (Wc/2)
+		);
+
+		/*$("#image-previewer-container").scrollTop(
+			($("#image-previewer-container").scrollTop() + ($("#image-previewer-container").scrollTop() * (zoomLevel/zoomLimit)) ) * ($('#image-previewer')[0].naturalHeight/$("#image-previewer").height())
+		);
+
+		$("#image-previewer-container").scrollLeft(
+			($("#image-previewer-container").scrollLeft() + ($("#image-previewer-container").scrollLeft() * (zoomLevel/zoomLimit)) ) * ($('#image-previewer')[0].naturalWidth/$("#image-previewer").width())
+		);*/
+
+		/*$("#image-previewer-container").scrollTop(
+			($("#image-previewer-container").scrollTop() * ($('#image-previewer')[0].naturalHeight/$("#image-previewer").height())) + $("#image-previewer").height()/2
+		);
+
+		$("#image-previewer-container").scrollLeft(
+			($("#image-previewer-container").scrollLeft() * ($("#image-previewer")[0].naturalWidth/$("#image-previewer").width())) + $("#image-previewer").width()/2
+		);*/
+	}
 
 };
 
-var zoomLevel = 1, zoomLimit = 10;
+var zoomLevel = 1, zoomFactor = 1.5, zoomLimit = 10;
 
 /**
  * updateZoomButtons()
@@ -799,6 +846,10 @@ function loadImages() {
 			$("#image-previewer").attr("height", $("#image-previewer-parent-container").height() + "px"); // this has to be second b/c imgAreaSelect resets the height attribute.
 
 			updateDirectionalButtons();
+
+			// needs to be doubled
+			switchImageHeightLock();
+			switchImageHeightLock();
 
 			// indicate
 			Materialize.toast('Images successfully loaded.', 2400);
