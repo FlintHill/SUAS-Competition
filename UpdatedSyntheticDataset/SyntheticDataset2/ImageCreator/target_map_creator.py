@@ -3,11 +3,13 @@ import random
 from SyntheticDataset2.ElementsCreator.background import BackgroundGenerator
 from .random_target_creator import RandomTargetCreator
 from SyntheticDataset2.ImageOperations.shape_rotator import ShapeRotator
+from SyntheticDataset2.ImageOperations.image_resizer import ImageResizer
+from SyntheticDataset2.ElementsCreator.noised_image_generator import NoisedImageGenerator
 
 class TargetMapCreator(object):
 
     @staticmethod
-    def create_random_target_map(number_of_targets, size_range, proportionality_range, path_to_backgrounds):
+    def create_random_target_map(number_of_targets, size_range, proportionality_range, path_to_backgrounds, pixelization_level, noise_level):
         """
         Create a map with a specified number of random targets.
 
@@ -28,10 +30,15 @@ class TargetMapCreator(object):
         :param size_range: the range of sizes that are to be selected randomly
         :param proportionality_range: the range of proportionality levels that are to be selected randomly
         :param path_to_backgrounds: the directory of images of background
+        :param pixelization_level: the level of pixelization, see the first method of ImageResizer
+        :param noise_level: the intended level of noise. (See gaussian_noise_generator for detail.)
+
         :type number_of_targets: int
         :type size_range: [min_size, max_size] //:type min_size and max_size: int
         :type proportionality_range: [min_proportionality, max_proportionality] //:type min_proportionality and max_proportionality: double
         :type path_to_backgrounds: directory
+        :type pixelization_level: float (preferably below 20.0)
+        :type noise_level: float (0.0 to 100.0)
         """
 
         #background = BackgroundGenerator(max(size_range) * number_of_targets * 2, max(size_range) * number_of_targets * 2, path_to_backgrounds).generate_background()
@@ -44,7 +51,11 @@ class TargetMapCreator(object):
         total_targets_output = 0
 
         while index_number_of_targets <= number_of_targets:
-            target_image = RandomTargetCreator.create_random_target(size_range, proportionality_range)
+            raw_target_image = RandomTargetCreator.create_random_target(size_range, proportionality_range)
+            resized_target_image = ImageResizer.resize_image_conserved(raw_target_image, pixelization_level)
+            noised_target_image = NoisedImageGenerator.generate_noised_image_by_level(resized_target_image, noise_level)
+            target_image = noised_target_image
+
             reroll_needed = True
             attempts_to_reroll = 0
 
