@@ -3,7 +3,7 @@ import random, os
 
 class BackgroundGenerator(object):
 
-    def __init__(self,path_to_backrounds):
+    def __init__(self,path_to_backgrounds):
         """
         Create a background for a Target or TargetField
 
@@ -15,10 +15,10 @@ class BackgroundGenerator(object):
         """
         Return a full sized background
         """
-        image_list = os.listdir(self.path_to_backrounds)
+        image_list = os.listdir(self.path_to_backgrounds)
         image_list = [f for f in image_list if not f.startswith(".")]
 
-        background = Image.open(self.path_to_backrounds + "/" + random.choice(image_list))
+        background = Image.open(self.path_to_backgrounds + "/" + random.choice(image_list))
         return background
 
     def generate_specific_background(self,specified_width,specified_height):
