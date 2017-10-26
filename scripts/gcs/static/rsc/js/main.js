@@ -1,6 +1,9 @@
 /**
- * main script file for gcs:WEBui
- * v0.1
+ * main script file for gcs:web ui
+ *
+ * @author		James Villemarette
+ * @version 	0.1
+ * @since		2017-10-26
  */
 
 // page init
@@ -19,7 +22,6 @@ $(document).ready(function(){
 		if(!$("#size-lock-icon").hasClass("fa-unlock"))
 			$("#size-lock-icon").removeClass("fa-lock").addClass("fa-unlock-alt");
 	}, function() {
-
 		// hover leave
 		if(!$("#size-lock-icon").hasClass("fa-unlock"))
 			$("#size-lock-icon").removeClass("fa-unlock-alt").addClass("fa-lock");
@@ -88,14 +90,17 @@ $(document).ready(function() {
  * IF it is NOT locked, the image will only be as wide as possible,
  * and there by as tall (within the aspect ratio) as it can be
  * within the viewer box.
+ *
+ * returns nothing.
  */
 function switchImageHeightLock() {
 
 	if(imageHeightLocked) {
 		$("#image-previewer").removeAttr("height");
-		$("#image-previewer").attr("width", $("#image-previewer-container").width() + "px");
+		$("#image-previewer").attr("width", $("#image-previewer-holder").width() + "px");
 
 		imageHeightLocked = false;
+
 		$("#size-lock-icon").removeClass("fa-lock fa-unlock-alt").addClass("fa-unlock");
 		$("#size-lock-button").addClass("shift-lock-icon");
 	} else {
@@ -103,13 +108,14 @@ function switchImageHeightLock() {
 		$("#image-previewer").attr("height", establishedLockHeight + "px");
 
 		imageHeightLocked = true;
+
 		$("#size-lock-icon").removeClass("fa-unlock").addClass("fa-lock");
 		$("#size-lock-button").removeClass("shift-lock-icon");
 	}
 
-}
+};
 
-var currentImage = 0, totalImages = 0, submittedImages = 0;
+var currentImage = 0, totalImages = 0, zoomLevel = 1;
 
 /**
  * updateCounters()
@@ -121,9 +127,9 @@ function updateCounters() {
 
 	$("#current-image").html(currentImage + 1);
 	$("#total-images").html(totalImages);
-	$("#submitted-images").html(submittedImages);
+	$("#zoom-level").html(zoomLevel);
 
-}
+};
 
 /**
  * indexExistsIn(array arr, int i)
@@ -138,7 +144,7 @@ function indexExistsIn(arr, i) {
 	if(i < arr.length && i >= 0)
 		return true;
 
-}
+};
 
 /**
  * showImage(int index)
@@ -161,37 +167,41 @@ function showImage(index) {
 
 	updateCounters();
 
-}
+};
 
 /**
- * imageSelect(string direction)
+ * imageSelect(string dir)
  *
- * Moves "left" or "right" (direction) by one image.
+ * Moves "left" or "right" (dir:direction) by one image.
  *		  ^			^
+ *
+ * returns nothing.
  */
-function imageSelect(direction) {
+function imageSelect(dir) {
 
 	var change = 0;
 
-	if(direction == "left")
+	if(dir == "left")
 		change = -1;
-	else if(direction == "right")
+	else if(dir == "right")
 		change = 1;
 	else
-		throw "imageSelect(direction): Unknown cardinal horizontal direction '" + direction + "'";
+		throw "imageSelect(direction): Unknown cardinal horizontal direction '" + dir + "'";
 
 	if(indexExistsIn(imgs, currentImage + change))
 		showImage(currentImage + change);
 
 	updateDirectionalButtons();
 
-}
+};
 
 /**
  * updateDirectionalButtons()
  *
  * Updates the directional buttons for switching between images
  * appropriately.
+ *
+ * returns nothing.
  */
 function updateDirectionalButtons() {
 
@@ -207,7 +217,186 @@ function updateDirectionalButtons() {
 	else
 		$("a[name='right-button']").removeClass('disabled');
 
-}
+};
+
+// image zoom
+
+/**
+ * updateImagePreviewDimensions(String dir)
+ *
+ * dir in this function stands for direction.
+ *
+ * Maintains the correct height and width pixel measurements for the 
+ * #image-previewer-container div before and after unlocking or locking
+ * the image size ratio.
+ *
+ * returns nothing.
+ */
+function updateImagePreviewDimensions(dir) {
+
+	// fix container
+	$("#image-previewer-holder").css({
+		"width": $("#image-previewer-container").width(),
+		"height": $("#specifications-pane-container").height()
+	});
+
+	// fix image itself
+	if(zoomLevel == 1 && dir == "out") {
+
+		$("#image-previewer").css(
+			{
+				"width": 'auto',
+				"height": establishedLockHeight
+			}
+		);
+
+	} else {
+
+		var deltaZ = (zoomLevel/(zoomLimit/zoomFactor));
+
+		// a = (a)ctual image dimensions
+		var Wa = $('#image-previewer')[0].naturalWidth;
+		var Ha = $('#image-previewer')[0].naturalHeight;
+
+		// c = (c)ropper image dimensions (static)
+		var Wc = $("#image-previewer-container").width();
+		var Hc = $("#image-previewer-container").height();
+
+		// s = scroll (l)eft/(t)op
+		var Sl = $("#image-previewer-container").scrollLeft();
+		var St = $("#image-previewer-container").scrollTop();
+
+		// (old) size in background and (new) size in background
+		var Wnew = $('#image-previewer')[0].naturalWidth * deltaZ;
+		var Wold = $('#image-previewer').width();
+
+		var Hnew = $('#image-previewer')[0].naturalHeight * deltaZ;
+		var Hold = $('#image-previewer').height();
+
+		// must set new width and height before scrolling
+		$("#image-previewer").css({
+			"width": Wnew,
+			"height": Hnew
+		});
+
+		// (M)iddle (P)oint of current viewbox
+		var MPx = (Sl + (Wc/2));
+		var MPy = (St + (Hc/2));
+
+		var Sx = Wnew/Wold;
+		var Sy = Hnew/Hold;
+
+		// new (M)iddle (P)oint of scroll box
+		var MPxn = Sx * MPx;
+		var MPyn = Sy * MPy;
+
+		$("#image-previewer-container").scrollTop(
+			MPyn - (Hc/2)
+		);
+
+		$("#image-previewer-container").scrollLeft(
+			MPxn - (Wc/2)
+		);
+
+	}
+
+};
+
+/**
+ * updateZoomButtons()
+ *
+ * Enables/disables the zoom in buttons, depending upon the zoomLevel.
+ *
+ * returns nothing.
+ */
+function updateZoomButtons() {
+
+	// zoom in
+	if(zoomLevel == zoomLimit)
+		$("#zoom-in-btn").addClass("disabled");
+	else
+		$("#zoom-in-btn").removeClass("disabled");
+
+	// zoom out
+	if(zoomLevel == 1)
+		$("#zoom-out-btn").addClass("disabled");
+	else
+		$("#zoom-out-btn").removeClass("disabled");;
+
+	updateCounters();
+
+	// disable image aspect ratio lock
+	if(zoomLevel > 1 && zoomLevel <= zoomLimit) {
+		$("#size-lock-button").addClass("disabled");
+		$("#size-lock-button").addClass("shift-lock-icon");
+	} else {
+		$("#size-lock-button").removeClass("disabled");
+		$("#size-lock-button").removeClass("shift-lock-icon");
+	}
+
+};
+
+var zoomLevel = 1, zoomFactor = 1.5, zoomLimit = 10;
+
+/**
+ * zoom(String dir)
+ *
+ * dir in this function stands for direction.
+ *
+ * zoom("in") zooms in on the image-preview by 1x.
+ * zoom("out") zooms out of the image-preview by 1x.
+ * 
+ * No preconditions.
+ *
+ * zoomLevel is > 0 and <= zoomLimit
+ *
+ * The magnification formula is defined as such:
+ *		   zoomLevel
+ *  ----------------------  =  deltaZ
+ *   zoomLimit/zoomFactor
+ *
+ *  deltaZ * Width of the actual image = new Width
+ *  deltaZ * Height of the actual image = new Height
+ *
+ * returns nothing.
+ */
+function zoom(dir) {
+
+	// hide overflow when zooming back in to original
+	if(zoomLevel == 2 && dir == "out")
+		$("#image-previewer-container").css(
+			{
+				"overflow": 'scroll',
+				"height": establishedLockHeight,
+				"width": 'auto'
+			}
+		);
+
+	// add overflow when zooming out from original
+	if(zoomLevel == 1 && dir == "in")
+		$("#image-previewer-container").css({"overflow": 'auto'});
+
+	if(dir == "in") {
+		if(zoomLevel < zoomLimit) {
+			// zoom in
+			zoomLevel++;
+
+			updateImagePreviewDimensions(dir);			
+		}
+	} else if(dir == "out") {
+		if(zoomLevel > 0) {
+			// zoom out
+			zoomLevel--;
+
+			updateImagePreviewDimensions(dir);
+		}
+	}
+
+	updateZoomButtons();
+
+};
+
+// target submission
 
 var cropData = {
 
@@ -226,14 +415,13 @@ var cropData = {
  *
  * Triggered by the "Crop and Submit" button.
  *
- * Generates 
+ * Adds CSS stylings to a #image-preview div box that displays a rough preview
+ * of the crop that was selected in MTS.
  */
 function loadCropPreview() {
 
 	// display crop preview
 	$(document).ready(function() {
-
-		// TODO: concatenate code.
 
 		var imageW = $('#image-previewer')[0].naturalWidth; 
 		var imageH = $('#image-previewer')[0].naturalHeight;
@@ -255,43 +443,18 @@ function loadCropPreview() {
 		var transformed_topLeftX = (transformedW/imageW) * actual_topLeftX;
 		var transformed_topLeftY = (transformedH/imageH) * actual_topLeftY;
 
-		console.log("imageW: " + imageW);
-		console.log("imageH: " + imageH);
-		console.log("cropperW: " + cropperW);
-		console.log("cropperH: " + cropperH);
-		console.log("length: " + length);
-		console.log("topLeftX: " + topLeftX);
-		console.log("topLeftY: " + topLeftY);
-		console.log("extrude: " + extrude);
-		console.log("transformedW: " + transformedW);
-		console.log("transformedH: " + transformedH);
-		console.log("actual_topLeftX: " + actual_topLeftX);
-		console.log("actual_topLeftY: " + actual_topLeftY);
-		console.log("transformed_topLeftX: " + transformed_topLeftX);
-		console.log("transformed_topLeftY: " + transformed_topLeftY);
-
 		$("#crop-previewer").css({
-			//"height": length + "px", 
-			//"width": length + "px",
-
 			"border": "1px solid black",
 
 			"background-image": "url('imgs/" + imgs[currentImage] + "')",
 			"background-repeat": "no-repeat",
-			"background-attachment": "scroll", // fixed
+			"background-attachment": "scroll",
 
 			"background-size": transformedW + "px " + transformedH + "px",
 			"background-position": 
-				"-" + 
-				(transformed_topLeftX + (50)) + // 17
-				"px -" + 
-				(transformed_topLeftY + (34)) + // 17
-				"px"
+				"-" + (transformed_topLeftX + 50) + "px " + 
+				"-" + (transformed_topLeftY + 34) + "px"
 		});
-
-		console.log("loadCropPreview(): imageW: " + imageW);
-		console.log("loadCropPreview(): length: " + length);
-		console.log("loadCropPreview(): extrude: " + extrude);
 
 		// store
 		var actual_extrude = (extrude/cropperW) * imageW;
@@ -313,19 +476,24 @@ function loadCropPreview() {
 
 	});
 
-}
+};
 
 /**
  * submitTarget()
  *
- * TODO: Expand doc when tested in real/artificial environment.
+ * Triggered by Crop Image Previewer modal in MTS.
+ *
+ * Posts an AJAX request to back-end flask script the details of the crop, not
+ * the actual crop itself. This also pushes the crop data (shape, color, etc.)
+ *
+ * returns nothing.
  */
 function submitTarget() {
 
 	$.ajax({
 		url: "/post/target",
 		method: "POST",
-		timeout: 1000,
+		timeout: 3000,
 
 		data: {
 			targetTopLeftX: cropData.targetTopLeftX,
@@ -352,7 +520,6 @@ function submitTarget() {
 			console.log("submitTarget(): ajax data:")
 			console.log(data);
 
-			submittedImages++;
 			updateCounters();
 		},
 
@@ -365,7 +532,7 @@ function submitTarget() {
 		}
 	});
 
-}
+};
 
 // control panel code
 
@@ -375,6 +542,8 @@ var refresh = null;
  * switchControlPanelRefresh()
  *
  * Enable or disable the automatic control panel refresh.
+ *
+ * returns nothing.
  */
 function switchControlPanelRefresh() {
 
@@ -390,7 +559,7 @@ function switchControlPanelRefresh() {
 		refresh = setInterval(function() { statusGet(); }, 1000); // 1000ms = 1s
 	}
 
-}
+};
 
 // front-to-backend code
 
@@ -399,7 +568,10 @@ function switchControlPanelRefresh() {
  *
  * Front-end update function that's used by statusPush() and statusGet().
  *
- * Updates the Control Panel slide with 
+ * Updates the Control Panel slide with the data that was received by the back-
+ * end script.
+ *
+ * returns nothing.
  */
 function statusDisplay(programName, data) {
 
@@ -423,8 +595,6 @@ function statusDisplay(programName, data) {
 			$(ref + "-light").removeClass("red").addClass("green");
 			$(ref + "-light-text").html("Connected");
 
-			console.log("HELP1 " + ref + "-power-button");
-
 			$(ref + "-power-button").removeClass("green").addClass("red");
 			$(ref + "-power-button").attr("onclick", "statusPush('" + programName + "', 'off');");
 		}
@@ -435,26 +605,24 @@ function statusDisplay(programName, data) {
 			$(ref + "-light").removeClass("green").addClass("red");
 			$(ref + "-light-text").html("Disconnected");
 
-			console.log("HELP2 " + ref + "-power-button");
-
 			$(ref + "-power-button").removeClass("red").addClass("green");
-			//$(ref + "-power-button").attr("data-tooltip", "Turn on");
 			$(ref + "-power-button").attr("onclick", "statusPush('" + programName + "', 'on');");
 		}
 
 	}
 
-}
+};
 
 /**
  * statusPush(String process, String cmd)
  *
- * Turn on or off a subprocess, either:
- *	- "interop-connection"
- *	- "sda"
+ * Turn on or off a subprocess, with the subprocessesing being:
+ *	- "interop-connection",
+ *	- "sda", and
  *	- "image-processing"
+ * by posting an AJAX request to the back-end script.
  *
- * TODO: Expand doc when tested in real/artificial environment.
+ * returns nothing.
  */
 function statusPush(process, cmd) {
 
@@ -476,7 +644,7 @@ function statusPush(process, cmd) {
 			friendlyProgramName = "Image Processing script"
 			break;
 		default:
-			// precondiiton: process requested valid
+			// precondition: process requested valid
 			throw "statusChange(process, cmd): Unknown String process '" + process + "'";
 	}
 
@@ -522,13 +690,15 @@ function statusPush(process, cmd) {
 		}
 	});
 
-}
+};
 
 /**
  * statusGet()
  *
  * Retrieves the status informaition of the different subprocesses for the 
  * control panel.
+ *
+ * returns nothing.
  */
 function statusGet(programName) {
 
@@ -564,7 +734,7 @@ function statusGet(programName) {
 		}
 	});
 
-}
+};
 
 // init code
 
@@ -591,7 +761,7 @@ var imgs = [], ias = null, selectionPoints = [];
 function loadImages() {
 
 	$.ajax({
-		url: "get/imgs", // "imgs/get.php"
+		url: "get/imgs",
 		
 		success:function(data) {
 			console.log("loadImages(): Images Loaded:");
@@ -649,6 +819,10 @@ function loadImages() {
 
 			updateDirectionalButtons();
 
+			// needs to be doubled
+			switchImageHeightLock();
+			switchImageHeightLock();
+
 			// indicate
 			Materialize.toast('Images successfully loaded.', 2400);
 		},
@@ -662,7 +836,7 @@ function loadImages() {
 		}
 	});
 
-}
+};
 
 const MTSFields = ["Shape", "Shape Color", "Alphanumeric Color", "Orientation"];
 
@@ -670,6 +844,8 @@ const MTSFields = ["Shape", "Shape Color", "Alphanumeric Color", "Orientation"];
  * enableMTSButtons()
  *
  * Only executes once. Opens up MTS screen buttons and fields.
+ *
+ * returns nothing.
  */
 function enableMTSButtons() {
 
@@ -681,5 +857,10 @@ function enableMTSButtons() {
 
 	$("#target-content").removeAttr("disabled");
 
-}
+	$("#zoom-in-btn").removeClass("disabled");
+	$("#zoom-out-btn").removeClass("disabled");
+
+	updateZoomButtons();
+
+};
 

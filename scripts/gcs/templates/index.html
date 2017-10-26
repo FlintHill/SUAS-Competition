@@ -149,10 +149,10 @@
 						</div>
 						<div class="col s4">
 							<div class="right">
-								<a class="waves-effect waves-light btn tooltipped light-blue disabled" name="left-button" data-position="left" data-delay="760" data-tooltip="Command + Left" href="#">
+								<a class="waves-effect waves-light btn tooltipped light-blue disabled" data-position="left" data-delay="760" data-tooltip="Command + Left" href="#">
 									<i class="fa fa-arrow-left"></i>
 								</a>
-								<a class="waves-effect waves-light btn tooltipped light-blue disabled" name="right-button" data-position="left" data-delay="760" data-tooltip="Command + Right" href="#">
+								<a class="waves-effect waves-light btn tooltipped light-blue disabled" data-position="left" data-delay="760" data-tooltip="Command + Right" href="#">
 									<i class="fa fa-arrow-right"></i>
 								</a>
 							</div>
@@ -180,10 +180,10 @@
 						</div>
 						<div class="col s4">
 							<div class="right">
-								<a class="waves-effect waves-light btn tooltipped light-blue" name="left-button" data-position="left" data-delay="760" data-tooltip="Command + Left" href="#">
+								<a class="waves-effect waves-light btn tooltipped light-blue" data-position="left" data-delay="760" data-tooltip="Command + Left" href="#">
 									<i class="fa fa-arrow-left"></i>
 								</a>
-								<a class="waves-effect waves-light btn tooltipped light-blue" name="right-button" data-position="left" data-delay="760" data-tooltip="Command + Right" href="#">
+								<a class="waves-effect waves-light btn tooltipped light-blue" data-position="left" data-delay="760" data-tooltip="Command + Right" href="#">
 									<i class="fa fa-arrow-right"></i>
 								</a>
 							</div>
@@ -209,7 +209,7 @@
 						</p>
 					</li>
 					<li class="collection-item">
-						<a class="waves-effect waves-light btn tooltipped light-blue" name="left-button" data-position="left" data-delay="760" data-tooltip="Command + Left" href="#">
+						<a class="waves-effect waves-light btn tooltipped light-blue" data-position="left" data-delay="760" data-tooltip="Command + Left" href="#">
 							<i class="fa fa-arrow-left"></i>
 						</a>
 						<p style="margin-bottom:0">
@@ -217,7 +217,7 @@
 						</p>
 					</li>
 					<li class="collection-item">
-						<a class="waves-effect waves-light btn tooltipped light-blue" name="right-button" data-position="left" data-delay="760" data-tooltip="Command + Right" href="#">
+						<a class="waves-effect waves-light btn tooltipped light-blue" data-position="left" data-delay="760" data-tooltip="Command + Right" href="#">
 							<i class="fa fa-arrow-right"></i>
 						</a>
 						<p style="margin-bottom:0">
@@ -310,6 +310,58 @@
 				</div>
 				<p>
 					The details of the cropped target do not appear in the Image Submission Verification modal, as there is not enough space screen space in the modal. You can, however, click out of the modal, and compare the crop preview in the modal with the details of the target that you specificied in the specification pane. 
+				</p>
+				<h5><i>The Zoom Buttons</i></h5>
+				<p>
+					Because the images from the drone will be taken from several hundred feet in the air, it's important that the MTS screen has built-in zoom functionality. You will find the zoom in and zoom out buttons on the bottom-right of the MTS screen, below the specifications pane.
+				</p>
+				<p>
+					The zoom in section looks like this:
+				</p>
+				<div class="row">
+					<div class="col s6">
+						<div class="grey lighten-3">
+							<p class="center grey-text" style="padding-top:14px">
+								<b>ZOOM</b>
+							</p>
+							<div class="row" style="padding-bottom:25px">
+								<!-- Zoom Buttons!! -->
+								<div class="col s6">
+									<a class="waves-effect waves-light btn tooltipped" data-position="left" data-tooltip="Command: +" data-delay="100" style="left:54px !important">
+										<i class="fa fa-plus" aria-hidden="true"></i>
+									</a>
+								</div>
+								<div class="col s6">
+									<a class="waves-effect waves-light btn tooltipped" data-position="left" data-tooltip="Command: -" data-delay="100" style="right:-20px !important">
+										<i class="fa fa-minus" aria-hidden="true"></i>
+									</a>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col s6">
+						<ul class="collection">
+							<li class="collection-item">
+								<b>+:</b> Zoom into the image.
+							</li>
+							<li class="collection-item">
+								<b>-:</b> Zoom out of the image.
+							</li>
+						</ul>
+					</div>
+				</div>
+				<p>
+					The buttons, themselves, are pretty self-explanatory.
+				</p>
+				<p>
+					What's important to note is how the zoom in function works. The zoom buttons zoom in on the center of the current view box, so, going from 1x to 2x zoom, you zoom in on the dead center of the image. But going from 2x to 3x, 4x, ... and so on, you zoom in on the box that you're looking at.
+				</p>
+				<p>
+					It would be best to practice using the zoom-in and zoom-out buttons before going into the competition, as a textual-based explanation like this can only do so much.
+				</p>
+				<hr style="margin-bottom:1em">
+				<p>
+					<i>About page last updated October 26th, 2017.</i>
 				</p>
 			</div>
 			<div class="modal-footer">
@@ -486,7 +538,7 @@
 					</div>
 				</div>
 				<hr>
-				<p class="grey-text">v0.1 /// Flinthill SUAS /// Last modified: October 23rd, 2017</p>
+				<p class="grey-text">v0.1 /// Flinthill SUAS /// Last modified: October 26th, 2017</p>
 			</div>
 		</div>
 
@@ -502,7 +554,7 @@
 						<div class="col s6">
 							<h5 class="right grey-text counter-fix">
 								(<span id="current-image">?</span>/<span id="total-images">?</span>) images<br>
-								<span id="submitted-images">0</span> submitted targets
+								<span id="zoom-level">1</span>x zoom level
 							</h5>
 						</div>
 					</div>
@@ -530,15 +582,18 @@
 						</div>
 					</div>
 					<div class="special-container grey lighten-3">
-						<div class="row" id="image-previewer-parent-container">
+						<div class="row" id="image-previewer-parent-container" style="margin-bottom:0">
 							<div class="col s9" id="image-previewer-container">
-								<!-- Image Previewer -->
+								<!-- Lock Button -->
 								<a class="waves-effect waves-light btn tooltipped disabled" style="position:absolute" id="size-lock-button" data-position="right" data-tooltip="Lock height of image to height of box: Command + L" onclick="switchImageHeightLock()">
 									<i class="fa fa-lock" id="size-lock-icon" aria-hidden="true"></i>
 								</a>
-								<img id="image-previewer" src="">
+								<!-- Image Previewer -->
+								<div id="image-previewer-holder">
+									<img id="image-previewer" src="">
+								</div>
 							</div>
-							<div class="col s3">
+							<div class="col s3" id="specifications-pane-container">
 								<div class="special-container white lighten-4">
 									<h5 style="margin-top:0">Specifications</h5>
 									<select id="target-shape">
@@ -594,6 +649,22 @@
 										<option value="W">West</option>
 										<option value="NW">North-West</option>
 									</select>
+								</div>
+								<p class="center grey-text">
+									<b>ZOOM</b>
+								</p>
+								<div class="row">
+									<!-- Zoom Buttons -->
+									<div class="col s6">
+										<a class="waves-effect waves-light btn tooltipped disabled" style="left:32px" data-position="left" data-tooltip="Command: +" data-delay="1000" id="zoom-in-btn" onclick="zoom('in')">
+											<i class="fa fa-plus" aria-hidden="true"></i>
+										</a>
+									</div>
+									<div class="col s6">
+										<a class="waves-effect waves-light btn tooltipped disabled" style="right:0" data-position="left" data-tooltip="Command: -" data-delay="1000" id="zoom-out-btn" onclick="zoom('out')">
+											<i class="fa fa-minus" aria-hidden="true"></i>
+										</a>
+									</div>
 								</div>
 							</div>
 						</div>
