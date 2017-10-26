@@ -21,3 +21,5 @@ class Settings(object):
     """See ImageResizer"""
 
     NOISE_LEVEL = 0
+
+    LOGGING_ON = true
