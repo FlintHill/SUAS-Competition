@@ -12,12 +12,12 @@ class Settings(object):
 
     TARGET_GENERATION_SIZE_IN_PIXELS = 1000
 
-    SINGLE_TARGET_PROPORTIONALITY = 2
+    SINGLE_TARGET_PROPORTIONALITY = 2.5
     """See SpecifiedTargetCreator"""
 
     PROPORTIONALITY_RANGE = [1.5, 2.5]
 
-    PIXELIZATION_LEVEL = 10
+    PIXELIZATION_LEVEL = 0
     """See ImageResizer"""
 
-    NOISE_LEVEL = 2
+    NOISE_LEVEL = 0

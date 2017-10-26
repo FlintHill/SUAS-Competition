@@ -53,7 +53,7 @@ class SpecifiedTargetCreator(object):
             shape_image = HalfCircle(size, shape_color, ShapeOrientator.orientate_shape(shape_type, shape_orientation)).draw()
 
         elif shape_type == ShapeTypes.CROSS:
-            shape_image = Cross(int(size * 2), shape_color, ShapeOrientator.orientate_shape(shape_type, shape_orientation)).draw()
+            shape_image = Cross(size * 2, shape_color, ShapeOrientator.orientate_shape(shape_type, shape_orientation)).draw()
 
         elif shape_type == ShapeTypes.TRIANGLE:
             shape_image = Triangle(int(size * 1.5 / math.sqrt(3) * 2), int(size * 1.5), shape_color, ShapeOrientator.orientate_shape(shape_type, shape_orientation)).draw()
