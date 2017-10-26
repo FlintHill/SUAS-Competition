@@ -595,8 +595,6 @@ function statusDisplay(programName, data) {
 			$(ref + "-light").removeClass("red").addClass("green");
 			$(ref + "-light-text").html("Connected");
 
-			console.log("HELP1 " + ref + "-power-button");
-
 			$(ref + "-power-button").removeClass("green").addClass("red");
 			$(ref + "-power-button").attr("onclick", "statusPush('" + programName + "', 'off');");
 		}
@@ -606,8 +604,6 @@ function statusDisplay(programName, data) {
 		if(!$(ref + "-light").hasClass("red")) {
 			$(ref + "-light").removeClass("green").addClass("red");
 			$(ref + "-light-text").html("Disconnected");
-
-			console.log("HELP2 " + ref + "-power-button");
 
 			$(ref + "-power-button").removeClass("red").addClass("green");
 			$(ref + "-power-button").attr("onclick", "statusPush('" + programName + "', 'on');");
