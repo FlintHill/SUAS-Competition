@@ -3,7 +3,7 @@
  *
  * @author		James Villemarette
  * @version 	0.1
- * @since		2017-10-23
+ * @since		2017-10-26
  */
 
 // page init
@@ -170,23 +170,23 @@ function showImage(index) {
 };
 
 /**
- * imageSelect(string direction)
+ * imageSelect(string dir)
  *
- * Moves "left" or "right" (direction) by one image.
+ * Moves "left" or "right" (dir:direction) by one image.
  *		  ^			^
  *
  * returns nothing.
  */
-function imageSelect(direction) {
+function imageSelect(dir) {
 
 	var change = 0;
 
-	if(direction == "left")
+	if(dir == "left")
 		change = -1;
-	else if(direction == "right")
+	else if(dir == "right")
 		change = 1;
 	else
-		throw "imageSelect(direction): Unknown cardinal horizontal direction '" + direction + "'";
+		throw "imageSelect(direction): Unknown cardinal horizontal direction '" + dir + "'";
 
 	if(indexExistsIn(imgs, currentImage + change))
 		showImage(currentImage + change);
@@ -224,7 +224,7 @@ function updateDirectionalButtons() {
 /**
  * updateImagePreviewDimensions(String dir)
  *
- * eeweweewweewef
+ * dir in this function stands for direction.
  *
  * Maintains the correct height and width pixel measurements for the 
  * #image-previewer-container div before and after unlocking or locking
@@ -242,41 +242,51 @@ function updateImagePreviewDimensions(dir) {
 
 	// fix image itself
 	if(zoomLevel == 1 && dir == "out") {
+
 		$("#image-previewer").css(
 			{
 				"width": 'auto',
 				"height": establishedLockHeight
 			}
 		);
+
 	} else {
+
 		var deltaZ = (zoomLevel/(zoomLimit/zoomFactor));
 
+		// a = (a)ctual image dimensions
 		var Wa = $('#image-previewer')[0].naturalWidth;
 		var Ha = $('#image-previewer')[0].naturalHeight;
 
+		// c = (c)ropper image dimensions (static)
 		var Wc = $("#image-previewer-container").width();
 		var Hc = $("#image-previewer-container").height();
 
+		// s = scroll (l)eft/(t)op
 		var Sl = $("#image-previewer-container").scrollLeft();
 		var St = $("#image-previewer-container").scrollTop();
 
+		// (old) size in background and (new) size in background
 		var Wnew = $('#image-previewer')[0].naturalWidth * deltaZ;
 		var Wold = $('#image-previewer').width();
 
 		var Hnew = $('#image-previewer')[0].naturalHeight * deltaZ;
 		var Hold = $('#image-previewer').height();
 
+		// must set new width and height before scrolling
 		$("#image-previewer").css({
 			"width": Wnew,
 			"height": Hnew
 		});
 
+		// (M)iddle (P)oint of current viewbox
 		var MPx = (Sl + (Wc/2));
 		var MPy = (St + (Hc/2));
 
 		var Sx = Wnew/Wold;
 		var Sy = Hnew/Hold;
 
+		// new (M)iddle (P)oint of scroll box
 		var MPxn = Sx * MPx;
 		var MPyn = Sy * MPy;
 
@@ -288,26 +298,9 @@ function updateImagePreviewDimensions(dir) {
 			MPxn - (Wc/2)
 		);
 
-		/*$("#image-previewer-container").scrollTop(
-			($("#image-previewer-container").scrollTop() + ($("#image-previewer-container").scrollTop() * (zoomLevel/zoomLimit)) ) * ($('#image-previewer')[0].naturalHeight/$("#image-previewer").height())
-		);
-
-		$("#image-previewer-container").scrollLeft(
-			($("#image-previewer-container").scrollLeft() + ($("#image-previewer-container").scrollLeft() * (zoomLevel/zoomLimit)) ) * ($('#image-previewer')[0].naturalWidth/$("#image-previewer").width())
-		);*/
-
-		/*$("#image-previewer-container").scrollTop(
-			($("#image-previewer-container").scrollTop() * ($('#image-previewer')[0].naturalHeight/$("#image-previewer").height())) + $("#image-previewer").height()/2
-		);
-
-		$("#image-previewer-container").scrollLeft(
-			($("#image-previewer-container").scrollLeft() * ($("#image-previewer")[0].naturalWidth/$("#image-previewer").width())) + $("#image-previewer").width()/2
-		);*/
 	}
 
 };
-
-var zoomLevel = 1, zoomFactor = 1.5, zoomLimit = 10;
 
 /**
  * updateZoomButtons()
@@ -343,14 +336,27 @@ function updateZoomButtons() {
 
 };
 
+var zoomLevel = 1, zoomFactor = 1.5, zoomLimit = 10;
+
 /**
  * zoom(String dir)
  *
  * dir in this function stands for direction.
  *
- * Zooms in on the image-preview by 1x.
+ * zoom("in") zooms in on the image-preview by 1x.
+ * zoom("out") zooms out of the image-preview by 1x.
+ * 
+ * No preconditions.
  *
- * TODO: define zoom magnification lvl.	
+ * zoomLevel is > 0 and <= zoomLimit
+ *
+ * The magnification formula is defined as such:
+ *		   zoomLevel
+ *  ----------------------  =  deltaZ
+ *   zoomLimit/zoomFactor
+ *
+ *  deltaZ * Width of the actual image = new Width
+ *  deltaZ * Height of the actual image = new Height
  *
  * returns nothing.
  */
@@ -417,8 +423,6 @@ function loadCropPreview() {
 	// display crop preview
 	$(document).ready(function() {
 
-		// TODO: concatenate code.
-
 		var imageW = $('#image-previewer')[0].naturalWidth; 
 		var imageH = $('#image-previewer')[0].naturalHeight;
 
@@ -439,45 +443,18 @@ function loadCropPreview() {
 		var transformed_topLeftX = (transformedW/imageW) * actual_topLeftX;
 		var transformed_topLeftY = (transformedH/imageH) * actual_topLeftY;
 
-		// TODO: delete when crop preview solved
-		console.log("imageW: " + imageW);
-		console.log("imageH: " + imageH);
-		console.log("cropperW: " + cropperW);
-		console.log("cropperH: " + cropperH);
-		console.log("length: " + length);
-		console.log("topLeftX: " + topLeftX);
-		console.log("topLeftY: " + topLeftY);
-		console.log("extrude: " + extrude);
-		console.log("transformedW: " + transformedW);
-		console.log("transformedH: " + transformedH);
-		console.log("actual_topLeftX: " + actual_topLeftX);
-		console.log("actual_topLeftY: " + actual_topLeftY);
-		console.log("transformed_topLeftX: " + transformed_topLeftX);
-		console.log("transformed_topLeftY: " + transformed_topLeftY);
-
 		$("#crop-previewer").css({
-			//"height": length + "px", 
-			//"width": length + "px",
-
 			"border": "1px solid black",
 
 			"background-image": "url('imgs/" + imgs[currentImage] + "')",
 			"background-repeat": "no-repeat",
-			"background-attachment": "scroll", // fixed
+			"background-attachment": "scroll",
 
-			// TODO: crop preview relation
 			"background-size": transformedW + "px " + transformedH + "px",
 			"background-position": 
-				"-" + 
-				(transformed_topLeftX + (50)) + // 17
-				"px -" + 
-				(transformed_topLeftY + (34)) + // 17
-				"px"
+				"-" + (transformed_topLeftX + 50) + "px " + 
+				"-" + (transformed_topLeftY + 34) + "px"
 		});
-
-		console.log("loadCropPreview(): imageW: " + imageW);
-		console.log("loadCropPreview(): length: " + length);
-		console.log("loadCropPreview(): extrude: " + extrude);
 
 		// store
 		var actual_extrude = (extrude/cropperW) * imageW;
@@ -633,7 +610,6 @@ function statusDisplay(programName, data) {
 			console.log("HELP2 " + ref + "-power-button");
 
 			$(ref + "-power-button").removeClass("red").addClass("green");
-			//$(ref + "-power-button").attr("data-tooltip", "Turn on");
 			$(ref + "-power-button").attr("onclick", "statusPush('" + programName + "', 'on');");
 		}
 
@@ -789,7 +765,7 @@ var imgs = [], ias = null, selectionPoints = [];
 function loadImages() {
 
 	$.ajax({
-		url: "get/imgs", // "imgs/get.php"
+		url: "get/imgs",
 		
 		success:function(data) {
 			console.log("loadImages(): Images Loaded:");
