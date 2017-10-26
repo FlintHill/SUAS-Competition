@@ -22,4 +22,4 @@ class Settings(object):
 
     NOISE_LEVEL = 0
 
-    LOGGING_ON = true
+    LOGGING_ON = True
