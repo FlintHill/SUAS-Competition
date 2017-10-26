@@ -128,12 +128,10 @@ class ObstacleMap(object):
         Return True if drone should avoid obstacle and False if not
         """
         for obstacle in self.obstacles.tolist():
-            print("obstacle.get_point():", obstacle.get_point())
             dist_to_obstacle = VectorMath.get_vector_magnitude(np.subtract(obstacle.get_point(), self.drone.get_point()))
             if dist_to_obstacle < obstacle.get_radius() + Constants.DETECTION_THRESHOLD:
                 if isinstance(obstacle, StationaryObstacle):
                     paths = self.generate_possible_paths(obstacle)
-
                     if len(paths) != 0:
                         return True, np.array(paths)
                 #elif isinstance(obstacle, MovingObstacle):

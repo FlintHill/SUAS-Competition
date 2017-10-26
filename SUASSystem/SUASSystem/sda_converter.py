@@ -23,7 +23,7 @@ class SDAConverter(object):
         self.current_path_index = 1
         self.minimum_change_in_guided_waypoint = 3
 
-        converted_boundary_points = self.convert_fly_zones(numpy.array([fly_zones]))
+        converted_boundary_points = self.convert_fly_zones(fly_zones)
         self.obstacle_map = ObstacleMap(numpy.array([0,0,0]), converted_boundary_points)
 
     def convert_fly_zones(self, fly_zones):
@@ -43,9 +43,10 @@ class SDAConverter(object):
         :param fly_zone: The boundary points that need to be converted
         :type fly_zone: List (of Location objects)
         """
+        print(fly_zone)
         converted_boundary_points = []
-        for index in range(len(fly_zone)):
-            for boundary_point in fly_zone[index]["boundary_pts"]:
+        for index in range(len(fly_zone["boundary_pts"])):
+            for boundary_point in fly_zone["boundary_pts"]:
                 if boundary_point["order"] == index:
                     boundary_point_geo = Location(boundary_point["latitude"], boundary_point["longitude"], 0)
                     converted_boundary_points.append(convert_to_point(self.initial_coordinates, boundary_point_geo)[:2])
