@@ -144,8 +144,10 @@ class TargetMapCreator(object):
         print "Total Number of Actual Target Output: " + str(total_targets_output)
         return background
 
+    @staticmethod
     def create_multiple_random_target_map(number_of_maps, number_of_targets):
-        i = 0
-        while i < number_of_maps:
-            return create_random_target_map(number_of_targets)
-            i = i + 1
+        target_maps = []
+        for index in range(number_of_maps):
+            target_maps.append(create_random_target_map(number_of_targets))
+
+        return target_maps
