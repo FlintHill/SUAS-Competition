@@ -130,9 +130,6 @@ class SDAConverterTestCase(unittest.TestCase):
         self.assertTrue(self.sda_converter.is_obstacle_in_path())
 
     def test_set_waypoints(self):
-
-        #Test the set_waypoints() method
-
         test_waypoint = Location(38.8742103, -77.3217697, 91.44000244140625)
         self.sda_converter.set_waypoint(test_waypoint)
         obstacle_map = self.sda_converter.obstacle_map
@@ -151,8 +148,6 @@ class SDAConverterTestCase(unittest.TestCase):
         self.assertEqual(obstacle_map.obstacles.size, 1)
 
     def test_reset_obstacles(self):
-
-        #Test the reset_obstacles() method
         self.sda_converter.reset_obstacles()
         obstacle_map = self.sda_converter.obstacle_map
 
