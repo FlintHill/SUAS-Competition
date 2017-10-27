@@ -1,5 +1,5 @@
 from PIL import Image
-import random
+import random, json
 from .settings import Settings
 from .random_target import RandomTarget
 from SyntheticDataset2.ImageOperations.shape_rotator import ShapeRotator
@@ -153,16 +153,19 @@ class TargetMap(object):
             Logger.log("The background is not able to contain the number of targets requested.")
         return self.background
 
-    def record_random_target_map(self):
-        text = open(Settings.TEXT_SAVING_PATH + "/tester.txt", "a")
-        text.write("Total Number of Actual Target Output: " + str(self.total_targets_output))
-
+    def record_random_target_map(self, index_number):
+        data = {}
+        data["targets"] = []
         for index in range (self.total_targets_output):
-            text.write("\n\n" + "Shape Type: " + str(self.target_list[index][0].random_shape_type)
-                       + "\nAlphanumeric Value: " + str(self.target_list[index][0].random_letter)
-                       + "\nShape Color: " + str(self.target_list[index][0].random_shape_color)
-                       + "\nAlphanumeric Color: " + str(self.target_list[index][0].random_letter_color)
-                       + "\nOrientation: " + str(self.target_list[index][0].random_rotation)
-                       + "\nCenter of Target: (" + str(self.target_list[index][1]) + ", " + str(self.target_list[index][2]) + ")")
+            data["targets"].append({
+                "shape_type": self.target_list[index][0].random_shape_type,
+                "shape_color": self.target_list[index][0].random_shape_color,
+                "alphanumeric_value": self.target_list[index][0].random_letter,
+                "alphanumeric_color": self.target_list[index][0].random_letter_color,
+                "orientation": self.target_list[index][0].random_rotation,
+                "target_center_coordinates": (self.target_list[index][1], self.target_list[index][2])
+            })
 
-        self.background.save(Settings.IMAGE_SAVING_PATH + "/tester.PNG")
+        with open(Settings.SAVE_PATH + "/target_maps_answers/" + str(index_number) + ".json", 'w') as outfile:
+            json.dump(data, outfile, indent=4)
+        self.background.save(Settings.SAVE_PATH + "/target_maps/" + str(index_number) + ".jpg")

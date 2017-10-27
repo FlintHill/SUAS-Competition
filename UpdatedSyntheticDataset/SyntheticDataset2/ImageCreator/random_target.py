@@ -1,6 +1,5 @@
 from PIL import Image
-import math
-import random
+import math, random, json
 from .settings import Settings
 from .specified_target import SpecifiedTarget
 from SyntheticDataset2.ElementsCreator.shape_types import ShapeTypes
@@ -75,11 +74,3 @@ class RandomTarget(object):
         Create a random target using SpecifiedTarget with random parameters.
         """
         return SpecifiedTarget(self.random_shape_type, self.random_shape_orientation, self.random_letter, self.random_size, self.random_proportionality, self.random_shape_color, self.random_letter_color, self.random_rotation, self.pixelization_level, self.noise_level).create_specified_target()
-
-    def record_random_target(self):
-        text = open(Settings.TEXT_SAVING_PATH + "/tester.txt", "a+")
-        text.write("Shape Type: " + str(self.random_shape_type)
-                   + "\nAlphanumeric Value: " + str(self.random_letter)
-                   + "\nShape Color: " + str(self.random_shape_color)
-                   + "\nAlphanumeric Color: " + str(self.random_letter_color)
-                   + "\nOrientation: " + str(self.random_rotation))

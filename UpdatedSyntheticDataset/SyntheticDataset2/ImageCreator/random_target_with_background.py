@@ -1,5 +1,5 @@
 from PIL import Image
-import random
+import random, json
 from .settings import Settings
 from .random_target import RandomTarget
 from SyntheticDataset2.ElementsCreator.background import BackgroundGenerator
@@ -35,9 +35,18 @@ class RandomTargetWithBackground(object):
 
         return self.background
 
-    def record_random_target_with_background(self):
-        self.random_target.record_random_target()
-        text = open(Settings.TEXT_SAVING_PATH + "/tester.txt", "a")
-        text.write("\nCenter of Target: (" + str(10 + (self.new_target_width / 2)) + ", " + str(10 + (self.new_target_height / 2)) + ")")
+    def record_random_target_with_background(self, index_number):
+        data={}
+        data["targets"] = []
+        data["targets"].append({
+            "shape_type": self.random_target.random_shape_type,
+            "shape_color": self.random_target.random_shape_color,
+            "alphanumeric_value": self.random_target.random_letter,
+            "alphanumeric_color": self.random_target.random_letter_color,
+            "orientation": self.random_target.random_rotation,
+            "target_center_coordinates": ((10+(self.new_target_width / 2)), (10 + (self.new_target_height / 2)))
+        })
+        with open(Settings.SAVE_PATH + "/single_targets_answers/" + str(index_number) + ".json", 'w') as outfile:
+            json.dump(data, outfile, indent=4)
 
-        self.background.save(Settings.IMAGE_SAVING_PATH + "/tester.PNG")
+        self.background.save(Settings.SAVE_PATH + "/single_targets/" + str(index_number) + ".jpg")
