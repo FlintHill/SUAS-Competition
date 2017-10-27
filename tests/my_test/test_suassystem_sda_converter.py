@@ -10,7 +10,6 @@ class SDAConverterTestCase(unittest.TestCase):
         self.setup_client_converter()
 
     def setup_client_converter(self):
-        self.VectorMath = VectorMath()
         self.initial_coordinates = Location(38.8703041, -77.3214035, 0)
         self.boundary_points = [
             {
@@ -29,7 +28,7 @@ class SDAConverterTestCase(unittest.TestCase):
         converted_fly_zones = self.sda_converter.convert_fly_zones(self.boundary_points)
         for num_of_fly_zone in range(len(converted_fly_zones)):
             for index_in_fly_zone in range(len(converted_fly_zones[num_of_fly_zone])):
-                location = Location(self.boundary_points[num_of_fly_zone]["boundary_pts"][index_in_fly_zone]["latitude"], self.boundary_points[num]["boundary_pts"][index_in_fly_zone]["longitude"], 0)
+                location = Location(self.boundary_points[num_of_fly_zone]["boundary_pts"][index_in_fly_zone]["latitude"], self.boundary_points[num_of_fly_zone]["boundary_pts"][index_in_fly_zone]["longitude"], 0)
                 expected_converted_boundary_point = haversine(self.initial_coordinates, location, units="US")
 
                 self.assertEqual(converted_fly_zones[num_of_fly_zone][index_in_fly_zone][0], expected_converted_boundary_point[0])
@@ -61,6 +60,14 @@ class SDAConverterTestCase(unittest.TestCase):
         
         self.assertEqual(int(converted_avoid_coordiantes[0]), self.sda_converter.current_path[0][0])
         self.assertEqual(int(converted_avoid_coordiantes[1]), self.sda_converter.current_path[0][1])
+
+        avoid_coordinates.alt = avoid_coordinates.get_alt() * 3.28084
+        self.sda_converter.set_uav_position(avoid_coordinates)
+        avoid_coordinates2 = self.sda_converter.get_uav_avoid_coordinates()
+        converted_avoid_coordiantes2 = haversine(self.initial_coordinates, avoid_coordinates2, units="US")
+
+        self.assertEqual(int(converted_avoid_coordiantes2[0]), self.sda_converter.current_path[1][0])
+        self.assertEqual(int(converted_avoid_coordiantes2[1]), self.sda_converter.current_path[1][1])        
 
     def test_has_uav_reached_guided_waypoint(self):
         """
@@ -107,7 +114,7 @@ class SDAConverterTestCase(unittest.TestCase):
         test_waypoint = Location(38.8703041, -77.3210866228, 0)
         self.sda_converter.set_waypoint(test_waypoint)
         self.sda_converter.avoid_obstacles()
-        distance = self.VectorMath.get_magnitude(numpy.array([0,0,0]),self.sda_converter.current_path[0])
+        distance = VectorMath.get_magnitude(numpy.array([0,0,0]),self.sda_converter.current_path[0])
 
         self.assertEqual(self.sda_converter.get_distance_to_current_guided_waypoint(),distance)
 
@@ -148,7 +155,7 @@ class SDAConverterTestCase(unittest.TestCase):
         self.assertEqual(obstacle_map.obstacles.size, 1)
 
     def test_reset_obstacles(self):
-        self.sda_converter.obstacle_map.add_obstacle(StationaryObstacle(38.8703041, -77.3214035, 0, 60.950000762939453))
+        self.sda_converter.obstacle_map.add_obstacle(numpy.array([10, 10, 10]))
         self.sda_converter.reset_obstacles()
         obstacle_map = self.sda_converter.obstacle_map
 
