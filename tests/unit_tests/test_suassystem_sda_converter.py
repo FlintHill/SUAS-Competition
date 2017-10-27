@@ -27,14 +27,13 @@ class SDAConverterTestCase(unittest.TestCase):
 
     def test_convert_fly_zones(self):
         converted_fly_zones = self.sda_converter.convert_fly_zones(self.boundary_points)
-        for num in range(len(converted_fly_zones)):
-            for index in range(len(converted_fly_zones[num])):
-                print(self.boundary_points[num]["boundary_pts"][index]["latitude"], self)
-                location = Location(self.boundary_points[num]["boundary_pts"][index]["latitude"], self.boundary_points[num]["boundary_pts"][index]["longitude"], 0)
+        for num_of_fly_zone in range(len(converted_fly_zones)):
+            for index_in_fly_zone in range(len(converted_fly_zones[num_of_fly_zone])):
+                location = Location(self.boundary_points[num_of_fly_zone]["boundary_pts"][index_in_fly_zone]["latitude"], self.boundary_points[num]["boundary_pts"][index_in_fly_zone]["longitude"], 0)
                 expected_converted_boundary_point = haversine(self.initial_coordinates, location, units="US")
 
-                self.assertEqual(converted_fly_zones[num][index][0], expected_converted_boundary_point[0])
-                self.assertEqual(converted_fly_zones[num][index][1], expected_converted_boundary_point[1])
+                self.assertEqual(converted_fly_zones[num_of_fly_zone][index_in_fly_zone][0], expected_converted_boundary_point[0])
+                self.assertEqual(converted_fly_zones[num_of_fly_zone][index_in_fly_zone][1], expected_converted_boundary_point[1])
     
     def test_avoid_obstacles(self):
         self.sda_converter.obstacle_map.set_drone_position(numpy.array([0,0,0]))
@@ -45,8 +44,10 @@ class SDAConverterTestCase(unittest.TestCase):
         self.sda_converter.avoid_obstacles()
         boolean, possible_paths = self.sda_converter.obstacle_map.is_obstacle_in_path()
         expected_guided_path = self.sda_converter.obstacle_map.get_min_path(possible_paths)
+
         self.assertEqual(self.sda_converter.current_path[0][0], expected_guided_path[0][0])
         self.assertEqual(self.sda_converter.current_path[0][1], expected_guided_path[0][1])
+        self.assertTrue(boolean)
 
     def test_get_uav_avoid_coordinates(self):
         self.sda_converter.obstacle_map.set_drone_position(numpy.array([0,0,0]))
@@ -74,7 +75,6 @@ class SDAConverterTestCase(unittest.TestCase):
         self.sda_converter.avoid_obstacles()
         
         self.assertEqual(False, self.sda_converter.has_uav_reached_guided_waypoint())
-
         """
         test case #2
         reached the point
@@ -148,6 +148,7 @@ class SDAConverterTestCase(unittest.TestCase):
         self.assertEqual(obstacle_map.obstacles.size, 1)
 
     def test_reset_obstacles(self):
+        self.sda_converter.obstacle_map.add_obstacle(StationaryObstacle(38.8703041, -77.3214035, 0, 60.950000762939453))
         self.sda_converter.reset_obstacles()
         obstacle_map = self.sda_converter.obstacle_map
 
