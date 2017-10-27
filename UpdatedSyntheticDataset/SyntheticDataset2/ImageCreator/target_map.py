@@ -1,16 +1,31 @@
 from PIL import Image
 import random
 from .settings import Settings
-from .random_target_creator import RandomTargetCreator
+from .random_target import RandomTarget
 from SyntheticDataset2.ImageOperations.shape_rotator import ShapeRotator
 from SyntheticDataset2.ImageOperations.image_resizer import ImageResizer
 from SyntheticDataset2.ElementsCreator.background import BackgroundGenerator
 from SyntheticDataset2.ElementsCreator.noised_image_generator import NoisedImageGenerator
+from SyntheticDataset2.logger import Logger
 
-class TargetMapCreator(object):
+class TargetMap(object):
 
-    @staticmethod
-    def create_random_target_map(number_of_targets):
+    def __init__(self, number_of_targets):
+        """
+        :param number_of_targets: the number of targets to be created.
+        :type number_of_targets: int
+        """
+        self.number_of_targets = number_of_targets
+        self.background = BackgroundGenerator(Settings.BACKGROUND_DIRECTORY).generate_full_background()
+        self.size_range = [Settings.TARGET_GENERATION_SIZE_IN_PIXELS, Settings.TARGET_GENERATION_SIZE_IN_PIXELS]
+        self.proportionality_range = Settings.PROPORTIONALITY_RANGE
+        self.pixelization_level = Settings.PIXELIZATION_LEVEL
+        self.noise_level = Settings.NOISE_LEVEL
+
+        self.target_list = []
+        self.total_targets_output = 0
+
+    def create_random_target_map(self):
         """
         Create a map with a specified number of random targets.
 
@@ -26,26 +41,15 @@ class TargetMapCreator(object):
         6. Continue to generate targets until the number of random targets
            is reached. The given-up rounds are counted.
         7. Output the actually targets created and the background itself.
-
-        :param number_of_targets: the number of targets to be created.
-
-        :type number_of_targets: int
         """
-        background = BackgroundGenerator(Settings.BACKGROUND_DIRECTORY).generate_full_background()
-        size_range = [Settings.TARGET_GENERATION_SIZE_IN_PIXELS, Settings.TARGET_GENERATION_SIZE_IN_PIXELS]
-        proportionality_range = Settings.PROPORTIONALITY_RANGE
-        pixelization_level = Settings.PIXELIZATION_LEVEL
-        noise_level = Settings.NOISE_LEVEL
-
         occupied_spaces = []
-
         index_number_of_targets = 1
-        total_targets_output = 0
 
-        while index_number_of_targets <= number_of_targets:
+        while index_number_of_targets <= self.number_of_targets:
 
-            raw_target_image = RandomTargetCreator.create_random_target(size_range, proportionality_range, pixelization_level, noise_level)
+            random_target = RandomTarget(self.size_range, self.proportionality_range, self.pixelization_level, self.noise_level)
 
+            raw_target_image = random_target.create_random_target()
             new_target_dimension = random.randint(Settings.TARGET_SIZE_RANGE_IN_PIXELS[0], Settings.TARGET_SIZE_RANGE_IN_PIXELS[1])
 
             if raw_target_image.width >= raw_target_image.height:
@@ -60,10 +64,10 @@ class TargetMapCreator(object):
             reroll_needed = True
             attempts_to_reroll = 0
 
-            while reroll_needed == True and attempts_to_reroll < 10:
+            while reroll_needed == True and attempts_to_reroll < 5:
                 reroll_needed = False
-                random_x_initial = random.randint(10, background.width - target_image.width - 10) - 10
-                random_y_initial = random.randint(10, background.height - target_image.height - 10) - 10
+                random_x_initial = random.randint(10, self.background.width - target_image.width - 10) - 10
+                random_y_initial = random.randint(10, self.background.height - target_image.height - 10) - 10
                 random_x_final = random_x_initial + target_image.width + 10
                 random_y_final = random_y_initial + target_image.height + 10
                 x_taking = [random_x_initial, random_x_final]
@@ -134,20 +138,31 @@ class TargetMapCreator(object):
                 attempts_to_reroll = attempts_to_reroll + 1
 
             if reroll_needed == False:
+
                 occupied_spaces.append([random_x_initial - 10, random_y_initial - 10, random_x_final + 10, random_y_final + 10])
-                background.paste(target_image, (random_x_initial, random_y_initial), target_image)
+                self.target_list.append([random_target, (random_x_initial + random_x_final)/2, (random_y_initial + random_y_final)/2])
+
+                self.background.paste(target_image, (random_x_initial, random_y_initial), target_image)
                 index_number_of_targets = index_number_of_targets + 1
-                total_targets_output = total_targets_output + 1
+                self.total_targets_output = self.total_targets_output + 1
             else:
                 index_number_of_targets = index_number_of_targets + 1
 
-        print "Total Number of Actual Target Output: " + str(total_targets_output)
-        return background
+        Logger.log("Total Number of Actual Target Output: " + str(self.total_targets_output))
+        if self.total_targets_output < self.number_of_targets:
+            Logger.log("The background is not able to contain the number of targets requested.")
+        return self.background
 
-    @staticmethod
-    def create_multiple_random_target_map(number_of_maps, number_of_targets):
-        target_maps = []
-        for index in range(number_of_maps):
-            target_maps.append(create_random_target_map(number_of_targets))
+    def record_random_target_map(self):
+        text = open(Settings.TEXT_SAVING_PATH + "/tester.txt", "a")
+        text.write("Total Number of Actual Target Output: " + str(self.total_targets_output))
 
-        return target_maps
+        for index in range (self.total_targets_output):
+            text.write("\n\n" + "Shape Type: " + str(self.target_list[index][0].random_shape_type)
+                       + "\nAlphanumeric Value: " + str(self.target_list[index][0].random_letter)
+                       + "\nShape Color: " + str(self.target_list[index][0].random_shape_color)
+                       + "\nAlphanumeric Color: " + str(self.target_list[index][0].random_letter_color)
+                       + "\nOrientation: " + str(self.target_list[index][0].random_rotation)
+                       + "\nCenter of Target: (" + str(self.target_list[index][1]) + ", " + str(self.target_list[index][2]) + ")")
+
+        self.background.save(Settings.IMAGE_SAVING_PATH + "/tester.PNG")

@@ -1,27 +1,21 @@
-from SyntheticDataset2.ElementsCreator import *
-from SyntheticDataset2.ImageOperations import *
-from SyntheticDataset2.ImageCreator import *
+from SyntheticDataset2 import *
 from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageFont
+import os
 import random
 
-"""
-image1 = SpecifiedTargetCreator.create_specified_target("circle", "N", "Z", 500, 2, (255, 255, 255, 255), (255, 0, 0, 255), 45)
-ImageResizer.resize_image_free(image1, 30.0).show()
 
-image2 = SpecifiedTargetCreator.create_specified_target("circle", "N", "Z", 1000, 2, (255, 255, 255, 255), (255, 0, 0, 255), 45)
-ImageResizer.resize_image_free(image2, 30.0).show()
 
-image3 = TargetWithBackgroundCreator.create_random_target_with_random_background([500, 1000], [1.5, 2.5], "/Users/zyin/Desktop/Competition Backgrounds", 0, 2)
-image3.show()
 """
-image4 = TargetMapCreator.create_random_target_map(10)
-image4.show()
-"""
-image5 = TargetWithBackgroundCreator.create_specified_target_with_random_background("circle", "N", "A", (255, 255, 255, 255), (255, 0, 0, 255), 0)
-image5.show()
+target = SpecifiedTargetWithBackground("circle", "N", "A", (255, 255, 255, 255), (255, 0, 0, 255), 45)
+target.create_specified_target_with_background().show()
+target.record_specified_target_with_background("tester.txt")
 
-image6 = TargetWithBackgroundCreator.create_random_target_with_random_background()
-image6.show()
+target_map = TargetMap(10)
+target_map.create_random_target_map().show()
+target_map.record_random_target_map("test")
 """
+#SyntheticDatasetMaker.create_target_maps(2, 5)
+#SyntheticDatasetMaker.create_single_targets(5)
+#SyntheticDatasetMaker.create_synthetic_dataset(2, 3, 3)
