@@ -31,7 +31,7 @@ class RandomTargetWithBackground(object):
         self.background.paste(resized_target_image, (10, 10), resized_target_image)
 
         Logger.log("Target's Dimension in pixels: " + str(self.new_target_dimension + 20)
-                   + "\nNew Target's Dimension in inches: " + str(float(self.new_target_dimension + 20) / Settings.PPSI))
+                   + "\nTarget's Dimension in inches: " + str(float(self.new_target_dimension + 20) / Settings.PPSI) + "\n")
 
         return self.background
 

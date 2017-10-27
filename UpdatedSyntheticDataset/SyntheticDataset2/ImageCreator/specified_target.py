@@ -137,7 +137,7 @@ class SpecifiedTarget(object):
         return NoisedImageGenerator.generate_noised_image_by_level(resized_image, self.noise_level)
 
     def record_specified_target(self, file_name):
-        text = open(Settings.TEXT_SAVING_PATH + "/" + file_name + ".txt", "a+")
+        text = open(Settings.TEXT_SAVING_PATH + "/" + file_name + ".txt", "w+")
         text.write("Shape Type: " + str(self.shape_type)
                    + "\nAlphanumeric Value: " + str(self.letter)
                    + "\nShape Color: " + str(self.shape_color)

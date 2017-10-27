@@ -16,7 +16,7 @@ class Settings(object):
 
     SINGLE_TARGET_PROPORTIONALITY = 2.5
     PROPORTIONALITY_RANGE = [1.5, 2.5]
-    """See SpecifiedTargetCreator"""
+    """See SpecifiedTarget"""
 
     PIXELIZATION_LEVEL = 10
     """See ImageResizer"""
