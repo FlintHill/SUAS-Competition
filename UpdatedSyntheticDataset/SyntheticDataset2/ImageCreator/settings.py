@@ -1,8 +1,8 @@
 class Settings(object):
-    FONT_TYPE = "data/fonts/Blockletter.otf"
-    BACKGROUND_DIRECTORY = "/Users/jmoxley/Desktop/compsci/SUAS/SyntheticDataset2_Backgrounds"
+    FONT_TYPE = "UpdatedSyntheticDataset/data/fonts/Blockletter.otf"
+    BACKGROUND_DIRECTORY = "/Users/zyin/Desktop/Synthetic Dataset/Backgrounds"
 
-    SAVE_PATH = "/Users/jmoxley/Desktop/compsci/SUAS"
+    SAVE_PATH = "/Users/zyin/Desktop/Synthetic Dataset/Answers"
 
     PPSI = 10
 
@@ -16,7 +16,7 @@ class Settings(object):
 
     SINGLE_TARGET_PROPORTIONALITY = 2.5
     PROPORTIONALITY_RANGE = [1.5, 2.5]
-    """See SpecifiedTargetCreator"""
+    """See SpecifiedTarget"""
 
     PIXELIZATION_LEVEL = 10
     """See ImageResizer"""

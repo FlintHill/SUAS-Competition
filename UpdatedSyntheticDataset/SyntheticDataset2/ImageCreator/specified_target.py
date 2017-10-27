@@ -135,11 +135,3 @@ class SpecifiedTarget(object):
 
         resized_image = ImageResizer.resize_image_conserved(rotated_image, self.pixelization_level)
         return NoisedImageGenerator.generate_noised_image_by_level(resized_image, self.noise_level)
-
-    def record_specified_target(self, file_name):
-        text = open(Settings.TEXT_SAVING_PATH + "/" + file_name + ".txt", "a+")
-        text.write("Shape Type: " + str(self.shape_type)
-                   + "\nAlphanumeric Value: " + str(self.letter)
-                   + "\nShape Color: " + str(self.shape_color)
-                   + "\nAlphanumeric Color: " + str(self.letter_color)
-                   + "\nOrientation: " + str(self.rotation))

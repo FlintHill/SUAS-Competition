@@ -65,7 +65,7 @@ class RandomTarget(object):
         color_list.remove(self.random_shape_color)
         self.random_letter_color = color_list[random.randint(0, 14)]
 
-        self.random_rotation = random.randint(0, 180)
+        self.random_rotation = random.uniform(0.0, 360.0)
         self.pixelization_level = pixelization_level
         self.noise_level = noise_level
 

@@ -2,6 +2,7 @@ from PIL import Image
 from .settings import Settings
 from .specified_target import SpecifiedTarget
 from SyntheticDataset2.ElementsCreator.background import BackgroundGenerator
+from SyntheticDataset2.ImageOperations.cardinal_direction_converter import CardinalDirectionConverter
 from SyntheticDataset2.logger import Logger
 
 class SpecifiedTargetWithBackground(object):
@@ -52,13 +53,23 @@ class SpecifiedTargetWithBackground(object):
         self.background.paste(resized_target_image, (10, 10), resized_target_image)
 
         Logger.log("Target's Dimension in pixels: " + str(self.new_target_dimension + 20)
-                   + "\nNew Target's Dimension in inches: " + str(float(self.new_target_dimension + 20) / Settings.PPSI))
+                   + "\nTarget's Dimension in inches: " + str(float(self.new_target_dimension + 20) / Settings.PPSI) + "\n")
 
         return self.background
 
     def record_specified_target_with_background(self, file_name):
-        self.specified_target.record_specified_target(file_name)
-        text = open(Settings.TEXT_SAVING_PATH + "/" + file_name + ".txt", "a")
-        text.write("\nCenter of Target: (" + str(10 + (self.new_target_width / 2)) + ", " + str(10 + (self.new_target_height / 2)) + ")")
+        data={}
+        data["targets"] = []
+        data["targets"].append({
+            "shape_type": self.shape_type,
+            "shape_color": self.shape_color,
+            "alphanumeric_value": self.letter,
+            "alphanumeric_color": self.letter_color,
+            "orientation in degree from north": self.rotation,
+            "cardinal orientation": CardinalDirectionConverter.convert_to_cardinal_direction(self.rotation),
+            "target_center_coordinates": ((10 + (self.new_target_width / 2)), (10 + (self.new_target_height / 2)))
+        })
+        with open(Settings.SAVE_PATH + "/single_targets_answers/" + file_name + ".json", 'w') as outfile:
+            json.dump(data, outfile, indent=4)
 
-        self.background.save(Settings.IMAGE_SAVING_PATH + "/" + file_name + ".PNG")
+        self.background.save(Settings.SAVE_PATH + "/single_targets/" + file_name + ".jpg")

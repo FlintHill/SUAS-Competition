@@ -3,6 +3,7 @@ import random, json
 from .settings import Settings
 from .random_target import RandomTarget
 from SyntheticDataset2.ElementsCreator.background import BackgroundGenerator
+from SyntheticDataset2.ImageOperations.cardinal_direction_converter import CardinalDirectionConverter
 from SyntheticDataset2.logger import Logger
 
 class RandomTargetWithBackground(object):
@@ -31,7 +32,7 @@ class RandomTargetWithBackground(object):
         self.background.paste(resized_target_image, (10, 10), resized_target_image)
 
         Logger.log("Target's Dimension in pixels: " + str(self.new_target_dimension + 20)
-                   + "\nNew Target's Dimension in inches: " + str(float(self.new_target_dimension + 20) / Settings.PPSI))
+                   + "\nTarget's Dimension in inches: " + str(float(self.new_target_dimension + 20) / Settings.PPSI) + "\n")
 
         return self.background
 
@@ -43,7 +44,8 @@ class RandomTargetWithBackground(object):
             "shape_color": self.random_target.random_shape_color,
             "alphanumeric_value": self.random_target.random_letter,
             "alphanumeric_color": self.random_target.random_letter_color,
-            "orientation": self.random_target.random_rotation,
+            "orientation in degree from north": self.random_target.random_rotation,
+            "cardinal orientation": CardinalDirectionConverter.convert_to_cardinal_direction(self.random_target.random_rotation),
             "target_center_coordinates": ((10+(self.new_target_width / 2)), (10 + (self.new_target_height / 2)))
         })
         with open(Settings.SAVE_PATH + "/single_targets_answers/" + str(index_number) + ".json", 'w') as outfile:
