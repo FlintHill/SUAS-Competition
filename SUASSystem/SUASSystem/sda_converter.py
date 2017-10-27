@@ -43,7 +43,6 @@ class SDAConverter(object):
         :param fly_zone: The boundary points that need to be converted
         :type fly_zone: List (of Location objects)
         """
-        print(fly_zone)
         converted_boundary_points = []
         for index in range(len(fly_zone["boundary_pts"])):
             for boundary_point in fly_zone["boundary_pts"]:
