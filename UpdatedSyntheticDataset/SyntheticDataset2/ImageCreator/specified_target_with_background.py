@@ -2,6 +2,7 @@ from PIL import Image
 from .settings import Settings
 from .specified_target import SpecifiedTarget
 from SyntheticDataset2.ElementsCreator.background import BackgroundGenerator
+from SyntheticDataset2.logger import Logger
 
 class SpecifiedTargetWithBackground(object):
 
@@ -50,8 +51,9 @@ class SpecifiedTargetWithBackground(object):
         self.background = BackgroundGenerator(Settings.BACKGROUND_DIRECTORY).generate_specific_background(resized_target_image.width + 20, resized_target_image.height + 20)
         self.background.paste(resized_target_image, (10, 10), resized_target_image)
 
-        print("New Target's Dimension in pixels: " + str(self.new_target_dimension + 20))
-        print("New Target's Dimension in inches: " + str(float(self.new_target_dimension + 20) / Settings.PPSI))
+        Logger.log("Target's Dimension in pixels: " + str(self.new_target_dimension + 20)
+                   + "\nNew Target's Dimension in inches: " + str(float(self.new_target_dimension + 20) / Settings.PPSI))
+
         return self.background
 
     def record_specified_target_with_background(self, file_name):

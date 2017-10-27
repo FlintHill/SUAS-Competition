@@ -6,6 +6,7 @@ from SyntheticDataset2.ImageOperations.shape_rotator import ShapeRotator
 from SyntheticDataset2.ImageOperations.image_resizer import ImageResizer
 from SyntheticDataset2.ElementsCreator.background import BackgroundGenerator
 from SyntheticDataset2.ElementsCreator.noised_image_generator import NoisedImageGenerator
+from SyntheticDataset2.logger import Logger
 
 class TargetMap(object):
 
@@ -147,8 +148,9 @@ class TargetMap(object):
             else:
                 index_number_of_targets = index_number_of_targets + 1
 
-
-        print("Total Number of Actual Target Output: " + str(self.total_targets_output))
+        Logger.log("Total Number of Actual Target Output: " + str(self.total_targets_output))
+        if self.total_targets_output < self.number_of_targets:
+            Logger.log("The background is not able to contain the number of targets requested.")
         return self.background
 
     def record_random_target_map(self):

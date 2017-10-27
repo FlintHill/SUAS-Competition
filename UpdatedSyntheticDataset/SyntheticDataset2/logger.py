@@ -1,4 +1,4 @@
-from .ImageCreater.settings import Settings
+from .ImageCreator.settings import Settings
 
 class Logger(object):
 

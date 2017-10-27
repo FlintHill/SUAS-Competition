@@ -19,17 +19,9 @@ class Settings(object):
     PROPORTIONALITY_RANGE = [1.5, 2.5]
     """See SpecifiedTargetCreator"""
 
-    PIXELIZATION_LEVEL = 10
+    PIXELIZATION_LEVEL = 0
     """See ImageResizer"""
 
-<<<<<<< HEAD
     NOISE_LEVEL = 0
 
     LOGGING_ON = True
-||||||| merged common ancestors
-    NOISE_LEVEL = 0
-=======
-    NOISE_LEVEL = 2
-
-    LOGGING_ON = True
->>>>>>> Changed the ImageCreators intoobjects from staticmethods, added the record function to each, and added synthetic_dataset_maker.

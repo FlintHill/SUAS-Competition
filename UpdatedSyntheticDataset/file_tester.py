@@ -18,4 +18,4 @@ target_map.record_random_target_map("test")
 """
 #SyntheticDatasetMaker.create_target_maps(2, 5)
 #SyntheticDatasetMaker.create_single_targets(5)
-SyntheticDatasetMaker.create_synthetic_dataset(2, 10, 10)
+#SyntheticDatasetMaker.create_synthetic_dataset(2, 3, 3)

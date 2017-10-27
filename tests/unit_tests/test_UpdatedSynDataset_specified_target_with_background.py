@@ -4,17 +4,17 @@ Running Successfully
 import unittest
 import math
 from PIL import Image
-from SyntheticDataset2.ImageCreator.target_with_background_creator import TargetWithBackgroundCreator
+from SyntheticDataset2.ImageCreator.specified_target_with_background import SpecifiedTargetWithBackground
 
-class TargetWithBackgroundCreatorTestCase(unittest.TestCase):
+class SpecifiedTargetWithBackgroundTestCase(unittest.TestCase):
 
     def setUp(self):
         self.path_to_background = "tests/images/competition_grass_1.JPG"
-        self.test_image1 = TargetWithBackgroundCreator.create_specified_target_with_random_background("circle", "?", "A", (255, 255, 255, 255), (255, 0, 0, 255), 0)
-        self.test_image2 = TargetWithBackgroundCreator.create_specified_target_with_random_background("half_circle", "E", "E", (0, 255, 0, 255), (0, 0, 255, 255), 45)
-        self.test_image3 = TargetWithBackgroundCreator.create_specified_target_with_random_background("cross", "D", "I", (255, 255, 0, 255), (255, 0, 255, 255), 90)
-        self.test_image4 = TargetWithBackgroundCreator.create_specified_target_with_random_background("heptagon", "S", "O", (0, 255, 255, 255), (0, 0, 0, 255), 135)
-        self.test_image5 = TargetWithBackgroundCreator.create_specified_target_with_random_background("star", "N", "U", (66, 66, 66, 255), (233, 233, 233, 255), 180)
+        self.test_image1 = SpecifiedTargetWithBackground("circle", "?", "A", (255, 255, 255, 255), (255, 0, 0, 255), 0).create_specified_target_with_background()
+        self.test_image2 = SpecifiedTargetWithBackground("half_circle", "E", "E", (0, 255, 0, 255), (0, 0, 255, 255), 45).create_specified_target_with_background()
+        self.test_image3 = SpecifiedTargetWithBackground("cross", "D", "I", (255, 255, 0, 255), (255, 0, 255, 255), 90).create_specified_target_with_background()
+        self.test_image4 = SpecifiedTargetWithBackground("heptagon", "S", "O", (0, 255, 255, 255), (0, 0, 0, 255), 135).create_specified_target_with_background()
+        self.test_image5 = SpecifiedTargetWithBackground("star", "N", "U", (66, 66, 66, 255), (233, 233, 233, 255), 180).create_specified_target_with_background()
         '''
         Settings:
         PPSI = 10
