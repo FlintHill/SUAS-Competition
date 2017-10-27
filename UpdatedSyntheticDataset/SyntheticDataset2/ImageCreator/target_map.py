@@ -4,6 +4,7 @@ from .settings import Settings
 from .random_target import RandomTarget
 from SyntheticDataset2.ImageOperations.shape_rotator import ShapeRotator
 from SyntheticDataset2.ImageOperations.image_resizer import ImageResizer
+from SyntheticDataset2.ImageOperations.cardinal_direction_converter import CardinalDirectionConverter
 from SyntheticDataset2.ElementsCreator.background import BackgroundGenerator
 from SyntheticDataset2.ElementsCreator.noised_image_generator import NoisedImageGenerator
 from SyntheticDataset2.logger import Logger
@@ -165,7 +166,8 @@ class TargetMap(object):
                 "shape_color": self.target_list[index][0].random_shape_color,
                 "alphanumeric_value": self.target_list[index][0].random_letter,
                 "alphanumeric_color": self.target_list[index][0].random_letter_color,
-                "orientation": self.target_list[index][0].random_rotation,
+                "orientation in degree from north": self.target_list[index][0].random_rotation,
+                "cardinal orientation": CardinalDirectionConverter.convert_to_cardinal_direction(self.target_list[index][0].random_rotation),
                 "target_center_coordinates": (self.target_list[index][1], self.target_list[index][2])
             })
 
