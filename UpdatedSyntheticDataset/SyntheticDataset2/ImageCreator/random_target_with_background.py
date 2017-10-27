@@ -37,16 +37,16 @@ class RandomTargetWithBackground(object):
 
     def record_random_target_with_background(self, index_number):
         data={}
-        data["target"] = []
-        data["target"].append({
+        data["targets"] = []
+        data["targets"].append({
             "shape_type": self.random_target.random_shape_type,
             "shape_color": self.random_target.random_shape_color,
-            "letter_value": self.random_target.random_letter,
-            "letter_color": self.random_target.random_letter_color,
+            "alphanumeric_value": self.random_target.random_letter,
+            "alphanumeric_color": self.random_target.random_letter_color,
             "orientation": self.random_target.random_rotation,
             "target_center_coordinates": ((10+(self.new_target_width / 2)), (10 + (self.new_target_height / 2)))
         })
-        with open(Settings.SAVE_PATH + "/single_targets_answers/single_target_" + str(index_number) + ".json", 'w') as outfile:
+        with open(Settings.SAVE_PATH + "/single_targets_answers/" + str(index_number) + ".json", 'w') as outfile:
             json.dump(data, outfile, indent=4)
 
-        self.background.save(Settings.SAVE_PATH + "/single_targets/single_target_" + str(index_number) + ".jpg")
+        self.background.save(Settings.SAVE_PATH + "/single_targets/" + str(index_number) + ".jpg")

@@ -160,12 +160,12 @@ class TargetMap(object):
             data["targets"].append({
                 "shape_type": self.target_list[index][0].random_shape_type,
                 "shape_color": self.target_list[index][0].random_shape_color,
-                "letter_value": self.target_list[index][0].random_letter,
-                "letter_color": self.target_list[index][0].random_letter_color,
+                "alphanumeric_value": self.target_list[index][0].random_letter,
+                "alphanumeric_color": self.target_list[index][0].random_letter_color,
                 "orientation": self.target_list[index][0].random_rotation,
                 "target_center_coordinates": (self.target_list[index][1], self.target_list[index][2])
             })
 
-        with open(Settings.SAVE_PATH + "/target_maps_answers/target_map_" + str(index_number) + ".json", 'w') as outfile:
+        with open(Settings.SAVE_PATH + "/target_maps_answers/" + str(index_number) + ".json", 'w') as outfile:
             json.dump(data, outfile, indent=4)
-        self.background.save(Settings.SAVE_PATH + "/target_maps/target_map_" + str(index_number) + ".jpg")
+        self.background.save(Settings.SAVE_PATH + "/target_maps/" + str(index_number) + ".jpg")
