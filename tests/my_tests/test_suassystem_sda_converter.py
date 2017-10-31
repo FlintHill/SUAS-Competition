@@ -147,9 +147,8 @@ class SDAConverterTestCase(unittest.TestCase):
     def test_add_obstacle(self):
         new_obstacle = interop.StationaryObstacle(38.8703041, -77.3214035, 0, 60.950000762939453)
         self.sda_converter.add_obstacle(Location(38.8703041, -77.3214035, 60.950000762939453), new_obstacle)
-        obstacle_map = self.sda_converter.obstacle_map
-
-        self.assertEqual(obstacle_map.obstacles.size, 1)
+       
+        self.assertEqual(self.sda_converter.obstacle_map.get_obstacles()[0].get_radius(), new_obstacle.cylinder_radius+30)
 
     def test_reset_obstacles(self):
         self.sda_converter.obstacle_map.add_obstacle(numpy.array([10, 10, 10]))

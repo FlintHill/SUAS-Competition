@@ -1,7 +1,7 @@
 from SDA import Obstacle
 from SDA import Constants
 
-class MovingObstacle(Obstacle)
+class MovingObstacle(Obstacle):
 	"""
 	sample
 	moving_obstacles": [
