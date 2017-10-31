@@ -11,6 +11,7 @@ class MovingObstacle(Obstacle)
             "longitude": -76.43199876559223,
             "sphere_radius": 150.0
         }
+        ]
 	"""
 
 	def __init__(self, point, radius):
