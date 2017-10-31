@@ -1,5 +1,6 @@
 import os, multiprocessing, timeit
 from SyntheticDataset2.ImageCreator import *
+from SyntheticDataset2.logger import Logger
 
 class SyntheticDatasetMaker(object):
 
