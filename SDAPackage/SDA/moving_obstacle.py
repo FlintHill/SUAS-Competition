@@ -1,4 +1,4 @@
-from Obstacle import *
+from SDA import Obstacle
 from SDA import Constants
 
 class MovingObstacle(Obstacle)
@@ -12,15 +12,21 @@ class MovingObstacle(Obstacle)
             "sphere_radius": 150.0
         }
 	"""
-	
 
 	def __init__(self, point, radius):
+		"""
+		:param point: The point for the stationary obstacle
+        :type point: Numpy Array
+        :param radius: The radius of the obstacle
+        :type radius: Float
+        """
 		super(MovingObstacle, self).__init__(point, Constants.MOVING_OBSTACLE_SAFETY_RADIUS)
 
 		self.radius = radius
-		self.velocity = velocity
 
 	def get_radius(self):
-
-		return self.radius+self.get_safety_radius()
+		"""
+        Return the radius of the obstacle plus that of the safety radius
+        """
+		return self.radius + self.get_safety_radius()
 	

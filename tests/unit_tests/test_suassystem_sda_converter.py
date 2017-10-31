@@ -96,7 +96,6 @@ class SDAConverterTestCase(unittest.TestCase):
         
         self.assertTrue(self.sda_converter.has_uav_reached_guided_waypoint())
 
-
     def test_does_guided_path_exist(self):
         self.sda_converter.obstacle_map.set_drone_position(numpy.array([0,0,0]))
         self.sda_converter.reset_obstacles()
@@ -117,7 +116,6 @@ class SDAConverterTestCase(unittest.TestCase):
         distance = VectorMath.get_magnitude(numpy.array([0,0,0]),self.sda_converter.current_path[0])
 
         self.assertEqual(self.sda_converter.get_distance_to_current_guided_waypoint(),distance)
-
 
     def test_has_path_changed(self):
         path1 = numpy.array([numpy.array([1,2,3]), numpy.array([2,2,3])])
@@ -141,8 +139,7 @@ class SDAConverterTestCase(unittest.TestCase):
         self.sda_converter.set_waypoint(test_waypoint)
         obstacle_map = self.sda_converter.obstacle_map
         waypoint_holder = obstacle_map.drone.get_waypoint_holder()
-        new_gps_point = inverse_haversine(self.sda_converter.initial_coordinates,
-            [waypoint_holder[0][0], waypoint_holder[0][1], 91.44000244140625])
+        new_gps_point = inverse_haversine(self.sda_converter.initial_coordinates, [waypoint_holder[0][0], waypoint_holder[0][1], 91.44000244140625])
 
         self.assertTrue(abs(new_gps_point.get_lat() - test_waypoint.get_lat()) < 0.004)
         self.assertTrue(abs(new_gps_point.get_lon() - test_waypoint.get_lon()) < 0.004)
