@@ -182,7 +182,7 @@ class Client(object):
         self.img_proc_start_time = self.manager.Value('i', int(datetime.utcnow().strftime("%s")))
 
         self.interop_client = self.manager.list()
-        #self.interop_client.append(SUASSystem.InteropClientConverter())
+        self.interop_client.append(SUASSystem.InteropClientConverter())
         self.interop_data = self.manager.list()
         self.interop_data.append(self.get_interop_data())
 
@@ -191,7 +191,7 @@ class Client(object):
             self.img_proc_status,
             self.interop_client
         ))
-        #self.gcs_process.start()
+        self.gcs_process.start()
 
     def get_interop_data(self):
         try:
