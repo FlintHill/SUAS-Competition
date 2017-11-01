@@ -14,7 +14,7 @@ class MovingObstacle(Obstacle):
         ]
 	"""
 
-	def __init__(self, point, radius):
+    def __init__(self, point, radius):
 		"""
 		:param point: The point for the stationary obstacle
         :type point: Numpy Array
@@ -25,7 +25,7 @@ class MovingObstacle(Obstacle):
 
 		self.radius = radius
 
-	def get_radius(self):
+    def get_radius(self):
 		"""
         Return the radius of the obstacle plus that of the safety radius
         """
