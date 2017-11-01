@@ -157,6 +157,7 @@ class SDAConverter(object):
         for xy_loc_point in self.current_path:
             gps_points.append(inverse_haversine(self.initial_coordinates, xy_loc_point))
 
+        #return gps_points
         return gps_points[self.current_path_index]
 
     def has_uav_reached_guided_waypoint(self):
@@ -171,7 +172,7 @@ class SDAConverter(object):
         """
         if self.does_guided_path_exist():
             distance = VectorMath.get_magnitude(self.current_path[self.current_path_index], self.obstacle_map.get_drone().get_point())
-
+            print('Distance to current guided waypoint', str(distance))
             return distance
 
         # Any really high number will work here

@@ -2,6 +2,7 @@ import multiprocessing
 import SUASSystem
 import dronekit
 import time
+import numpy
 from .suas_logging import *
 from .settings import GCSSettings
 from time import sleep
@@ -58,6 +59,7 @@ def gcs_process(sda_status, img_proc_status, interop_client_array, targets_to_su
         if True:#sda_status.value.lower() == "connected":
             if (vehicle.location.global_relative_frame.alt * 3.28084) > GCSSettings.SDA_MIN_ALT and (vehicle.mode.name == "GUIDED" or vehicle.mode.name == "AUTO"):
                 if (len(sda_avoid_coords) > 0):
+                    sda_avoid_feet_height = Location(sda_avoid_coords[0].get_lat(), sda_avoid_coords[0].get_lon(), sda_avoid_coords[0].get_alt()*3.28084)
                     log("root", "Avoiding obstacles...")
                     vehicle.mode = dronekit.VehicleMode("GUIDED")
                     guided_waypoint_location = sda_avoid_coords[0]
@@ -66,11 +68,16 @@ def gcs_process(sda_status, img_proc_status, interop_client_array, targets_to_su
                     print('vehicel mode name:')
                     print(vehicle.mode.name)
                     print('has it reached the waypoint?')
-                    print(has_uav_reached_waypoint(current_location, sda_avoid_coords[0]))
-                    if vehicle.mode.name == "GUIDED" and has_uav_reached_waypoint(current_location, sda_avoid_coords[0]):
+                    print(has_uav_reached_waypoint(sda_avoid_feet_height, sda_avoid_coords[0]))
+                    print('sda avoid coords')
+                    print(sda_avoid_coords)
+                    print('sda avoid feet height')
+                    print(sda_avoid_feet_height)
+                    print('current location')
+                    print(current_location)
+                    if vehicle.mode.name == "GUIDED" and len(sda_avoid_coords) == 0:
                         print('tells the vehicle to become Auto')
                         vehicle.mode = dronekit.VehicleMode("AUTO")
-                        sda_avoid_coords = []
 
 
         #print(current_location)

@@ -30,6 +30,7 @@ def run_sda_process(logger_queue, waypoints, sda_status, sda_avoid_coords, vehic
             try:
                 current_location = vehicle_state_data[0].get_location()
                 current_waypoint_number = vehicle_state_data[0].get_current_waypoint_number()
+                print("Current waypoint number: " + str(current_waypoint_number))
                 if current_waypoint_number != 0:
                     current_uav_waypoint = waypoints[current_waypoint_number - 1]
                     sda_converter.set_waypoint(SUASSystem.Location(current_uav_waypoint.x, current_uav_waypoint.y, current_uav_waypoint.z * 3.28084))
@@ -40,15 +41,29 @@ def run_sda_process(logger_queue, waypoints, sda_status, sda_avoid_coords, vehic
                     #for moving_obstacle in mission_information_data["moving_obstacles"]:
                     #    sda_converter.add_obstacle(get_obstacle_location(moving_obstacle, MSL_ALT), moving_obstacle)"""
                     sda_converter.set_uav_position(current_location)
+                    #if len(sda_avoid_coords) == 0:
+                    #    sda_converter.avoid_obstacles()
                     sda_converter.avoid_obstacles()
                     print("has completed guided path before")
                     print(sda_converter.has_uav_completed_guided_path())
-                    print("has completed guided path before after")
-                    if not sda_converter.has_uav_completed_guided_path():
+                    print('length of sda avoid coords')
+                    print(len(sda_avoid_coords))
+                    print('current sda avoid coords')
+                    print(sda_avoid_coords)
+                    if not sda_converter.has_uav_completed_guided_path() and len(sda_avoid_coords) == 0:
                         try:
+                            print('sets new sda avoid coords')
                             sda_avoid_coords[0] = sda_converter.get_uav_avoid_coordinates()
+                            print('new sda avoid coords')
+                            print(sda_avoid_coords)
                         except:
+                            print('sets new sda avoid coords')
                             sda_avoid_coords.append(sda_converter.get_uav_avoid_coordinates())
+                            print('new sda avoid coords')
+                            print(sda_avoid_coords)
+
+                    if sda_converter.has_uav_completed_guided_path():
+                        sda_avoid_coords = []
             except:
                 print('IN EXCEPT BLOCK')
 

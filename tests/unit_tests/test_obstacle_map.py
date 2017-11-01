@@ -157,10 +157,12 @@ class TestObstacleMap(unittest.TestCase):
 		 check if the obstacel is in the new path
  		"""
 		self.obstacle_map1.reset_obstacles()
+		self.obstacle_map1.reset_waypoints()
+		self.obstacle_map1.set_drone_position(numpy.array([0,0,0]))
 		self.obstacle_map1.add_waypoint(numpy.array([100, 100, 2]))
-		self.test_obstacle = StationaryObstacle(numpy.array([150, 150, 2]), 10, 300)
-		self.test_waypoint = numpy.array([100, 100, 2])
-		self.test_waypoint2 = numpy.array([600, 800, 700])
+		self.test_obstacle = StationaryObstacle(numpy.array([150, 150, 1]), 10, 300)
+		#self.test_waypoint = numpy.array([100, 100, 2])
+		#self.test_waypoint2 = numpy.array([600, 800, 700])
 		self.attempt_paths = self.obstacle_map1.generate_possible_paths(self.test_obstacle)
 
 		for paths in self.attempt_paths:
