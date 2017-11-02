@@ -3,7 +3,7 @@ import unittest
 import numpy
 
 class MovingObstacleTestCase(unittest.TestCase):
-	"""docstring for  MovingObstacleTestCase"""
+	
 	def setUp(self):
 		self.point = numpy.array([0,0,0])
 		self.radius = 5
