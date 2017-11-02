@@ -149,6 +149,12 @@ class TargetMap(object):
             else:
                 index_number_of_targets = index_number_of_targets + 1
 
+        if self.total_targets_output < self.number_of_targets:
+            Logger.log("Total Number of Actual Target Output: " + str(self.total_targets_output) + "\n"
+                       + "The background is not able to contain the number of targets requested." + "\n")
+        else:
+            Logger.log("Total Number of Actual Target Output: " + str(self.total_targets_output) + "\n")
+
         return self.total_targets_output
 
     def record_random_target_map(self, index_number):

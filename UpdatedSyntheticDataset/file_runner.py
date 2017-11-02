@@ -4,8 +4,8 @@ from SyntheticDataset2 import *
 Run UpdatedSyntheticDataset here. More parameters can be changed in ImageCreator/settings.py.
 """
 
-SyntheticDatasetMaker(2, 5, 3).create_target_maps()
+SyntheticDatasetMaker.create_target_maps(2, 100)
 """Input (number of maps to create, number of targets on each map)"""
 
-SyntheticDatasetMaker(2, 5, 3).create_single_targets()
+SyntheticDatasetMaker.create_single_targets(3)
 """Input (number of single targets to create)"""
