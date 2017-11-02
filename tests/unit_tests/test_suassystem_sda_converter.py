@@ -151,6 +151,8 @@ class SDAConverterTestCase(unittest.TestCase):
         self.assertEqual(self.sda_converter.obstacle_map.get_obstacles()[0].get_radius(), new_obstacle.cylinder_radius+30)
 
     def test_reset_obstacles(self):
+        self.assertEqual(self.sda_converter.obstacle_map.obstacles.size,0)
+
         self.sda_converter.obstacle_map.add_obstacle(numpy.array([10, 10, 10]))
         self.sda_converter.reset_obstacles()
         obstacle_map = self.sda_converter.obstacle_map
