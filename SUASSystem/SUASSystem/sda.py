@@ -2,8 +2,9 @@ import SUASSystem
 import multiprocessing
 from SUASSystem.suas_logging import log
 from time import sleep
+import traceback
 
-def run_sda_process(logger_queue, waypoints, sda_status, sda_avoid_coords, vehicle_state_data, mission_information_data):
+def run_sda_process(logger_queue, waypoints, sda_status, sda_avoid_coords, UAV_status, vehicle_state_data, mission_information_data):
     SUASSystem.suas_logging.logger_worker_configurer(logger_queue)
     logger_name = multiprocessing.current_process().name
     boundary_points = [
@@ -29,6 +30,7 @@ def run_sda_process(logger_queue, waypoints, sda_status, sda_avoid_coords, vehic
         if True:#sda_status.value == "connected":
             try:
                 current_location = vehicle_state_data[0].get_location()
+                current_location.alt = current_location.get_alt() - SUASSystem.GCSSettings.MSL_ALT
                 current_waypoint_number = vehicle_state_data[0].get_current_waypoint_number()
                 print("Current waypoint number: " + str(current_waypoint_number))
                 if current_waypoint_number != 0:
@@ -50,21 +52,25 @@ def run_sda_process(logger_queue, waypoints, sda_status, sda_avoid_coords, vehic
                     print(len(sda_avoid_coords))
                     print('current sda avoid coords')
                     print(sda_avoid_coords)
-                    if not sda_converter.has_uav_completed_guided_path() and len(sda_avoid_coords) == 0:
+                    if not sda_converter.has_uav_completed_guided_path(): #and len(sda_avoid_coords) == 0:
+                        UAV_status.value = "GUIDED"
                         try:
                             print('sets new sda avoid coords')
                             sda_avoid_coords[0] = sda_converter.get_uav_avoid_coordinates()
                             print('new sda avoid coords')
                             print(sda_avoid_coords)
                         except:
+                            print('in the except block')
+                            print('has it completed guided path', str(sda_converter.has_uav_completed_guided_path()))
                             print('sets new sda avoid coords')
                             sda_avoid_coords.append(sda_converter.get_uav_avoid_coordinates())
                             print('new sda avoid coords')
                             print(sda_avoid_coords)
 
                     if sda_converter.has_uav_completed_guided_path():
-                        sda_avoid_coords = []
+                        UAV_status.value = "AUTO"
             except:
+                traceback.print_exc()
                 print('IN EXCEPT BLOCK')
 
         sleep(0.5)

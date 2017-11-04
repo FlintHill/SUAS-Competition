@@ -24,6 +24,7 @@ def gcs_process(sda_status, img_proc_status, interop_client_array, targets_to_su
     vehicle_state_data = manager.list()
     mission_information_data = manager.list()
     sda_avoid_coords = manager.list()
+    UAV_status = manager.Value('s', "AUTO")
     location_log = manager.list()
     vehicle = connect_to_vehicle()
     waypoints = download_waypoints(vehicle)
@@ -58,7 +59,7 @@ def gcs_process(sda_status, img_proc_status, interop_client_array, targets_to_su
 
         if True:#sda_status.value.lower() == "connected":
             if (vehicle.location.global_relative_frame.alt * 3.28084) > GCSSettings.SDA_MIN_ALT and (vehicle.mode.name == "GUIDED" or vehicle.mode.name == "AUTO"):
-                if (len(sda_avoid_coords) > 0):
+                if (UAV_status.value == "GUIDED"):
                     sda_avoid_feet_height = Location(sda_avoid_coords[0].get_lat(), sda_avoid_coords[0].get_lon(), sda_avoid_coords[0].get_alt()*3.28084)
                     log("root", "Avoiding obstacles...")
                     vehicle.mode = dronekit.VehicleMode("GUIDED")
@@ -67,17 +68,17 @@ def gcs_process(sda_status, img_proc_status, interop_client_array, targets_to_su
                     print('tells the vehicle the simple_goto')
                     print('vehicel mode name:')
                     print(vehicle.mode.name)
-                    print('has it reached the waypoint?')
-                    print(has_uav_reached_waypoint(sda_avoid_feet_height, sda_avoid_coords[0]))
+                    print('has it reached the guided waypoint?')
+                    print(str(has_uav_reached_waypoint(current_location, sda_avoid_feet_height)))
                     print('sda avoid coords')
                     print(sda_avoid_coords)
                     print('sda avoid feet height')
                     print(sda_avoid_feet_height)
                     print('current location')
                     print(current_location)
-                    if vehicle.mode.name == "GUIDED" and len(sda_avoid_coords) == 0:
-                        print('tells the vehicle to become Auto')
-                        vehicle.mode = dronekit.VehicleMode("AUTO")
+                if UAV_status.value == 'AUTO':
+                    print('tells the vehicle to become Auto')
+                    vehicle.mode = dronekit.VehicleMode("AUTO")
 
 
         #print(current_location)
@@ -94,13 +95,14 @@ def initialize_competition_viewer_process(vehicle_state_data, mission_informatio
 
     return competition_viewer_process
 
-def initialize_sda_process(logger_queue, sda_status, waypoints, sda_avoid_coords, vehicle_state_data, mission_information_data):
+def initialize_sda_process(logger_queue, sda_status, UAV_status, waypoints, sda_avoid_coords, vehicle_state_data, mission_information_data):
     log(gcs_logger_name, "Instantiating SDA process")
     sda_process = multiprocessing.Process(target=SUASSystem.run_sda_process, args=(
         logger_queue,
         waypoints,
         sda_status,
         sda_avoid_coords,
+        UAV_status,
         vehicle_state_data,
         mission_information_data,
     ))

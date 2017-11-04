@@ -21,8 +21,7 @@ class SDAConverter(object):
         self.initial_coordinates = initial_coordinates
         self.current_path = numpy.array([])
         self.current_path_index = 1
-        self.minimum_change_in_guided_waypoint = 3
-
+        self.minimum_change_in_guided_waypoint = 1000
         converted_boundary_points = self.convert_fly_zones(fly_zones)
         self.obstacle_map = ObstacleMap(numpy.array([0,0,0]), converted_boundary_points)
 
@@ -141,7 +140,10 @@ class SDAConverter(object):
         """
         Returns True if the UAV has completed the guided path, False if not
         """
-        return self.current_path_index >= len(self.current_path)
+        if len(self.current_path) != 0:
+            return self.current_path_index >= len(self.current_path)
+        else:
+            return True
 
     def does_guided_path_exist(self):
         """
