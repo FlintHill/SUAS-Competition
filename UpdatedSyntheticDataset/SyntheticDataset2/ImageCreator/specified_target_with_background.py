@@ -49,12 +49,19 @@ class SpecifiedTargetWithBackground(object):
 
     def create_specified_target_with_background(self):
         resized_target_image = self.target_image.resize((self.new_target_width, self.new_target_height))
-        self.background = BackgroundGenerator(Settings.BACKGROUND_DIRECTORY).generate_specific_background(resized_target_image.width + 20, resized_target_image.height + 20)
+        self.background = BackgroundGenerator(Settings.BACKGROUND_DIRECTORY_PATH).generate_specific_background(resized_target_image.width + 20, resized_target_image.height + 20)
         self.background.paste(resized_target_image, (10, 10), resized_target_image)
 
         Logger.log("Target's Dimension in pixels: " + str(self.new_target_dimension + 20)
-                   + "\nTarget's Dimension in inches: " + str(float(self.new_target_dimension + 20) / Settings.PPSI) + "\n")
-
+                   + "\nTarget's Dimension in inches: " + str(float(self.new_target_dimension + 20) / Settings.PPSI)
+                   + "\nshape_type: " + self.shape_type
+                   + "\nshape_color: (" + str(self.shape_color[0]) + ", " + str(self.shape_color[1]) + ", " + str(self.shape_color[2]) + ")"
+                   + "\nalphanumeric_value: " + self.letter
+                   + "\nalphanumeric_color: (" + str(self.letter_color[0]) + ", " + str(self.letter_color[1]) + ", " + str(self.letter_color[2]) + ")"
+                   + "\norientation in degree from north: " + str(self.rotation)
+                   + "\ncardinal orientation: " + CardinalDirectionConverter.convert_to_cardinal_direction(self.rotation)
+                   + "\ntarget_center_coordinates: " + str(10+(self.new_target_width / 2)) + ", " + str(10 + (self.new_target_height / 2)) + "\n")
+        
         return self.background
 
     def record_specified_target_with_background(self, file_name):
@@ -69,7 +76,7 @@ class SpecifiedTargetWithBackground(object):
             "cardinal orientation": CardinalDirectionConverter.convert_to_cardinal_direction(self.rotation),
             "target_center_coordinates": ((10 + (self.new_target_width / 2)), (10 + (self.new_target_height / 2)))
         })
-        with open(Settings.SAVE_PATH + "/single_targets_answers/" + file_name + ".json", 'w') as outfile:
+        with open(Settings.SAVE_PATH + Settings.ANSWERS_DIRECTORY + "/single_targets_answers/" + file_name + ".json", 'w') as outfile:
             json.dump(data, outfile, indent=4)
 
-        self.background.save(Settings.SAVE_PATH + "/single_targets/" + file_name + ".jpg")
+        self.background.save(Settings.SAVE_PATH + Settings.ANSWERS_DIRECTORY + "/single_targets/" + file_name + ".jpg")
