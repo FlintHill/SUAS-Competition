@@ -17,7 +17,7 @@ class TargetMap(object):
         :type number_of_targets: int
         """
         self.number_of_targets = number_of_targets
-        self.background = BackgroundGenerator(Settings.BACKGROUND_DIRECTORY).generate_full_background()
+        self.background = BackgroundGenerator(Settings.BACKGROUND_DIRECTORY_PATH).generate_full_background()
         self.size_range = [Settings.TARGET_GENERATION_SIZE_IN_PIXELS, Settings.TARGET_GENERATION_SIZE_IN_PIXELS]
         self.proportionality_range = Settings.PROPORTIONALITY_RANGE
         self.pixelization_level = Settings.PIXELIZATION_LEVEL
@@ -155,7 +155,7 @@ class TargetMap(object):
         else:
             Logger.log("Total Number of Actual Target Output: " + str(self.total_targets_output) + "\n")
 
-        return self.background
+        return self.total_targets_output
 
     def record_random_target_map(self, index_number):
         data = {}
@@ -171,6 +171,6 @@ class TargetMap(object):
                 "target_center_coordinates": (self.target_list[index][1], self.target_list[index][2])
             })
 
-        with open(Settings.SAVE_PATH + "/target_maps_answers/" + str(index_number) + ".json", 'w') as outfile:
+        with open(Settings.SAVE_PATH + Settings.ANSWERS_DIRECTORY + "/target_maps_answers/" + str(index_number) + ".json", 'w') as outfile:
             json.dump(data, outfile, indent=4)
-        self.background.save(Settings.SAVE_PATH + "/target_maps/" + str(index_number) + ".jpg")
+        self.background.save(Settings.SAVE_PATH + Settings.ANSWERS_DIRECTORY + "/target_maps/" + str(index_number) + ".jpg")
