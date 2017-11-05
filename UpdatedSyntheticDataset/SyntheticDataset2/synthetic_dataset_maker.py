@@ -36,7 +36,6 @@ class SyntheticDatasetMaker(object):
             image_generation_process = multiprocessing.Process(target=SyntheticDatasetMaker.run_target_maps_generator, args=(pics_per_process, number_of_targets_on_each_map, starting_index))
             jobs.append(image_generation_process)
             image_generation_process.start()
-            #Logger.log("Current process: " + str(index + 1) + "\n")
 
         for job in jobs:
             job.join()
