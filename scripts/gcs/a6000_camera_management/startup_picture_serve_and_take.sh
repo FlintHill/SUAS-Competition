@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 cd /home/pi/Desktop/SUAS-Competition/scripts/gcs/a6000_camera_management/
 
