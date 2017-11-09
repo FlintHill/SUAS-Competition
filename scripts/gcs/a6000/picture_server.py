@@ -2,6 +2,8 @@ from flask import Flask, jsonify, send_from_directory, make_response
 import traceback
 import os
 
+print os.getcwd()
+
 app = Flask(__name__)
 @app.route('/get/imgs/<path:path>', methods=["GET"])
 def get_image(path):
