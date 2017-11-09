@@ -40,7 +40,7 @@ class SyntheticDatasetMaker(object):
         for job in jobs:
             job.join()
 
-        Logger.log("Target Maps saved at: " + Settings.SAVE_PATH + Settings.ANSWERS_DIRECTORY + "/target_maps\n")
+        Logger.log("Target Maps saved at: " + Settings.SAVE_PATH + Settings.ANSWERS_DIRECTORY + "/target_maps")
         Logger.log("Target Maps Answers saved at: " + Settings.SAVE_PATH + Settings.ANSWERS_DIRECTORY + "/target_maps_answers\n")
 
         print("====================================")
@@ -85,7 +85,7 @@ class SyntheticDatasetMaker(object):
         for job in jobs:
             job.join()
 
-        Logger.log("Single Targets saved at: " + Settings.SAVE_PATH + Settings.ANSWERS_DIRECTORY + "/single_targets\n")
+        Logger.log("Single Targets saved at: " + Settings.SAVE_PATH + Settings.ANSWERS_DIRECTORY + "/single_targets")
         Logger.log("Single Targets Answers saved at: " + Settings.SAVE_PATH + Settings.ANSWERS_DIRECTORY + "/single_targets_answers\n")
 
         print("====================================")

@@ -1,9 +1,9 @@
 class Settings(object):
     FONT_TYPE = "UpdatedSyntheticDataset/data/fonts/Blockletter.otf"
-    BACKGROUND_DIRECTORY_PATH = "/Users/zyin/Desktop/Synthetic Dataset/Backgrounds"
+    BACKGROUND_DIRECTORY_PATH = "/Users/vtolpegin/Desktop/Backgrounds"
 
-    SAVE_PATH = "/Users/zyin/Desktop/Synthetic Dataset"
-    ANSWERS_DIRECTORY = "/Answers"
+    SAVE_PATH = "/Users/vtolpegin/Desktop"
+    ANSWERS_DIRECTORY = "/SyntheticDataset"
 
     PPSI = 10
 
