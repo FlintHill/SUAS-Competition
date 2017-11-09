@@ -147,24 +147,17 @@ def post_target():
         # @TODO: Need to implement autnomous GPS coordinate calculation here
         target_characteristics = {
             "alphanumeric" : request.form["targetContent"],
-            "alphanumeric_color" : request.form["targetColor"],
+            "alphanumeric_color" : request.form["contentColor"],
             "shape" : request.form["targetShape"],
             "orientation" : request.form["targetOrientation"],
             "base_image_filename" : request.form["imageFilename"],
-            "background_color" : request.form["contentColor"],
+            "background_color" : request.form["targetColor"],
             "target_top_left" : [int(request.form["targetTopLeftX"]), int(request.form["targetTopLeftY"])],
             "target_bottom_right" : [int(request.form["targetBottomRightX"]), int(request.form["targetBottomRightY"])],
             "latitude" : 0,
             "longitude" : 0
         }
-
-        original_image_path = "static/imgs/" + target_characteristics["base_image_filename"]
-        cropped_target_path = "static/crops/" + str(len(os.listdir('static/crops'))) + ".jpg"
-        cropped_target_data_path = "static/crops/" + str(len(os.listdir('static/crops'))) + ".json"
-        utils.crop_target(original_image_path, cropped_target_path, target_characteristics["target_top_left"], target_characteristics["target_bottom_right"])
-        utils.save_json_data(cropped_target_data_path, target_characteristics)
-
-        client.interop_client[0].post_standard_target(target_characteristics, cropped_target_path)
+        client.targets_to_submit.append(target_characteristics)
 
         return jsonify({"request_status" : "success"})
     except:
@@ -180,6 +173,7 @@ class Client(object):
         self.img_proc_status = self.manager.Value('s', "disconnected")
         self.sda_start_time = self.manager.Value('i', int(datetime.utcnow().strftime("%s")))
         self.img_proc_start_time = self.manager.Value('i', int(datetime.utcnow().strftime("%s")))
+        self.targets_to_submit = self.manager.list()
 
         self.interop_client = self.manager.list()
         self.interop_client.append(SUASSystem.InteropClientConverter())
@@ -189,7 +183,8 @@ class Client(object):
         self.gcs_process = multiprocessing.Process(target=SUASSystem.gcs_process, args=(
             self.sda_status,
             self.img_proc_status,
-            self.interop_client
+            self.interop_client,
+            self.targets_to_submit
         ))
         self.gcs_process.start()
 
