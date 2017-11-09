@@ -8,7 +8,7 @@ from .converter_functions import *
 
 gcs_logger_name = multiprocessing.current_process().name
 
-def gcs_process(sda_status, img_proc_status, interop_client_array):
+def gcs_process(sda_status, img_proc_status, interop_client_array, targets_to_submit):
     # Setup logging information
     logger_queue = multiprocessing.Queue(-1)
     logger_listener_process = multiprocessing.Process(target=listener_process, args=(
@@ -21,7 +21,6 @@ def gcs_process(sda_status, img_proc_status, interop_client_array):
     manager = multiprocessing.Manager()
     vehicle_state_data = manager.list()
     mission_information_data = manager.list()
-    targets_to_submit = manager.list()
     sda_avoid_coords = manager.list()
     location_log = manager.list()
 
@@ -98,7 +97,7 @@ def initialize_image_processing_process(logger_queue, img_proc_status, location_
         location_log,
         targets_to_submit
     ))
-    #img_proc_process.start()
+    img_proc_process.start()
     log(gcs_logger_name, "Image Processing process instantiated")
 
     return img_proc_process
