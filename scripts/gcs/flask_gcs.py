@@ -147,11 +147,11 @@ def post_target():
         # @TODO: Need to implement autnomous GPS coordinate calculation here
         target_characteristics = {
             "alphanumeric" : request.form["targetContent"],
-            "alphanumeric_color" : request.form["targetColor"],
+            "alphanumeric_color" : request.form["contentColor"],
             "shape" : request.form["targetShape"],
             "orientation" : request.form["targetOrientation"],
             "base_image_filename" : request.form["imageFilename"],
-            "background_color" : request.form["contentColor"],
+            "background_color" : request.form["targetColor"],
             "target_top_left" : [int(request.form["targetTopLeftX"]), int(request.form["targetTopLeftY"])],
             "target_bottom_right" : [int(request.form["targetBottomRightX"]), int(request.form["targetBottomRightY"])],
             "latitude" : 0,
@@ -176,7 +176,7 @@ class Client(object):
         self.targets_to_submit = self.manager.list()
 
         self.interop_client = self.manager.list()
-        #self.interop_client.append(SUASSystem.InteropClientConverter())
+        self.interop_client.append(SUASSystem.InteropClientConverter())
         self.interop_data = self.manager.list()
         self.interop_data.append(self.get_interop_data())
 
