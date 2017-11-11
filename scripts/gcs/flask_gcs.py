@@ -176,11 +176,9 @@ class Client(object):
         self.targets_to_submit = self.manager.list()
 
         self.interop_client = self.manager.list()
-        #self.interop_client.append(SUASSystem.InteropClientConverter())
+        self.interop_client.append(SUASSystem.InteropClientConverter())
         self.interop_data = self.manager.list()
-
-        self.targets_to_submit = self.manager.list()
-        self.targets_to_submit.append(target_characteristics)
+        self.interop_data.append(self.get_interop_data())
 
         self.gcs_process = multiprocessing.Process(target=SUASSystem.gcs_process, args=(
             self.sda_status,
@@ -238,8 +236,5 @@ class Client(object):
 
     def get_img_proc_status(self):
         return self.img_proc_status.value
-
-    def append_targets_to_submit_list(self, target_characteristics):
-        self.targets_to_submit.append(target_characteristics)
 
 client = Client()
