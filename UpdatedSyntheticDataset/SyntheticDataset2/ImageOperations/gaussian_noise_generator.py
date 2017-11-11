@@ -27,4 +27,3 @@ class GaussianNoiseGenerator(object):
         :type radius: int (representing pixel)
         """
         return image.filter(ImageFilter.GaussianBlur(radius = radius))
-        #return image.filter(ImageFilter.DETAIL)
