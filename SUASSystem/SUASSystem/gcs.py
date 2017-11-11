@@ -65,13 +65,8 @@ def gcs_process(sda_status, img_proc_status, interop_client_array, targets_to_su
                     vehicle.mode = dronekit.VehicleMode("GUIDED")
                     guided_waypoint_location = sda_avoid_coords[0]
                     vehicle.simple_goto(guided_waypoint_location.as_global_relative_frame())
-                    print('tells the vehicle the simple_goto')
                     print('vehicel mode name:')
                     print(vehicle.mode.name)
-                    print('has it reached the guided waypoint?')
-                    print(str(has_uav_reached_waypoint(current_location, sda_avoid_feet_height)))
-                    print('sda avoid coords')
-                    print(sda_avoid_coords)
                     print('sda avoid feet height')
                     print(sda_avoid_feet_height)
                     print('current location')
@@ -81,7 +76,6 @@ def gcs_process(sda_status, img_proc_status, interop_client_array, targets_to_su
                     vehicle.mode = dronekit.VehicleMode("AUTO")
 
 
-        #print(current_location)
         sleep(0.1)
 
 def initialize_competition_viewer_process(vehicle_state_data, mission_information_data):

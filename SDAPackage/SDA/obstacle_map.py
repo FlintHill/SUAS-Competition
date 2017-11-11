@@ -297,6 +297,7 @@ class ObstacleMap(object):
             if distance < shortest_distance:
                 shortest_path = path
                 shortest_distance = distance
+        print('min path')
         print(shortest_path)
         return shortest_path
 

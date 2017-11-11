@@ -60,11 +60,12 @@ class SDAConverter(object):
         :type new_waypoint: Location
         """
         converted_waypoint = convert_to_point(self.initial_coordinates, new_waypoint)
-
+        print('waypoint')
+        print(converted_waypoint)
         self.obstacle_map.reset_waypoints()
         self.obstacle_map.add_waypoint(converted_waypoint)
 
-    def add_obstacle(self, obstacle_location, obstacle):
+    def add_obstacle(self, obstacle):
         """
         Add an obstacle to the obstacle map
 
@@ -73,9 +74,12 @@ class SDAConverter(object):
         :param obstacle: The obstacle to add
         :type obstacle: interop.StationaryObstacle
         """
+        obstacle_location = Location(obstacle["latitude"], obstacle["longitude"], 0)
         converted_obstacle_location = convert_to_point(self.initial_coordinates, obstacle_location)
-
-        new_obstacle = StationaryObstacle(converted_obstacle_location, obstacle.cylinder_radius, obstacle.cylinder_height)
+        print("obstacle")
+        print(converted_obstacle_location)
+        new_obstacle = StationaryObstacle(converted_obstacle_location, obstacle["cylinder_radius"], obstacle["cylinder_height"])
+        #new_obstacle = StationaryObstacle(obstacle.get_point(), obstacle.cylinder_radius, obstacle.cylinder_height)
 
         self.obstacle_map.add_obstacle(new_obstacle)
 
