@@ -1,6 +1,6 @@
 class Settings(object):
-    FONT_TYPE = "UpdatedSyntheticDataset/data/fonts/Blockletter.otf"
-    BACKGROUND_DIRECTORY_PATH = "/Users/vtolpegin/Desktop/Backgrounds"
+    FONT_TYPE = "UpdatedSyntheticDataset/data/fonts/GothamBold.ttf"
+    BACKGROUND_DIRECTORY_PATH = "/Users/zyin/Desktop/Synthetic Dataset/Backgrounds"
 
     SAVE_PATH = "/Users/vtolpegin/Desktop"
     ANSWERS_DIRECTORY = "/SyntheticDataset"

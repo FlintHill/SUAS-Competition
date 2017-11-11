@@ -23,7 +23,6 @@ def gcs_process(sda_status, img_proc_status, interop_client_array, targets_to_su
     mission_information_data = manager.list()
     sda_avoid_coords = manager.list()
     location_log = manager.list()
-
     vehicle = connect_to_vehicle()
     waypoints = download_waypoints(vehicle)
 

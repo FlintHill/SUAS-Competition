@@ -1,0 +1,18 @@
+{
+    "alphanumeric": "Z", 
+    "alphanumeric_color": "green", 
+    "background_color": "blue", 
+    "base_image_filename": "1.jpg", 
+    "latitude": 0, 
+    "longitude": 0, 
+    "orientation": "NW", 
+    "shape": "trapezoid", 
+    "target_bottom_right": [
+        5798, 
+        3969
+    ], 
+    "target_top_left": [
+        5226, 
+        3397
+    ]
+}
