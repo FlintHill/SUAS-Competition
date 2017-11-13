@@ -45,8 +45,4 @@ systemctl status a6000
 # ask for restart to test if service boots up correctly
 echo "Finished installation. Restarting in 10 seconds..."
 sleep 10
-reboot
-
-
-
-
+sudo reboot now
