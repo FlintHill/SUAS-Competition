@@ -2,9 +2,8 @@ from flask import Flask, jsonify, send_from_directory, make_response
 import traceback
 import os
 
-print os.getcwd()
-
 app = Flask(__name__)
+
 @app.route('/get/imgs/<path:path>', methods=["GET"])
 def get_image(path):
     try:
@@ -24,7 +23,6 @@ def get_image_list():
         return jsonify(pictures)
     except:
         traceback.print_exc()
-
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0")
