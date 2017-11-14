@@ -7,6 +7,8 @@ remaining_list = BlobDetector(ImageDetectionSettings.IMAGE_PATH, Settings.TARGET
 remaining_list = FalsePositiveEliminator.eliminate_overrepeated_colors("/Users/zyin/Desktop/Synthetic Dataset/Answers/target_maps/2.jpg", remaining_list)
 remaining_list = FalsePositiveEliminator.eliminate_overlapping_blobs(remaining_list)
 
+print remaining_list
+
 AutomaticTester(remaining_list, "/Users/zyin/Desktop/Synthetic Dataset/Answers/target_maps_answers/2.json").run_automatic_tester()
 
 

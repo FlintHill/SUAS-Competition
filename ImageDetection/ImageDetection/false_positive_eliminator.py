@@ -104,7 +104,7 @@ class FalsePositiveEliminator(object):
         distance and y distance are both smaller than the diameter of the larger
         blob in comparison, eliminate the smaller blob.
         """
-        
+
         list_to_eliminate = []
         for index_1 in range(len(positive_list)):
             for index_2 in range(index_1 + 1, len(positive_list)):
@@ -118,19 +118,21 @@ class FalsePositiveEliminator(object):
 
                 larger_x = positive_list[index_1][2] / 2
                 larger_y = positive_list[index_1][3] / 2
+                smaller_x = positive_list[index_2][2] / 2
+                smaller_y = positive_list[index_2][3] / 2
+                index_of_potential_blob_to_eliminate = index_2
 
-                if (positive_list[index_1][2] > positive_list[index_2][2]):
-                    index_of_potential_blob_to_eliminate = index_2
-                else:
+                if (positive_list[index_1][2] < positive_list[index_2][2]):
                     larger_x = positive_list[index_2][2] / 2
+                    smaller_x = positive_list[index_1][2] / 2
                     index_of_potential_blob_to_eliminate = index_1
 
-                if (positive_list[index_1][3] > positive_list[index_2][3]):
-                    pass
-                else:
-                    larget_y = positive_list[index_2][3] / 2
+                if (positive_list[index_1][3] < positive_list[index_2][3]):
+                    larger_y = positive_list[index_2][3] / 2
+                    smaller_y = positive_list[index_1][3] / 2
+                    index_of_potential_blob_to_eliminate = index_1
 
-                if ((x_distance < larger_x) and (y_distance < larger_y)):
+                if ((x_distance < (larger_x + smaller_x)) and (y_distance < (larger_y + smaller_y))):
                     list_to_eliminate.append(index_of_potential_blob_to_eliminate)
 
         index = len(list_to_eliminate) - 1
