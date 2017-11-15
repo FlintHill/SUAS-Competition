@@ -19,14 +19,14 @@ class TargetDetectionSettings(object):
     """
     Filter the blobs based on sizes in pixels squared.
     """
-    FILTER_BY_AREA_ON = True
+    FILTER_BY_AREA_ON = False
 
     """
     Filter the blobs based on circularity. 0 <= circularity <= 1. See link in
     BlobDetector for more information.
     """
     FILTER_BY_CIRCULARITY_ON = False
-    MINIMUM_CIRCULARITY = 0.3
+    MINIMUM_CIRCULARITY = 0.2
     MAXIMUM_CIRCULARITY = 1
 
     """
@@ -41,6 +41,6 @@ class TargetDetectionSettings(object):
     Filter the blobs based on inertia ratio. 0 <= inertia ratio <= 1. See link
     in BlobDetector for more information.
     """
-    FILTER_BY_INERTIA_ON = False
-    MINIMUM_INERTIA_RATIO = 0.3
+    FILTER_BY_INERTIA_ON = True
+    MINIMUM_INERTIA_RATIO = 0.1
     MAXIMUM_INERTIA_RATIO = 1

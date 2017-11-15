@@ -135,9 +135,12 @@ class FalsePositiveEliminator(object):
                 if ((x_distance < (larger_x + smaller_x)) and (y_distance < (larger_y + smaller_y))):
                     list_to_eliminate.append(index_of_potential_blob_to_eliminate)
 
+        list_to_eliminate = list(set(list_to_eliminate))
+        list_to_eliminate.sort()
+
         index = len(list_to_eliminate) - 1
         while (index >= 0):
-            positive_list.remove(positive_list[list_to_eliminate[index]])
+            positive_list.pop(list_to_eliminate[index])
             index -= 1
 
         return positive_list

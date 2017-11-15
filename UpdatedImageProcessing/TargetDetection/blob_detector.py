@@ -80,7 +80,7 @@ class BlobDetector(object):
 
         #Detect blobs.
         inverted_image = PIL.ImageOps.invert(self.raw_image)
-        posterized_image = PIL.ImageOps.posterize(inverted_image, 2)
+        posterized_image = PIL.ImageOps.posterize(inverted_image, 3)
         image = cv2.cvtColor(numpy.array(posterized_image), cv2.COLOR_RGB2BGR)
 
         keypoints = detector.detect(image)
@@ -119,8 +119,9 @@ class BlobDetector(object):
         """
         Show the image with detected blobs circled.
         """
+        """
         image_with_keypoints = cv2.drawKeypoints(image, keypoints, numpy.array([]), (0,0,255), cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
         image = Image.fromarray(image_with_keypoints, 'RGB')
         image.show()
-        
+        """
         return blob_list

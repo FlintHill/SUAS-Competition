@@ -12,6 +12,7 @@ class TargetDetector(object):
 
     def detect_targets(self):
         positive_list = BlobDetector(self.target_map_path, TargetDetectionSettings.TARGET_SIZE_RANGE_IN_PIXELS).detect_blobs()
-        positive_list = FalsePositiveEliminator.eliminate_overrepeated_colors(self.target_map_path, positive_list)
+        if (len(positive_list) > 15):
+            positive_list = FalsePositiveEliminator.eliminate_overrepeated_colors(self.target_map_path, positive_list)
         positive_list = FalsePositiveEliminator.eliminate_overlapping_blobs(positive_list)
         return AutomaticTester(positive_list, self.target_map_answer_path).run_automatic_tester()

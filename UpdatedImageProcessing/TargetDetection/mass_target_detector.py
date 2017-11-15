@@ -21,6 +21,7 @@ class MassTargetDetector(object):
 
             if (len(combo_positive_list[1]) > 0):
                 false_positives_list.append([index, combo_positive_list[1]])
+            print index
 
         print str(float(true_positives_count) / (float(number_of_target_maps) * 10) * 100) + "%"
         print str(false_positives_count)
