@@ -251,7 +251,7 @@ class ObstacleMap(object):
         rejection_vector = VectorMath.get_vector_rejection(obstacle_vector, waypoint_vector)
         rejection_vector_magnitude = VectorMath.get_vector_magnitude(rejection_vector)
 
-        # Uncomment for DEBUGGING ONLY
+        #Uncomment for DEBUGGING ONLY
         #print("Waypoint Vector: " + str(waypoint_vector))
         #print("Obstacle Vector: " + str(obstacle_vector))
         #print("Rejection Vector: " + str(rejection_vector))

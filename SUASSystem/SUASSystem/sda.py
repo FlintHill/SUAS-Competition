@@ -21,7 +21,8 @@ def run_sda_process(logger_queue, waypoints, sda_status, sda_avoid_coords, UAV_s
     log(logger_name, "Instantiating SDA converter")
     while True:
         try:
-            sda_converter = SUASSystem.SDAConverter(vehicle_state_data[0].get_location(), mission_information_data[0]["fly_zones"])
+            print('tries to instantiate')
+            sda_converter = SUASSystem.SDAConverter(vehicle_state_data[0].get_location(), 5)#mission_information_data[0]["fly_zones"])
             break
         except:
             sleep(0.1)
@@ -34,21 +35,30 @@ def run_sda_process(logger_queue, waypoints, sda_status, sda_avoid_coords, UAV_s
                 current_location.alt = current_location.get_alt() - SUASSystem.GCSSettings.MSL_ALT
                 current_waypoint_number = vehicle_state_data[0].get_current_waypoint_number()
                 print("Current waypoint number: " + str(current_waypoint_number))
+                '''for waypoint in waypoints:
+                    print(waypoint)
+                exit(0)'''
                 if current_waypoint_number != 0:
                     current_uav_waypoint = waypoints[current_waypoint_number - 1]
                     sda_converter.set_waypoint(SUASSystem.Location(current_uav_waypoint.x, current_uav_waypoint.y, current_uav_waypoint.z * 3.28084))
 
-                    sda_converter.reset_obstacles()
-                    for stationary_obstacle in mission_information_data[0]["stationary_obstacles"]:
-                        sda_converter.add_obstacle(stationary_obstacle)
+                    #sda_converter.reset_obstacles()
+                    #for stationary_obstacle in mission_information_data[0]["stationary_obstacles"]:
+                    #    sda_converter.add_obstacle(stationary_obstacle)
                     #for moving_obstacle in mission_information_data["moving_obstacles"]:
                     #    sda_converter.add_obstacle(get_obstacle_location(moving_obstacle, MSL_ALT), moving_obstacle)
                     sda_converter.set_uav_position(current_location)
+                    print('waypoint command')
+                    print(str(waypoints[current_waypoint_number-1].command))
+                    #if str(waypoints[current_waypoint_number-1].command) != ('183') or str(waypoints[current_waypoint_number-2].command) != ('183'):
                     sda_converter.avoid_obstacles()
                     print('current sda avoid coords')
                     print(sda_avoid_coords)
                     print("has completed guided path?")
                     print(sda_converter.has_uav_completed_guided_path())
+                    #if str(waypoints[current_waypoint_number-1].command) == ('183') or str(waypoints[current_waypoint_number-2].command) == ('183'):
+                    #    UAV_status.value = "AUTO"
+                    #    sda_converter.current_path = numpy.array([])
                     if not sda_converter.has_uav_completed_guided_path():
                         UAV_status.value = "GUIDED"
                         try:
