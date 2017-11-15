@@ -1,5 +1,13 @@
-class ImageDetectionSettings(object):
-    IMAGE_PATH = "/Users/zyin/Desktop/Synthetic Dataset/Answers/target_maps/2.jpg"
+from SyntheticDataset2.ImageCreator.settings import Settings
+
+class TargetDetectionSettings(object):
+    TARGET_MAP_PATH = "/Users/zyin/Desktop/Synthetic Dataset/Answers/target_maps/2.jpg"
+    TARGET_MAP_ANSWERS_PATH = "/Users/zyin/Desktop/Synthetic Dataset/Answers/target_maps_answers/2.json"
+
+    TARGET_MAPS_DIRECTORY = "/Users/zyin/Desktop/Synthetic Dataset/Answers/target_maps"
+    TARGET_MAPS_ANSWERS_DIRECTORY = "/Users/zyin/Desktop/Synthetic Dataset/Answers/target_maps_answers"
+
+    TARGET_SIZE_RANGE_IN_PIXELS = Settings.TARGET_SIZE_RANGE_IN_PIXELS
 
     """
     Change thresholds for convering source image to binary images. See

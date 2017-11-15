@@ -4,11 +4,11 @@ import os, sys
 from os import path
 
 setup(
-    name = 'ImageDetection',
+    name = 'UpdatedImageProcessing',
 
     version = '0.0.1',
 
-    description = 'Image detection algorithm for the SUAS Competition',
+    description = 'Image processing algorithm for the SUAS Competition',
 
     url = 'https://github.com/FlintHill/SUAS-Competition',
 

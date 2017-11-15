@@ -4,9 +4,10 @@ import PIL.ImageOps
 from matplotlib import pyplot
 from PIL import Image
 from SyntheticDataset2 import *
-from .image_detection_settings import ImageDetectionSettings
+from .target_detection_settings import TargetDetectionSettings
 
 class BlobDetector(object):
+
     """
     The following code and descriptions are adapted from OpenCV:
     """
@@ -18,7 +19,7 @@ class BlobDetector(object):
         self.target_size_range_in_pixels = target_size_range_in_pixels
         self.raw_image = Image.open(image_path)
         self.minimum_area = target_size_range_in_pixels[0]
-        self.maximum_area = (target_size_range_in_pixels[1])**1.5
+        self.maximum_area = (target_size_range_in_pixels[1]) ** 1.5
 
     def detect_blobs(self):
         """
@@ -43,48 +44,41 @@ class BlobDetector(object):
                                      blobs are computed and returned.
         """
 
-        """
-        Set up the detector with default parameters.
-        """
+
+        #Set up the detector with default parameters.
         params = cv2.SimpleBlobDetector_Params()
 
-        """
-        Set up Thresholds. Values are changed in ImageDetectionSettings.
-        """
-        params.minThreshold = ImageDetectionSettings.MINIMUM_THRESHOLD
-        params.maxThreshold = ImageDetectionSettings.MAXIMUM_THRESHOLD
 
-        """
-        Set up filters. Values are changed in ImageDetectionSettings.
-        """
-        params.filterByArea = ImageDetectionSettings.FILTER_BY_AREA_ON
+        #Set up Thresholds. Values are changed in TargetDetectionSettings.
+        params.minThreshold = TargetDetectionSettings.MINIMUM_THRESHOLD
+        params.maxThreshold = TargetDetectionSettings.MAXIMUM_THRESHOLD
+
+
+        #Set up filters. Values are changed in TargetDetectionSettings.
+        params.filterByArea = TargetDetectionSettings.FILTER_BY_AREA_ON
         params.minArea = self.minimum_area
         params.maxArea = self.maximum_area
 
-        params.filterByCircularity = ImageDetectionSettings.FILTER_BY_CIRCULARITY_ON
-        params.minCircularity = ImageDetectionSettings.MINIMUM_CIRCULARITY
-        params.maxCircularity = ImageDetectionSettings.MAXIMUM_CIRCULARITY
+        params.filterByCircularity = TargetDetectionSettings.FILTER_BY_CIRCULARITY_ON
+        params.minCircularity = TargetDetectionSettings.MINIMUM_CIRCULARITY
+        params.maxCircularity = TargetDetectionSettings.MAXIMUM_CIRCULARITY
 
-        params.filterByConvexity = ImageDetectionSettings.FILTER_BY_CONVEXITY_ON
-        params.minConvexity = ImageDetectionSettings.MINIMUM_CONVEXITY
-        params.maxConvexity = ImageDetectionSettings.MAXIMUM_CONVEXITY
+        params.filterByConvexity = TargetDetectionSettings.FILTER_BY_CONVEXITY_ON
+        params.minConvexity = TargetDetectionSettings.MINIMUM_CONVEXITY
+        params.maxConvexity = TargetDetectionSettings.MAXIMUM_CONVEXITY
 
-        params.filterByInertia = ImageDetectionSettings.FILTER_BY_INERTIA_ON
-        params.minInertiaRatio = ImageDetectionSettings.MINIMUM_INERTIA_RATIO
-        params.maxInertiaRatio = ImageDetectionSettings.MAXIMUM_INERTIA_RATIO
+        params.filterByInertia = TargetDetectionSettings.FILTER_BY_INERTIA_ON
+        params.minInertiaRatio = TargetDetectionSettings.MINIMUM_INERTIA_RATIO
+        params.maxInertiaRatio = TargetDetectionSettings.MAXIMUM_INERTIA_RATIO
 
-        """
-        Create a detector with the parameters.
-        """
+        #Create a detector with the parameters.
         ver = (cv2.__version__).split('.')
         if int(ver[0]) < 3 :
         	detector = cv2.SimpleBlobDetector(params)
         else :
         	detector = cv2.SimpleBlobDetector_create(params)
 
-        """
-        Detect blobs.
-        """
+        #Detect blobs.
         inverted_image = PIL.ImageOps.invert(self.raw_image)
         posterized_image = PIL.ImageOps.posterize(inverted_image, 2)
         image = cv2.cvtColor(numpy.array(posterized_image), cv2.COLOR_RGB2BGR)
@@ -128,5 +122,5 @@ class BlobDetector(object):
         image_with_keypoints = cv2.drawKeypoints(image, keypoints, numpy.array([]), (0,0,255), cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
         image = Image.fromarray(image_with_keypoints, 'RGB')
         image.show()
-
+        
         return blob_list

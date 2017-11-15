@@ -23,7 +23,7 @@ class AutomaticTester(object):
                     true_positive_found = True
             if (true_positive_found == False):
                 false_positive_list.append(self.positive_list[index_1])
-
+        """
         print "True positives: "
         if (len(true_positive_list) == 0):
             print "None"
@@ -39,9 +39,5 @@ class AutomaticTester(object):
             for index in range(len(false_positive_list)):
                 print false_positive_list[index]
             print "\nNumber of false positives: " + str(len(false_positive_list))
-
-
-
-
-    #print data["targets"][-2]["target_center_coordinates"]
-    #print len(data["targets"][-2]["target_center_coordinates"])
+        """
+        return [true_positive_list, false_positive_list]
