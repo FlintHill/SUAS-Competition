@@ -64,7 +64,7 @@ def gcs_process(sda_status, img_proc_status, interop_client_array, targets_to_su
                     vehicle.mode = VehicleMode("AUTO")"""
             print("SDA is Enabled")
 
-        #print(current_location)
+        print(current_location)
         sleep(0.1)
 
 def initialize_competition_viewer_process(vehicle_state_data, mission_information_data):
