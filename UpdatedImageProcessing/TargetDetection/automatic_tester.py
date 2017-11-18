@@ -3,6 +3,22 @@ import json
 class AutomaticTester(object):
 
     def __init__(self, positive_list, path_to_answer_sheet):
+        """
+        Compare the positive_list with the answers of the a target map and
+        return the list of the true and false positives.
+
+        :param positive_list: the list holding the information of the blobs.
+        :param path_to_answer_sheet: the path to the json file of the answers of
+                                     the background image under detection.
+
+        :type positive_list: a list of lists containing four elements for each
+                             blob: [x, y, length, width]
+        :type x: int
+        :type y: int
+        :type length: int
+        :type width: int
+        :type path_to_answer_sheet: a json file
+        """
         self.positive_list = positive_list
         self.answer_sheet = json.load(open(path_to_answer_sheet))
 
@@ -23,21 +39,5 @@ class AutomaticTester(object):
                     true_positive_found = True
             if (true_positive_found == False):
                 false_positive_list.append(self.positive_list[index_1])
-        """
-        print "True positives: "
-        if (len(true_positive_list) == 0):
-            print "None"
-        else:
-            for index in range(len(true_positive_list)):
-                print true_positive_list[index]
-            print "\nNumber of true positives: " + str(len(true_positive_list))
 
-        print "\nFalse positives: "
-        if (len(false_positive_list) == 0):
-            print "None"
-        else:
-            for index in range(len(false_positive_list)):
-                print false_positive_list[index]
-            print "\nNumber of false positives: " + str(len(false_positive_list))
-        """
         return [true_positive_list, false_positive_list]

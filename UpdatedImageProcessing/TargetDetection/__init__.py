@@ -1,5 +1,6 @@
 from .target_detection_settings import TargetDetectionSettings
 from .color_operations import ColorOperations
+from .blob_color_operations import BlobColorOperations
 from .blob_detector import BlobDetector
 from .false_positive_eliminator import FalsePositiveEliminator
 from .automatic_tester import AutomaticTester

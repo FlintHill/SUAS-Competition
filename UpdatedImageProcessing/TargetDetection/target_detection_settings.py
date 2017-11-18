@@ -1,9 +1,6 @@
 from SyntheticDataset2.ImageCreator.settings import Settings
 
 class TargetDetectionSettings(object):
-    TARGET_MAP_PATH = "/Users/zyin/Desktop/Synthetic Dataset/Answers/target_maps/2.jpg"
-    TARGET_MAP_ANSWERS_PATH = "/Users/zyin/Desktop/Synthetic Dataset/Answers/target_maps_answers/2.json"
-
     TARGET_MAPS_DIRECTORY = "/Users/zyin/Desktop/Synthetic Dataset/Answers/target_maps"
     TARGET_MAPS_ANSWERS_DIRECTORY = "/Users/zyin/Desktop/Synthetic Dataset/Answers/target_maps_answers"
 
@@ -19,7 +16,7 @@ class TargetDetectionSettings(object):
     """
     Filter the blobs based on sizes in pixels squared.
     """
-    FILTER_BY_AREA_ON = False
+    FILTER_BY_AREA_ON = True
 
     """
     Filter the blobs based on circularity. 0 <= circularity <= 1. See link in
@@ -42,5 +39,5 @@ class TargetDetectionSettings(object):
     in BlobDetector for more information.
     """
     FILTER_BY_INERTIA_ON = True
-    MINIMUM_INERTIA_RATIO = 0.1
+    MINIMUM_INERTIA_RATIO = 0.2
     MAXIMUM_INERTIA_RATIO = 1

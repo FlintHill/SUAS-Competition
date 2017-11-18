@@ -13,7 +13,13 @@ class BlobDetector(object):
     """
     def __init__(self, image_path, target_size_range_in_pixels):
         """
-        Read image.
+        :param image_path: the path of an image
+        :param target_size_range_in_pixels: the size range of the targets on the
+                                            target map.
+
+        :type image_path: an image file such as JPG and PNG
+        :type positive_list: a list two elements, the min and max sizes in
+                             pixels.
         """
         self.image_path = image_path
         self.target_size_range_in_pixels = target_size_range_in_pixels
@@ -43,16 +49,12 @@ class BlobDetector(object):
         Center & Radius Calculation: The centers and radii of the new merged
                                      blobs are computed and returned.
         """
-
-
         #Set up the detector with default parameters.
         params = cv2.SimpleBlobDetector_Params()
-
 
         #Set up Thresholds. Values are changed in TargetDetectionSettings.
         params.minThreshold = TargetDetectionSettings.MINIMUM_THRESHOLD
         params.maxThreshold = TargetDetectionSettings.MAXIMUM_THRESHOLD
-
 
         #Set up filters. Values are changed in TargetDetectionSettings.
         params.filterByArea = TargetDetectionSettings.FILTER_BY_AREA_ON
@@ -80,7 +82,7 @@ class BlobDetector(object):
 
         #Detect blobs.
         inverted_image = PIL.ImageOps.invert(self.raw_image)
-        posterized_image = PIL.ImageOps.posterize(inverted_image, 3)
+        posterized_image = PIL.ImageOps.posterize(inverted_image, 2)
         image = cv2.cvtColor(numpy.array(posterized_image), cv2.COLOR_RGB2BGR)
 
         keypoints = detector.detect(image)
@@ -114,7 +116,10 @@ class BlobDetector(object):
             if (blob_bottom_right_y >= self.raw_image.height):
                 blob_bottom_right_y = self.raw_image.height - 1
 
-            blob_list.append([blob_top_left_x, blob_top_left_y, blob_bottom_right_x - blob_top_left_x, blob_bottom_right_y - blob_top_left_y])
+            blob_width = blob_bottom_right_x - blob_top_left_x
+            blob_height = blob_bottom_right_y - blob_top_left_y
+
+            blob_list.append([blob_top_left_x, blob_top_left_y, blob_width, blob_height])
 
         """
         Show the image with detected blobs circled.

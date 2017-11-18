@@ -1,6 +1,6 @@
-import math
 from PIL import Image
 from .color_operations import ColorOperations
+from .blob_color_operations import BlobColorOperations
 
 class FalsePositiveEliminator(object):
 
@@ -8,6 +8,9 @@ class FalsePositiveEliminator(object):
     def eliminate_overrepeated_colors(image_path, positive_list):
         """
         Eliminate false positives after blob detection.
+
+        (This method works better when there are significantly more false
+        positives than real targets)
 
         :param image_path: the path of an image
         :param positive_list: the list holding the information of the blobs.
@@ -23,42 +26,14 @@ class FalsePositiveEliminator(object):
         Concept:
         Find the average color of all the blobs. Compare that color to the color
         of each blob. Save all the blobs with colors that stand out from the
-        rest and eliminate the rest.
-
-        (The colors of the targets differ from the colors of the background. By
-        eliminating the blobs of the background, targets remain)
-
-        Procedure:
-        1. Create blob_color_list for containing the colors of all blobs.
-        2. For each blob, find the average RGB values of nine uniformly separated
-           pixels and save these average RGB values as colors of 3-tuples into
-           blob_color_list.
-        3. Find the average RGB value of all RGB values saved in
-           blob_color_list.
-        4. Using the find_percentage_difference method in ColorOperations to
-           find the percentage_difference between each RGB value in
-           blob_color_list and the average RGB value of all blob colors.
-        5. Set a threshold of percentage_difference to eliminate the blobs.
+        rest and eliminate the rest. The colors of the targets differ from the
+        colors of the background. By eliminating the blobs of the background,
+        targets remain.
         """
-
-        blob_color_list = []
         image = Image.open(image_path)
+        blob_color_list = []
         for index in range(len(positive_list)):
-            center_color = image.load()[positive_list[index][0] + (positive_list[index][2] / 2), positive_list[index][1] + (positive_list[index][3] / 2)]
-            upper_color = image.load()[positive_list[index][0] + (positive_list[index][2] / 2), positive_list[index][1] + (positive_list[index][3] * 0.375)]
-            lower_color = image.load()[positive_list[index][0] + (positive_list[index][2] / 2), positive_list[index][1] + (positive_list[index][3] * 0.625)]
-            left_color = image.load()[positive_list[index][0] + (positive_list[index][2] * 0.375), positive_list[index][1] + (positive_list[index][3] / 2)]
-            right_color = image.load()[positive_list[index][0] + (positive_list[index][2] * 0.625), positive_list[index][1] + (positive_list[index][3] / 2)]
-            left_upper_color = image.load()[positive_list[index][0] + (positive_list[index][2] * 0.375), positive_list[index][1] + (positive_list[index][3] * 0.375)]
-            right_upper_color = image.load()[positive_list[index][0] + (positive_list[index][2] * 0.625), positive_list[index][1] + (positive_list[index][3] * 0.375)]
-            left_lower_color = image.load()[positive_list[index][0] + (positive_list[index][2] * 0.375), positive_list[index][1] + (positive_list[index][3] * 0.625)]
-            right_lower_color = image.load()[positive_list[index][0] + (positive_list[index][2] * 0.625), positive_list[index][1] + (positive_list[index][3] * 0.625)]
-
-            average_blob_color_x = (center_color[0] + upper_color[0] + lower_color[0] + left_color[0] + right_color[0] + left_upper_color[0] + right_upper_color[0] + left_lower_color[0] + right_lower_color[0]) / 9
-            average_blob_color_y = (center_color[1] + upper_color[1] + lower_color[1] + left_color[1] + right_color[1] + left_upper_color[1] + right_upper_color[1] + left_lower_color[1] + right_lower_color[1]) / 9
-            average_blob_color_z = (center_color[2] + upper_color[2] + lower_color[2] + left_color[2] + right_color[2] + left_upper_color[2] + right_upper_color[2] + left_lower_color[2] + right_lower_color[2]) / 9
-            average_blob_color = (average_blob_color_x, average_blob_color_y, average_blob_color_z)
-
+            average_blob_color = BlobColorOperations.find_blob_average_color(image, positive_list[index])
             blob_color_list.append(average_blob_color)
 
         average_list_color_x = 0
@@ -99,12 +74,11 @@ class FalsePositiveEliminator(object):
         :type width: int
 
         Concept:
-        Using the information of blobs given by positive_list, Compare the
-        centers of each blob with every other blob in the list. If the x
-        distance and y distance are both smaller than the diameter of the larger
-        blob in comparison, eliminate the smaller blob.
+        Compare the centers of each blob with every other blob in positive_list.
+        If the x distance and y distance between two blobs are both smaller than
+        the combination of the diameters of the larger blob and the smaller
+        blob, eliminate the smaller blob.
         """
-
         list_to_eliminate = []
         for index_1 in range(len(positive_list)):
             for index_2 in range(index_1 + 1, len(positive_list)):
@@ -134,6 +108,52 @@ class FalsePositiveEliminator(object):
 
                 if ((x_distance < (larger_x + smaller_x)) and (y_distance < (larger_y + smaller_y))):
                     list_to_eliminate.append(index_of_potential_blob_to_eliminate)
+
+        list_to_eliminate = list(set(list_to_eliminate))
+        list_to_eliminate.sort()
+
+        index = len(list_to_eliminate) - 1
+        while (index >= 0):
+            positive_list.pop(list_to_eliminate[index])
+            index -= 1
+
+        return positive_list
+
+    @staticmethod
+    def eliminate_by_surrounding_color(image_path, positive_list):
+        """
+        Eliminate false positives after blob detection.
+
+        (This method works better when there are less number of false positives.
+        If this condition does not apply, use eliminate_overrepeated_colors
+        first to ensure better results.)
+
+        :param image_path: the path of an image
+        :param positive_list: the list holding the information of the blobs.
+
+        :type image_path: an image file such as JPG and PNG
+        :type positive_list: a list of lists containing four elements for each
+                             blob: [x, y, length, width]
+        :type x: int
+        :type y: int
+        :type length: int
+        :type width: int
+
+        Concept:
+        For every blob given by positive_list, if its surrounding color is below
+        a certain threshold, eliminate this blob. The targets have colors that
+        stand out from the background, if a blob's color conforms with the
+        background color, then it is not a target.
+        """
+        image = Image.open(image_path)
+        list_to_eliminate = []
+        for index in range(len(positive_list)):
+            average_surrounding_color = BlobColorOperations.find_surrounding_average_color(image, positive_list[index])
+            average_blob_color = BlobColorOperations.find_blob_average_color(image, positive_list[index])
+
+            percentage_difference = ColorOperations.find_percentage_difference(average_surrounding_color, average_blob_color)
+            if (percentage_difference <= 5):
+                list_to_eliminate.append(index)
 
         list_to_eliminate = list(set(list_to_eliminate))
         list_to_eliminate.sort()
