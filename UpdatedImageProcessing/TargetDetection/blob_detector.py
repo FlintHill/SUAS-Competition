@@ -121,9 +121,7 @@ class BlobDetector(object):
 
             blob_list.append([blob_top_left_x, blob_top_left_y, blob_width, blob_height])
 
-        """
-        Show the image with detected blobs circled.
-        """
+        #Show the image with detected blobs circled.
         """
         image_with_keypoints = cv2.drawKeypoints(image, keypoints, numpy.array([]), (0,0,255), cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
         image = Image.fromarray(image_with_keypoints, 'RGB')

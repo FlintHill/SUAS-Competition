@@ -152,7 +152,7 @@ class FalsePositiveEliminator(object):
             average_blob_color = BlobColorOperations.find_blob_average_color(image, positive_list[index])
 
             percentage_difference = ColorOperations.find_percentage_difference(average_surrounding_color, average_blob_color)
-            if (percentage_difference <= 5):
+            if (percentage_difference <= 10):
                 list_to_eliminate.append(index)
 
         list_to_eliminate = list(set(list_to_eliminate))

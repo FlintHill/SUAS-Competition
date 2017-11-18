@@ -34,7 +34,7 @@ class AutomaticTester(object):
                 target_center_x = self.answer_sheet["targets"][index_2]["target_center_coordinates"][0]
                 target_center_y = self.answer_sheet["targets"][index_2]["target_center_coordinates"][1]
 
-                if ((abs(blob_center_x - target_center_x) <= 10) and (abs(blob_center_y - target_center_y) <= 10)):
+                if ((abs(blob_center_x - target_center_x) <= 20) and (abs(blob_center_y - target_center_y) <= 20)):
                     true_positive_list.append(self.positive_list[index_1])
                     true_positive_found = True
             if (true_positive_found == False):
