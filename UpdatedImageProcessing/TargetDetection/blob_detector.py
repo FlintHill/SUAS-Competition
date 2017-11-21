@@ -11,7 +11,7 @@ class BlobDetector(object):
     """
     The following code and descriptions are adapted from OpenCV:
     """
-    def __init__(self, image_path, target_size_range_in_pixels):
+    def __init__(self, image_path):
         """
         :param image_path: the path of an image
         :param target_size_range_in_pixels: the size range of the targets on the
@@ -22,10 +22,10 @@ class BlobDetector(object):
                              pixels.
         """
         self.image_path = image_path
-        self.target_size_range_in_pixels = target_size_range_in_pixels
         self.raw_image = Image.open(image_path)
-        self.minimum_area = target_size_range_in_pixels[0]
-        self.maximum_area = (target_size_range_in_pixels[1]) ** 1.5
+        self.raw_image = self.raw_image.convert("RGB")
+        self.minimum_area = TargetDetectionSettings.TARGET_SIZE_RANGE_IN_PIXELS[0]
+        self.maximum_area = (TargetDetectionSettings.TARGET_SIZE_RANGE_IN_PIXELS[1]) ** 1.5
 
     def detect_blobs(self):
         """
@@ -119,7 +119,7 @@ class BlobDetector(object):
             blob_width = blob_bottom_right_x - blob_top_left_x
             blob_height = blob_bottom_right_y - blob_top_left_y
 
-            blob_list.append([blob_top_left_x, blob_top_left_y, blob_width, blob_height])
+            blob_list.append((blob_top_left_x, blob_top_left_y, blob_width, blob_height))
 
         #Show the image with detected blobs circled.
         """

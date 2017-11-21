@@ -1,10 +1,14 @@
 import json
 import os.path
 from TargetDetection import *
+"""
+mylist = TargetDetector.detect_targets("/Users/zyin/Desktop/Synthetic Dataset/Answers/target_maps/1.jpg")
+print mylist
+#MassTargetDetector.detect_mass_target()
 
-#TargetDetector(TargetDetectionSettings.TARGET_MAP_PATH, TargetDetectionSettings.TARGET_MAP_ANSWER_PATH).detect_targets()
-
-MassTargetDetector.run_mass_target_detector()
+#SingleTargetCapturer.capture_single_target("/Users/zyin/Desktop/Synthetic Dataset/Answers/target_maps/1.jpg", (3070, 2700, 3170, 2800))
+"""
+MassSingleTargetsCapturer.capture_mass_single_targets()
 
 """
 json_answer_sheet = "/Users/zyin/Desktop/Synthetic Dataset/Answers/target_maps_answers/7.json"

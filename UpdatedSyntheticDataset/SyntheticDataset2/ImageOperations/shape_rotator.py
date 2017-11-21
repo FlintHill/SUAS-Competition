@@ -10,4 +10,4 @@ class ShapeRotator(object):
         background = RawImageGenerator.generate_raw_image(image_input.width*3, image_input.height*3, (255, 255, 255, 0))
         image_with_background = ImagePaster.paste_images(background, image_input)
         rotated_image_with_background = image_with_background.rotate(degree)
-        return BoundedImageCropper.crop_bounded_image(rotated_image_with_background, rotated_image_with_background.load(), shape_color)
+        return BoundedImageCropper.crop_bounded_image(rotated_image_with_background, shape_color)
