@@ -2,10 +2,10 @@ class Settings(object):
     FONT_TYPE = "UpdatedSyntheticDataset/data/fonts/GothamBold.ttf"
     BACKGROUND_DIRECTORY_PATH = "/Users/zyin/Desktop/Synthetic Dataset/Backgrounds"
 
-    SAVE_PATH = "/Users/vtolpegin/Desktop"
-    ANSWERS_DIRECTORY = "/SyntheticDataset"
+    SAVE_PATH = "/Users/zyin/Desktop/Synthetic Dataset"
+    ANSWERS_DIRECTORY = "/Answers"
 
-    PPSI = 10
+    PPSI = 1.5
 
     SINGLE_TARGET_SIZE_IN_INCHES = 24.0
     SINGLE_TARGET_SIZE_IN_PIXELS = int(SINGLE_TARGET_SIZE_IN_INCHES * PPSI)

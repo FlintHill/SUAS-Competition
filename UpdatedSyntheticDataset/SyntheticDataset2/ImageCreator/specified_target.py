@@ -91,7 +91,7 @@ class SpecifiedTarget(object):
         else:
             shape_image = Star(int(self.size / 1.1), self.shape_color, ShapeOrientator.orientate_shape(self.shape_type, self.shape_orientation)).draw()
 
-        cropped_shape_image = BoundedImageCropper.crop_bounded_image(shape_image, shape_image.load(), self.shape_color)
+        cropped_shape_image = BoundedImageCropper.crop_bounded_image(shape_image, self.shape_color)
         letter_image = SpecifiedLetterGenerator(self.letter, Settings.FONT_TYPE, int(self.size*(10000.0 / 6832.0) / self.proportionality_level), self.letter_color).generate_specified_letter()
 
         if self.shape_type == ShapeTypes.TRIANGLE:
