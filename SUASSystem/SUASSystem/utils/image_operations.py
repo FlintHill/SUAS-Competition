@@ -5,7 +5,7 @@ def get_image_timestamp(filename):
     filename = filename[6:]
     return float(filename[:-4])
 
-def target_gps_location_from_image(image_midpoint, target_midpoint, drone_gps_location):
+def get_target_gps_location(image_midpoint, target_midpoint, drone_gps_location):
     difference_x = target_midpoint[0] - image_midpoint[0]
     difference_y = target_midpoint[1] - image_midpoint[1]
     difference_alt = 0 - (drone_gps_location.get_alt() / 3.28084)
