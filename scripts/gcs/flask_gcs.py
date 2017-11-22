@@ -14,6 +14,7 @@ class Client(object):
         self.img_proc_status = self.manager.Value('s', "disconnected")
         self.sda_start_time = self.manager.Value('i', int(datetime.utcnow().strftime("%s")))
         self.img_proc_start_time = self.manager.Value('i', int(datetime.utcnow().strftime("%s")))
+        self.targets_to_submit = self.manager.list()
 
         self.interop_client = self.manager.list()
         #self.interop_client.append(SUASSystem.InteropClientConverter())
@@ -23,7 +24,8 @@ class Client(object):
         self.gcs_process = multiprocessing.Process(target=SUASSystem.gcs_process, args=(
             self.sda_status,
             self.img_proc_status,
-            self.interop_client
+            self.interop_client,
+            self.targets_to_submit
         ))
         self.gcs_process.start()
 

@@ -12,16 +12,16 @@ def run_img_proc_process(logger_queue, img_proc_status, location_log, targets_to
             closest_time_index = 0
             least_time_difference = location_log[0]["epoch_time"]
             for index in range(len(location_log)):
-                difference = target_time-location_log[closest_time_index]["epoch_time"]
-                if abs(difference) <= least_time_difference:
+                difference_in_times = target_time - location_log[closest_time_index]["epoch_time"]
+                if abs(difference_in_times) <= least_time_difference:
                     closest_time_index = index
-                    least_time_difference = difference
+                    least_time_difference = difference_in_times
 
             drone_gps_location = location_log[closest_time_index]["current_location"]
             image = Image.open("static/imgs/" + target_characteristics["base_image_filename"])
             image_midpoint = (image.width / 2, image.height / 2)
             target_midpoint = ((target_characteristics["target_top_left"][0] + target_characteristics["target_bottom_right"][0]) / 2, (target_characteristics["target_top_left"][1] + target_characteristics["target_bottom_right"][1]) / 2)
-            target_location = utils.target_gps_location_from_image(image_midpoint, target_midpoint, drone_gps_location)
+            target_location = utils.get_target_gps_location(image_midpoint, target_midpoint, drone_gps_location)
             target_characteristics["latitude"] = target_location.get_lat()
             target_characteristics["longitude"] = target_location.get_lon()
 
