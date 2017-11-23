@@ -37,8 +37,8 @@ class ColorOperations(object):
         list_of_x = []
         list_of_y = []
 
-        for x in range(0, dimension[0]):
-            for y in range(0, dimension[1]):
+        for x in range(dimension[0]):
+            for y in range(dimension[1]):
                 if image.load()[x, y] == color:
                     list_of_x.append(x)
                     list_of_y.append(y)
@@ -47,10 +47,60 @@ class ColorOperations(object):
         right_x = max(list_of_x)
         up_y = min(list_of_y)
         low_y = max(list_of_y)
-        return (left_x, up_y, right_x, low_y)
+        return (left_x - 5, up_y - 5, right_x + 5, low_y + 5)
 
     @staticmethod
     def nullify_color(captured_image, quantized_image, color):
+        captured_image = captured_image.convert("RGBA")
+        for x in range(quantized_image.width):
+            color_found_in_column = False
+            for y in range(quantized_image.height):
+                if (quantized_image.load()[x, y] != color):
+                    captured_image.load()[x, y] = (255, 255, 255, 0)
+                else:
+                    color_found_in_column = True
+                    break
+            if (color_found_in_column == True):
+                y = quantized_image.height - 1
+                while (y >= 0):
+                    if (quantized_image.load()[x, y] != color):
+                        captured_image.load()[x, y] = (255, 255, 255, 0)
+                    else:
+                        break
+                    y -= 1
+
+        for y in range(quantized_image.height):
+            color_found_in_row = False
+            for x in range(quantized_image.width):
+                if (quantized_image.load()[x, y] != color):
+                    captured_image.load()[x, y] = (255, 255, 255, 0)
+                else:
+                    color_found_in_row = True
+                    break
+            if (color_found_in_row == True):
+                x = quantized_image.width - 1
+                while (x >= 0):
+                    if (quantized_image.load()[x, y] != color):
+                        captured_image.load()[x, y] = (255, 255, 255, 0)
+                    else:
+                        break
+                    x -= 1
+
+        return captured_image
+
+
+
+
+
+
+
+
+
+
+
+
+
+        """
         captured_image = captured_image.convert("RGBA")
         dimension = quantized_image.size
         pixels_to_nullify = []
@@ -61,3 +111,4 @@ class ColorOperations(object):
                     captured_image.load()[x,y] = (255, 255, 255, 0)
 
         return captured_image
+        """
