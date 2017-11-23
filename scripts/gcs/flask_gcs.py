@@ -17,7 +17,7 @@ class Client(object):
         self.targets_to_submit = self.manager.list()
 
         self.interop_client = self.manager.list()
-        #self.interop_client.append(SUASSystem.InteropClientConverter())
+        self.interop_client.append(SUASSystem.InteropClientConverter())
         self.interop_data = self.manager.list()
         self.interop_data.append(self.get_interop_data())
 
