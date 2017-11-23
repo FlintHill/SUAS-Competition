@@ -10,8 +10,8 @@ class TargetDetector(object):
         """
         Detect the targets for one target map and return all positives.
 
-        :param target_map_path: a directory containing the target map images
-        :type target_map_path: a directory
+        :param target_map_path: the path to a target map image
+        :type target_map_path: an image file such as JPG and PNG
         """
         positive_list = BlobDetector(target_map_path).detect_blobs()
 

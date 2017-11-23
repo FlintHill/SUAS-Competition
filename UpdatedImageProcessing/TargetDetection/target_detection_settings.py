@@ -2,13 +2,13 @@ import os
 from SyntheticDataset2.ImageCreator.settings import Settings
 
 class TargetDetectionSettings(object):
-    TARGET_MAPS_DIRECTORY = "/Users/zyin/Desktop/Synthetic Dataset/Answers/target_maps"
-    TARGET_MAPS_ANSWERS_DIRECTORY = "/Users/zyin/Desktop/Synthetic Dataset/Answers/target_maps_answers"
+    TARGET_MAPS_PATH = "/Users/zyin/Desktop/Synthetic Dataset/Answers/target_maps"
+    TARGET_MAPS_ANSWERS_PATH = "/Users/zyin/Desktop/Synthetic Dataset/Answers/target_maps_answers"
+
+    TARGET_DETECTION_REPORT_SAVE_PATH = "/Users/zyin/Desktop/Target Detection Report"
 
     NUMBER_OF_TARGET_MAPS = sum(os.path.isfile(os.path.join("/Users/zyin/Desktop/Synthetic Dataset/Answers/target_maps", f)) for f in os.listdir("/Users/zyin/Desktop/Synthetic Dataset/Answers/target_maps"))
-
-    TARGET_DETECTION_SAVE_PATH = "/Users/zyin/Desktop/Target Detection"
-
+    NUMBER_OF_TARGETS_ON_EACH_MAP = 10
     TARGET_SIZE_RANGE_IN_PIXELS = Settings.TARGET_SIZE_RANGE_IN_PIXELS
 
     """

@@ -1,36 +1,120 @@
-import os, multiprocessing, timeit
+import os
 from .target_detection_settings import TargetDetectionSettings
 from .target_detection_logger import TargetDetectionLogger
-from .blob_detector import BlobDetector
-from .false_positive_eliminator import FalsePositiveEliminator
+from .target_detector import TargetDetector
 from .automatic_tester import AutomaticTester
-
-def run_target_detector(target_map_path):
-
-    positive_list = BlobDetector(target_map_path).detect_blobs()
-    if (len(positive_list) > 15):
-        positive_list = FalsePositiveEliminator.eliminate_overrepeated_colors(target_map_path, positive_list)
-
-    positive_list = FalsePositiveEliminator.eliminate_overlapping_blobs(positive_list)
-    positive_list = FalsePositiveEliminator.eliminate_by_surrounding_color(target_map_path, positive_list)
-    print positive_list
-    #return AutomaticTester(positive_list, self.target_map_answer_path).run_automatic_tester()
+from .single_targets_capturer import SingleTargetsCapturer
 
 class MassTargetDetector(object):
 
     @staticmethod
     def detect_mass_target():
-        target_maps_list = []
-        target_map_answers_list = []
+        if (os.path.isdir(TargetDetectionSettings.TARGET_DETECTION_REPORT_SAVE_PATH)):
+            raise Exception("Cannot create Target Detection Report: Save directory already exists")
+        os.mkdir(TargetDetectionSettings.TARGET_DETECTION_REPORT_SAVE_PATH)
+
+        if (os.path.isdir(TargetDetectionSettings.TARGET_DETECTION_REPORT_SAVE_PATH + "/Target Map Reports")):
+            raise Exception("Cannot create Target Map Reports: Save directory already exists")
+        os.mkdir(TargetDetectionSettings.TARGET_DETECTION_REPORT_SAVE_PATH + "/Target Map Reports")
+
+        if (os.path.isdir(TargetDetectionSettings.TARGET_DETECTION_REPORT_SAVE_PATH + "/Single Target Crops")):
+            raise Exception("Cannot create Single Target Crops: Save directory already exists")
+        os.mkdir(TargetDetectionSettings.TARGET_DETECTION_REPORT_SAVE_PATH + "/Single Target Crops")
+
         for index in range(1, TargetDetectionSettings.NUMBER_OF_TARGET_MAPS + 1):
-            target_maps_list.append(TargetDetectionSettings.TARGET_MAPS_DIRECTORY + "/" + str(index) + ".jpg")
-            target_map_answers_list.append(TargetDetectionSettings.TARGET_MAPS_ANSWERS_DIRECTORY + "/" + str(index) + ".json")
+
+            current_target_map = TargetDetectionSettings.TARGET_MAPS_PATH + "/" + str(index) + ".jpg"
+            current_target_map_answer = TargetDetectionSettings.TARGET_MAPS_ANSWERS_PATH + "/" + str(index) + ".json"
+
+            positive_list = TargetDetector.detect_targets(current_target_map)
+
+            single_target_capturer_results = SingleTargetsCapturer.capture_single_targets(current_target_map, positive_list)
+            single_target_crops = single_target_capturer_results[0]
+            list_to_eliminate = single_target_capturer_results[1]
+
+            for index_2 in range(len(single_target_crops)):
+                single_target_crops[index_2].save(TargetDetectionSettings.TARGET_DETECTION_REPORT_SAVE_PATH + "/Single Target Crops" + "/" + str(index) + "-" + str(index_2 + 1) + ".png")
+
+            index_3 = len(list_to_eliminate) - 1
+            while(index_3 >= 0):
+                positive_list.pop(list_to_eliminate[index_3])
+                index_3 -= 1
+
+            #Following lines are for checking the positives against the answer sheet and returning a report.
+            combo_positive_list = AutomaticTester.run_automatic_tester(positive_list, current_target_map_answer)
+            true_positive_list = combo_positive_list[0]
+            false_positive_list = combo_positive_list[1]
+
+            AutomaticTester.save_result(true_positive_list, false_positive_list, index)
+
+            TargetDetectionLogger.log("Detection for Target Map " + str(index) + " Completed")
+
+        AutomaticTester.report_result()
+
+
+#The following lines for multiprocessing are still under developments.
+"""
+import os, multiprocessing, timeit
+from .target_detection_settings import TargetDetectionSettings
+from .target_detection_logger import TargetDetectionLogger
+from .blob_detector import BlobDetector
+from .target_detector import TargetDetector
+from .false_positive_eliminator import FalsePositiveEliminator
+from .automatic_tester import AutomaticTester
+
+def run_target_detector(target_map_answer_index_combo_list):
+    current_target_map = target_map_answer_index_combo_list[0]
+    current_target_map_answer = target_map_answer_index_combo_list[1]
+    index_number = target_map_answer_index_combo_list[2]
+
+    positive_list = BlobDetector(current_target_map).detect_blobs()
+    if (len(positive_list) > 15):
+        positive_list = FalsePositiveEliminator.eliminate_overrepeated_colors(current_target_map, positive_list)
+
+    positive_list = FalsePositiveEliminator.eliminate_overlapping_blobs(positive_list)
+    positive_list = FalsePositiveEliminator.eliminate_by_surrounding_color(current_target_map, positive_list)
+
+    combo_positive_list = AutomaticTester.run_automatic_tester(positive_list, current_target_map_answer)
+    true_positive_list = combo_positive_list[0]
+    false_positive_list = combo_positive_list[1]
+    AutomaticTester.save_result(true_positive_list, false_positive_list, index_number)
+
+class MassTargetDetector(object):
+
+    #multiprocessing pool
+    @staticmethod
+    def detect_mass_target():
+        target_map_answer_index_combo_list = []
+
+        for index in range(1, TargetDetectionSettings.NUMBER_OF_TARGET_MAPS + 1):
+            current_target_map = TargetDetectionSettings.TARGET_MAPS_PATH + "/" + str(index) + ".jpg"
+            current_target_map_answer = TargetDetectionSettings.TARGET_MAPS_ANSWERS_PATH + "/" + str(index) + ".json"
+            target_map_answer_index_combo_list.append([current_target_map, current_target_map_answer, index])
 
         pool = multiprocessing.Pool(processes = multiprocessing.cpu_count())
         maps_per_process = TargetDetectionSettings.NUMBER_OF_TARGET_MAPS / multiprocessing.cpu_count()
-        pool.map(run_target_detector, target_maps_list)
 
-        """
+    @staticmethod
+    def run_mass_target_detector(maps_per_process, process_number):
+        for index in range(1, maps_per_process + 1):
+            current_target_map = TargetDetectionSettings.TARGET_MAPS_PATH + "/" + str(index + process_number) + ".jpg"
+            current_target_map_answers = TargetDetectionSettings.TARGET_MAPS_ANSWERS_PATH + "/" + str(index + process_number) + ".json"
+
+            positive_list = BlobDetector(current_target_map).detect_blobs()
+
+            if (len(positive_list) > 15):
+                positive_list = FalsePositiveEliminator.eliminate_overrepeated_colors(current_target_map, positive_list)
+
+            positive_list = FalsePositiveEliminator.eliminate_overlapping_blobs(positive_list)
+            positive_list = FalsePositiveEliminator.eliminate_by_surrounding_color(current_target_map, positive_list)
+            print positive_list
+            #return AutomaticTester(positive_list, current_target_map_answers).run_automatic_tester()
+
+    #standard multiprocessing
+    @staticmethod
+    def detect_mass_target():
+        cpu_count = multiprocessing.cpu_count()
+        maps_per_process = (TargetDetectionSettings.NUMBER_OF_TARGET_MAPS / cpu_count)
         start_time = timeit.default_timer()
 
         jobs = []
@@ -49,30 +133,4 @@ class MassTargetDetector(object):
         print("Total number of target_maps detected:", len(os.listdir(TargetDetectionSettings.TARGET_DETECTION_SAVE_PATH)))
         print("Total elapsed time (sec):", timeit.default_timer() - start_time)
         print("====================================")
-        """
-
-
-    @staticmethod
-    def run_mass_target_detector():
-        true_positives_count = 0
-        false_positives_count = 0
-        false_positives_list = []
-
-        for index in range(1, TargetDetectionSettings.NUMBER_OF_TARGET_MAPS + 1):
-
-            current_target_map = TargetDetectionSettings.TARGET_MAPS_DIRECTORY + "/" + str(index) + ".jpg"
-            current_target_map_answers = TargetDetectionSettings.TARGET_MAPS_ANSWERS_DIRECTORY + "/" + str(index) + ".json"
-
-            positive_list = TargetDetector.detect_targets(current_target_map)
-            combo_positive_list = AutomaticTester.run_automatic_tester(positive_list, current_target_map_answers)
-
-            true_positives_count += len(combo_positive_list[0])
-            false_positives_count += len(combo_positive_list[1])
-
-            if (len(combo_positive_list[1]) > 0):
-                false_positives_list.append([index, combo_positive_list[1]])
-            print index
-
-        print str(float(true_positives_count) / (float(TargetDetectionSettings.NUMBER_OF_TARGET_MAPS) * 10) * 100) + "%"
-        print str(false_positives_count)
-        print false_positives_list
+"""

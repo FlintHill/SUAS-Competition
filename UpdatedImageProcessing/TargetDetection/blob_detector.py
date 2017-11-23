@@ -1,5 +1,6 @@
 import cv2
 import numpy
+import io
 import PIL.ImageOps
 from matplotlib import pyplot
 from PIL import Image
@@ -14,12 +15,8 @@ class BlobDetector(object):
     def __init__(self, image_path):
         """
         :param image_path: the path of an image
-        :param target_size_range_in_pixels: the size range of the targets on the
-                                            target map.
 
         :type image_path: an image file such as JPG and PNG
-        :type positive_list: a list two elements, the min and max sizes in
-                             pixels.
         """
         self.image_path = image_path
         self.raw_image = Image.open(image_path)
@@ -49,6 +46,7 @@ class BlobDetector(object):
         Center & Radius Calculation: The centers and radii of the new merged
                                      blobs are computed and returned.
         """
+
         #Set up the detector with default parameters.
         params = cv2.SimpleBlobDetector_Params()
 
@@ -83,7 +81,12 @@ class BlobDetector(object):
         #Detect blobs.
         inverted_image = PIL.ImageOps.invert(self.raw_image)
         posterized_image = PIL.ImageOps.posterize(inverted_image, 2)
-        image = cv2.cvtColor(numpy.array(posterized_image), cv2.COLOR_RGB2BGR)
+
+        #open_cv_image = numpy.array(posterized_image)
+
+        image = numpy.array(posterized_image)
+
+        image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
 
         keypoints = detector.detect(image)
 
@@ -98,11 +101,19 @@ class BlobDetector(object):
             blob_center_y = round(keypoints[index].pt[1])
             blob_diameter = round(keypoints[index].size)
 
+            """
             blob_top_left_x = blob_center_x - blob_diameter
             blob_top_left_y = blob_center_y - blob_diameter
 
             blob_bottom_right_x = blob_center_x + blob_diameter
             blob_bottom_right_y = blob_center_y + blob_diameter
+            """
+
+            blob_top_left_x = blob_center_x - (blob_diameter / 2)
+            blob_top_left_y = blob_center_y - (blob_diameter / 2)
+
+            blob_bottom_right_x = blob_center_x + (blob_diameter / 2)
+            blob_bottom_right_y = blob_center_y + (blob_diameter / 2)
 
             if (blob_top_left_x < 0):
                 blob_top_left_x = 0

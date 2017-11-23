@@ -16,8 +16,8 @@ class FalsePositiveEliminator(object):
         :param positive_list: the list holding the information of the blobs.
 
         :type image_path: an image file such as JPG and PNG
-        :type positive_list: a list of lists containing four elements for each
-                             blob: [x, y, length, width]
+        :type positive_list: a list of four-tuples containing four elements for each
+                             blob: (x, y, length, width)
         :type x: int
         :type y: int
         :type length: int
@@ -82,10 +82,10 @@ class FalsePositiveEliminator(object):
         list_to_eliminate = []
         for index_1 in range(len(positive_list)):
             for index_2 in range(index_1 + 1, len(positive_list)):
-                target_1_center_x = positive_list[index_1][0] + (0.5 * positive_list[index_1][2])
-                target_1_center_y = positive_list[index_1][1] + (0.5 * positive_list[index_1][3])
-                target_2_center_x = positive_list[index_2][0] + (0.5 * positive_list[index_2][2])
-                target_2_center_y = positive_list[index_2][1] + (0.5 * positive_list[index_2][3])
+                target_1_center_x = positive_list[index_1][0] + (positive_list[index_1][2] / 2)
+                target_1_center_y = positive_list[index_1][1] + (positive_list[index_1][3] / 2)
+                target_2_center_x = positive_list[index_2][0] + (positive_list[index_2][2] / 2)
+                target_2_center_y = positive_list[index_2][1] + (positive_list[index_2][3] / 2)
 
                 x_distance = abs(target_1_center_x - target_2_center_x)
                 y_distance = abs(target_1_center_y - target_2_center_y)

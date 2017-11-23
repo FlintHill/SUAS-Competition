@@ -47,18 +47,17 @@ class ColorOperations(object):
         right_x = max(list_of_x)
         up_y = min(list_of_y)
         low_y = max(list_of_y)
-        return (left_x - 5, up_y - 5, right_x + 5, low_y + 5)
+        return (left_x, up_y, right_x, low_y)
 
     @staticmethod
     def nullify_color(captured_image, quantized_image, color):
         captured_image = captured_image.convert("RGBA")
-        #quantized_image = PIL.ImageOps.posterize(quantized_image, 3)
-
-        dimension = captured_image.size
+        dimension = quantized_image.size
+        pixels_to_nullify = []
 
         for x in range(0, dimension[0]):
             for y in range(0, dimension[1]):
-                if (quantized_image.load()[x,y] == color):
-                    #if (((x < (4 * dimension[0] / 10)) or (x > (6 * dimension[0] / 10))) or ((y < (4 * dimension[1] / 10)) or (y > (6 * dimension[1] / 10)))):
+                if (quantized_image.load()[x, y] == color):
                     captured_image.load()[x,y] = (255, 255, 255, 0)
+
         return captured_image

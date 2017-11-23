@@ -7,5 +7,4 @@ from .false_positive_eliminator import FalsePositiveEliminator
 from .automatic_tester import AutomaticTester
 from .target_detector import TargetDetector
 from .mass_target_detector import MassTargetDetector
-from .single_target_capturer import SingleTargetCapturer
-from .mass_single_targets_capturer import MassSingleTargetsCapturer
+from .single_targets_capturer import SingleTargetsCapturer
