@@ -87,28 +87,3 @@ class ColorOperations(object):
                     x -= 1
 
         return captured_image
-
-
-
-
-
-
-
-
-
-
-
-
-
-        """
-        captured_image = captured_image.convert("RGBA")
-        dimension = quantized_image.size
-        pixels_to_nullify = []
-
-        for x in range(0, dimension[0]):
-            for y in range(0, dimension[1]):
-                if (quantized_image.load()[x, y] == color):
-                    captured_image.load()[x,y] = (255, 255, 255, 0)
-
-        return captured_image
-        """
