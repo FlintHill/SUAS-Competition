@@ -122,10 +122,14 @@ class SingleTargetsCapturer(object):
 
             if (percentage_difference >= 10):
 
-                crop_x1 = blob_x - (blob_width * 2)
-                crop_y1 = blob_y - (blob_height * 2)
-                crop_x2 = blob_x + (blob_width * 3)
-                crop_y2 = blob_y + (blob_height * 3)
+                list_to_eliminate.append(index)
+                continue
+
+                """
+                crop_x1 = blob_x - (blob_width)
+                crop_y1 = blob_y - (blob_height)
+                crop_x2 = blob_x + (blob_width * 2)
+                crop_y2 = blob_y + (blob_height * 2)
 
                 if (crop_x1 < 0):
                     crop_x1 = 0
@@ -179,7 +183,8 @@ class SingleTargetsCapturer(object):
 
                 captured_image = captured_image.crop((crop_x1, crop_y1, crop_x2, crop_y2))
                 quantized_image = quantized_image.crop((crop_x1, crop_y1, crop_x2, crop_y2))
-
+                quantized_image.show()
+                """
             border_colors = []
 
             border_colors.append(quantized_image.load()[1, 1])

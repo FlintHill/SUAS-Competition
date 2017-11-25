@@ -58,12 +58,11 @@ class RandomTarget(object):
         self.random_proportionality = random.uniform(proportionality_range[0], proportionality_range[1])
 
         color_list = [(255, 255, 255, 255), (0, 0, 0, 255), (255, 0, 0, 255), (0, 255, 0, 255), (0, 0, 255, 255),
-                      (255, 255, 0, 255), (255, 0, 255, 255), (0, 255, 255, 255), (192, 192, 192, 255), (128, 128, 128, 255),
-                      (128, 0, 0, 255), (0, 128, 0, 255), (0, 0, 128, 255), (128, 128, 0, 255), (128, 0, 128, 255),
-                      (0, 128, 128, 255)]
-        self.random_shape_color = color_list[random.randint(0, 15)]
+                      (128, 128, 128, 255), (255, 255, 0, 255), (255, 165, 0, 255), (128, 0, 128, 255), (165, 42, 42, 255)]
+
+        self.random_shape_color = color_list[random.randint(0, 9)]
         color_list.remove(self.random_shape_color)
-        self.random_letter_color = color_list[random.randint(0, 14)]
+        self.random_letter_color = color_list[random.randint(0, 8)]
 
         self.random_rotation = random.uniform(0.0, 360.0)
         self.pixelization_level = pixelization_level
