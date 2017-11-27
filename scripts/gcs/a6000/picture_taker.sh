@@ -1,6 +1,6 @@
 #!/bin/bash
 
-waitTime = 5
+waitTime=5
 
 while [ true ]
 do

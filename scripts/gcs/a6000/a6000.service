@@ -2,7 +2,7 @@
 Description=A6000 Camera Picture Take and Serve
 
 [Service]
-ExecStart=/home/$USER/Desktop/SUAS-Competition/scripts/gcs/a6000/startup_picture_serve_and_take.sh
+ExecStart=/home/odroid/Desktop/SUAS-Competition/scripts/gcs/a6000/startup_picture_serve_and_take.sh
 User=odroid
 Group=root
 StandardOutput=null

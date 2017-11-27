@@ -1,4 +1,4 @@
-#!/bin/sh -
+#!/bin/bash
 
 cd /home/odroid/Desktop/SUAS-Competition/scripts/gcs/a6000
 

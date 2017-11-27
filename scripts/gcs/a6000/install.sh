@@ -8,14 +8,16 @@ apt-get install git -y
 
 # get pip
 cd ~/Downloads/
-sudo apt-get install python3-pip
+sudo apt-get install python-pip
 
+#install Flask
+sudo pip install flask
 # install gphoto
 wget https://raw.githubusercontent.com/gonzalo/gphoto2-updater/master/gphoto2-updater.sh && chmod +x gphoto2-updater.sh && sudo ./gphoto2-updater.sh
 
 # move service file
-
-mv a6000.service /etc/systemd/system/a6000.service
+cd /home/odroid/Desktop/SUAS-Competition/scripts/gcs/a6000
+cp a6000.service /etc/systemd/system/a6000.service
 
 # enable service
 systemctl enable a6000
