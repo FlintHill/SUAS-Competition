@@ -2,7 +2,7 @@ import math
 from SUASSystem import GCSSettings, inverse_haversine
 
 def get_image_timestamp(filename):
-    filename = filename[6:]
+    filename = filename[5:]
     return float(filename[:-4])
 
 def get_target_gps_location(image_midpoint, target_midpoint, drone_gps_location):
