@@ -5,10 +5,10 @@ from SUASSystem.utils import get_image_timestamp, get_target_gps_location
 class ImageOperationsTestCase(unittest.TestCase):
 
     def test_get_image_timestamp(self):
-        self.test_filename = "image1234567889910.jpg"
+        self.test_filename = "image-1234567889910.jpg"
         self.assertEqual(get_image_timestamp(self.test_filename), 1234567889910)
 
-        self.test_filename = "image0.jpg"
+        self.test_filename = "image-0.jpg"
         self.assertEqual(get_image_timestamp(self.test_filename), 0)
 
     def test_get_target_gps_location(self):
