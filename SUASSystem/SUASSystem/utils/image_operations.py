@@ -13,4 +13,4 @@ def get_target_gps_location(image_midpoint, target_midpoint, drone_gps_location)
     difference_y = (difference_y / math.sqrt(GCSSettings.IMAGE_PROC_PPSI)) / 12 #convert to feet
 
     difference_point = (difference_x, difference_y, 0)
-    return = inverse_haversine(drone_gps_location, difference_point)
+    return inverse_haversine(drone_gps_location, difference_point)
