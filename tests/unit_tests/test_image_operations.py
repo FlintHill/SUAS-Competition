@@ -16,12 +16,12 @@ class ImageOperationsTestCase(unittest.TestCase):
         self.test_image_midpoint = (100,100)
         self.test_target_midpoint = (50,50)
 
-        self.difference_vector = ((self.test_target_midpoint[0] - self.test_image_midpoint[0]) / math.sqrt(GCSSettings.IMAGE_PROC_PPSI) / 12, (self.test_target_midpoint[1] - self.test_image_midpoint[1]) / math.sqrt(GCSSettings.IMAGE_PROC_PPSI) / 12, (0 - self.test_drone_gps_location.get_alt()) / 3.28084)
+        self.difference_vector = ((self.test_target_midpoint[0] - self.test_image_midpoint[0]) / math.sqrt(GCSSettings.IMAGE_PROC_PPSI) / 12, (self.test_target_midpoint[1] - self.test_image_midpoint[1]) / math.sqrt(GCSSettings.IMAGE_PROC_PPSI) / 12, 0)
         self.assertEqual(round(inverse_haversine(self.test_drone_gps_location, self.difference_vector).get_lat()), round(get_target_gps_location(self.test_image_midpoint, self.test_target_midpoint, self.test_drone_gps_location).get_lat()))
 
         self.test_drone_gps_location = Location(1000,1000,5)
         self.test_image_midpoint = (40,75)
         self.test_target_midpoint = (1000,510)
 
-        self.difference_vector = ((self.test_target_midpoint[0] - self.test_image_midpoint[0]) / math.sqrt(GCSSettings.IMAGE_PROC_PPSI) / 12, (self.test_target_midpoint[1] - self.test_image_midpoint[1]) / math.sqrt(GCSSettings.IMAGE_PROC_PPSI) / 12, (0 - self.test_drone_gps_location.get_alt()) / 3.28084)
+        self.difference_vector = ((self.test_target_midpoint[0] - self.test_image_midpoint[0]) / math.sqrt(GCSSettings.IMAGE_PROC_PPSI) / 12, (self.test_target_midpoint[1] - self.test_image_midpoint[1]) / math.sqrt(GCSSettings.IMAGE_PROC_PPSI) / 12, 0)
         self.assertEqual(round(inverse_haversine(self.test_drone_gps_location, self.difference_vector).get_lat()), round(get_target_gps_location(self.test_image_midpoint, self.test_target_midpoint, self.test_drone_gps_location).get_lat()))
