@@ -3,16 +3,16 @@ from PIL import Image
 class BlobColorOperations(object):
 
     @staticmethod
-    def find_blob_average_color(map_image, blob_location):
+    def find_blob_average_color(target_map_image, blob_location):
         """
         Find the average color of a blob by taking the average RGB value of
         nine uniformly separated pixels within this blob and return this average
         RGB value as a color of 3-tuple.
 
-        :param map_image: the image of the background
+        :param target_map_image: the image of the background
         :param blob_location: the information of a single blob
 
-        :type map_image: PIL image
+        :type target_map_image: PIL image
         :type blob_location: a list containing four elements for each
                              blob: [x, y, length, width]
         :type x: int
@@ -20,39 +20,39 @@ class BlobColorOperations(object):
         :type length: int
         :type width: int
         """
-        center_color = map_image.load()[blob_location[0] + (blob_location[2] / 2), blob_location[1] + (blob_location[3] / 2)]
+        center_color = target_map_image.load()[blob_location[0] + (blob_location[2] / 2), blob_location[1] + (blob_location[3] / 2)]
 
-        upper_color_1 = map_image.load()[blob_location[0] + (blob_location[2] / 2), blob_location[1] + (blob_location[3] / 6)]
-        upper_color_2 = map_image.load()[blob_location[0] + (blob_location[2] / 2), blob_location[1] + (blob_location[3] / 3)]
+        upper_color_1 = target_map_image.load()[blob_location[0] + (blob_location[2] / 2), blob_location[1] + (blob_location[3] / 6)]
+        upper_color_2 = target_map_image.load()[blob_location[0] + (blob_location[2] / 2), blob_location[1] + (blob_location[3] / 3)]
 
-        lower_color_1 = map_image.load()[blob_location[0] + (blob_location[2] / 2), blob_location[1] + (blob_location[3] / 6 * 5)]
-        lower_color_2 = map_image.load()[blob_location[0] + (blob_location[2] / 2), blob_location[1] + (blob_location[3] / 3 * 2)]
+        lower_color_1 = target_map_image.load()[blob_location[0] + (blob_location[2] / 2), blob_location[1] + (blob_location[3] / 6 * 5)]
+        lower_color_2 = target_map_image.load()[blob_location[0] + (blob_location[2] / 2), blob_location[1] + (blob_location[3] / 3 * 2)]
 
-        left_color_1 = map_image.load()[blob_location[0] + (blob_location[2] / 6), blob_location[1] + (blob_location[3] / 2)]
-        left_color_2 = map_image.load()[blob_location[0] + (blob_location[2] / 3), blob_location[1] + (blob_location[3] / 2)]
+        left_color_1 = target_map_image.load()[blob_location[0] + (blob_location[2] / 6), blob_location[1] + (blob_location[3] / 2)]
+        left_color_2 = target_map_image.load()[blob_location[0] + (blob_location[2] / 3), blob_location[1] + (blob_location[3] / 2)]
 
-        right_color_1 = map_image.load()[blob_location[0] + (blob_location[2] / 6 * 5), blob_location[1] + (blob_location[3] / 2)]
-        right_color_2 = map_image.load()[blob_location[0] + (blob_location[2] / 3 * 2), blob_location[1] + (blob_location[3] / 2)]
+        right_color_1 = target_map_image.load()[blob_location[0] + (blob_location[2] / 6 * 5), blob_location[1] + (blob_location[3] / 2)]
+        right_color_2 = target_map_image.load()[blob_location[0] + (blob_location[2] / 3 * 2), blob_location[1] + (blob_location[3] / 2)]
 
-        left_upper_color_1 = map_image.load()[blob_location[0] + (blob_location[2] / 6), blob_location[1] + (blob_location[3] / 6)]
-        left_upper_color_2 = map_image.load()[blob_location[0] + (blob_location[2] / 3), blob_location[1] + (blob_location[3] / 6)]
-        left_upper_color_3 = map_image.load()[blob_location[0] + (blob_location[2] / 6), blob_location[1] + (blob_location[3] / 3)]
-        left_upper_color_4 = map_image.load()[blob_location[0] + (blob_location[2] / 3), blob_location[1] + (blob_location[3] / 3)]
+        left_upper_color_1 = target_map_image.load()[blob_location[0] + (blob_location[2] / 6), blob_location[1] + (blob_location[3] / 6)]
+        left_upper_color_2 = target_map_image.load()[blob_location[0] + (blob_location[2] / 3), blob_location[1] + (blob_location[3] / 6)]
+        left_upper_color_3 = target_map_image.load()[blob_location[0] + (blob_location[2] / 6), blob_location[1] + (blob_location[3] / 3)]
+        left_upper_color_4 = target_map_image.load()[blob_location[0] + (blob_location[2] / 3), blob_location[1] + (blob_location[3] / 3)]
 
-        right_upper_color_1 = map_image.load()[blob_location[0] + (blob_location[2] / 3 * 2), blob_location[1] + (blob_location[3] / 6)]
-        right_upper_color_2 = map_image.load()[blob_location[0] + (blob_location[2] / 6 * 5), blob_location[1] + (blob_location[3] / 6)]
-        right_upper_color_3 = map_image.load()[blob_location[0] + (blob_location[2] / 3 * 2), blob_location[1] + (blob_location[3] / 3)]
-        right_upper_color_4 = map_image.load()[blob_location[0] + (blob_location[2] / 6 * 5), blob_location[1] + (blob_location[3] / 3)]
+        right_upper_color_1 = target_map_image.load()[blob_location[0] + (blob_location[2] / 3 * 2), blob_location[1] + (blob_location[3] / 6)]
+        right_upper_color_2 = target_map_image.load()[blob_location[0] + (blob_location[2] / 6 * 5), blob_location[1] + (blob_location[3] / 6)]
+        right_upper_color_3 = target_map_image.load()[blob_location[0] + (blob_location[2] / 3 * 2), blob_location[1] + (blob_location[3] / 3)]
+        right_upper_color_4 = target_map_image.load()[blob_location[0] + (blob_location[2] / 6 * 5), blob_location[1] + (blob_location[3] / 3)]
 
-        left_lower_color_1 = map_image.load()[blob_location[0] + (blob_location[2] / 6), blob_location[1] + (blob_location[3] / 3 * 2)]
-        left_lower_color_2 = map_image.load()[blob_location[0] + (blob_location[2] / 3), blob_location[1] + (blob_location[3] / 3 * 2)]
-        left_lower_color_3 = map_image.load()[blob_location[0] + (blob_location[2] / 6), blob_location[1] + (blob_location[3] / 6 * 5)]
-        left_lower_color_4 = map_image.load()[blob_location[0] + (blob_location[2] / 3), blob_location[1] + (blob_location[3] / 6 * 5)]
+        left_lower_color_1 = target_map_image.load()[blob_location[0] + (blob_location[2] / 6), blob_location[1] + (blob_location[3] / 3 * 2)]
+        left_lower_color_2 = target_map_image.load()[blob_location[0] + (blob_location[2] / 3), blob_location[1] + (blob_location[3] / 3 * 2)]
+        left_lower_color_3 = target_map_image.load()[blob_location[0] + (blob_location[2] / 6), blob_location[1] + (blob_location[3] / 6 * 5)]
+        left_lower_color_4 = target_map_image.load()[blob_location[0] + (blob_location[2] / 3), blob_location[1] + (blob_location[3] / 6 * 5)]
 
-        right_lower_color_1 = map_image.load()[blob_location[0] + (blob_location[2] / 3 * 2), blob_location[1] + (blob_location[3] / 3 * 2)]
-        right_lower_color_2 = map_image.load()[blob_location[0] + (blob_location[2] / 6 * 5), blob_location[1] + (blob_location[3] / 3 * 2)]
-        right_lower_color_3 = map_image.load()[blob_location[0] + (blob_location[2] / 3 * 2), blob_location[1] + (blob_location[3] / 6 * 5)]
-        right_lower_color_4 = map_image.load()[blob_location[0] + (blob_location[2] / 6 * 5), blob_location[1] + (blob_location[3] / 6 * 5)]
+        right_lower_color_1 = target_map_image.load()[blob_location[0] + (blob_location[2] / 3 * 2), blob_location[1] + (blob_location[3] / 3 * 2)]
+        right_lower_color_2 = target_map_image.load()[blob_location[0] + (blob_location[2] / 6 * 5), blob_location[1] + (blob_location[3] / 3 * 2)]
+        right_lower_color_3 = target_map_image.load()[blob_location[0] + (blob_location[2] / 3 * 2), blob_location[1] + (blob_location[3] / 6 * 5)]
+        right_lower_color_4 = target_map_image.load()[blob_location[0] + (blob_location[2] / 6 * 5), blob_location[1] + (blob_location[3] / 6 * 5)]
 
         average_blob_color_x = (center_color[0] + upper_color_1[0] + upper_color_2[0] + lower_color_1[0] + lower_color_2[0] + left_color_1[0] + left_color_2[0] + right_color_1[0] + right_color_2[0]\
                                 + left_upper_color_1[0] + left_upper_color_2[0] + left_upper_color_3[0] + left_upper_color_4[0] + right_upper_color_1[0] + right_upper_color_2[0] + right_upper_color_3[0] + right_upper_color_4[0]\
@@ -71,16 +71,16 @@ class BlobColorOperations(object):
         return average_blob_color
 
     @staticmethod
-    def find_surrounding_average_color(map_image, blob_location):
+    def find_surrounding_average_color(target_map_image, blob_location):
         """
         Find the average color of the surrounding color of a blob by taking the
         average RGB value of eight uniformly separated pixels around this blob
         and return this average RGB value as a color of 3-tuple.
 
-        :param map_image: the image of the background
+        :param target_map_image: the image of the background
         :param blob_location: the information of a single blob
 
-        :type map_image: PIL image
+        :type target_map_image: PIL image
         :type blob_location: a list containing four elements for each
                              blob: [x, y, length, width]
         :type x: int
@@ -96,24 +96,24 @@ class BlobColorOperations(object):
         if (left_x < 0):
             left_x = 0
 
-        if (right_x >= map_image.width):
-            right_x = map_image.width - 1
+        if (right_x >= target_map_image.width):
+            right_x = target_map_image.width - 1
 
         if (upper_y < 0):
             upper_y = 0
 
-        if (lower_y >= map_image.height):
-            lower_y = map_image.height - 1
+        if (lower_y >= target_map_image.height):
+            lower_y = target_map_image.height - 1
 
-        upper_color = map_image.load()[blob_location[0] + (blob_location[2] / 2), upper_y]
-        lower_color = map_image.load()[blob_location[0] + (blob_location[2] / 2), lower_y]
-        left_color = map_image.load()[left_x, blob_location[1] + (blob_location[3] / 2)]
-        right_color = map_image.load()[right_x, blob_location[1] + (blob_location[3] / 2)]
+        upper_color = target_map_image.load()[blob_location[0] + (blob_location[2] / 2), upper_y]
+        lower_color = target_map_image.load()[blob_location[0] + (blob_location[2] / 2), lower_y]
+        left_color = target_map_image.load()[left_x, blob_location[1] + (blob_location[3] / 2)]
+        right_color = target_map_image.load()[right_x, blob_location[1] + (blob_location[3] / 2)]
 
-        left_upper_color = map_image.load()[left_x, upper_y]
-        right_upper_color = map_image.load()[right_x, upper_y]
-        left_lower_color = map_image.load()[left_x, lower_y]
-        right_lower_color = map_image.load()[right_x, lower_y]
+        left_upper_color = target_map_image.load()[left_x, upper_y]
+        right_upper_color = target_map_image.load()[right_x, upper_y]
+        left_lower_color = target_map_image.load()[left_x, lower_y]
+        right_lower_color = target_map_image.load()[right_x, lower_y]
 
         average_surrounding_color_x = (upper_color[0] + lower_color[0] + left_color[0] + right_color[0] + left_upper_color[0] + right_upper_color[0] + left_lower_color[0] + right_lower_color[0]) / 8
         average_surrounding_color_y = (upper_color[1] + lower_color[1] + left_color[1] + right_color[1] + left_upper_color[1] + right_upper_color[1] + left_lower_color[1] + right_lower_color[1]) / 8

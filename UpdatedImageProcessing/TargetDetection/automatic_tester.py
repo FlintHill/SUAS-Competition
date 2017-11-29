@@ -5,13 +5,13 @@ from .target_detection_logger import TargetDetectionLogger
 class AutomaticTester(object):
 
     @staticmethod
-    def run_automatic_tester(positive_list, path_to_answer_sheet):
+    def run_automatic_tester(positive_list, answer_sheet_path):
         """
         Compare the positive_list with the answers of the a target map and
         return the list of the true and false positives.
 
         :param positive_list: the list holding the information of the blobs.
-        :param path_to_answer_sheet: the path to the json file of the answers of
+        :param answer_sheet_path: the path to the json file of the answers of
                                      the background image under detection.
 
         :type positive_list: a list of four-tuples containing four elements for each
@@ -20,9 +20,9 @@ class AutomaticTester(object):
         :type y: int
         :type length: int
         :type width: int
-        :type path_to_answer_sheet: a json file
+        :type answer_sheet_path: a json file
         """
-        answer_sheet = json.load(open(path_to_answer_sheet))
+        answer_sheet = json.load(open(answer_sheet_path))
 
         true_positive_list = []
         false_positive_list = []

@@ -10,6 +10,7 @@ class TargetDetectionSettings(object):
     NUMBER_OF_TARGET_MAPS = sum(os.path.isfile(os.path.join("/Users/zyin/Desktop/Synthetic Dataset/Answers/target_maps", f)) for f in os.listdir("/Users/zyin/Desktop/Synthetic Dataset/Answers/target_maps"))
     NUMBER_OF_TARGETS_ON_EACH_MAP = 10
     TARGET_SIZE_RANGE_IN_PIXELS = Settings.TARGET_SIZE_RANGE_IN_PIXELS
+    TARGET_AVERAGE_SIZE = (TARGET_SIZE_RANGE_IN_PIXELS[0] + TARGET_SIZE_RANGE_IN_PIXELS[1]) / 2
 
     """
     Change thresholds for convering source image to binary images. See

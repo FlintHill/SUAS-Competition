@@ -50,40 +50,71 @@ class ColorOperations(object):
         return (left_x - 5, up_y - 5, right_x + 5, low_y + 5)
 
     @staticmethod
-    def nullify_color(captured_image, quantized_image, color):
+    def nullify_color_and_crop_to_target(captured_image, quantized_image, color_difference_threshold):
+        x_min = 1000000
+        y_min = 1000000
+        x_max = 0
+        y_max = 0
+
         captured_image = captured_image.convert("RGBA")
+
         for x in range(quantized_image.width):
-            color_found_in_column = False
-            for y in range(quantized_image.height):
-                if (quantized_image.load()[x, y] != color):
-                    captured_image.load()[x, y] = (255, 255, 255, 0)
-                else:
-                    color_found_in_column = True
+            threshold_color = quantized_image.load()[x, 0]
+
+            for y in range(1, quantized_image.height):
+                color_difference = ColorOperations.find_percentage_difference(threshold_color, quantized_image.load()[x, y])
+
+                if (color_difference > color_difference_threshold):
+                    y_min = y
                     break
-            if (color_found_in_column == True):
-                y = quantized_image.height - 1
-                while (y >= 0):
-                    if (quantized_image.load()[x, y] != color):
-                        captured_image.load()[x, y] = (255, 255, 255, 0)
-                    else:
-                        break
-                    y -= 1
+
+                else:
+                    captured_image.load()[x, y] = (255, 255, 255, 0)
+
+            y = quantized_image.height - 1
+            while (y >= 0):
+                color_difference = ColorOperations.find_percentage_difference(threshold_color, quantized_image.load()[x, y])
+
+                if (color_difference > color_difference_threshold):
+                    y_max = y
+                    break
+
+                else:
+                    captured_image.load()[x, y] = (255, 255, 255, 0)
+
+                y -= 1
 
         for y in range(quantized_image.height):
-            color_found_in_row = False
-            for x in range(quantized_image.width):
-                if (quantized_image.load()[x, y] != color):
-                    captured_image.load()[x, y] = (255, 255, 255, 0)
-                else:
-                    color_found_in_row = True
+            threshold_color = quantized_image.load()[0, y]
+
+            for x in range(1, quantized_image.width):
+                color_difference = ColorOperations.find_percentage_difference(threshold_color, quantized_image.load()[x, y])
+
+                if (color_difference > color_difference_threshold):
+                    x_min = x
                     break
-            if (color_found_in_row == True):
-                x = quantized_image.width - 1
-                while (x >= 0):
-                    if (quantized_image.load()[x, y] != color):
-                        captured_image.load()[x, y] = (255, 255, 255, 0)
-                    else:
-                        break
-                    x -= 1
+
+                else:
+                    captured_image.load()[x, y] = (255, 255, 255, 0)
+
+            x = quantized_image.width - 1
+            while (x >= 0):
+                color_difference = ColorOperations.find_percentage_difference(threshold_color, quantized_image.load()[x, y])
+
+                if (color_difference > color_difference_threshold):
+                    x_max = x
+                    break
+
+                else:
+                    captured_image.load()[x, y] = (255, 255, 255, 0)
+
+                x -= 1
+
+        x_min = x_min - 5
+        y_min = y_min - 5
+        x_max = x_max + 5
+        y_max = y_max + 5
+
+        captured_image.crop((x_min, y_min, x_max, y_max))
 
         return captured_image
