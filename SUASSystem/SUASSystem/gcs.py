@@ -1,6 +1,7 @@
 import multiprocessing
 import SUASSystem
 import dronekit
+import time
 from .suas_logging import *
 from .settings import GCSSettings
 from time import sleep
@@ -40,7 +41,11 @@ def gcs_process(sda_status, img_proc_status, interop_client_array, targets_to_su
     guided_waypoint_location = None
     while True:
         current_location = get_location(vehicle)
-        location_log.append(current_location)
+        current_location_json = {
+            "current_location": current_location,
+            "epoch_time": time.time()
+        }
+        location_log.append(current_location_json)
 
         vehicle_state_data[0] = SUASSystem.get_vehicle_state(vehicle, GCSSettings.MSL_ALT)
         if len(interop_client_array) != 0:
@@ -59,7 +64,7 @@ def gcs_process(sda_status, img_proc_status, interop_client_array, targets_to_su
                     vehicle.mode = VehicleMode("AUTO")"""
             print("SDA is Enabled")
 
-        #print(current_location)
+        print(current_location)
         sleep(0.1)
 
 def initialize_competition_viewer_process(vehicle_state_data, mission_information_data):

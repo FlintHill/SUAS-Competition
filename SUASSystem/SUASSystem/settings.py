@@ -3,8 +3,8 @@ class GCSSettings(object):
     UAV_CONNECTION_STRING = "tcp:127.0.0.1:14551"
 
     INTEROP_URL = "http://10.10.130.2:8000"
-    INTEROP_USERNAME = "Flint"
-    INTEROP_PASSWORD = "271824758"
+    INTEROP_USERNAME = "Flint"       #"img_proc_test"
+    INTEROP_PASSWORD = "271824758"   #"robotics"
 
     MSL_ALT = 446.42
     SDA_MIN_ALT = 110
@@ -27,3 +27,5 @@ class GCSSettings(object):
 
     MIN_DIST_BETWEEN_TARGETS_KM = 30.0/1000.0
     KNOTS_PER_METERS_PER_SECOND = 1.94384448
+
+    IMAGE_PROC_PPSI = 1.5
