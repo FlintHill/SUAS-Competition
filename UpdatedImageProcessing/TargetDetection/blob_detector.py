@@ -1,4 +1,7 @@
-import cv2, numpy, io, PIL.ImageOps
+import cv2
+import numpy
+import io
+import PIL.ImageOps
 from matplotlib import pyplot
 from PIL import Image
 from SyntheticDataset2 import *

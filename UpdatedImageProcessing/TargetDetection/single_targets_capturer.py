@@ -100,7 +100,7 @@ class SingleTargetsCapturer(object):
                 crop_y2 = target_map.height - 1
 
             captured_image = target_map.crop((crop_x1, crop_y1, crop_x2, crop_y2))
-            quantized_image = ColorOperations.quantize_color(captured_image, 4)
+            quantized_image = ColorOperations.apply_color_quantization(captured_image, 4)
             quantized_image_average_corner_color = BlobColorOperations.find_average_corner_color(quantized_image)
             percentage_difference = ColorOperations.find_percentage_difference(target_map_average_color, quantized_image_average_corner_color)
             """

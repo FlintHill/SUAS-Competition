@@ -22,7 +22,6 @@ class MassTargetDetector(object):
         os.mkdir(TargetDetectionSettings.TARGET_DETECTION_REPORT_SAVE_PATH + "/Single Target Crops")
 
         for index in range(1, TargetDetectionSettings.NUMBER_OF_TARGET_MAPS + 1):
-
             current_target_map = TargetDetectionSettings.TARGET_MAPS_PATH + "/" + str(index) + ".jpg"
             current_target_map_answer = TargetDetectionSettings.TARGET_MAPS_ANSWERS_PATH + "/" + str(index) + ".json"
 
