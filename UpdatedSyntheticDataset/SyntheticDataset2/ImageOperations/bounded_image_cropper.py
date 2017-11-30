@@ -15,10 +15,11 @@ class BoundedImageCropper(object):
         dimension = image.size
         list_of_x = []
         list_of_y = []
+        pixel_access_image = image.load()
 
         for x in range(0, dimension[0]):
             for y in range(0, dimension[1]):
-                if  image.load()[x,y] == color:
+                if  pixel_access_image[x,y] == color:
                     list_of_x.append(x)
                     list_of_y.append(y)
 
@@ -39,10 +40,11 @@ class BoundedImageCropper(object):
         dimension = image.size
         list_of_x = []
         list_of_y = []
+        pixel_access_image = image.load()
 
         for x in range(0, dimension[0]):
             for y in range(0, dimension[1]):
-                if  image.load()[x,y] != color:
+                if  pixel_access_image[x,y] != color:
                     list_of_x.append(x)
                     list_of_y.append(y)
 
