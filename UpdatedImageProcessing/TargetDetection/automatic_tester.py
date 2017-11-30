@@ -76,11 +76,9 @@ class AutomaticTester(object):
         for index in range(len(false_positive_list)):
             data["false_positive_list"].append(false_positive_list[index])
 
-        data["true_positive_count"] = []
-        data["true_positive_count"].append(len(true_positive_list))
+        data["true_positive_count"] = len(true_positive_list)
 
-        data["false_positive_count"] = []
-        data["false_positive_count"].append(len(false_positive_list))
+        data["false_positive_count"] = len(false_positive_list)
 
         with open(os.path.join(TargetDetectionSettings.TARGET_DETECTION_REPORT_SAVE_PATH, "Target_Map_Reports", str(index_number) + ".json"), 'w') as outfile:
             json.dump(data, outfile, indent = 4)
@@ -93,8 +91,8 @@ class AutomaticTester(object):
         for index in range(1, TargetDetectionSettings.NUMBER_OF_TARGET_MAPS + 1):
             target_detection_report = json.load(open(os.path.join(TargetDetectionSettings.TARGET_DETECTION_REPORT_SAVE_PATH, "Target_Map_Reports", str(index) + ".json")))
 
-            total_true_positive_count += target_detection_report["true_positive_count"][0]
-            total_false_positive_count += target_detection_report["false_positive_count"][0]
+            total_true_positive_count += target_detection_report["true_positive_count"]
+            total_false_positive_count += target_detection_report["false_positive_count"]
 
         percentage = 100 * total_true_positive_count / (TargetDetectionSettings.NUMBER_OF_TARGET_MAPS * TargetDetectionSettings.NUMBER_OF_TARGETS_ON_EACH_MAP)
 
