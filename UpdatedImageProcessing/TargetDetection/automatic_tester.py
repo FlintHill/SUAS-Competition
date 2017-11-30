@@ -1,3 +1,4 @@
+import os
 import json
 from .target_detection_settings import TargetDetectionSettings
 from .target_detection_logger import TargetDetectionLogger
@@ -81,7 +82,7 @@ class AutomaticTester(object):
         data["false_positive_count"] = []
         data["false_positive_count"].append(len(false_positive_list))
 
-        with open(TargetDetectionSettings.TARGET_DETECTION_REPORT_SAVE_PATH + "/Target Map Reports/" + str(index_number) + ".json", 'w') as outfile:
+        with open(os.path.join(TargetDetectionSettings.TARGET_DETECTION_REPORT_SAVE_PATH, "Target_Map_Reports", str(index_number) + ".json"), 'w') as outfile:
             json.dump(data, outfile, indent = 4)
 
     @staticmethod
@@ -90,7 +91,7 @@ class AutomaticTester(object):
         total_false_positive_count = 0
 
         for index in range(1, TargetDetectionSettings.NUMBER_OF_TARGET_MAPS + 1):
-            target_detection_report = json.load(open(TargetDetectionSettings.TARGET_DETECTION_REPORT_SAVE_PATH + "/Target Map Reports/" + str(index) + ".json"))
+            target_detection_report = json.load(open(os.path.join(TargetDetectionSettings.TARGET_DETECTION_REPORT_SAVE_PATH, "Target_Map_Reports", str(index) + ".json")))
 
             total_true_positive_count += target_detection_report["true_positive_count"][0]
             total_false_positive_count += target_detection_report["false_positive_count"][0]

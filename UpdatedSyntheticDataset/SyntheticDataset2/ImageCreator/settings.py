@@ -1,8 +1,10 @@
+import os
+
 class Settings(object):
     FONT_TYPE = "UpdatedSyntheticDataset/data/fonts/GothamBold.ttf"
-    BACKGROUND_DIRECTORY_PATH = "/Users/zyin/Desktop/Synthetic Dataset/Backgrounds"
+    BACKGROUND_DIRECTORY_PATH = os.path.expanduser("~/Desktop/Synthetic Dataset/Backgrounds")
 
-    SAVE_PATH = "/Users/zyin/Desktop/Synthetic Dataset"
+    SAVE_PATH = os.path.expanduser("~/Desktop/Synthetic Dataset")
     ANSWERS_DIRECTORY = "/Answers"
 
     PPSI = 1.5

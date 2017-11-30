@@ -10,20 +10,20 @@ class MassTargetDetector(object):
     @staticmethod
     def detect_mass_target():
         if (os.path.isdir(TargetDetectionSettings.TARGET_DETECTION_REPORT_SAVE_PATH)):
-            raise Exception("Cannot create Target Detection Report: Save directory already exists")
+            raise Exception("Cannot create Target_Detection_Report: Save directory already exists")
         os.mkdir(TargetDetectionSettings.TARGET_DETECTION_REPORT_SAVE_PATH)
 
-        if (os.path.isdir(TargetDetectionSettings.TARGET_DETECTION_REPORT_SAVE_PATH + "/Target Map Reports")):
-            raise Exception("Cannot create Target Map Reports: Save directory already exists")
-        os.mkdir(TargetDetectionSettings.TARGET_DETECTION_REPORT_SAVE_PATH + "/Target Map Reports")
+        if (os.path.isdir(os.path.join(TargetDetectionSettings.TARGET_DETECTION_REPORT_SAVE_PATH, "Target_Map_Reports"))):
+            raise Exception("Cannot create Target_Map_Reports: Save directory already exists")
+        os.mkdir(os.path.join(TargetDetectionSettings.TARGET_DETECTION_REPORT_SAVE_PATH, "Target_Map_Reports"))
 
-        if (os.path.isdir(TargetDetectionSettings.TARGET_DETECTION_REPORT_SAVE_PATH + "/Single Target Crops")):
-            raise Exception("Cannot create Single Target Crops: Save directory already exists")
-        os.mkdir(TargetDetectionSettings.TARGET_DETECTION_REPORT_SAVE_PATH + "/Single Target Crops")
+        if (os.path.isdir(os.path.join(TargetDetectionSettings.TARGET_DETECTION_REPORT_SAVE_PATH, "Single_Target_Crops"))):
+            raise Exception("Cannot create Single_Target_Crops: Save directory already exists")
+        os.mkdir(os.path.join(TargetDetectionSettings.TARGET_DETECTION_REPORT_SAVE_PATH, "Single_Target_Crops"))
 
         for index in range(1, TargetDetectionSettings.NUMBER_OF_TARGET_MAPS + 1):
-            current_target_map = TargetDetectionSettings.TARGET_MAPS_PATH + "/" + str(index) + ".jpg"
-            current_target_map_answer = TargetDetectionSettings.TARGET_MAPS_ANSWERS_PATH + "/" + str(index) + ".json"
+            current_target_map = os.path.join(TargetDetectionSettings.TARGET_MAPS_PATH, str(index) + ".jpg")
+            current_target_map_answer = os.path.join(TargetDetectionSettings.TARGET_MAPS_ANSWERS_PATH, str(index) + ".json")
 
             positive_list = TargetDetector.detect_targets(current_target_map)
 
@@ -32,7 +32,7 @@ class MassTargetDetector(object):
             list_to_eliminate = single_target_capturer_results[1]
 
             for index_2 in range(len(single_target_crops)):
-                single_target_crops[index_2].save(TargetDetectionSettings.TARGET_DETECTION_REPORT_SAVE_PATH + "/Single Target Crops" + "/" + str(index) + "-" + str(index_2 + 1) + ".png")
+                single_target_crops[index_2].save(os.path.join(TargetDetectionSettings.TARGET_DETECTION_REPORT_SAVE_PATH, "Single_Target_Crops", str(index) + "-" + str(index_2 + 1) + ".png"))
 
             index_3 = len(list_to_eliminate) - 1
             while(index_3 >= 0):
