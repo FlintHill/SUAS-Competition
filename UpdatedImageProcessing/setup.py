@@ -27,7 +27,7 @@ setup(
 
     packages = find_packages(),
 
-    install_requires = ['numpy', 'pillow'],
+    install_requires = ['numpy', 'PIL', 'os', 'sys', 'json', 'cv2', 'math', 'io'],
 
     keywords = ['SUAS'],
 )
