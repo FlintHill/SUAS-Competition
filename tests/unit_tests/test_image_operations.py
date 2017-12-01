@@ -1,4 +1,5 @@
-import unittest, math
+import unittest
+import math
 from SUASSystem import Location, GCSSettings, inverse_haversine
 from SUASSystem.utils import *
 
