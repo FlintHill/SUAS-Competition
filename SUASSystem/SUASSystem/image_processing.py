@@ -1,5 +1,6 @@
 from time import sleep
-import os, math, sys
+import os
+import math
 from SUASSystem import utils, GCSSettings, inverse_haversine
 from PIL import Image
 
