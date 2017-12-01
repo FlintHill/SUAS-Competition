@@ -103,6 +103,7 @@ class SingleTargetsCapturer(object):
             quantized_image = ColorOperations.apply_color_quantization(captured_image, 4)
             quantized_image_average_corner_color = BlobColorOperations.find_average_corner_color(quantized_image)
             percentage_difference = ColorOperations.find_percentage_difference(target_map_average_color, quantized_image_average_corner_color)
+            #if the following four lines are uncommented, more targets would false positives would be captured.
             """
             if (percentage_difference >= 10):
 
