@@ -1,5 +1,6 @@
 from time import sleep
-import os, math
+import os
+import math
 from SUASSystem import utils, GCSSettings, inverse_haversine
 from PIL import Image
 
@@ -8,7 +9,13 @@ def run_img_proc_process(logger_queue, img_proc_status, location_log, targets_to
         if len(targets_to_submit) > 0:
             target_characteristics = targets_to_submit.pop(0)
 
-            target_time = utils.get_image_timestamp(target_characteristics["base_image_filename"])
+            if GCSSettings.UAV_VERSION == "10":
+                target_time = utils.get_image_timestamp_from_filename(target_characteristics["base_image_filename"])
+            elif GCSSettings.UAV_VERSION == "9.1":
+                target_time = utils.get_image_timestamp_from_metadata("static/imgs/" + target_characteristics["base_image_filename"])
+            else:
+                raise Exception("Unknown drone type")
+
             closest_time_index = 0
             least_time_difference = location_log[0]["epoch_time"]
             for index in range(len(location_log)):

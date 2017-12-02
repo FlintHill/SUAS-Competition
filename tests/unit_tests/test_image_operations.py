@@ -1,15 +1,20 @@
-import unittest, math
+import unittest
+import math
 from SUASSystem import Location, GCSSettings, inverse_haversine
-from SUASSystem.utils import get_image_timestamp, get_target_gps_location
+from SUASSystem.utils import *
 
 class ImageOperationsTestCase(unittest.TestCase):
 
-    def test_get_image_timestamp(self):
+    def test_get_image_timestamp_from_filename(self):
         self.test_filename = "image-1234567889910.jpg"
-        self.assertEqual(get_image_timestamp(self.test_filename), 1234567889910)
+        self.assertEqual(get_image_timestamp_from_filename(self.test_filename), 1234567889910)
 
         self.test_filename = "image-0.jpg"
-        self.assertEqual(get_image_timestamp(self.test_filename), 0)
+        self.assertEqual(get_image_timestamp_from_filename(self.test_filename), 0)
+
+    def test_get_image_timestamp_from_metadata(self):
+        self.test_path = "tests/images/metadata_test_img.JPG"
+        self.assertEqual(get_image_timestamp_from_metadata(self.test_path), 1511953162)
 
     def test_get_target_gps_location(self):
         self.test_drone_gps_location = Location(0,0,100)
