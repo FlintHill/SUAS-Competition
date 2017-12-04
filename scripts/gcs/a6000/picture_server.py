@@ -20,7 +20,9 @@ def get_image_list():
             if file_name.endswith(".jpg"):
                 pictures[pictures_index] = file_name
                 pictures_index = pictures_index + 1
-        return jsonify(pictures)
+        dict = {}
+        dict[“images”]= pictures
+        return jsonify(dict[“images”])
     except:
         traceback.print_exc()
 
