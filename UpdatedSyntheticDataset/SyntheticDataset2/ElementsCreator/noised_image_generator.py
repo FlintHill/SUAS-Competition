@@ -16,7 +16,7 @@ class NoisedImageGenerator(object):
         if level != 0:
             image1 = ImageExtender.extend_image(image, int(image.width), int(image.height))
             image2 = GaussianNoiseGenerator.generate_gaussian_noise_by_level(image1, level, image.width)
-            return BoundedImageCropper.crop_bounded_image_inverse(image2, image2.load(), (255,255,255,0))
+            return BoundedImageCropper.crop_bounded_image_inverse(image2, (255,255,255,0))
         else:
             return image
 
@@ -32,6 +32,6 @@ class NoisedImageGenerator(object):
         if level != 0:
             image1 = ImageExtender.extend_image(image, int(image.width), int(image.height))
             image2 = GaussianNoiseGenerator.generate_gaussian_noise_by_radius(image1, radius)
-            return BoundedImageCropper.crop_bounded_image_inverse(image2, image2.load(), (255,255,255,0))
+            return BoundedImageCropper.crop_bounded_image_inverse(image2, (255,255,255,0))
         else:
             return image
