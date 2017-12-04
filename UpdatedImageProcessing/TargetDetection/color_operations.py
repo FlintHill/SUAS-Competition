@@ -46,6 +46,7 @@ class ColorOperations(object):
         right_x = max(list_of_x)
         up_y = min(list_of_y)
         low_y = max(list_of_y)
+
         return (left_x - margin_length, up_y - margin_length, right_x + margin_length, low_y + margin_length)
 
     @staticmethod
@@ -73,6 +74,7 @@ class ColorOperations(object):
                     pixel_access_captured_image[x, y] = (255, 255, 255, 0)
 
             y = quantized_image.height - 1
+
             while (y >= 0):
                 color_difference = ColorOperations.find_percentage_difference(threshold_color, pixel_access_quantized_image[x, y])
 
@@ -97,6 +99,7 @@ class ColorOperations(object):
                     pixel_access_captured_image[x, y] = (255, 255, 255, 0)
 
             x = quantized_image.width - 1
+            
             while (x >= 0):
                 color_difference = ColorOperations.find_percentage_difference(threshold_color, pixel_access_quantized_image[x, y])
 

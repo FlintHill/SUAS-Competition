@@ -27,8 +27,10 @@ class AutomaticTester(object):
 
         true_positive_list = []
         false_positive_list = []
+
         for index_1 in range(len(positive_list)):
             true_positive_found = False
+
             for index_2 in range(len(answer_sheet["targets"])):
                 blob_center_x = positive_list[index_1][0] + (positive_list[index_1][2] / 2)
                 blob_center_y = positive_list[index_1][1] + (positive_list[index_1][3] / 2)
@@ -38,6 +40,7 @@ class AutomaticTester(object):
                 if ((abs(blob_center_x - target_center_x) <= 20) and (abs(blob_center_y - target_center_y) <= 20)):
                     true_positive_list.append(positive_list[index_1])
                     true_positive_found = True
+                    
             if (true_positive_found == False):
                 false_positive_list.append(positive_list[index_1])
 
