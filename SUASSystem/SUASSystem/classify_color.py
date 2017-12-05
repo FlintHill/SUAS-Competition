@@ -16,7 +16,7 @@ class ColorClassifier(object):
 
 	def __init__(self, img=None, imgs=None):
 		"""
-		Constructor
+		Constructor. 
 		"""
 		if img is not None and imgs is not None:
 			raise Exception("classify_color.py: Cannot pass both an img object and imgs array")
@@ -43,7 +43,8 @@ class ColorClassifier(object):
 
 	def load_images(self, image_dir, count=sys.maxint):
 		"""
-		Import all the targets images from a specified directory.
+		Import all (or a specific number of) the target images from a specified 
+		directory.
 
 		:param image_dir:	target images dir. ex: "targets/single_targets"
 		:param count:		number of images to load, starting from the lowest
@@ -63,6 +64,11 @@ class ColorClassifier(object):
 
 		if count != sys.maxint:
 			self.imgs = self.imgs[0:count]
+
+	def add_images(self, new_imgs):
+		"""
+
+		"""
 
 	def get_color(self, img):
 		"""
@@ -111,9 +117,9 @@ class ColorClassifier(object):
 		See page 3 of:
 			http://www.math.usm.edu/lambers/mat169/fall09/lecture17.pdf
 		"""
-		return np.sqrt((p2[0] - p1[0])**2 + (p2[1] - p[1])**2 + (p2[2] - p1[2])**2)
+		return np.sqrt((p2[0] - p1[0])**2 + (p2[1] - p1[1])**2 + (p2[2] - p1[2])**2)
 
-	def convert_rgb_to_color_name(self, rgba):
+	def convert_rgba_to_color_name(self, rgba):
 		"""
 		Using min-distance approximation, this function converts the rgba value,
 		which is a list of [r, g, b, a] into it's closest color name, which are
@@ -131,7 +137,6 @@ class ColorClassifier(object):
 			"orange": [255, 165, 0, 255]
 
 		:param rgba:	color component in the format [r, g, b, a].
-
 		:type rgba:		four element list.
 
 		:return:		"white", "black", etc.
@@ -140,16 +145,15 @@ class ColorClassifier(object):
 		distances = []
 		i = 0
 
-		for color in self.colors:
+		for color in self.colors.keys():
 			distances.append(0)
+
+			c = self.colors[color]
 
 			distances[i] = self.three_dimesional_distance(
 				[rgba[0], rgba[1], rgba[2]],
-				[color[0], color[1], color[2]]
+				[c[0], c[1], c[2]]
 			)
-
-			#for component in color:
-			#	distance[i] = three_dimesional_distance()
 
 			i += 1 
 
@@ -159,13 +163,13 @@ class ColorClassifier(object):
 		j = 0
 
 		for distance in distances:
-			if d < distance:
+			if distance < d:
 				d = distance
 				i = j
 
 			j += 1
 
-		return self.colors[0]
+		return self.colors.keys()[i]
 
 	def convert_color_name_to_rgba(self, color_name):
 		"""
