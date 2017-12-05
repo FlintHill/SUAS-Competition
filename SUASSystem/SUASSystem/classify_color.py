@@ -4,9 +4,9 @@ from os import walk
 import numpy as np
 
 try:
-    from PIL import Image
+	from PIL import Image
 except ImportError:
-    import Image
+	import Image
 
 
 class ColorClassifier(object):
@@ -23,6 +23,18 @@ class ColorClassifier(object):
 
 		self.imgs = []
 		self.results = []
+		self.colors = {
+			"white": [255, 255, 255, 255],
+			"black": [0, 0, 0, 255],
+			"gray": [128, 128, 128, 255],
+			"red": [255, 0, 0, 255],
+			"blue": [0, 0, 255, 255],
+			"green": [0, 255, 0, 255],
+			"yellow": [255, 255, 0, 255],
+			"purple": [128, 0, 128, 255],
+			"brown": [165, 42, 42, 255],
+			"orange": [255, 165, 0, 255]
+		}
 
 		if img is not None:
 			self.imgs.append(img)
@@ -52,16 +64,10 @@ class ColorClassifier(object):
 		if count != sys.maxint:
 			self.imgs = self.imgs[0:count]
 
-	def get_color():
-		return True
-
-	def get_colors(self, verbose=False):
+	def get_color(self, img):
 		"""
 
 		"""
-		for img in self.imgs:
-			self.results.append("[192, 192, 192, 255]")
-
 		# collect unique colors and number how many there are
 
 		# check colors in center
@@ -70,20 +76,113 @@ class ColorClassifier(object):
 
 		# report shape color background only
 
-		return self.results
+		return True
 
-	def convert_rgb_to_color_name(rgba):
+	def get_colors(self, verbose=False):
+		"""
+		If ColorClassifier has been passed the filenames of multiple images,
+		then 
+		"""
+		if len(self.imgs) == 1:
+			return get_color(self.imgs[0])
+
+		output = []
+
+		for img in self.imgs:
+			output.append(self.get_color(img))
+
+		return output
+
+	def three_dimesional_distance(self, p1, p2):
+		"""
+		Calculates the distance between two three dimesional points.
+
+		p1 or p2 should be a list of three elements:
+			[x, y, z]
+
+		:param p1:	point one with x, y, z.
+		:param p2:	point two with x, y, z.
+
+		:type p1:	three element list.
+		:type p2:	three element list.
+
+		:return:	float distance.
+
+		See page 3 of:
+			http://www.math.usm.edu/lambers/mat169/fall09/lecture17.pdf
+		"""
+		return np.sqrt((p2[0] - p1[0])**2 + (p2[1] - p[1])**2 + (p2[2] - p1[2])**2)
+
+	def convert_rgb_to_color_name(self, rgba):
+		"""
+		Using min-distance approximation, this function converts the rgba value,
+		which is a list of [r, g, b, a] into it's closest color name, which are
+		as follows:
+
+			"white": [255, 255, 255, 255]
+			"black": [0, 0, 0, 255]
+			"gray": [128, 128, 128, 255]
+			"red": [255, 0, 0, 255]
+			"blue": [0, 0, 255, 255]
+			"green": [0, 255, 0, 255]
+			"yellow": [255, 255, 0, 255]
+			"purple": [128, 0, 128, 255]
+			"brown": [165, 42, 42, 255]
+			"orange": [255, 165, 0, 255]
+
+		:param rgba:	color component in the format [r, g, b, a].
+
+		:type rgba:		four element list.
+
+		:return:		"white", "black", etc.
+		"""
+
+		distances = []
+		i = 0
+
+		for color in self.colors:
+			distances.append(0)
+
+			distances[i] = self.three_dimesional_distance(
+				[rgba[0], rgba[1], rgba[2]],
+				[color[0], color[1], color[2]]
+			)
+
+			#for component in color:
+			#	distance[i] = three_dimesional_distance()
+
+			i += 1 
+
 		# approximate color name based on min-distance
-		return [0, 255, 255, 255]
+		d = sys.maxint
+		i = 0
+		j = 0
 
-	def convert_color_name_to_rgb(color_name):
+		for distance in distances:
+			if d < distance:
+				d = distance
+				i = j
+
+			j += 1
+
+		return self.colors[0]
+
+	def convert_color_name_to_rgba(self, color_name):
 		"""
 		Takes in a cardinal color name and converts it to an rgba value with
 		100 percent alpha.
+
+		:param color_name:	Cardinal name of color.
+
+							Either "white", "black", 
+							"gray", "red", "blue", "green", "yellow", "purple", 
+							"brown", or "orange".
+
+		:type color_name:	String.
+
+		:return:			rgba version of color.
 		"""
-		return {
-			"red": 
-		}[color_name]
+		return self.colors[color_name]
 
 	def __str__(self):
 		print("----- COLOR CLASSIFIER -----")
