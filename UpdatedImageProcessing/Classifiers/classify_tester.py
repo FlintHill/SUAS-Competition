@@ -140,7 +140,7 @@ def load_images(image_dir, count=sys.maxint):
 	return imgs
 
 ### color tester
-directory = "targets_new/single_targets"
+directory = "../../../image-processing/targets_new/single_targets"
 
 imgs = load_images(directory, count=10)
 results = []
@@ -152,5 +152,5 @@ for img in imgs:
 
 ### color tester
 
-main.compare_results("targets_new/single_targets_answers/", "targets.0.alphanumeric_color", results, verbose=True)
+main.compare_results(directory + "_answers/", "targets.0.alphanumeric_color", results, verbose=True)
 
