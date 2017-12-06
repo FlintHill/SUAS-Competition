@@ -1,11 +1,14 @@
 #!/bin/bash
 
-waitTime=5
+WAIT_TIME=5
+
+mkdir imgs
+cd imgs
 
 while [ true ]
 do
   fn=$(date +%s)
   gphoto2 --capture-image-and-download --filename image-$fn.jpg
-  mv image-$fn.jpg imgs/
-  sleep $waitTime
+
+  sleep $WAIT_TIME
 done

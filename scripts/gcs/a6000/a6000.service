@@ -6,6 +6,9 @@ ExecStart=/home/odroid/Desktop/SUAS-Competition/scripts/gcs/a6000/startup_pictur
 User=odroid
 Group=root
 StandardOutput=null
+TimeoutSec=30
+Restart=on-failure
+RestartSec=30
 
 [Install]
 WantedBy=multi-user.target

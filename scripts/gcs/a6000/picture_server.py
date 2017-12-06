@@ -1,4 +1,7 @@
-from flask import Flask, jsonify, send_from_directory, make_response
+from flask import Flask
+from flask import jsonify
+from flask import send_from_directory
+from flask import make_response
 import traceback
 import os
 
@@ -14,17 +17,14 @@ def get_image(path):
 @app.route('/get/imgs', methods=["GET"])
 def get_image_list():
     try:
-        pictures = {}
-        pictures_index = 0
+        pictures = []
         for file_name in os.listdir('imgs'):
             if file_name.endswith(".jpg"):
-                pictures[pictures_index] = file_name
-                pictures_index = pictures_index + 1
-        dict = {}
-        dict[“images”]= pictures
-        return jsonify(dict[“images”])
+                pictures.append(file_name)
+
+        return jsonify({"image_list" : pictures})
     except:
         traceback.print_exc()
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0")
+    app.run(host="0.0.0.0", port="8000")
