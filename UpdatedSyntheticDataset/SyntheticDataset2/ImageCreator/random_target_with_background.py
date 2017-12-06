@@ -8,13 +8,20 @@ from SyntheticDataset2.logger import Logger
 
 class RandomTargetWithBackground(object):
 
-    def __init__(self):
+    def __init__(self, shape_type, shape_orientation, letter, shape_color, letter_color, rotation):
+        self.shape_type = shape_type
+        self.shape_orientation = shape_orientation
+        self.letter = letter
+        self.shape_color = shape_color
+        self.letter_color = letter_color
+        self.rotation = rotation
+
         self.size_range = Settings.TARGET_SIZE_RANGE_IN_PIXELS
         self.proportionality_range = Settings.PROPORTIONALITY_RANGE
         self.pixelization_level = Settings.PIXELIZATION_LEVEL
         self.noise_level = Settings.NOISE_LEVEL
 
-        self.random_target = RandomTarget(self.size_range, self.proportionality_range, self.pixelization_level, self.noise_level)
+        self.random_target = RandomTarget(self.shape_type, self.shape_orientation, self.letter, self.size_range, self.proportionality_range, self.shape_color, self.letter_color, self.rotation, self.pixelization_level, self.noise_level)
 
         self.new_target_dimension = random.randint(Settings.TARGET_SIZE_RANGE_IN_PIXELS[0], Settings.TARGET_SIZE_RANGE_IN_PIXELS[1])
         self.target_image = self.random_target.create_random_target()
@@ -33,12 +40,12 @@ class RandomTargetWithBackground(object):
 
         Logger.log("Target's Dimension in pixels: " + str(self.new_target_dimension + 20)
                    + "\nTarget's Dimension in inches: " + str(float(self.new_target_dimension + 20) / Settings.PPSI)
-                   + "\nshape_type: " + self.random_target.random_shape_type
-                   + "\nshape_color: (" + str(self.random_target.random_shape_color[0]) + ", " + str(self.random_target.random_shape_color[1]) + ", " + str(self.random_target.random_shape_color[2]) + ")"
-                   + "\nalphanumeric_value: " + self.random_target.random_letter
-                   + "\nalphanumeric_color: (" + str(self.random_target.random_letter_color[0]) + ", " + str(self.random_target.random_letter_color[1]) + ", " + str(self.random_target.random_letter_color[2]) + ")"
-                   + "\norientation in degree from north: " + str(self.random_target.random_rotation)
-                   + "\ncardinal orientation: " + CardinalDirectionConverter.convert_to_cardinal_direction(self.random_target.random_rotation)
+                   + "\nshape_type: " + self.random_target.shape_type
+                   + "\nshape_color: (" + str(self.random_target.shape_color[0]) + ", " + str(self.random_target.shape_color[1]) + ", " + str(self.random_target.shape_color[2]) + ")"
+                   + "\nalphanumeric_value: " + self.random_target.letter
+                   + "\nalphanumeric_color: (" + str(self.random_target.letter_color[0]) + ", " + str(self.random_target.letter_color[1]) + ", " + str(self.random_target.letter_color[2]) + ")"
+                   + "\norientation in degree from north: " + str(self.random_target.rotation)
+                   + "\ncardinal orientation: " + CardinalDirectionConverter.convert_to_cardinal_direction(self.random_target.rotation)
                    + "\ntarget_center_coordinates: " + str(10+(self.new_target_width / 2)) + ", " + str(10 + (self.new_target_height / 2)) + "\n")
 
         return self.background
@@ -47,12 +54,12 @@ class RandomTargetWithBackground(object):
         data={}
         data["targets"] = []
         data["targets"].append({
-            "shape_type": self.random_target.random_shape_type,
-            "shape_color": self.random_target.random_shape_color,
-            "alphanumeric_value": self.random_target.random_letter,
-            "alphanumeric_color": self.random_target.random_letter_color,
-            "orientation in degree from north": self.random_target.random_rotation,
-            "cardinal orientation": CardinalDirectionConverter.convert_to_cardinal_direction(self.random_target.random_rotation),
+            "shape_type": self.random_target.shape_type,
+            "shape_color": self.random_target.shape_color,
+            "alphanumeric_value": self.random_target.letter,
+            "alphanumeric_color": self.random_target.letter_color,
+            "orientation in degree from north": self.random_target.rotation,
+            "cardinal orientation": CardinalDirectionConverter.convert_to_cardinal_direction(self.random_target.rotation),
             "target_center_coordinates": ((10+(self.new_target_width / 2)), (10 + (self.new_target_height / 2)))
         })
         with open(Settings.SAVE_PATH + Settings.ANSWERS_DIRECTORY + "/single_targets_answers/" + str(index_number) + ".json", 'w') as outfile:

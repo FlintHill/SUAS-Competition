@@ -5,15 +5,15 @@ from SyntheticDataset2.logger import Logger
 class SyntheticDatasetMaker(object):
 
     @staticmethod
-    def run_target_maps_generator(number_of_target_maps, number_of_targets_on_each_map, process_number):
+    def run_target_maps_generator(number_of_target_maps, number_of_targets_on_each_map, process_number, shape_type, shape_orientation, letter, shape_color, letter_color, rotation):
         for index in range(number_of_target_maps):
-            target_map = TargetMap(number_of_targets_on_each_map, "randomize", "randomize", "randomize", "randomize", "randomize")
-            target_map.create_target_map()
+            target_map = TargetMap(number_of_targets_on_each_map, shape_type, shape_orientation, letter, shape_color, letter_color, rotation)
+            target_map.create_random_target_map()
             Logger.log("Current process: " + str((process_number / number_of_target_maps) + 1) + "\n")
-            target_map.record_target_map(process_number + index + 1)
+            target_map.record_random_target_map(process_number + index + 1)
 
     @staticmethod
-    def create_target_maps(number_of_target_maps, number_of_targets_on_each_map):
+    def create_target_maps(number_of_target_maps, number_of_targets_on_each_map, shape_type, shape_orientation, letter, shape_color, letter_color, rotation):
         if (os.path.isdir(Settings.SAVE_PATH + Settings.ANSWERS_DIRECTORY)):
             pass
         else:
@@ -33,7 +33,7 @@ class SyntheticDatasetMaker(object):
         jobs = []
         for index in range(cpu_count):
             starting_index = index * int(pics_per_process)
-            image_generation_process = multiprocessing.Process(target=SyntheticDatasetMaker.run_target_maps_generator, args=(pics_per_process, number_of_targets_on_each_map, starting_index))
+            image_generation_process = multiprocessing.Process(target=SyntheticDatasetMaker.run_target_maps_generator, args=(pics_per_process, number_of_targets_on_each_map, starting_index, shape_type, shape_orientation, letter, shape_color, letter_color, rotation))
             jobs.append(image_generation_process)
             image_generation_process.start()
 
@@ -49,15 +49,15 @@ class SyntheticDatasetMaker(object):
         print("====================================")
 
     @staticmethod
-    def run_single_targets_generator(number_of_single_targets, process_number):
+    def run_single_targets_generator(number_of_single_targets, process_number, shape_type, shape_orientation, letter, shape_color, letter_color, rotation):
         for index in range(number_of_single_targets):
-            single_target = RandomTargetWithBackground()
+            single_target = RandomTargetWithBackground(shape_type, shape_orientation, letter, shape_color, letter_color, rotation)
             single_target.create_random_target_with_background()
             Logger.log("Current process: " + str((process_number / number_of_single_targets) + 1) + "\n")
             single_target.record_random_target_with_background(process_number + index + 1)
 
     @staticmethod
-    def create_single_targets(number_of_single_targets):
+    def create_single_targets(number_of_single_targets, shape_type, shape_orientation, letter, shape_color, letter_color, rotation):
         if (os.path.isdir(Settings.SAVE_PATH + Settings.ANSWERS_DIRECTORY)):
             pass
         else:
@@ -78,7 +78,7 @@ class SyntheticDatasetMaker(object):
         jobs = []
         for index in range(cpu_count):
             starting_index = index * int(pics_per_process)
-            image_generation_process = multiprocessing.Process(target=SyntheticDatasetMaker.run_single_targets_generator, args=(pics_per_process,starting_index))
+            image_generation_process = multiprocessing.Process(target=SyntheticDatasetMaker.run_single_targets_generator, args=(pics_per_process, starting_index, shape_type, shape_orientation, letter, shape_color, letter_color, rotation))
             jobs.append(image_generation_process)
             image_generation_process.start()
 

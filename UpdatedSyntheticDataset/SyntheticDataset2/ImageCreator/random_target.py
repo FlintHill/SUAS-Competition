@@ -26,7 +26,7 @@ class RandomTarget(object):
         self.proportionality_range = proportionality_range
         self.shape_color = shape_color
         self.letter_color = letter_color
-        self.rotaton = rotation
+        self.rotation = rotation
         self.pixelization_level = pixelization_level
         self.noise_level = noise_level
 
@@ -46,14 +46,14 @@ class RandomTarget(object):
                                   ShapeOrientations.SOUTHWEST, ShapeOrientations.NORTHSOUTH,
                                   ShapeOrientations.EASTWEST]
 
-        if (self.shape_type == "randomize"):
+        if (self.shape_orientation == "randomize"):
             if self.shape_type == ShapeTypes.CIRCLE:
                 self.shape_orientation = ShapeOrientations.NORTH
             elif self.shape_type == ShapeTypes.QUARTERCIRCLE:
                 self.shape_orientation = shape_orientation_list[random.randint(1, 8)]
             elif self.shape_type == ShapeTypes.HALFCIRCLE:
                 self.shape_orientation = shape_orientation_list[random.randint(1, 4)]
-            elif self.shape_type == ShapeTypes.CROSS or self.random_shape_type == ShapeTypes.SQUARE or self.random_shape_type == ShapeTypes.HEXAGON or self.random_shape_type == ShapeTypes.OCTAGON:
+            elif self.shape_type == ShapeTypes.CROSS or self.shape_type == ShapeTypes.SQUARE or self.shape_type == ShapeTypes.HEXAGON or self.shape_type == ShapeTypes.OCTAGON:
                 self.shape_orientation = shape_orientation_list[random.randint(0, 1)]
             elif self.shape_type == ShapeTypes.RECTANGLE:
                 self.shape_orientation = shape_orientation_list[random.randint(9, 10)]
@@ -67,7 +67,6 @@ class RandomTarget(object):
             self.letter = letter_list[random.randint(0, 25)]
 
         self.size = random.randint(size_range[0], size_range[1])
-
         self.proportionality = random.uniform(proportionality_range[0], proportionality_range[1])
 
         color_list = [(255, 255, 255, 255), (0, 0, 0, 255), (255, 0, 0, 255), (0, 255, 0, 255), (0, 0, 255, 255),

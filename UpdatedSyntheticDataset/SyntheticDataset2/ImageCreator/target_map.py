@@ -11,19 +11,21 @@ from SyntheticDataset2.logger import Logger
 
 class TargetMap(object):
 
-    def __init__(self, number_of_targets, shape_type, shape_orientation, letter, shape_color, letter_color):
+    def __init__(self, number_of_targets, shape_type, shape_orientation, letter, shape_color, letter_color, rotation):
         """
         :param number_of_targets: the number of targets to be created.
         :type number_of_targets: int
         """
         self.number_of_targets = number_of_targets
+        self.background = BackgroundGenerator(Settings.BACKGROUND_DIRECTORY_PATH).generate_full_background()
+
         self.shape_type = shape_type
         self.shape_orientation = shape_orientation
         self.letter = letter
         self.shape_color = shape_color
         self.letter_color = letter_color
+        self.rotation = rotation
 
-        self.background = BackgroundGenerator(Settings.BACKGROUND_DIRECTORY_PATH).generate_full_background()
         self.size_range = [Settings.TARGET_GENERATION_SIZE_IN_PIXELS, Settings.TARGET_GENERATION_SIZE_IN_PIXELS]
         self.proportionality_range = Settings.PROPORTIONALITY_RANGE
         self.pixelization_level = Settings.PIXELIZATION_LEVEL
@@ -32,7 +34,7 @@ class TargetMap(object):
         self.target_list = []
         self.total_targets_output = 0
 
-    def create_target_map(self):
+    def create_random_target_map(self):
         """
         Create a map with a specified number of random targets.
 
@@ -163,7 +165,7 @@ class TargetMap(object):
 
         return self.total_targets_output
 
-    def record_target_map(self, index_number):
+    def record_random_target_map(self, index_number):
         data = {}
         data["targets"] = []
         for index in range (self.total_targets_output):
