@@ -159,18 +159,18 @@ class ObstacleMap(object):
                     [obstacle.get_point()[0] + obstacle.get_radius(), obstacle.get_point()[1], obstacle.get_height() + (Constants.STATIONARY_OBSTACLE_SAFETY_RADIUS)],
                     [obstacle.get_point()[0] - obstacle.get_radius(), obstacle.get_point()[1], obstacle.get_height() + (Constants.STATIONARY_OBSTACLE_SAFETY_RADIUS)]
                 ]
-                for new_point in new_attempt_pos_points:
-                    print("New Attempt Pos Point", str(new_point))
+                #for new_point in new_attempt_pos_points:
+                #    print("New Attempt Pos Point", str(new_point))
 
                 new_paths = []
                 for new_pos_point in new_attempt_pos_points:
                     print(self.flight_boundary.is_point_in_bounds(new_pos_point))
-                    if not self.does_path_intersect_obstacle_3d(obstacle, self.drone.get_point(), new_pos_point) and self.flight_boundary.is_point_in_bounds(new_pos_point):
+                    if not self.does_path_intersect_obstacle_2d(obstacle, self.drone.get_point(), new_pos_point) and self.flight_boundary.is_point_in_bounds(new_pos_point):
                     #if self.flight_boundary.is_point_in_bounds(new_pos_point):
                         for recursive_new_pos_point in new_attempt_pos_points:
                             if self.flight_boundary.is_point_in_bounds(recursive_new_pos_point) and abs(recursive_new_pos_point[2] - new_pos_point[2]) < 5:
                                 if recursive_new_pos_point[0] != new_pos_point[0] or recursive_new_pos_point[1] != new_pos_point[1]:
-                                    if not self.does_path_intersect_obstacle_3d(obstacle, new_pos_point, recursive_new_pos_point) and not self.does_path_intersect_obstacle_3d(obstacle, recursive_new_pos_point, self.drone.get_waypoint_holder().get_current_waypoint()):
+                                    if not self.does_path_intersect_obstacle_2d(obstacle, new_pos_point, recursive_new_pos_point) and not self.does_path_intersect_obstacle_2d(obstacle, recursive_new_pos_point, self.drone.get_waypoint_holder().get_current_waypoint()):
                                         new_paths.append([new_pos_point, recursive_new_pos_point])
 
                 # Uncomment for DEBUGGING ONLY
@@ -230,37 +230,6 @@ class ObstacleMap(object):
 
         if self.is_obstacle_in_path_of_drone(obstacle_vector, waypoint_vector):
             return rejection_vector_magnitude < obstacle.get_radius()
-
-        return False
-
-    def does_path_intersect_obstacle_3d(self, obstacle, drone_point, waypoint):
-        """
-        Determine if the vector between a UAV's position and the current waypoint intersect
-        an obstacle.
-
-        :param obstacle: The obstacle to determine if the UAV intersects with
-        :type obstacle: StationaryObstacle or MovingObstacle
-        :param uav_point: The UAV's position
-        :type uav_point: Numpy Array
-        :param waypoint: The waypoint that the UAV is headed to
-        :type waypoint: Numpy Array
-        """
-        waypoint_vector = np.subtract(waypoint, drone_point)
-        obstacle_vector = np.subtract(obstacle.get_point(), drone_point)
-        obstacle_vector_magnitude = VectorMath.get_vector_magnitude(obstacle_vector)
-        rejection_vector = VectorMath.get_vector_rejection(obstacle_vector, waypoint_vector)
-        rejection_vector_magnitude = VectorMath.get_vector_magnitude(rejection_vector)
-
-        #Uncomment for DEBUGGING ONLY
-        #print("Waypoint Vector: " + str(waypoint_vector))
-        #print("Obstacle Vector: " + str(obstacle_vector))
-        #print("Rejection Vector: " + str(rejection_vector))
-        #print("Rejection Vector Magnitude: " + str(rejection_vector_magnitude))
-        #print("Obstacle Radius: " + str(obstacle.get_radius()))
-        #print("Distance From Obstacle: " + str(VectorMath.get_vector_magnitude(np.subtract(drone_point, obstacle.get_point()))))
-
-        if self.is_obstacle_in_path_of_drone(obstacle_vector, waypoint_vector):
-            return rejection_vector_magnitude < Constants.STATIONARY_OBSTACLE_SAFETY_RADIUS
 
         return False
 
