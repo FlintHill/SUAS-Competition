@@ -1,6 +1,6 @@
 import sys
 from os import walk
-#import cv2
+import cv2
 import numpy as np
 
 try:
@@ -8,21 +8,23 @@ try:
 except ImportError:
 	import Image
 
-
 class ColorClassifier(object):
 	"""
 	Step 4: Autonomously classify shape color and alphanumeric color.
 	"""
 
-	def __init__(self, img=None, imgs=None):
+	def __init__(self, img=None):
 		"""
-		Constructor. 
-		"""
-		if img is not None and imgs is not None:
-			raise Exception("classify_color.py: Cannot pass both an img object and imgs array")
+		Constructor.
 
-		self.imgs = []
-		self.results = []
+		:param img:		Opened PIL (Python Image Library) image.
+		:type img:		PIL.Image.Image
+
+		:return:		Nothing.
+		"""
+		if img != None:
+			self.img = img
+
 		self.colors = {
 			"white": [255, 255, 255, 255],
 			"black": [0, 0, 0, 255],
@@ -36,70 +38,85 @@ class ColorClassifier(object):
 			"orange": [255, 165, 0, 255]
 		}
 
-		if img is not None:
-			self.imgs.append(img)
-		elif imgs is not None:
-			self.imgs = imgs
-
-	def load_images(self, image_dir, count=sys.maxint):
-		"""
-		Import all (or a specific number of) the target images from a specified 
-		directory.
-
-		:param image_dir:	target images dir. ex: "targets/single_targets"
-		:param count:		number of images to load, starting from the lowest
-							file name ascending.
-
-							ex: 
-							when count=3:
-							["1.jpg", "2.jpg", "3.jpg"]
-		"""
-		for (dirpath, dirnames, filenames) in walk(image_dir):
-			self.imgs = filenames
-			break
-
-		self.imgs.sort(key=lambda f: int(filter(str.isdigit, f)))
-
-		self.imgs = np.array(self.imgs)
-
-		if count != sys.maxint:
-			self.imgs = self.imgs[0:count]
-
-	def add_images(self, new_imgs):
-		"""
-
-		"""
-
-	def get_color(self, img):
+	def get_color(self, img=None):
 		"""
 		Gets the color of the background and text inside a target.
 
-		
+		If no img is passed to get_color, then this function assumes to use the 
+		PIL image passed in the constructor.
+
+		:param img:		optional. Opened PIL image.
+		:type img:		PIL object.
+
+		:return:		Two element list, where the first element is the shape
+						color, and the second element is the text color. Ex:
+							["red", "green"]
+						or, simply:
+							[<background color>, <text color>]
 		"""
-		# collect unique colors and number how many there are
+		passed = Image.open(self.img)
 
-		# check colors in center
+		# convert pil to opencv2
+		img = np.array(passed)
+		img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
-		# compare against unique color list
+		Z = img.reshape((-1, 3))
 
-		# report shape color background only
+		# convert to np.float32
+		Z = np.float32(Z)
 
-		return True
+		# define criteria, number of clusters(K) and apply kmeans()
+		criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 10, 1.0)
+		K = 3
+		ret, label, center = cv2.kmeans(Z, K, None, criteria, 10, cv2.KMEANS_RANDOM_CENTERS)
 
-	def get_colors(self, verbose=False):
-		"""
-		If ColorClassifier has been passed the filenames of multiple images,
-		then 
-		"""
-		if len(self.imgs) == 1:
-			return get_color(self.imgs[0])
+		# now convert back into uint8, and make original image
+		center = np.uint8(center)
+		res = center[label.flatten()]
+		res2 = res.reshape((img.shape)) # actual image
 
-		output = []
+		# grab colors from image
+		res3 = cv2.cvtColor(res2, cv2.COLOR_RGB2BGR)
+		colors_from_img = set( tuple(v) for m2d in res3 for v in m2d )
 
-		for img in self.imgs:
-			output.append(self.get_color(img))
+		print("classify_color.py: Raw colors from image: " + str(colors_from_img))
 
-		return output
+		color_names_from_img = []
+
+		for color in colors_from_img:
+			color_names_from_img.append(self.convert_rgba_to_color_name(list(color)))
+
+		if "white" in color_names_from_img:
+			color_names_from_img.remove("white") # remove background
+
+		print("classify_color.py: Converted color names: " + str(color_names_from_img))
+
+		# figure out which color comes first, reading from the center row outwards
+		height, width, channels = img.shape
+		print("classify_color.py: Height of image is " + str(height) + "px and width is " + str(width) + "px.")
+		print("classify_color.py: Height divided by 2, rounded, is " + str(int(round(height/2.0))) + ".")
+
+		row = int(round(height/2.0))
+
+		shape_color = None
+		text_color = None
+
+		for column in range(1, width):
+			if self.convert_color_name_to_rgba(self.convert_rgba_to_color_name(res3[row, column])) == self.convert_color_name_to_rgba(color_names_from_img[0]):
+				shape_color = color_names_from_img[0]
+				text_color = color_names_from_img[1]
+			elif self.convert_color_name_to_rgba(self.convert_rgba_to_color_name(res3[row, column])) == self.convert_color_name_to_rgba(color_names_from_img[1]):
+				shape_color = color_names_from_img[1]
+				text_color = color_names_from_img[0]
+
+			if shape_color != None and text_color != None:
+				print("classify_color.py: Determined shape color to be " + str(shape_color) + ".")
+				print("classify_color.py: Determined text color to be " + str(text_color) + ".")
+				break;
+
+		result = [shape_color, text_color]
+
+		return result
 
 	def three_dimesional_distance(self, p1, p2):
 		"""
@@ -173,6 +190,7 @@ class ColorClassifier(object):
 
 		return self.colors.keys()[i]
 
+
 	def convert_color_name_to_rgba(self, color_name):
 		"""
 		Takes in a cardinal color name and converts it to an rgba value with
@@ -191,16 +209,12 @@ class ColorClassifier(object):
 		return self.colors[color_name]
 
 	def __str__(self):
-		print("----- COLOR CLASSIFIER -----")
+		"""
+		To string method.
+
+		:return:	Nothing.
+		"""
+		print("<COLOR CLASSIFIER>")
 		print("Type:     Object.")
-		print("Contains: " + str(len(imgs)) + " images.")
-		print("Files:")
 		print("")
-
-		self.print_image_filenames()
-
-		print("")
-		print("----- END COLOR CLASSIFIER -----")
-
-
-
+		print("</COLOR CLASSIFIER>")
