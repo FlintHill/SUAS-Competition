@@ -7,10 +7,10 @@ class SyntheticDatasetMaker(object):
     @staticmethod
     def run_target_maps_generator(number_of_target_maps, number_of_targets_on_each_map, process_number):
         for index in range(number_of_target_maps):
-            target_map = TargetMap(number_of_targets_on_each_map)
-            target_map.create_random_target_map()
+            target_map = TargetMap(number_of_targets_on_each_map, "randomize", "randomize", "randomize", "randomize", "randomize")
+            target_map.create_target_map()
             Logger.log("Current process: " + str((process_number / number_of_target_maps) + 1) + "\n")
-            target_map.record_random_target_map(process_number + index + 1)
+            target_map.record_target_map(process_number + index + 1)
 
     @staticmethod
     def create_target_maps(number_of_target_maps, number_of_targets_on_each_map):

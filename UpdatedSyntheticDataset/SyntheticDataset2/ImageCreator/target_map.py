@@ -11,12 +11,18 @@ from SyntheticDataset2.logger import Logger
 
 class TargetMap(object):
 
-    def __init__(self, number_of_targets):
+    def __init__(self, number_of_targets, shape_type, shape_orientation, letter, shape_color, letter_color):
         """
         :param number_of_targets: the number of targets to be created.
         :type number_of_targets: int
         """
         self.number_of_targets = number_of_targets
+        self.shape_type = shape_type
+        self.shape_orientation = shape_orientation
+        self.letter = letter
+        self.shape_color = shape_color
+        self.letter_color = letter_color
+
         self.background = BackgroundGenerator(Settings.BACKGROUND_DIRECTORY_PATH).generate_full_background()
         self.size_range = [Settings.TARGET_GENERATION_SIZE_IN_PIXELS, Settings.TARGET_GENERATION_SIZE_IN_PIXELS]
         self.proportionality_range = Settings.PROPORTIONALITY_RANGE
@@ -26,7 +32,7 @@ class TargetMap(object):
         self.target_list = []
         self.total_targets_output = 0
 
-    def create_random_target_map(self):
+    def create_target_map(self):
         """
         Create a map with a specified number of random targets.
 
@@ -48,7 +54,7 @@ class TargetMap(object):
 
         while index_number_of_targets <= self.number_of_targets:
 
-            random_target = RandomTarget(self.size_range, self.proportionality_range, self.pixelization_level, self.noise_level)
+            random_target = RandomTarget(self.shape_type, self.shape_orientation, self.letter, self.size_range, self.proportionality_range, self.shape_color, self.letter_color, self.rotation, self.pixelization_level, self.noise_level)
 
             raw_target_image = random_target.create_random_target()
             new_target_dimension = random.randint(Settings.TARGET_SIZE_RANGE_IN_PIXELS[0], Settings.TARGET_SIZE_RANGE_IN_PIXELS[1])
@@ -157,17 +163,17 @@ class TargetMap(object):
 
         return self.total_targets_output
 
-    def record_random_target_map(self, index_number):
+    def record_target_map(self, index_number):
         data = {}
         data["targets"] = []
         for index in range (self.total_targets_output):
             data["targets"].append({
-                "shape_type": self.target_list[index][0].random_shape_type,
-                "shape_color": self.target_list[index][0].random_shape_color,
-                "alphanumeric_value": self.target_list[index][0].random_letter,
-                "alphanumeric_color": self.target_list[index][0].random_letter_color,
-                "orientation in degree from north": self.target_list[index][0].random_rotation,
-                "cardinal orientation": CardinalDirectionConverter.convert_to_cardinal_direction(self.target_list[index][0].random_rotation),
+                "shape_type": self.target_list[index][0].shape_type,
+                "shape_color": self.target_list[index][0].shape_color,
+                "alphanumeric_value": self.target_list[index][0].letter,
+                "alphanumeric_color": self.target_list[index][0].letter_color,
+                "orientation in degree from north": self.target_list[index][0].rotation,
+                "cardinal orientation": CardinalDirectionConverter.convert_to_cardinal_direction(self.target_list[index][0].rotation),
                 "target_center_coordinates": (self.target_list[index][1], self.target_list[index][2])
             })
 
