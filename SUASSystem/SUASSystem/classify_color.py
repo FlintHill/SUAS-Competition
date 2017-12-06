@@ -72,7 +72,9 @@ class ColorClassifier(object):
 
 	def get_color(self, img):
 		"""
+		Gets the color of the background and text inside a target.
 
+		
 		"""
 		# collect unique colors and number how many there are
 
