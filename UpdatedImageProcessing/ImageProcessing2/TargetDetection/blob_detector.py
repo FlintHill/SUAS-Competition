@@ -22,7 +22,7 @@ class BlobDetector(object):
         self.raw_target_map_image = Image.open(target_map_image_path)
         self.raw_target_map_image = self.raw_target_map_image.convert("RGB")
         self.minimum_area = TargetDetectionSettings.TARGET_SIZE_RANGE_IN_PIXELS[0]
-        self.maximum_area = (TargetDetectionSettings.TARGET_SIZE_RANGE_IN_PIXELS[1]) ** 1.5
+        self.maximum_area = (TargetDetectionSettings.TARGET_SIZE_RANGE_IN_PIXELS[1]) ** 2
 
     def detect_blobs(self):
         """
@@ -120,10 +120,9 @@ class BlobDetector(object):
             blob_list.append((blob_top_left_x, blob_top_left_y, blob_width, blob_height))
 
         #Show the image with detected blobs circled.
-        """
+
         image_with_keypoints = cv2.drawKeypoints(image, keypoints, numpy.array([]), (0,0,255), cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
         image = Image.fromarray(image_with_keypoints, 'RGB')
         image.show()
-        """
 
         return blob_list
