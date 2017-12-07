@@ -21,7 +21,7 @@ class Settings(object):
     SINGLE_TARGET_PROPORTIONALITY = 2.5
     PROPORTIONALITY_RANGE = [1.5, 2.5]
     #See ImageResizer
-    PIXELIZATION_LEVEL = 10
+    PIXELIZATION_LEVEL = 5
 
     NOISE_LEVEL = 2
 
