@@ -91,7 +91,7 @@ class ClassifierTester(object):
 				false += 1
 
 				if verbose:
-					print("classifier.py: WRONG: image #" + str(i + 1) + " identified INCORRECTLY as " + str(result) + ". Answer was " + str(answers[i][0]) + ".")
+					print("classifier.py: WRONG:   image #" + str(i + 1) + " identified INCORRECTLY as " + str(result) + ". Answer was " + str(answers[i][0]) + ".")
 
 			i += 1
 
@@ -112,8 +112,6 @@ class ClassifierTester(object):
 		print("  Success rate: " + str( round( float(correct) / float(len(answers)), 4 ) * 100.0 ) + "%")
 		print("")
 
-
-main = ClassifierTester()
 
 def load_images(image_dir, count=sys.maxint):
 	"""
@@ -139,18 +137,22 @@ def load_images(image_dir, count=sys.maxint):
 
 	return imgs
 
-### color tester
-directory = "../../../image-processing/targets_new/single_targets"
 
-imgs = load_images(directory, count=10)
-results = []
+if __name__ == '__main__':
+	main = ClassifierTester()
+	
+	### color tester
+	directory = "../../../image-processing/targets_new/single_targets"
 
-for img in imgs:
-	test = ColorClassifier(directory + "/" + img)
-	results.append(test.get_color()[1])
+	imgs = load_images(directory, count=10)
+	results = []
+
+	for img in imgs:
+		test = ColorClassifier(directory + "/" + img)
+		results.append(test.get_color()[0])
 
 
-### color tester
+	### color tester
 
-main.compare_results(directory + "_answers/", "targets.0.alphanumeric_color", results, verbose=True)
+	main.compare_results(directory + "_answers/", "targets.0.shape_color", results, verbose=True)
 

@@ -3,10 +3,9 @@ from os import walk
 import cv2
 import numpy as np
 
-try:
-	from PIL import Image
-except ImportError:
-	import Image
+#from ..settings import ImgProcSettings
+
+from PIL import Image
 
 class ColorClassifier(object):
 	"""
@@ -22,8 +21,7 @@ class ColorClassifier(object):
 
 		:return:		Nothing.
 		"""
-		if img != None:
-			self.img = img
+		self.img = img
 
 		self.colors = {
 			"white": [255, 255, 255, 255],
@@ -38,6 +36,7 @@ class ColorClassifier(object):
 			"orange": [255, 165, 0, 255]
 		}
 
+	#@staticmethod
 	def get_color(self, img=None):
 		"""
 		Gets the color of the background and text inside a target.
@@ -45,7 +44,11 @@ class ColorClassifier(object):
 		If no img is passed to get_color, then this function assumes to use the 
 		PIL image passed in the constructor.
 
-		:param img:		optional. Opened PIL image.
+		See section 3 for code source:
+			https://docs.opencv.org/3.0-beta/doc/py_tutorials/py_ml/py_kmeans/
+			py_kmeans_opencv/py_kmeans_opencv.html
+
+		:param img:		optional. An opened PIL image.
 		:type img:		PIL object.
 
 		:return:		Two element list, where the first element is the shape
@@ -54,10 +57,10 @@ class ColorClassifier(object):
 						or, simply:
 							[<background color>, <text color>]
 		"""
-		passed = Image.open(self.img)
+		opened_img = Image.open(self.img)
 
 		# convert pil to opencv2
-		img = np.array(passed)
+		img = np.array(opened_img)
 		img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
 		Z = img.reshape((-1, 3))
@@ -82,9 +85,8 @@ class ColorClassifier(object):
 		print("classify_color.py: Raw colors from image: " + str(colors_from_img))
 
 		color_names_from_img = []
-
-		for color in colors_from_img:
-			color_names_from_img.append(self.convert_rgba_to_color_name(list(color)))
+		for pixel_from_img in colors_from_img:
+			color_names_from_img.append(self.convert_rgba_to_color_name(list(pixel_from_img)))
 
 		if "white" in color_names_from_img:
 			color_names_from_img.remove("white") # remove background
