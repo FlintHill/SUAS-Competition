@@ -19,10 +19,18 @@ class Settings(object):
 
     #See SpecifiedTarget
     SINGLE_TARGET_PROPORTIONALITY = 2.5
+
     PROPORTIONALITY_RANGE = [1.5, 2.5]
+
     #See ImageResizer
     PIXELIZATION_LEVEL = 5
 
     NOISE_LEVEL = 2
+
+    """
+    Determine whether modular_target_with_background creates synthetic
+    background or blank background.
+    """
+    CREATE_SYNTHETIC_BACKGROUND = False
 
     LOGGING_ON = True

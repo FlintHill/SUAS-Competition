@@ -3,6 +3,7 @@ import random, json
 from .settings import Settings
 from .modular_target import ModularTarget
 from SyntheticDataset2.ElementsCreator.background import BackgroundGenerator
+from SyntheticDataset2.ElementsCreator.raw_image_generator import RawImageGenerator
 from SyntheticDataset2.ImageOperations.cardinal_direction_converter import CardinalDirectionConverter
 from SyntheticDataset2.logger import Logger
 
@@ -23,7 +24,13 @@ class ModularTargetWithBackground(object):
 
     def create_modular_target_with_background(self):
         resized_target_image = self.target_image.resize((self.new_target_width, self.new_target_height))
-        self.background = BackgroundGenerator(Settings.BACKGROUND_DIRECTORY_PATH).generate_specific_background(resized_target_image.width + 20, resized_target_image.height + 20)
+
+        if (Settings.CREATE_SYNTHETIC_BACKGROUND):
+            self.background = BackgroundGenerator(Settings.BACKGROUND_DIRECTORY_PATH).generate_specific_background(resized_target_image.width + 20, resized_target_image.height + 20)
+
+        else:
+            self.background = RawImageGenerator.generate_raw_image(resized_target_image.width + 20, resized_target_image.height + 20, (255, 255, 255, 0))
+
         self.background.paste(resized_target_image, (10, 10), resized_target_image)
 
         Logger.log("Target's Dimension in pixels: " + str(self.new_target_dimension + 20)
@@ -53,4 +60,4 @@ class ModularTargetWithBackground(object):
         with open(Settings.SAVE_PATH + Settings.ANSWERS_DIRECTORY + "/modular_single_targets_with_background_answers/" + str(index_number) + ".json", 'w') as outfile:
             json.dump(data, outfile, indent=4)
 
-        self.background.save(Settings.SAVE_PATH + Settings.ANSWERS_DIRECTORY + "/modular_single_targets_with_background/" + str(index_number) + ".jpg")
+        self.background.save(Settings.SAVE_PATH + Settings.ANSWERS_DIRECTORY + "/modular_single_targets_with_background/" + str(index_number) + ".png")

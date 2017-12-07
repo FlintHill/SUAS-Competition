@@ -1,5 +1,7 @@
+import math
+import random
+import json
 from PIL import Image
-import math, random, json
 from .settings import Settings
 from .modular_target_settings import ModularTargetSettings
 from .specified_target import SpecifiedTarget
@@ -21,7 +23,7 @@ class ModularTarget(object):
                                ShapeTypes.HEXAGON, ShapeTypes.HEPTAGON, ShapeTypes.OCTAGON,
                                ShapeTypes.STAR]
 
-            self.shape_type = shape_type_list[random.randint(0, 12)]
+            self.shape_type = shape_type_list[random.randint(0, len(shape_type_list) - 1)]
 
         else:
             self.shape_type = ModularTargetSettings.SHAPE_TYPE
@@ -54,7 +56,7 @@ class ModularTarget(object):
             letter_list = ["A", "B", "c", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
                            "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
 
-            self.letter = letter_list[random.randint(0, 25)]
+            self.letter = letter_list[random.randint(0, len(letter_list) - 1)]
 
         else:
             self.letter = ModularTargetSettings.LETTER
@@ -65,23 +67,17 @@ class ModularTarget(object):
                       (128, 128, 128, 255), (255, 255, 0, 255), (255, 165, 0, 255), (128, 0, 128, 255), (165, 42, 42, 255)]
 
         if (ModularTargetSettings.RANDOM_SHAPE_COLOR):
-            self.shape_color = color_list[random.randint(0, 9)]
+            self.shape_color = color_list[random.randint(0, len(color_list) - 1)]
             color_list.remove(self.shape_color)
-
-            if (ModularTargetSettings.RANDOM_LETTER_COLOR):
-                self.letter_color = color_list[random.randint(0, 8)]
-
-            else:
-                self.letter_color = ModularTargetSettings.LETTER_COLOR
 
         else:
             self.shape_color = ModularTargetSettings.SHAPE_COLOR
 
-            if (ModularTargetSettings.RANDOM_LETTER_COLOR):
-                self.letter_color = color_list[random.randint(0, 9)]
+        if (ModularTargetSettings.RANDOM_LETTER_COLOR):
+            self.letter_color = color_list[random.randint(0, len(color_list) - 1)]
 
-            else:
-                self.letter_color = ModularTargetSettings.LETTER_COLOR
+        else:
+            self.letter_color = ModularTargetSettings.LETTER_COLOR
 
         self.rotation = random.uniform(0.0, 360.0)
 
