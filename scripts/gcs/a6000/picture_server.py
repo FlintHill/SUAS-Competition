@@ -6,10 +6,12 @@ import subprocess
 import traceback
 import os
 from time import sleep
+from datetime import datetime
 
 app = Flask(__name__)
 
 IMAGE_DIRECTORY_PATH = "imgs"
+DELAY_BETWEEN_PICTURES_IN_SECONDS = 4
 
 @app.route('/get/imgs/<path:path>', methods=["GET"])
 def get_image(path):
@@ -30,8 +32,16 @@ def get_image_list():
     except:
         traceback.print_exc()
 
+def take_pictures():
+    while True:
+        time = str(datetime.utcnow().strftime("%s"))
+        subprocess.call("gphoto2", "--capture-image-and-download", "--filename", "image-" + time + ".jpg")
+
+        sleep(DELAY_BETWEEN_PICTURES_IN_SECONDS)
+
 def create_picture_taking_process():
-    picture_taking_process = subprocess.Popen(["sudo", "bash", "picture_taker.sh"])
+    picture_taking_process = multiprocessing.Process(target=take_pictures)
+    picture_taking_process.start()
 
     return picture_taking_process
 
