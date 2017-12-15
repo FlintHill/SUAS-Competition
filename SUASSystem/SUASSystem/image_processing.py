@@ -4,7 +4,7 @@ import math
 from SUASSystem import utils, GCSSettings, inverse_haversine
 from PIL import Image
 
-def run_img_proc_process(logger_queue, img_proc_status, location_log, targets_to_submit, interop_client_array):
+def run_img_proc_process(logger_queue, location_log, targets_to_submit, interop_client_array):
     while True:
         if len(targets_to_submit) > 0:
             target_characteristics = targets_to_submit.pop(0)
@@ -41,3 +41,10 @@ def run_img_proc_process(logger_queue, img_proc_status, location_log, targets_to
             interop_client_array[0].post_standard_target(target_characteristics, cropped_target_path)
 
         sleep(0.1)
+
+def run_autonomous_img_proc_process(logger_queue, location_log, targets_to_submit, interop_client_array, img_proc_status):
+    while True:
+        if img_proc_status.value == "connected":
+            # Add autonomous image processing code here
+
+            pass
