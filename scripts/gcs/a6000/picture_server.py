@@ -32,24 +32,11 @@ def get_image_list():
     except:
         traceback.print_exc()
 
-def take_pictures():
-    while True:
-        time = str(datetime.utcnow().strftime("%s"))
-        subprocess.call("gphoto2", "--capture-image-and-download", "--filename", "image-" + time + ".jpg")
+def take_picture():
+    time = str(datetime.utcnow().strftime("%s"))
+    subprocess.call("gphoto2", "--capture-image-and-download", "--filename", "image-" + time + ".jpg")
 
-        sleep(DELAY_BETWEEN_PICTURES_IN_SECONDS)
-
-def create_picture_taking_process():
-    picture_taking_process = multiprocessing.Process(target=take_pictures)
-    picture_taking_process.start()
-
-    return picture_taking_process
-
-def is_process_dead(child_process):
-    if child_process.poll() is None:
-        return False
-
-    return True
+    sleep(DELAY_BETWEEN_PICTURES_IN_SECONDS)
 
 def is_image_directory_changing(previous_image_directory_contents):
     if len(list(set(os.listdir(IMAGE_DIRECTORY_PATH)) - set(previous_image_directory_contents))) == 0:
@@ -58,21 +45,13 @@ def is_image_directory_changing(previous_image_directory_contents):
     return True
 
 def manage_camera():
-    picture_taking_process = create_picture_taking_process()
-    sleep(20)
     previous_image_directory_contents = os.listdir(IMAGE_DIRECTORY_PATH)
 
     while True:
-        print(previous_image_directory_contents)
-        if is_process_dead(picture_taking_process) or is_image_directory_changing(previous_image_directory_contents):
-            print("[Error] Camera image gathering process is not working...Rebooting...")
+        take_picture()
 
-            picture_taking_process.kill()
-            sleep(10)
-            picture_taking_process = create_picture_taking_process()
-
+        print(is_image_directory_changing(previous_image_directory_contents))
         previous_image_directory_contents = os.listdir(IMAGE_DIRECTORY_PATH)
-        sleep(20)
 
 if __name__ == '__main__':
     camera_manager_process = multiprocessing.Process(target=manage_camera)
