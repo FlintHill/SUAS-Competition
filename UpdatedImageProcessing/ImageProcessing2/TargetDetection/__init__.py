@@ -3,6 +3,7 @@ from .target_detection_logger import TargetDetectionLogger
 from .color_operations import ColorOperations
 from .blob_color_operations import BlobColorOperations
 from .blob_detector import BlobDetector
+from .canny_edge_contour_detector import CannyEdgeContourDetector
 from .false_positive_eliminator import FalsePositiveEliminator
 from .automatic_tester import AutomaticTester
 from .target_detector import TargetDetector

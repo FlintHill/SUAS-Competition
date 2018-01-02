@@ -21,7 +21,7 @@ class BlobDetector(object):
         self.target_map_image_path = target_map_image_path
         self.raw_target_map_image = Image.open(target_map_image_path)
         self.raw_target_map_image = self.raw_target_map_image.convert("RGB")
-        self.minimum_area = TargetDetectionSettings.TARGET_SIZE_RANGE_IN_PIXELS[0]
+        self.minimum_area = (TargetDetectionSettings.TARGET_SIZE_RANGE_IN_PIXELS[0]) ** 2
         self.maximum_area = (TargetDetectionSettings.TARGET_SIZE_RANGE_IN_PIXELS[1]) ** 2
 
     def detect_blobs(self):
@@ -50,8 +50,8 @@ class BlobDetector(object):
         params = cv2.SimpleBlobDetector_Params()
 
         #Set up Thresholds. Values are changed in TargetDetectionSettings.
-        params.minThreshold = TargetDetectionSettings.MINIMUM_THRESHOLD
-        params.maxThreshold = TargetDetectionSettings.MAXIMUM_THRESHOLD
+        params.minThreshold = TargetDetectionSettings.BLOB_DETECTOR_MINIMUM_THRESHOLD
+        params.maxThreshold = TargetDetectionSettings.BLOB_DETECTOR_MAXIMUM_THRESHOLD
 
         #Set up filters. Values are changed in TargetDetectionSettings.
         params.filterByArea = TargetDetectionSettings.FILTER_BY_AREA_ON
@@ -120,9 +120,10 @@ class BlobDetector(object):
             blob_list.append((blob_top_left_x, blob_top_left_y, blob_width, blob_height))
 
         #Show the image with detected blobs circled.
-
+        '''
         image_with_keypoints = cv2.drawKeypoints(image, keypoints, numpy.array([]), (0,0,255), cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
         image = Image.fromarray(image_with_keypoints, 'RGB')
         image.show()
-
+        '''
+        
         return blob_list

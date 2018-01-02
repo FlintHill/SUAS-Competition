@@ -12,12 +12,14 @@ class TargetDetectionSettings(object):
     TARGET_SIZE_RANGE_IN_PIXELS = Settings.TARGET_SIZE_RANGE_IN_PIXELS
     TARGET_AVERAGE_SIZE = (TARGET_SIZE_RANGE_IN_PIXELS[0] + TARGET_SIZE_RANGE_IN_PIXELS[1]) / 2
 
+    LOGGING_ON = True
+
     """
     Change thresholds for convering source image to binary images. See
     BlobDetector for more information.
     """
-    MINIMUM_THRESHOLD = 10
-    MAXIMUM_THRESHOLD = 200
+    BLOB_DETECTOR_MINIMUM_THRESHOLD = 10
+    BLOB_DETECTOR_MAXIMUM_THRESHOLD = 200
 
     """
     Filter the blobs based on sizes in pixels squared.
@@ -48,4 +50,7 @@ class TargetDetectionSettings(object):
     MINIMUM_INERTIA_RATIO = 0.2
     MAXIMUM_INERTIA_RATIO = 1
 
-    LOGGING_ON = True
+
+    KERNEL_SIZE = 3
+    CANNY_EDGE_CONTOUR_DETECTOR_MINIMUM_THRESHOLD = 10
+    CANNY_EDGE_CONTOUR_DETECTOR_MAXIMUM_THRESHOLD = 200

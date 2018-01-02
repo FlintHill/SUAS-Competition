@@ -31,6 +31,24 @@ class ColorOperations(object):
         return rgb_image
 
     @staticmethod
+    def apply_mean_blur(rgb_image, kernel_size):
+        rgb_image = numpy.array(rgb_image)
+        bgr_image = cv2.cvtColor(rgb_image, cv2.COLOR_RGB2BGR)
+        bgr_image = cv2.blur(bgr_image, (kernel_size, kernel_size))
+        rgb_image = cv2.cvtColor(bgr_image, cv2.COLOR_BGR2RGB)
+        rgb_image = Image.fromarray(rgb_image)
+        return rgb_image
+
+    @staticmethod
+    def apply_median_blur(rgb_image, kernel_size):
+        rgb_image = numpy.array(rgb_image)
+        bgr_image = cv2.cvtColor(rgb_image, cv2.COLOR_RGB2BGR)
+        bgr_image = cv2.medianBlur(bgr_image, kernel_size)
+        rgb_image = cv2.cvtColor(bgr_image, cv2.COLOR_BGR2RGB)
+        rgb_image = Image.fromarray(rgb_image)
+        return rgb_image
+        
+    @staticmethod
     def find_boundary_of_color(image, color, margin_length):
         list_of_x = []
         list_of_y = []
@@ -99,7 +117,7 @@ class ColorOperations(object):
                     pixel_access_captured_image[x, y] = (255, 255, 255, 0)
 
             x = quantized_image.width - 1
-            
+
             while (x >= 0):
                 color_difference = ColorOperations.find_percentage_difference(threshold_color, pixel_access_quantized_image[x, y])
 

@@ -1,5 +1,4 @@
-from TargetDetection import *
-from PIL import Image
+from ImageProcessing2.TargetDetection import *
 
 #Run UpdatedImageProcessing here. More parameters can be changed in target_detection_settings.py.
 
