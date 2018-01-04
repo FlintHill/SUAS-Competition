@@ -9,15 +9,13 @@ from .target_detection_settings import TargetDetectionSettings
 class CannyEdgeContourDetector(object):
 
     def __init__(self, target_map_image_path):
-        '''
         raw_target_map_image = Image.open(target_map_image_path)
-        #inverted_target_map_image = PIL.ImageOps.invert(raw_target_map_image)
-        #posterized_target_map_image = PIL.ImageOps.posterize(raw_target_map_image, 2)
+        posterized_target_map_image = PIL.ImageOps.posterize(raw_target_map_image, 2)
 
-        self.target_map_image = numpy.array(raw_target_map_image)
+        self.target_map_image = numpy.array(posterized_target_map_image)
         self.target_map_image = cv2.cvtColor(self.target_map_image, cv2.COLOR_RGB2BGR)
-        '''
-        self.target_map_image = cv2.imread(target_map_image_path)
+
+        #self.target_map_image = cv2.imread(target_map_image_path)
         self.kernel_size = TargetDetectionSettings.KERNEL_SIZE
         self.minimum_threshold = TargetDetectionSettings.CANNY_EDGE_CONTOUR_DETECTOR_MINIMUM_THRESHOLD
         self.maximum_threshold = TargetDetectionSettings.CANNY_EDGE_CONTOUR_DETECTOR_MAXIMUM_THRESHOLD

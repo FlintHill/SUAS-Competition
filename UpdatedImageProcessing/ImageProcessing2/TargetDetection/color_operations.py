@@ -82,11 +82,14 @@ class ColorOperations(object):
         for x in range(quantized_image.width):
             threshold_color = pixel_access_quantized_image[x, 0]
 
+            color_found = False
+
             for y in range(1, quantized_image.height):
                 color_difference = ColorOperations.find_percentage_difference(threshold_color, pixel_access_quantized_image[x, y])
 
                 if (color_difference > color_difference_threshold):
                     y_min = y
+                    color_found = True
                     break
                 else:
                     pixel_access_captured_image[x, y] = (255, 255, 255, 0)
@@ -98,20 +101,29 @@ class ColorOperations(object):
 
                 if (color_difference > color_difference_threshold):
                     y_max = y
+                    color_found = True
                     break
                 else:
                     pixel_access_captured_image[x, y] = (255, 255, 255, 0)
 
                 y -= 1
 
+            if ((color_found == False) and (x > quantized_image.width * 4 / 10) and (x < quantized_image.width * 6 / 10)):
+                to_eliminate = True
+                break
+
+
         for y in range(quantized_image.height):
             threshold_color = pixel_access_quantized_image[0, y]
+
+            color_found = False
 
             for x in range(1, quantized_image.width):
                 color_difference = ColorOperations.find_percentage_difference(threshold_color, pixel_access_quantized_image[x, y])
 
                 if (color_difference > color_difference_threshold):
                     x_min = x
+                    color_found = True
                     break
                 else:
                     pixel_access_captured_image[x, y] = (255, 255, 255, 0)
@@ -123,13 +135,21 @@ class ColorOperations(object):
 
                 if (color_difference > color_difference_threshold):
                     x_max = x
+                    color_found = True
                     break
                 else:
                     pixel_access_captured_image[x, y] = (255, 255, 255, 0)
 
                 x -= 1
 
+            if ((color_found == False) and (y > quantized_image.height * 4 / 10) and (y < quantized_image.height * 6 / 10)):
+                to_eliminate = True
+                break
+
         if ((x_min == sys.maxint) or (y_min == sys.maxint) or (x_max == 0) or (y_max == 0)):
+            to_eliminate = True
+
+        if (to_eliminate == True):
             return 0
 
         else:

@@ -21,6 +21,10 @@ class MassTargetDetector(object):
             raise Exception("Cannot create Single_Target_Crops: Save directory already exists")
         os.mkdir(os.path.join(TargetDetectionSettings.TARGET_DETECTION_REPORT_SAVE_PATH, "Single_Target_Crops"))
 
+        if (os.path.isdir(os.path.join(TargetDetectionSettings.TARGET_DETECTION_REPORT_SAVE_PATH, "False_Positive_Crops"))):
+            raise Exception("Cannot create False_Positive_Crops: Save directory already exists")
+        os.mkdir(os.path.join(TargetDetectionSettings.TARGET_DETECTION_REPORT_SAVE_PATH, "False_Positive_Crops"))
+
         for index in range(1, TargetDetectionSettings.NUMBER_OF_TARGET_MAPS + 1):
             current_target_map = os.path.join(TargetDetectionSettings.TARGET_MAPS_PATH, str(index) + ".jpg")
             current_target_map_answer = os.path.join(TargetDetectionSettings.TARGET_MAPS_ANSWERS_PATH, str(index) + ".json")
@@ -42,16 +46,13 @@ class MassTargetDetector(object):
             #Following lines are for checking the positives against the answer sheet and returning a report.
             combo_positive_list = AutomaticTester.run_automatic_tester(positive_list, current_target_map_answer)
             true_positive_list = combo_positive_list[0]
+            false_positive_list = combo_positive_list[1]
 
-            '''
-            single_target_capturer_results = SingleTargetsCapturer.capture_single_targets(current_target_map, true_positive_list)
+            single_target_capturer_results = SingleTargetsCapturer.capture_single_targets(current_target_map, false_positive_list)
             single_target_crops = single_target_capturer_results[0]
 
             for index_2 in range(len(single_target_crops)):
-                single_target_crops[index_2].save(os.path.join(TargetDetectionSettings.TARGET_DETECTION_REPORT_SAVE_PATH, "Single_Target_Crops", str(index) + "-" + str(index_2 + 1) + ".png"))
-            '''
-            
-            false_positive_list = combo_positive_list[1]
+                single_target_crops[index_2].save(os.path.join(TargetDetectionSettings.TARGET_DETECTION_REPORT_SAVE_PATH, "False_Positive_Crops", str(index) + "-" + str(index_2 + 1) + ".png"))
 
             AutomaticTester.save_result(true_positive_list, false_positive_list, index)
 
