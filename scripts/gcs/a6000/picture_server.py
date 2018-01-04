@@ -33,8 +33,8 @@ def get_image_list():
         traceback.print_exc()
 
 def take_picture():
-    time = str(datetime.utcnow().strftime("%s"))
-    subprocess.call("gphoto2", "--capture-image-and-download", "--filename", "image-" + time + ".jpg")
+    time = str(datetime.utcnow().strftime("%s").split(".")[0])
+    subprocess.call(["gphoto2", "--capture-image-and-download", "--filename", "image-" + time + ".jpg"])
 
     sleep(DELAY_BETWEEN_PICTURES_IN_SECONDS)
 
@@ -45,6 +45,11 @@ def is_image_directory_changing(previous_image_directory_contents):
     return True
 
 def manage_camera():
+    if not os.path.exists(IMAGE_DIRECTORY_PATH):
+        os.mkdir(IMAGE_DIRECTORY_PATH)
+
+    os.chdir(IMAGE_DIRECTORY_PATH)
+
     previous_image_directory_contents = os.listdir(IMAGE_DIRECTORY_PATH)
 
     while True:
