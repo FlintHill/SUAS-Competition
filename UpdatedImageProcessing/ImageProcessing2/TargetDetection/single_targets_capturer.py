@@ -2,7 +2,7 @@ from PIL import Image
 from PIL import ImageFilter
 from collections import Counter
 from .color_operations import ColorOperations
-from .blob_color_operations import BlobColorOperations
+from .target_analyzer import TargetAnalyzer
 
 class SingleTargetsCapturer(object):
 
@@ -10,14 +10,14 @@ class SingleTargetsCapturer(object):
     def capture_single_targets(target_map_image_path, positive_list):
         """
         Using color quantization, crop the single targets with information given
-        by blob_location.
+        by target_location.
 
         :param target_map_image_path: the path to the target map image
-        :param blob_location: a four-tuple of the blob's top left x, top left y,
+        :param target_location: a four-tuple of the target's top left x, top left y,
                               width, and height
 
         :type target_map_image_path: an image file such as JPG and PNG
-        :type blob_location: (x, y, width, height)
+        :type target_location: (x, y, width, height)
         :type x: int
         :type y: int
         :type length: int
@@ -69,23 +69,23 @@ class SingleTargetsCapturer(object):
         7. Return the resultant_image_list along with list_to_eliminate.
         """
         target_map_image = Image.open(target_map_image_path)
-        target_map_image_average_color = BlobColorOperations.find_blob_average_color(target_map_image, (0, 0, target_map_image.width, target_map_image.height))
+        target_map_image_average_color = TargetAnalyzer.find_target_average_color(target_map_image, (0, 0, target_map_image.width, target_map_image.height))
 
         resultant_image_list = []
         list_to_eliminate = []
         for index in range(len(positive_list)):
 
-            blob_location = positive_list[index]
+            target_location = positive_list[index]
 
-            blob_x = blob_location[0]
-            blob_y = blob_location[1]
-            blob_width = blob_location[2]
-            blob_height = blob_location[3]
+            target_x = target_location[0]
+            target_y = target_location[1]
+            target_width = target_location[2]
+            target_height = target_location[3]
 
-            crop_x1 = blob_x - 20
-            crop_y1 = blob_y - 20
-            crop_x2 = blob_x + blob_width + 20
-            crop_y2 = blob_y + blob_height + 20
+            crop_x1 = target_x - 20
+            crop_y1 = target_y - 20
+            crop_x2 = target_x + target_width + 20
+            crop_y2 = target_y + target_height + 20
 
             if (crop_x1 < 0):
                 crop_x1 = 0
@@ -101,12 +101,12 @@ class SingleTargetsCapturer(object):
 
             captured_image = target_map_image.crop((crop_x1, crop_y1, crop_x2, crop_y2))
             quantized_image = ColorOperations.apply_color_quantization(captured_image, 4)
-            quantized_image_average_color = BlobColorOperations.find_blob_average_color(quantized_image, (0, 0, quantized_image.width, quantized_image.height))
-            quantized_image_average_corner_color = BlobColorOperations.find_average_corner_color(quantized_image)
+            quantized_image_average_color = TargetAnalyzer.find_target_average_color(quantized_image, (0, 0, quantized_image.width, quantized_image.height))
+            quantized_image_average_corner_color = TargetAnalyzer.find_average_corner_color(quantized_image)
 
             percentage_difference_1 = ColorOperations.find_percentage_difference(quantized_image_average_color, quantized_image_average_corner_color)
             percentage_difference_2 = ColorOperations.find_percentage_difference(target_map_image_average_color, quantized_image_average_corner_color)
-
+            '''
             if (percentage_difference_1 < 5):
                 list_to_eliminate.append(index)
                 continue
@@ -115,9 +115,12 @@ class SingleTargetsCapturer(object):
             if (percentage_difference_2 >= 10):
                 list_to_eliminate.append(index)
                 continue
-
-            captured_image_with_background_nullified = ColorOperations.nullify_color_and_crop_to_target(captured_image, quantized_image, 15)
-            resultant_image = captured_image_with_background_nullified
-            resultant_image_list.append(resultant_image)
+            '''
+            color_nullifying_result = ColorOperations.nullify_color_and_crop_to_target(captured_image, quantized_image, 15)
+            if (color_nullifying_result == 0):
+                list_to_eliminate.append(index)
+            else:
+                resultant_image = color_nullifying_result
+                resultant_image_list.append(resultant_image)
 
         return [resultant_image_list, list_to_eliminate]

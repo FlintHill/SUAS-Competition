@@ -1,95 +1,95 @@
 from PIL import Image
 from .color_operations import ColorOperations
-from .blob_color_operations import BlobColorOperations
+from .target_analyzer import TargetAnalyzer
 
 class FalsePositiveEliminator(object):
 
     @staticmethod
     def eliminate_overrepeated_colors(target_map_image, positive_list):
         """
-        Eliminate false positives after blob detection.
+        Eliminate false positives after target detection.
 
         (This method works better when there are significantly more false
         positives than real targets)
 
         :param target_map_image: the image of the background
-        :param positive_list: the list holding the information of the blobs.
+        :param positive_list: the list holding the information of the targets.
 
         :type target_map_image: PIL image
         :type positive_list: a list of four-tuples containing four elements for each
-                             blob: (x, y, length, width)
+                             target: (x, y, length, width)
         :type x: int
         :type y: int
         :type length: int
         :type width: int
 
         Concept:
-        Find the average color of all the blobs. Compare that color to the color
-        of each blob. Save all the blobs with colors that stand out from the
+        Find the average color of all the targets. Compare that color to the color
+        of each target. Save all the targets with colors that stand out from the
         rest and eliminate the rest. The colors of the targets differ from the
-        colors of the background. By eliminating the blobs of the background,
+        colors of the background. By eliminating the targets of the background,
         targets remain.
         """
-        blob_color_list = []
+        target_color_list = []
         for index in range(len(positive_list)):
-            average_blob_color = BlobColorOperations.find_blob_average_color(target_map_image, positive_list[index])
-            blob_color_list.append(average_blob_color)
+            average_target_color = TargetAnalyzer.find_target_average_color(target_map_image, positive_list[index])
+            target_color_list.append(average_target_color)
 
         average_list_color_x = 0
         average_list_color_y = 0
         average_list_color_z = 0
 
-        for index in range(len(blob_color_list)):
-            average_list_color_x += blob_color_list[index][0]
-            average_list_color_y += blob_color_list[index][1]
-            average_list_color_z += blob_color_list[index][2]
+        for index in range(len(target_color_list)):
+            average_list_color_x += target_color_list[index][0]
+            average_list_color_y += target_color_list[index][1]
+            average_list_color_z += target_color_list[index][2]
 
-        average_list_color = (average_list_color_x / len(blob_color_list) , average_list_color_y / len(blob_color_list), average_list_color_z / len(blob_color_list))
+        average_list_color = (average_list_color_x / len(target_color_list) , average_list_color_y / len(target_color_list), average_list_color_z / len(target_color_list))
 
-        remaining_blob_list = []
+        remaining_target_list = []
         index = len(positive_list) - 1
         while (index >= 0):
-            percentage_difference = ColorOperations.find_percentage_difference(average_list_color, blob_color_list[index])
+            percentage_difference = ColorOperations.find_percentage_difference(average_list_color, target_color_list[index])
 
             if (percentage_difference >= 15):
-                remaining_blob_list.append(positive_list[index])
+                remaining_target_list.append(positive_list[index])
 
             index -= 1
 
-        return remaining_blob_list
+        return remaining_target_list
 
     @staticmethod
     def eliminate_by_surrounding_color(target_map_image, positive_list):
         """
-        Eliminate false positives after blob detection.
+        Eliminate false positives after target detection.
 
         (This method works better when there are less number of false positives.
         If this condition does not apply, use eliminate_overrepeated_colors
         first to ensure better results.)
 
         :param target_map_image: the image of the background
-        :param positive_list: the list holding the information of the blobs.
+        :param positive_list: the list holding the information of the targets.
 
         :type target_map_image: PIL image
         :type positive_list: a list of four-tuples containing four elements for each
-                             blob: (x, y, length, width)
+                             target: (x, y, length, width)
         :type x: int
         :type y: int
         :type length: int
         :type width: int
 
         Concept:
-        For every blob given by positive_list, if its surrounding color is below
-        a certain threshold, eliminate this blob. The targets have colors that
-        stand out from the background, if a blob's color conforms with the
+        For every target given by positive_list, if its surrounding color is below
+        a certain threshold, eliminate this target. The targets have colors that
+        stand out from the background, if a target's color conforms with the
         background color, then it is not a target.
         """
         list_to_eliminate = []
         for index in range(len(positive_list)):
-            average_surrounding_color = BlobColorOperations.find_surrounding_average_color(target_map_image, positive_list[index])
-            average_blob_color = BlobColorOperations.find_blob_average_color(target_map_image, positive_list[index])
+            average_surrounding_color = TargetAnalyzer.find_surrounding_average_color(target_map_image, positive_list[index])
+            average_target_color = TargetAnalyzer.find_target_average_color(target_map_image, positive_list[index])
 
-            percentage_difference = ColorOperations.find_percentage_difference(average_surrounding_color, average_blob_color)
+            percentage_difference = ColorOperations.find_percentage_difference(average_surrounding_color, average_target_color)
             if (percentage_difference <= 10):
                 list_to_eliminate.append(index)
 
@@ -107,11 +107,11 @@ class FalsePositiveEliminator(object):
     def eliminate_close_by_targets(positive_list):
         """
         :param target_map_image: the image of the background
-        :param positive_list: the list holding the information of the blobs.
+        :param positive_list: the list holding the information of the targets.
 
         :type target_map_image: PIL image
         :type positive_list: a list of four-tuples containing four elements for each
-                             blob: (x, y, length, width)
+                             target: (x, y, length, width)
         :type x: int
         :type y: int
         :type length: int

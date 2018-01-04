@@ -47,7 +47,7 @@ class ColorOperations(object):
         rgb_image = cv2.cvtColor(bgr_image, cv2.COLOR_BGR2RGB)
         rgb_image = Image.fromarray(rgb_image)
         return rgb_image
-        
+
     @staticmethod
     def find_boundary_of_color(image, color, margin_length):
         list_of_x = []
@@ -78,7 +78,7 @@ class ColorOperations(object):
         pixel_access_captured_image = captured_image.load()
         pixel_access_quantized_image = quantized_image.load()
 
-
+        to_eliminate = False
         for x in range(quantized_image.width):
             threshold_color = pixel_access_quantized_image[x, 0]
 
@@ -129,11 +129,14 @@ class ColorOperations(object):
 
                 x -= 1
 
-        x_min = x_min - 5
-        y_min = y_min - 5
-        x_max = x_max + 5
-        y_max = y_max + 5
+        if ((x_min == sys.maxint) or (y_min == sys.maxint) or (x_max == 0) or (y_max == 0)):
+            return 0
 
-        captured_image.crop((x_min, y_min, x_max, y_max))
+        else:
+            x_min = x_min - 5
+            y_min = y_min - 5
+            x_max = x_max + 5
+            y_max = y_max + 5
 
-        return captured_image
+            captured_image.crop((x_min, y_min, x_max, y_max))
+            return captured_image
