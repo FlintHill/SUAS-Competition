@@ -1,7 +1,7 @@
 import math
 import numpy
 import unittest
-from SDA import VectorMath
+from SDAWithVectorField import VectorMath
 
 class VectorMathTestCase(unittest.TestCase):
 
@@ -62,3 +62,21 @@ class VectorMathTestCase(unittest.TestCase):
         self.assertTrue(numpy.array_equal(numpy.round(VectorMath.get_vector_rejection(test_vector1, test_vector2), decimals = 5, out = None), numpy.round(numpy.array([-2.0/3.0, 1.0/3.0, 1.0/3.0]), decimals = 5, out = None)))
         self.assertTrue(numpy.array_equal(numpy.round(VectorMath.get_vector_rejection(test_vector3, test_vector4), decimals = 5, out = None), numpy.round(numpy.array([-33, 21.5878621, 58.53886533]), decimals = 5, out = None)))
         self.assertTrue(numpy.array_equal(numpy.round(VectorMath.get_vector_rejection(test_vector5, test_vector6), decimals = 5, out = None), numpy.round(numpy.array([-8.0/7.0, 4.0/7.0, 16.0/7.0]), decimals = 5, out = None)))
+
+    def test_get_force(self):
+        test_vector1 = numpy.array([1,2,3])
+        test_vector2 = numpy.array([2,3,4])
+        test_vector3 = numpy.array([3,4,5])
+
+        force_one = VectorMath.get_force(test_vector1, test_vector2)
+        force_two = VectorMath.get_force(test_vector2, test_vector3)
+
+        print(force_one)
+        print(force_two)
+        self.assertEqual(force_one[0],force_two[0])
+        self.assertEqual(force_one[1],force_two[1])
+        self.assertEqual(force_one[2],force_two[2])
+
+
+
+

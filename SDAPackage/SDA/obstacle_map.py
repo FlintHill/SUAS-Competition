@@ -92,6 +92,16 @@ class ObstacleMap(object):
             new_z = second_obstacle.get_point()[2]
         return StationaryObstacle(np.array([new_x, new_y, new_z]), new_radius, new_height)
 
+    def is_moving_obstacle_in_path(self, obstacle):
+        path_vector = np.subtract(self.drone.get_waypoint_holder().get_current_waypoint(), self.drone.point)
+        obstacel_to_drone = np.subtract(obstacle.get_point(), self.drone.point)
+        rejection = VectorMath.get_vector_rejection(path_vector, obstacel_to_drone)
+
+        if (VectorMath.get_vector_magnitude(rejection) <= obstacle.get_radius()):
+            return True
+
+        return False
+
     def add_waypoint(self, waypoint):
         """
         Add a waypoint to the drone
