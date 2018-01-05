@@ -13,8 +13,13 @@ class ImageOperationsTestCase(unittest.TestCase):
         self.assertEqual(get_image_timestamp_from_filename(self.test_filename), 0)
 
     def test_get_image_timestamp_from_metadata(self):
+        #image from gopro
         self.test_path = "tests/images/metadata_test_img.JPG"
         self.assertEqual(get_image_timestamp_from_metadata(self.test_path), 1511953162)
+
+        #image from nx500
+        self.test_path = "tests/images/metadata_test_img_2.JPG"
+        self.assertEqual(get_image_timestamp_from_metadata(self.test_path), 1515156605)
 
     def test_get_target_gps_location(self):
         self.test_drone_gps_location = Location(0,0,100)

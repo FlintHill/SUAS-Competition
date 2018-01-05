@@ -46,5 +46,5 @@ def run_autonomous_img_proc_process(logger_queue, location_log, targets_to_submi
     while True:
         if img_proc_status.value == "connected":
             # Add autonomous image processing code here
-
+    
             pass
