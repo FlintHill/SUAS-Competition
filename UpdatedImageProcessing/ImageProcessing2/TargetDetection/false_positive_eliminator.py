@@ -104,7 +104,7 @@ class FalsePositiveEliminator(object):
         return positive_list
 
     @staticmethod
-    def eliminate_close_by_targets(positive_list):
+    def combine_close_by_targets(positive_list):
         """
         :param target_map_image: the image of the background
         :param positive_list: the list holding the information of the targets.
@@ -119,7 +119,6 @@ class FalsePositiveEliminator(object):
         """
         close_by_targets = []
         list_to_append = []
-        list_to_eliminate = []
 
         for index_1 in range(len(positive_list)):
             for index_2 in range(index_1 + 1, len(positive_list)):
@@ -173,3 +172,47 @@ class FalsePositiveEliminator(object):
         number_of_close_by_targets = len(close_by_targets)
 
         return [positive_list, number_of_close_by_targets]
+
+    @staticmethod
+    def eliminate_overlapping_targets(positive_list):
+        """
+        :param target_map_image: the image of the background
+        :param positive_list: the list holding the information of the targets.
+
+        :type target_map_image: PIL image
+        :type positive_list: a list of four-tuples containing four elements for each
+                             target: (x, y, length, width)
+        :type x: int
+        :type y: int
+        :type length: int
+        :type width: int
+        """
+        for index_1 in range(len(positive_list)):
+            for index_2 in range(index_1 + 1, len(positive_list)):
+
+                if ((positive_list[index_1] == -1) or (positive_list[index_2] == -1)):
+                    continue
+
+                target_1_center_x = positive_list[index_1][0] + (positive_list[index_1][2] / 2)
+                target_1_center_y = positive_list[index_1][1] + (positive_list[index_1][3] / 2)
+                target_2_center_x = positive_list[index_2][0] + (positive_list[index_2][2] / 2)
+                target_2_center_y = positive_list[index_2][1] + (positive_list[index_2][3] / 2)
+
+                x_distance = abs(target_1_center_x - target_2_center_x)
+                y_distance = abs(target_1_center_y - target_2_center_y)
+
+                target_1_radius = positive_list[index_1][2]
+                target_2_radius = positive_list[index_2][2]
+
+                if ((x_distance < (target_1_radius + target_2_radius)) and (y_distance < (target_1_radius + target_2_radius))):
+                    if ((positive_list[index_1][2] + positive_list[index_1][3]) > (positive_list[index_2][2] + positive_list[index_2][3])):
+                        positive_list[index_2] = -1
+                    else:
+                        positive_list[index_1] = -1
+
+        new_positive_list = []
+        for index_3 in range(len(positive_list)):
+            if (positive_list[index_3] != -1):
+                new_positive_list.append(positive_list[index_3])
+
+        return new_positive_list

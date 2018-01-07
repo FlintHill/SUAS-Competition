@@ -3,6 +3,7 @@ from PIL import ImageFilter
 from collections import Counter
 from .color_operations import ColorOperations
 from .target_analyzer import TargetAnalyzer
+from .connected_component_labeler import ConnectedComponentLabeler
 
 class SingleTargetsCapturer(object):
 
@@ -82,10 +83,10 @@ class SingleTargetsCapturer(object):
             target_width = target_location[2]
             target_height = target_location[3]
 
-            crop_x1 = target_x - 20
-            crop_y1 = target_y - 20
-            crop_x2 = target_x + target_width + 20
-            crop_y2 = target_y + target_height + 20
+            crop_x1 = target_x - 30
+            crop_y1 = target_y - 30
+            crop_x2 = target_x + target_width + 30
+            crop_y2 = target_y + target_height + 30
 
             if (crop_x1 < 0):
                 crop_x1 = 0
@@ -100,13 +101,38 @@ class SingleTargetsCapturer(object):
                 crop_y2 = target_map_image.height - 1
 
             captured_image = target_map_image.crop((crop_x1, crop_y1, crop_x2, crop_y2))
+
+            captured_image_average_corner_color = TargetAnalyzer.find_average_corner_color(captured_image)
+            captured_image_rim_average_color = TargetAnalyzer.find_rim_average_color(captured_image)
+            percentage_difference = ColorOperations.find_percentage_difference(captured_image_average_corner_color, captured_image_rim_average_color)
+
+            if (percentage_difference > 15):
+                list_to_eliminate.append(index)
+                continue
+
+            else:
+                color_nullifying_result = ColorOperations.nullify_color_and_crop_to_target(captured_image, 15)
+                if (color_nullifying_result == 0):
+                    list_to_eliminate.append(index)
+                else:
+                    resultant_image = color_nullifying_result
+                    resultant_image_list.append(resultant_image)
+
+        return [resultant_image_list, list_to_eliminate]
+
+
+
+        '''
+            labeled_image = captured_image.crop(ConnectedComponentLabeler.label_connected_components(captured_image))
+            labeled_image.show()
+
             quantized_image = ColorOperations.apply_color_quantization(captured_image, 4)
             quantized_image_average_color = TargetAnalyzer.find_target_average_color(quantized_image, (0, 0, quantized_image.width, quantized_image.height))
             quantized_image_average_corner_color = TargetAnalyzer.find_average_corner_color(quantized_image)
 
             percentage_difference_1 = ColorOperations.find_percentage_difference(quantized_image_average_color, quantized_image_average_corner_color)
             percentage_difference_2 = ColorOperations.find_percentage_difference(target_map_image_average_color, quantized_image_average_corner_color)
-            '''
+
             if (percentage_difference_1 < 5):
                 list_to_eliminate.append(index)
                 continue
@@ -115,8 +141,8 @@ class SingleTargetsCapturer(object):
             if (percentage_difference_2 >= 10):
                 list_to_eliminate.append(index)
                 continue
-            '''
-            color_nullifying_result = ColorOperations.nullify_color_and_crop_to_target(captured_image, quantized_image, 15)
+
+            color_nullifying_result = ColorOperations.nullify_color_and_crop_to_target(captured_image, 15)
             if (color_nullifying_result == 0):
                 list_to_eliminate.append(index)
             else:
@@ -124,3 +150,4 @@ class SingleTargetsCapturer(object):
                 resultant_image_list.append(resultant_image)
 
         return [resultant_image_list, list_to_eliminate]
+        '''

@@ -127,6 +127,44 @@ class TargetAnalyzer(object):
         return average_surrounding_color
 
     @staticmethod
+    def find_rim_average_color(cropped_target_image):
+        pixel_access_cropped_target_image = cropped_target_image.load()
+        first_two_line_colors = []
+        last_two_line_colors = []
+        first_two_column_colors = []
+        last_two_column_colors = []
+
+        for x in range(cropped_target_image.width):
+            first_two_line_colors.append(pixel_access_cropped_target_image[x, 0])
+            first_two_line_colors.append(pixel_access_cropped_target_image[x, 1])
+            last_two_line_colors.append(pixel_access_cropped_target_image[x, cropped_target_image.height - 1])
+            last_two_line_colors.append(pixel_access_cropped_target_image[x, cropped_target_image.height - 2])
+
+        for y in range(1, cropped_target_image.height - 1):
+            first_two_column_colors.append(pixel_access_cropped_target_image[0, y])
+            first_two_column_colors.append(pixel_access_cropped_target_image[1, y])
+            last_two_column_colors.append(pixel_access_cropped_target_image[cropped_target_image.width - 1, y])
+            last_two_column_colors.append(pixel_access_cropped_target_image[cropped_target_image.width - 2, y])
+
+        rim_colors = first_two_line_colors + last_two_line_colors + first_two_column_colors + last_two_column_colors
+        number_of_colors = len(rim_colors)
+
+        r_sum = 0
+        g_sum = 0
+        b_sum = 0
+
+        for index in range(len(rim_colors)):
+            r_sum += rim_colors[index][0]
+            g_sum += rim_colors[index][1]
+            b_sum += rim_colors[index][2]
+
+        r_average = float(r_sum) / number_of_colors
+        g_average = float(g_sum) / number_of_colors
+        b_average = float(b_sum) / number_of_colors
+
+        return (r_average, g_average, b_average)
+
+    @staticmethod
     def find_average_corner_color(cropped_target_image):
         pixel_access_cropped_target_image = cropped_target_image.load()
 

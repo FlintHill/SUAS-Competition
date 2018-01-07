@@ -68,6 +68,8 @@ class ModularTarget(object):
 
         if (ModularTargetSettings.RANDOM_SHAPE_COLOR):
             self.shape_color = color_list[random.randint(0, len(color_list) - 1)]
+            while (self.shape_color == (0, 0, 0, 255)):
+                self.shape_color = color_list[random.randint(0, len(color_list) - 1)]
             color_list.remove(self.shape_color)
 
         else:

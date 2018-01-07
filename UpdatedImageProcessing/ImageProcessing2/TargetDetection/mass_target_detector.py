@@ -48,11 +48,11 @@ class MassTargetDetector(object):
             true_positive_list = combo_positive_list[0]
             false_positive_list = combo_positive_list[1]
 
-            single_target_capturer_results = SingleTargetsCapturer.capture_single_targets(current_target_map, false_positive_list)
-            single_target_crops = single_target_capturer_results[0]
+            false_positive_results = SingleTargetsCapturer.capture_single_targets(current_target_map, false_positive_list)
+            false_positive_crops = false_positive_results[0]
 
-            for index_2 in range(len(single_target_crops)):
-                single_target_crops[index_2].save(os.path.join(TargetDetectionSettings.TARGET_DETECTION_REPORT_SAVE_PATH, "False_Positive_Crops", str(index) + "-" + str(index_2 + 1) + ".png"))
+            for index_2 in range(len(false_positive_crops)):
+                false_positive_crops[index_2].save(os.path.join(TargetDetectionSettings.TARGET_DETECTION_REPORT_SAVE_PATH, "False_Positive_Crops", str(index) + "-" + str(index_2 + 1) + ".png"))
 
             AutomaticTester.save_result(true_positive_list, false_positive_list, index)
 

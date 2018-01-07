@@ -6,4 +6,4 @@ from SyntheticDataset2 import *
 ModularSyntheticDatasetMaker.create_modular_target_maps(10, 10)
 
 #Input (number of single targets with background to create)
-ModularSyntheticDatasetMaker.create_modular_single_targets_with_background(4)
+ModularSyntheticDatasetMaker.create_modular_single_targets_with_background(0)

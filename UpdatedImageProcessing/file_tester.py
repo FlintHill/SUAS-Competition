@@ -1,55 +1,34 @@
-import numpy
-import cv2
-import io
-from matplotlib import pyplot
-import io
-from PIL import Image
 from ImageProcessing2.TargetDetection import *
+from PIL import Image
+import cv2
+import numpy
 
-# load the image, convert it to grayscale, and blur it slightly
-image = cv2.imread(TargetDetectionSettings.TARGET_MAPS_PATH + "/2.jpg", 0)
+single_target_crop = Image.open("/Users/zyin/Desktop/Synthetic_Dataset/Answers/modular_single_targets_with_background/1.png")
 
-blurred = cv2.GaussianBlur(image, (3, 3), 0)
-
-edge = cv2.Canny(blurred, 100, 200)
-
-#image = Image.fromarray(wide, 'RGB')
-#image.show()
-
-_, contours, _= cv2.findContours(edge, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-
-
-cnt = contours[1]
-M = cv2.moments(cnt)
-
-cx = int(M['m10']/M['m00'])
-cy = int(M['m01']/M['m00'])
-
-print cx
+print single_target_crop.load()[0, 0]
+#ConnectedComponentLabeler.label_connected_components(single_target_crop)
 
 '''
-cv2.imshow("Original", image)
-cv2.imshow("Edges", edge)
-cv2.waitKey(0)
-'''
+target_image = numpy.array(single_target_crop)
+target_image = cv2.cvtColor(target_image, cv2.COLOR_RGB2GRAY)
+
+#img = cv2.imread("/Users/zyin/Desktop/Synthetic_Dataset/Answers/modular_single_targets_with_background/1.png")
+img = cv2.threshold(target_image, 127, 255, cv2.THRESH_BINARY)[1]  # ensure binary
+ret, labels = cv2.connectedComponents(img)
+
+# Map component labels to hue val
+label_hue = numpy.uint8(179 * labels/numpy.max(labels))
 
 
+blank_ch = 255*numpy.ones_like(label_hue)
+labeled_img = cv2.merge([label_hue, blank_ch, blank_ch])
 
+# cvt to BGR for display
+labeled_img = cv2.cvtColor(labeled_img, cv2.COLOR_HSV2BGR)
 
+# set bg label to black
+labeled_img[label_hue==0] = 0
 
-'''
-print image_with_keypoints
-image = Image.fromarray(image_with_keypoints, 'RGB')
-print image
-#image.show()
-'''
-'''
-# show the images
-image = Image.fromarray(wide, 'RGBA')
+image = Image.fromarray(labeled_img, 'RGB')
 image.show()
-
-# show the images
-cv2.imshow("Original", image)
-cv2.imshow("Edges", numpy.hstack([wide, tight]))
-cv2.waitKey(0)
 '''
