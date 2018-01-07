@@ -4,7 +4,7 @@ import os, sys
 from os import path
 
 setup(
-    name = 'SDAWtihVectorField',
+    name = 'SDAWithVectorField',
 
     version = '0.0.2',
 
@@ -12,8 +12,8 @@ setup(
 
     url = 'https://github.com/FlintHill/SUAS-Competition',
 
-    author = 'Vale Tolpegin',
-    author_email = 'vtolpegin@flinthill.org',
+    author = 'Yudong Li',
+    author_email = 'a1923172548@gmail.com',
 
     license = 'MIT',
 
