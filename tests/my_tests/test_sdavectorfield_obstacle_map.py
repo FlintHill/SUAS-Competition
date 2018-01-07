@@ -18,7 +18,7 @@ class TestObstacleMap(unittest.TestCase):
 		self.obstacle2 = MovingObstacle(numpy.array([200,200,200]), 10)
 		self.waypoint = numpy.array([100,100,100])
 	
-	def test_add_forces(self):
+	def test_update_repulsive_forces(self):
 		self.obstacle_map1.reset_obstacles()
 		self.obstacle_map1.reset_waypoints()
 		self.obstacle_map1.reset_attractive_force()
@@ -31,7 +31,7 @@ class TestObstacleMap(unittest.TestCase):
 		repulsive_force1 = VectorMath.get_force(self.obstacle_map1.drone.point, self.obstacle1.get_point())
 		repulsive_force2 = VectorMath.get_force(self.obstacle_map1.drone.point, self.obstacle2.get_point())
 
-		self.obstacle_map1.add_force()
+		self.obstacle_map1.update_repulsive_forces()
 
 		sum_of_forces = numpy.sum([repulsive_force1, repulsive_force2], axis= 0)
 
@@ -39,21 +39,20 @@ class TestObstacleMap(unittest.TestCase):
 		self.assertEqual(self.obstacle_map1.repulsive_forces[1], sum_of_forces[1])
 		self.assertEqual(self.obstacle_map1.repulsive_forces[2], sum_of_forces[2])
 
-	def test_set_attractive_force(self):
+	def test_update_attractive_force(self):
 		self.obstacle_map1.reset_obstacles()
 		self.obstacle_map1.reset_waypoints()
 		self.obstacle_map1.reset_attractive_force()
 		self.obstacle_map1.reset_repulsive_forces()
 		self.obstacle_map1.set_drone_position(self.test_drone_point)
 		self.obstacle_map1.add_waypoint(self.waypoint)
-		self.obstacle_map1.set_attractive_force()
+		self.obstacle_map1.update_attractive_force()
 
 		attractive_force = VectorMath.get_force(self.test_drone_point, self.waypoint)
 
 		self.assertEqual(self.obstacle_map1.get_attractive_force()[0], attractive_force[0])
 		self.assertEqual(self.obstacle_map1.get_attractive_force()[1], attractive_force[1])
 		self.assertEqual(self.obstacle_map1.get_attractive_force()[2], attractive_force[2])
-
 
 	def test_get_avoidance_vector(self):
 		self.obstacle_map1.reset_obstacles()
@@ -62,8 +61,8 @@ class TestObstacleMap(unittest.TestCase):
 		self.obstacle_map1.reset_repulsive_forces()
 		self.obstacle_map1.add_obstacle(self.obstacle1)
 		self.obstacle_map1.add_waypoint(self.waypoint)
-		self.obstacle_map1.add_force()
-		self.obstacle_map1.set_attractive_force()
+		self.obstacle_map1.update_repulsive_forces()
+		self.obstacle_map1.update_attractive_force()
 		result = self.obstacle_map1.get_avoidance_vector()
 
 		repulsive_forces = VectorMath.get_force(self.test_drone_point, self.obstacle1.get_point())
@@ -71,6 +70,3 @@ class TestObstacleMap(unittest.TestCase):
 		avoidance_vector = numpy.sum([attractive_force, repulsive_forces], axis=0)
 
 		self.assertEqual(result[0], avoidance_vector[0])
-		
-
-

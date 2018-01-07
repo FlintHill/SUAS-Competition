@@ -68,11 +68,8 @@ class VectorMath(object):
     @staticmethod
     def get_force(vector_one, vector_two):
         """
-        return the force vector between two points
+        Return the force vector between two points
         """
         distance_vector = np.subtract(vector_one, vector_two)
         force_vector = np.array([1.0/pow(distance_vector[0],2),1.0/pow(distance_vector[1],2),1.0/pow(distance_vector[2],2)])
         return force_vector
-
-        
-

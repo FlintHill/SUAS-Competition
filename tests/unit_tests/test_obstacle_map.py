@@ -368,7 +368,3 @@ class TestObstacleMap(unittest.TestCase):
 		self.obstacle_map1.add_waypoint(test_waypoint)
 		self.obstacle_map1.add_obstacle(test_obstacle)
 		self.assertTrue(self.obstacle_map1.is_moving_obstacle_in_path(test_obstacle))
-
-	
-
-
