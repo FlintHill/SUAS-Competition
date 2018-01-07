@@ -2,6 +2,7 @@ import multiprocessing
 import SUASSystem
 import dronekit
 import time
+import numpy
 from .suas_logging import *
 from .settings import GCSSettings
 from time import sleep
@@ -23,6 +24,7 @@ def gcs_process(sda_status, img_proc_status, interop_client_array, targets_to_su
     vehicle_state_data = manager.list()
     mission_information_data = manager.list()
     sda_avoid_coords = manager.list()
+    UAV_status = manager.Value('s', "AUTO")
     location_log = manager.list()
     vehicle = connect_to_vehicle()
     waypoints = download_waypoints(vehicle)
@@ -30,6 +32,7 @@ def gcs_process(sda_status, img_proc_status, interop_client_array, targets_to_su
     if len(interop_client_array) != 0:
         mission_information_data.append(get_mission_json(interop_client_array[0].get_active_mission(), interop_client_array[0].get_obstacles()))
     else:
+        print("[Error] : The GCS process is unable to load mission data from the Interoperability server")
         mission_information_data.append({})
     vehicle_state_data.append(SUASSystem.get_vehicle_state(vehicle, GCSSettings.MSL_ALT))
 
@@ -39,7 +42,6 @@ def gcs_process(sda_status, img_proc_status, interop_client_array, targets_to_su
     sda_process = initialize_sda_process(logger_queue, sda_status, waypoints, sda_avoid_coords, vehicle_state_data, mission_information_data)
     log(gcs_logger_name, "Completed instantiation of all child processes")
 
-    guided_waypoint_location = None
     while True:
         current_location = get_location(vehicle)
         current_location_json = {
@@ -49,24 +51,23 @@ def gcs_process(sda_status, img_proc_status, interop_client_array, targets_to_su
         location_log.append(current_location_json)
 
         vehicle_state_data[0] = SUASSystem.get_vehicle_state(vehicle, GCSSettings.MSL_ALT)
+
         if len(interop_client_array) != 0:
             interop_client_array[0].post_telemetry(current_location, vehicle_state_data[0].get_direction())
             mission_information_data[0] = get_mission_json(interop_client_array[0].get_active_mission(), interop_client_array[0].get_obstacles())
 
-        if sda_status.value.lower() == "connected":
-            """if (vehicle.location.global_relative_frame.alt * 3.28084) > GCSSettings.SDA_MIN_ALT and (vehicle.mode.name == "GUIDED" or vehicle.mode.name == "AUTO"):
+        if (vehicle.location.global_relative_frame.alt * 3.28084) > GCSSettings.SDA_MIN_ALT and sda_status.value.lower() == "connected":
+            print("Condition is TRUE")
+            if (UAV_status.value == "GUIDED"):
+                sda_avoid_feet_height = Location(sda_avoid_coords[0].get_lat(), sda_avoid_coords[0].get_lon(), sda_avoid_coords[0].get_alt()*3.28084)
                 log("root", "Avoiding obstacles...")
-                vehicle.mode = VehicleMode("GUIDED")
-                guided_waypoint_location = sda_avoid_coords[0][0]
-                vehicle.simple_goto(guided_waypoint_location.as_global_relative_frame())
+                vehicle.mode = dronekit.VehicleMode("GUIDED")
+                vehicle.simple_goto(sda_avoid_coords[0].as_global_relative_frame())
+            if UAV_status.value == 'AUTO' and vehicle.mode.name != "AUTO":
+                vehicle.mode = dronekit.VehicleMode("AUTO")
 
-            if waypoint_location:
-                if vehicle.mode.name == "GUIDED" and has_uav_reached_waypoint(current_location, guided_waypoint_location):
-                    vehicle.mode = VehicleMode("AUTO")"""
-            print("SDA is Enabled")
 
-        print(current_location)
-        sleep(0.1)
+        sleep(0.25)
 
 def initialize_competition_viewer_process(vehicle_state_data, mission_information_data):
     log(gcs_logger_name, "Instantiating Competition Viewer process")
@@ -79,17 +80,18 @@ def initialize_competition_viewer_process(vehicle_state_data, mission_informatio
 
     return competition_viewer_process
 
-def initialize_sda_process(logger_queue, sda_status, waypoints, sda_avoid_coords, vehicle_state_data, mission_information_data):
+def initialize_sda_process(logger_queue, sda_status, UAV_status, waypoints, sda_avoid_coords, vehicle_state_data, mission_information_data):
     log(gcs_logger_name, "Instantiating SDA process")
     sda_process = multiprocessing.Process(target=SUASSystem.run_sda_process, args=(
         logger_queue,
         waypoints,
         sda_status,
         sda_avoid_coords,
+        UAV_status,
         vehicle_state_data,
         mission_information_data,
     ))
-    #sda_process.start()
+    sda_process.start()
     log(gcs_logger_name, "SDA process instantiated")
 
     return sda_process

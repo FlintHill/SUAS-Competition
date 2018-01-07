@@ -6,8 +6,8 @@ class GCSSettings(object):
     INTEROP_USERNAME = "Flint"       #"img_proc_test"
     INTEROP_PASSWORD = "271824758"   #"robotics"
 
-    MSL_ALT = 446.42
-    SDA_MIN_ALT = 110
+    MSL_ALT = 446.42#22
+    SDA_MIN_ALT = 50#110
 
     GENERATED_DATA_LOCATION = "image_data"
     '''

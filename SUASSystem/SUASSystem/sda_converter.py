@@ -22,7 +22,6 @@ class SDAConverter(object):
         self.current_path = numpy.array([])
         self.current_path_index = 1
         self.minimum_change_in_guided_waypoint = 3
-
         converted_boundary_points = self.convert_fly_zones(fly_zones)
         self.obstacle_map = ObstacleMap(numpy.array([0,0,0]), converted_boundary_points)
 
@@ -61,11 +60,11 @@ class SDAConverter(object):
         :type new_waypoint: Location
         """
         converted_waypoint = convert_to_point(self.initial_coordinates, new_waypoint)
-
+        print(converted_waypoint)
         self.obstacle_map.reset_waypoints()
         self.obstacle_map.add_waypoint(converted_waypoint)
 
-    def add_obstacle(self, obstacle_location, obstacle):
+    def add_obstacle(self, obstacle):
         """
         Add an obstacle to the obstacle map
 
@@ -74,10 +73,12 @@ class SDAConverter(object):
         :param obstacle: The obstacle to add
         :type obstacle: interop.StationaryObstacle
         """
+        print(obstacle)
+        obstacle_location = Location(obstacle["latitude"], obstacle["longitude"], 0)
         converted_obstacle_location = convert_to_point(self.initial_coordinates, obstacle_location)
-
-        new_obstacle = StationaryObstacle(converted_obstacle_location, obstacle.cylinder_radius, obstacle.cylinder_height)
-
+        new_obstacle = StationaryObstacle(converted_obstacle_location, obstacle["cylinder_radius"], obstacle["cylinder_height"])
+        print('ADDS THE OBSTACLE TO THE OBSTACLE MAP')
+        print(converted_obstacle_location)
         self.obstacle_map.add_obstacle(new_obstacle)
 
     def reset_obstacles(self):
@@ -141,7 +142,10 @@ class SDAConverter(object):
         """
         Returns True if the UAV has completed the guided path, False if not
         """
-        return self.current_path_index >= len(self.current_path)
+        if len(self.current_path) != 0:
+            return self.current_path_index >= len(self.current_path)
+
+        return True
 
     def does_guided_path_exist(self):
         """
@@ -163,6 +167,8 @@ class SDAConverter(object):
         """
         Return True if the UAV has reached the current guided waypoint
         """
+        print(self.get_distance_to_current_guided_waypoint())
+        print(Constants.MAX_DISTANCE_TO_TARGET)
         return self.get_distance_to_current_guided_waypoint() < Constants.MAX_DISTANCE_TO_TARGET
 
     def get_distance_to_current_guided_waypoint(self):
@@ -171,7 +177,9 @@ class SDAConverter(object):
         """
         if self.does_guided_path_exist():
             distance = VectorMath.get_magnitude(self.current_path[self.current_path_index], self.obstacle_map.get_drone().get_point())
-
+            print(self.current_path[self.current_path_index])
+            print(self.obstacle_map.get_drone().get_point())
+            print('Distance to current guided waypoint', str(distance))
             return distance
 
         # Any really high number will work here
