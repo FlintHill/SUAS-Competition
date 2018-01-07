@@ -133,10 +133,7 @@ class ObstacleMap(object):
                 if isinstance(obstacle, StationaryObstacle):
                     paths = self.generate_possible_paths(obstacle)
                     if len(paths) != 0:
-                        print(len(paths))
                         return True, np.array(paths)
-                #elif isinstance(obstacle, MovingObstacle):
-                #    pass
 
         return False, None
 
@@ -159,14 +156,10 @@ class ObstacleMap(object):
                     [obstacle.get_point()[0] + obstacle.get_radius(), obstacle.get_point()[1], obstacle.get_height() + (Constants.STATIONARY_OBSTACLE_SAFETY_RADIUS)],
                     [obstacle.get_point()[0] - obstacle.get_radius(), obstacle.get_point()[1], obstacle.get_height() + (Constants.STATIONARY_OBSTACLE_SAFETY_RADIUS)]
                 ]
-                #for new_point in new_attempt_pos_points:
-                #    print("New Attempt Pos Point", str(new_point))
 
                 new_paths = []
                 for new_pos_point in new_attempt_pos_points:
-                    print(self.flight_boundary.is_point_in_bounds(new_pos_point))
                     if not self.does_path_intersect_obstacle_2d(obstacle, self.drone.get_point(), new_pos_point) and self.flight_boundary.is_point_in_bounds(new_pos_point):
-                    #if self.flight_boundary.is_point_in_bounds(new_pos_point):
                         for recursive_new_pos_point in new_attempt_pos_points:
                             if self.flight_boundary.is_point_in_bounds(recursive_new_pos_point) and abs(recursive_new_pos_point[2] - new_pos_point[2]) < 5:
                                 if recursive_new_pos_point[0] != new_pos_point[0] or recursive_new_pos_point[1] != new_pos_point[1]:
@@ -174,10 +167,11 @@ class ObstacleMap(object):
                                         new_paths.append([new_pos_point, recursive_new_pos_point])
 
                 # Uncomment for DEBUGGING ONLY
-                for path in new_paths:
+                '''for path in new_paths:
                     print(self.get_path_distance(path))
-                    print("Point:", str(path))
+                    print("Point:", str(path))'''
                 return new_paths
+
 
         return []
 
@@ -266,8 +260,7 @@ class ObstacleMap(object):
             if distance < shortest_distance:
                 shortest_path = path
                 shortest_distance = distance
-        print('min path')
-        print(shortest_path)
+
         return shortest_path
 
     def get_path_distance(self, path):

@@ -23,10 +23,6 @@ class Drone(object):
         :param new_point: New point for the drone
         :type new_point: Numpy Array
         """
-        print('current point of drone')
-        print(self.point)
-        print('new point of drone')
-        print(new_point)
         self.point = new_point
 
         self.waypoint_holder.reached_current_waypoint(self.point)
