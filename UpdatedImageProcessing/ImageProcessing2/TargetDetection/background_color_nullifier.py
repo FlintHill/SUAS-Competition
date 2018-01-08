@@ -1,5 +1,5 @@
 from .color_operations import ColorOperations
-from .TargetAnalyzer import TargetAnalyzer
+from .target_analyzer import TargetAnalyzer
 from PIL import Image
 
 class BackgroundColorNullifier(object):
