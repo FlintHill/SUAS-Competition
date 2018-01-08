@@ -10,7 +10,7 @@ class ModularTargetSettings(object):
     SHAPE_ORIENTATION = "N"
 
     RANDOM_LETTER = True
-    LETTER = "A"
+    LETTER = "W"
 
     RANDOM_SHAPE_COLOR = True
     SHAPE_COLOR = (255, 255, 255, 255)

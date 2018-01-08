@@ -21,6 +21,10 @@ class MassTargetDetector(object):
             raise Exception("Cannot create Single_Target_Crops: Save directory already exists")
         os.mkdir(os.path.join(TargetDetectionSettings.TARGET_DETECTION_REPORT_SAVE_PATH, "Single_Target_Crops"))
 
+        if (os.path.isdir(os.path.join(TargetDetectionSettings.TARGET_DETECTION_REPORT_SAVE_PATH, "False_Positive_Crops"))):
+            raise Exception("Cannot create False_Positive_Crops: Save directory already exists")
+        os.mkdir(os.path.join(TargetDetectionSettings.TARGET_DETECTION_REPORT_SAVE_PATH, "False_Positive_Crops"))
+
         for index in range(1, TargetDetectionSettings.NUMBER_OF_TARGET_MAPS + 1):
             current_target_map = os.path.join(TargetDetectionSettings.TARGET_MAPS_PATH, str(index) + ".jpg")
             current_target_map_answer = os.path.join(TargetDetectionSettings.TARGET_MAPS_ANSWERS_PATH, str(index) + ".json")
@@ -43,6 +47,12 @@ class MassTargetDetector(object):
             combo_positive_list = AutomaticTester.run_automatic_tester(positive_list, current_target_map_answer)
             true_positive_list = combo_positive_list[0]
             false_positive_list = combo_positive_list[1]
+
+            false_positive_results = SingleTargetsCapturer.capture_single_targets(current_target_map, false_positive_list)
+            false_positive_crops = false_positive_results[0]
+
+            for index_2 in range(len(false_positive_crops)):
+                false_positive_crops[index_2].save(os.path.join(TargetDetectionSettings.TARGET_DETECTION_REPORT_SAVE_PATH, "False_Positive_Crops", str(index) + "-" + str(index_2 + 1) + ".png"))
 
             AutomaticTester.save_result(true_positive_list, false_positive_list, index)
 
