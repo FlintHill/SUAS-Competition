@@ -3,6 +3,7 @@ from .target_detection_logger import TargetDetectionLogger
 from .list_operations import ListOperations
 from .color_operations import ColorOperations
 from .target_analyzer import TargetAnalyzer
+from .background_color_nullifier import BackgroundColorNullifier
 from .connected_component_labeler import ConnectedComponentLabeler
 from .blob_detector import BlobDetector
 from .canny_edge_contour_detector import CannyEdgeContourDetector

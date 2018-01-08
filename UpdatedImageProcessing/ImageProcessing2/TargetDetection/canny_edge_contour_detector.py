@@ -8,7 +8,15 @@ from .target_detection_settings import TargetDetectionSettings
 
 class CannyEdgeContourDetector(object):
 
+    """
+    The following code is adapted from OpenCV:
+    """
     def __init__(self, target_map_image_path):
+        """
+        :param target_map_image_path: the path to an image
+
+        :type target_map_image_path: an image file such as JPG and PNG
+        """
         raw_target_map_image = Image.open(target_map_image_path)
         posterized_target_map_image = PIL.ImageOps.posterize(raw_target_map_image, 2)
 

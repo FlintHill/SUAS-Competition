@@ -1,3 +1,6 @@
+"""
+Target Detection currently does not need this method.
+"""
 import sys
 import cv2
 import copy
@@ -8,27 +11,16 @@ from .list_operations import ListOperations
 from .color_operations import ColorOperations
 
 class ConnectedComponentLabeler(object):
-    '''
+
     @staticmethod
     def label_connected_components(single_target_crop):
-        target_image = numpy.array(single_target_crop)
-        target_image = cv2.cvtColor(target_image, cv2.COLOR_RGB2GRAY)
+        """
+        Return the boundary of the target in the given crop.
 
-        target_image = cv2.threshold(target_image, 127, 255, cv2.THRESH_BINARY)[1]
-        ret, labels = cv2.connectedComponents(target_image)
+        :param single_target_crop: a captured image of a potential target.
 
-        label_hue = numpy.uint8(179 * labels/numpy.max(labels))
-        blank_ch = 255 * numpy.ones_like(label_hue)
-        labeled_image = cv2.merge([label_hue, blank_ch, blank_ch])
-
-        labeled_image = cv2.cvtColor(labeled_image, cv2.COLOR_HSV2BGR)
-        labeled_image[label_hue==0] = 0
-
-        resultant_image = Image.fromarray(labeled_image, 'RGB')
-        return resultant_image
-    '''
-    @staticmethod
-    def label_connected_components(single_target_crop):
+        :type single_target_crop: an image file such as JPG and PNG.
+        """
         index_matrix = []
         pixel_access_single_target_crop = single_target_crop.load()
 

@@ -9,11 +9,11 @@ class AutomaticTester(object):
     def run_automatic_tester(positive_list, answer_sheet_path):
         """
         Compare the positive_list with the answers of the a target map and
-        return the list of the true and false positives.
+        return lists of true and false positives.
 
-        :param positive_list: the list holding the information of the blobs.
+        :param positive_list: the list holding the information of the blobs
         :param answer_sheet_path: the path to the json file of the answers of
-                                     the background image under detection.
+                                     the background image being detected
 
         :type positive_list: a list of four-tuples containing four elements for each
                              blob: (x, y, length, width)

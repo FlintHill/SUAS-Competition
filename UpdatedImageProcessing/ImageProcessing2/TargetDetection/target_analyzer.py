@@ -6,7 +6,7 @@ class TargetAnalyzer(object):
     def find_target_average_color(target_map_image, target_location):
         """
         Find the average color of a target by taking the average RGB value of
-        nine uniformly separated pixels within this target and return this average
+        25 uniformly separated pixels within this target and return this average
         RGB value as a color of 3-tuple.
 
         :param target_map_image: the image of the background
@@ -128,6 +128,11 @@ class TargetAnalyzer(object):
 
     @staticmethod
     def find_rim_average_color(cropped_target_image):
+        """
+        :param cropped_target_image: a captured image of a potential target.
+
+        :type cropped_target_image: an image file such as JPG and PNG.
+        """
         pixel_access_cropped_target_image = cropped_target_image.load()
         first_two_line_colors = []
         last_two_line_colors = []
@@ -166,6 +171,11 @@ class TargetAnalyzer(object):
 
     @staticmethod
     def find_average_corner_color(cropped_target_image):
+        """
+        :param cropped_target_image: a captured image of a potential target.
+
+        :type cropped_target_image: an image file such as JPG and PNG.
+        """
         pixel_access_cropped_target_image = cropped_target_image.load()
 
         upper_left_corner_color = pixel_access_cropped_target_image[1, 1]

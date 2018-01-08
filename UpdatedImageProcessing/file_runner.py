@@ -9,7 +9,4 @@ start_time = timeit.default_timer()
 #Detect targets on all target maps in the given path
 MassTargetDetector.detect_mass_target()
 
-time_in_seconds = timeit.default_timer() - start_time
-minutes = int(time_in_seconds / 60)
-seconds = time_in_seconds - (minutes * 60)
-print str(minutes) + "min " + str(seconds) + "s"
+TargetDetectionLogger.format_time_report(imeit.default_timer() - start_time)

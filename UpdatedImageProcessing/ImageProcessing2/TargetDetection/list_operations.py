@@ -1,3 +1,6 @@
+"""
+Target Detection currently does not need this method.
+"""
 from collections import Counter
 
 class ListOperations(object):

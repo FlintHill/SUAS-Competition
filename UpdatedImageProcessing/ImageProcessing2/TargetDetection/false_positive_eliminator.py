@@ -106,10 +106,8 @@ class FalsePositiveEliminator(object):
     @staticmethod
     def combine_close_by_targets(positive_list):
         """
-        :param target_map_image: the image of the background
         :param positive_list: the list holding the information of the targets.
 
-        :type target_map_image: PIL image
         :type positive_list: a list of four-tuples containing four elements for each
                              target: (x, y, length, width)
         :type x: int
@@ -176,10 +174,8 @@ class FalsePositiveEliminator(object):
     @staticmethod
     def eliminate_overlapping_targets(positive_list):
         """
-        :param target_map_image: the image of the background
         :param positive_list: the list holding the information of the targets.
 
-        :type target_map_image: PIL image
         :type positive_list: a list of four-tuples containing four elements for each
                              target: (x, y, length, width)
         :type x: int

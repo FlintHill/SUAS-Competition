@@ -14,7 +14,7 @@ class BlobDetector(object):
     """
     def __init__(self, target_map_image_path):
         """
-        :param target_map_image_path: the path of an image
+        :param target_map_image_path: the path to an image
 
         :type target_map_image_path: an image file such as JPG and PNG
         """
@@ -87,7 +87,7 @@ class BlobDetector(object):
 
         """
         Return the coordinates of the top left corners of the blobs and their
-        widths and heights with margins around it. The margins are checked so
+        widths and heights with margins around them. The margins are checked so
         that they do not extend out of the bound of the image.
         """
         blob_list = []
@@ -125,5 +125,5 @@ class BlobDetector(object):
         image = Image.fromarray(image_with_keypoints, 'RGB')
         image.show()
         '''
-        
+
         return blob_list

@@ -11,7 +11,8 @@ class TargetDetector(object):
     @staticmethod
     def detect_targets(target_map_image_path):
         """
-        Detect the targets for one target map and return all positives.
+        Detect the targets for one target map using both BlobDetector and
+        CannyEdgeContourDetector and return all positives.
 
         :param target_map_image_path: the path to a target map image
         :type target_map_image_path: an image file such as JPG and PNG
