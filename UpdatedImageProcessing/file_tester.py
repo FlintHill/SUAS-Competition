@@ -27,11 +27,9 @@ average_b = total_b / area
 average_color = (average_r, average_g, average_b)
 
 print average_color
-
 print ColorOperations.find_percentage_difference((38, 37, 19), average_color)
 
 #print CannyEdgeContourDetector(target_map_image).detect_canny_edge_contours()
-
 """
 src = raw_target_map_image
 sp = 10
@@ -42,8 +40,6 @@ image = cv2.cvtColor(x, cv2.COLOR_BGR2RGB)
 image = Image.fromarray(image, 'RGB')
 image.show()
 """
-
-
 
 #The following code tests dynamic target detection process.
 '''
