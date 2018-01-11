@@ -108,7 +108,7 @@ def initialize_image_processing_process(logger_queue, location_log, targets_to_s
 
     return img_proc_process
 
-def initialize_autonomous_image_processing_process(logger_queue, location_log, targets_to_submit, interop_client_array, img_proc_status):
+def initialize_autonomous_image_processing_process(logger_queue, location_log, interop_client_array, img_proc_status):
     log(gcs_logger_name, "Instantiating Autonomous Image Processing process")
     auto_img_proc_process = multiprocessing.Process(target=SUASSystem.run_autonomous_img_proc_process, args=(
         logger_queue,
