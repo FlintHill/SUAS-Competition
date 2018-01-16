@@ -1,5 +1,5 @@
 import numpy
-from math import atan2, cos, sin, pi, sqrt
+import math
 from SDAWithVectorField import *
 
 
@@ -22,7 +22,8 @@ class ObstacleMap(object):
 
 	def update_repulsive_forces(self):
 		for obstacle in self.obstacles:
-			if obstacle.get_type() == "moving":
+			type(obstacle) == MovingObstacle
+			if obstacle.get_type() == MovingObstacle:
 				force = VectorMath.get_force(self.drone.get_point(), obstacle.get_point())
 				self.repulsive_forces = numpy.sum([self.repulsive_forces, force], axis=0)
 

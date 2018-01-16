@@ -358,13 +358,3 @@ class TestObstacleMap(unittest.TestCase):
 		self.paths1 = self.obstacle_map1.generate_possible_paths(self.test_obstacle1)
 		self.min_path1 = self.obstacle_map1.get_min_path(self.paths1)
 		self.assertEqual(self.obstacle_map1.get_path_distance(self.min_path1), 236.44394938110665)
-
-	def test_is_moving_obstacle_in_path(self):
-		self.obstacle_map1.reset_waypoints()
-		self.obstacle_map1.reset_obstacles()
-		test_obstacle = MovingObstacle(numpy.array([50,0,2]),10)
-		drone_point = numpy.array([0,0,2])
-		test_waypoint = numpy.array([70,0,2])
-		self.obstacle_map1.add_waypoint(test_waypoint)
-		self.obstacle_map1.add_obstacle(test_obstacle)
-		self.assertTrue(self.obstacle_map1.is_moving_obstacle_in_path(test_obstacle))
