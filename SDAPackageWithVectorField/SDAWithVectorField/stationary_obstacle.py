@@ -19,7 +19,7 @@ class StationaryObstacle(Obstacle):
 
         self.radius = radius
         self.height = height
-        self.type = "stationary"
+
 
     def get_radius(self):
         """
@@ -34,4 +34,4 @@ class StationaryObstacle(Obstacle):
         return self.height
 
     def get_type(self):
-        return self.type
+        return self.__class__.__name__
