@@ -4,7 +4,7 @@ import math
 from utils import *
 from .settings import GCSSettings
 from .converter_functions import inverse_haversine
-from ImageProcessing2.TargetDetection.single_target_map_detector import SingleTargetMapDetector
+from ...UpdatedImageProcessing.ImageProcessing2.TargetDetection.single_target_map_detector import SingleTargetMapDetector
 from PIL import Image
 
 def run_img_proc_process(logger_queue, location_log, targets_to_submit, interop_client_array):
