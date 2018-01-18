@@ -13,6 +13,8 @@ sudo -H python -m pip install . -U
 cd ../
 sudo rm -r simple-websocket-server
 
+sudo -H pip install opencv-python
+
 sudo -H python -m pip install dronekit
 sudo -H python -m pip install wxpython
 
