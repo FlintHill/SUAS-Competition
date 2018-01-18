@@ -7,7 +7,7 @@ from utils import *
 from ImageProcessing2.TargetDetection.single_target_map_detector import SingleTargetMapDetector
 from .settings import GCSSettings
 from .converter_functions import inverse_haversine
-from ...UpdatedImageProcessing.ImageProcessing2.TargetDetection.single_target_map_detector import SingleTargetMapDetector
+from ..UpdatedImageProcessing.ImageProcessing2.TargetDetection.single_target_map_detector import SingleTargetMapDetector
 from PIL import Image
 >>>>>>> Completed code for SWT, although not working as intended; completed autonomous image processing integration, to be further tested
 
