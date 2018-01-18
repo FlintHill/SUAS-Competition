@@ -1,0 +1,6 @@
+2018.1.7 assigned
+due around 2018.1.10
+	#Simulator for obstacle map
+	#Avoid from the edge
+	#Type() instead of get_type()
+
