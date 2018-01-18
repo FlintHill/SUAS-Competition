@@ -1,12 +1,13 @@
 from time import sleep
+from PIL import Image
 import os
 import math
 from utils import *
+from ImageProcessing2.TargetDetection.single_target_map_detector import SingleTargetMapDetector
 from .settings import GCSSettings
 from .converter_functions import inverse_haversine
-from ..UpdatedImageProcessing.ImageProcessing2.TargetDetection.single_target_map_detector import SingleTargetMapDetector
-from PIL import Image
 
+print "LOL"
 def run_img_proc_process(logger_queue, location_log, targets_to_submit, interop_client_array):
     while True:
         if len(targets_to_submit) > 0:
