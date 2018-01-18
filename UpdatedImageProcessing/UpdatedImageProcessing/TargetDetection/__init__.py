@@ -10,5 +10,6 @@ from .blob_detector import BlobDetector
 from .canny_edge_contour_detector import CannyEdgeContourDetector
 from .false_positive_eliminator import FalsePositiveEliminator
 from .target_detector import TargetDetector
+from .single_target_map_detector import SingleTargetMapDetector
 from .mass_target_detector import MassTargetDetector
 from .single_targets_capturer import SingleTargetsCapturer
