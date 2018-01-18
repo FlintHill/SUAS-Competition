@@ -1,7 +1,9 @@
 from time import sleep
 import os
 import math
-from SUASSystem import utils, GCSSettings, inverse_haversine
+from utils import *
+from .settings import GCSSettings
+from .converter_functions import inverse_haversine
 from UpdatedImageProcessing.ImageProcessing2.TargetDetection.single_target_map_detector import SingleTargetMapDetector
 from PIL import Image
 
