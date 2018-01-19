@@ -5,5 +5,3 @@
 ./UpdatedImageProcessing
 nose
 opencv-python
-scikit-learn
-scipy
