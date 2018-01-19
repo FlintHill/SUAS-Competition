@@ -7,7 +7,6 @@ from ImageProcessing2.TargetDetection.single_target_map_detector import SingleTa
 from .settings import GCSSettings
 from .converter_functions import inverse_haversine
 
-print "LOL"
 def run_img_proc_process(logger_queue, location_log, targets_to_submit, interop_client_array):
     while True:
         if len(targets_to_submit) > 0:
