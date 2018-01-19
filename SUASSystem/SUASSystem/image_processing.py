@@ -11,7 +11,6 @@ from ..UpdatedImageProcessing.ImageProcessing2.TargetDetection.single_target_map
 from PIL import Image
 >>>>>>> Completed code for SWT, although not working as intended; completed autonomous image processing integration, to be further tested
 
-print "LOL"
 def run_img_proc_process(logger_queue, location_log, targets_to_submit, interop_client_array):
     while True:
         if len(targets_to_submit) > 0:
