@@ -4,3 +4,4 @@
 ./UpdatedSyntheticDataset
 ./UpdatedImageProcessing
 nose
+opencv-python
