@@ -222,12 +222,12 @@ class ObstacleMap(object):
         #print("Obstacle Radius: " + str(obstacle.get_radius()))
         #print("Distance From Obstacle: " + str(VectorMath.get_vector_magnitude(np.subtract(uav_point, obstacle.get_point()[:2]))))
 
-        if self.is_obstacle_in_path_of_drone(obstacle_vector, waypoint_vector):
+        if self.is_obstacle_in_path_of_drone(obstacle_vector, waypoint_vector, obstacle):
             return rejection_vector_magnitude < obstacle.get_radius()
 
         return False
 
-    def is_obstacle_in_path_of_drone(self, obstacle_vector, waypoint_vector):
+    def is_obstacle_in_path_of_drone(self, obstacle_vector, waypoint_vector, obstacle):
         """
         Looks at the signs of the components of the vectors to determine if the
         direction of the obstacle is in the same direction as the waypoint
@@ -239,6 +239,11 @@ class ObstacleMap(object):
         for index in range(len(obstacle_list)):
             if all(item > 0 for item in [-1.0 * obstacle_list[index], waypoint_vector[index]]) or all(item < 0 for item in [-1.0 * obstacle_list[index], waypoint_vector[index]]):
                 return False
+
+        obstacle_vector_magnitude = VectorMath.get_vector_magnitude(obstacle_vector)
+        waypoint_vector_magnitude = VectorMath.get_vector_magnitude(waypoint_vector)
+        if waypoint_vector_magnitude < (obstacle_vector_magnitude + obstacle.get_safety_radius()):
+            return False
 
         return True
 
