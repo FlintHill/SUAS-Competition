@@ -3,7 +3,7 @@ from os import walk
 import cv2
 import numpy as np
 
-#from ..settings import ImgProcSettings
+from logger import Logger
 
 from PIL import Image
 
@@ -36,8 +36,7 @@ class ColorClassifier(object):
 			"orange": [255, 165, 0, 255]
 		}
 
-	#@staticmethod
-	def get_color(self, img=None):
+	def get_color(self):
 		"""
 		Gets the color of the background and text inside a target.
 
@@ -48,22 +47,25 @@ class ColorClassifier(object):
 			https://docs.opencv.org/3.0-beta/doc/py_tutorials/py_ml/py_kmeans/
 			py_kmeans_opencv/py_kmeans_opencv.html
 
-		:param img:		optional. An opened PIL image.
-		:type img:		PIL object.
-
 		:return:		Two element list, where the first element is the shape
 						color, and the second element is the text color. Ex:
 							["red", "green"]
 						or, simply:
 							[<background color>, <text color>]
 		"""
+		if self.img is None:
+			raise Exception("classify_color.py: No image was passed in the constructor.")
+
 		opened_img = Image.open(self.img)
+		lines_to_grab = 6
+
+		Logger.log("classify_color.py: Starting work on new image.")
 
 		# convert pil to opencv2
 		img = np.array(opened_img)
 		img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
-		Z = img.reshape((-1, 3))
+		Z = img.reshape((-1,3))
 
 		# convert to np.float32
 		Z = np.float32(Z)
@@ -71,52 +73,96 @@ class ColorClassifier(object):
 		# define criteria, number of clusters(K) and apply kmeans()
 		criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 10, 1.0)
 		K = 3
-		ret, label, center = cv2.kmeans(Z, K, None, criteria, 10, cv2.KMEANS_RANDOM_CENTERS)
+		ret,label,center = cv2.kmeans(Z, K, None, criteria, 10, cv2.KMEANS_RANDOM_CENTERS)
 
 		# now convert back into uint8, and make original image
 		center = np.uint8(center)
-		res = center[label.flatten()]
-		res2 = res.reshape((img.shape)) # actual image
+		flattened_img = center[label.flatten()]
+		reshaped_img = flattened_img.reshape((img.shape))
 
-		# grab colors from image
-		res3 = cv2.cvtColor(res2, cv2.COLOR_RGB2BGR)
-		colors_from_img = set( tuple(v) for m2d in res3 for v in m2d )
+		# grab colors
+		corrected_img = cv2.cvtColor(reshaped_img, cv2.COLOR_RGB2BGR)
+		colors_from_img = set(tuple(v) for m2d in corrected_img for v in m2d)
 
-		print("classify_color.py: Raw colors from image: " + str(colors_from_img))
+		Logger.log("classify_color.py: Raw colors from image: " + str(colors_from_img))
 
 		color_names_from_img = []
+
 		for pixel_from_img in colors_from_img:
 			color_names_from_img.append(self.convert_rgba_to_color_name(list(pixel_from_img)))
 
 		if "white" in color_names_from_img:
 			color_names_from_img.remove("white") # remove background
 
-		print("classify_color.py: Converted color names: " + str(color_names_from_img))
-
 		# figure out which color comes first, reading from the center row outwards
 		height, width, channels = img.shape
-		print("classify_color.py: Height of image is " + str(height) + "px and width is " + str(width) + "px.")
-		print("classify_color.py: Height divided by 2, rounded, is " + str(int(round(height/2.0))) + ".")
-
-		row = int(round(height/2.0))
+		row_factor = int(round(height/(float(lines_to_grab) + 1.0)))
 
 		shape_color = None
 		text_color = None
+		row = 0
 
-		for column in range(1, width):
-			if self.convert_color_name_to_rgba(self.convert_rgba_to_color_name(res3[row, column])) == self.convert_color_name_to_rgba(color_names_from_img[0]):
-				shape_color = color_names_from_img[0]
-				text_color = color_names_from_img[1]
-			elif self.convert_color_name_to_rgba(self.convert_rgba_to_color_name(res3[row, column])) == self.convert_color_name_to_rgba(color_names_from_img[1]):
-				shape_color = color_names_from_img[1]
-				text_color = color_names_from_img[0]
+		im = opened_img
+		im_width, im_height = im.size
+		pixels = list(im.getdata())
 
-			if shape_color != None and text_color != None:
-				print("classify_color.py: Determined shape color to be " + str(shape_color) + ".")
-				print("classify_color.py: Determined text color to be " + str(text_color) + ".")
-				break;
+		count = {
+			colors_from_img.pop(): 0,
+			colors_from_img.pop(): 0,
+			colors_from_img.pop(): 0
+		}
 
-		result = [shape_color, text_color]
+		Logger.log("classify_color.py: Count before: ")
+		Logger.log("classify_color.py: " + str(count))
+
+		for line in range(lines_to_grab):
+			row = row + row_factor
+
+			Logger.log("classify_color.py: Line collection #" + str(line + 1) + " start at height: " + str(row))
+
+			for column in range(1, width):
+				# check original image to see if alpha is 0
+				if pixels[(im_width * row) + column] == (255, 255, 255, 0):
+					pass # empty, transparent background pixel
+				else:
+					count[tuple(corrected_img.tolist()[row][column])] += 1
+
+
+		Logger.log("classify_color.py: Count results: ")
+		Logger.log("classify_color.py: " + str(count))
+
+		new_count = {}
+
+		for i in range(len(count.keys())):
+			new_count[self.convert_rgba_to_color_name(list(count.keys()[i]))] = count[count.keys()[i]]
+
+			Logger.log("classify_color.py: Discovered color: " + str(list(count.keys()[i])) + " as " + self.convert_rgba_to_color_name(list(count.keys()[i])))
+
+		Logger.log("classify_color.py: Count color rgb convert to names: ")
+		Logger.log("classify_color.py: " + str(new_count))
+
+		# determine shape and content color based on max and min
+		maximum = 0
+		minimum = 0
+
+		if len(new_count.keys()) == 3:
+			maximum = max(new_count, key=new_count.get)
+
+			del new_count[min(new_count, key=new_count.get)]
+
+			minimum = min(new_count, key=new_count.get)
+		else: # if background color is white
+			if new_count[new_count.keys()[0]] >= new_count[new_count.keys()[1]]:
+				maximum = new_count.keys()[0]
+				minimum = new_count.keys()[1]
+			else:
+				maximum = new_count.keys()[1]
+				minimum = new_count.keys()[0]
+
+		Logger.log("classify_color.py: Determined shape color to be '" + maximum + "'")
+		Logger.log("classify_color.py: Determined text color to be '" + minimum + "'")
+
+		result = [maximum, minimum]
 
 		return result
 
@@ -192,7 +238,6 @@ class ColorClassifier(object):
 
 		return self.colors.keys()[i]
 
-
 	def convert_color_name_to_rgba(self, color_name):
 		"""
 		Takes in a cardinal color name and converts it to an rgba value with
@@ -209,14 +254,3 @@ class ColorClassifier(object):
 		:return:			rgba version of color.
 		"""
 		return self.colors[color_name]
-
-	def __str__(self):
-		"""
-		To string method.
-
-		:return:	Nothing.
-		"""
-		print("<COLOR CLASSIFIER>")
-		print("Type:     Object.")
-		print("")
-		print("</COLOR CLASSIFIER>")

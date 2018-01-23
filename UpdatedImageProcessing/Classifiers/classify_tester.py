@@ -97,13 +97,14 @@ class ClassifierTester(object):
 
 		if verbose:
 			print("classifier.py: Completed comparison.")
+			print("")
 
-		print("")
 		print("### COMPARE RESULTS ###")
 
 		end = timeit.default_timer()
 
-		print("Compared " + str(i) + " results in " + str(round(end - start, 4)) + " ms")
+		print("Compared " + str(i) + " results in " + str(round(end - start, 7) * 1000000) + " ms")
+		print("Looked at field " + answer_field)
 		print("")
 		print("Results:")
 		print("  Correctly identified images:   " + str(correct))
@@ -141,7 +142,6 @@ def load_images(image_dir, count=sys.maxint):
 if __name__ == '__main__':
 	main = ClassifierTester()
 	
-	### color tester
 	directory = "../../../image-processing/targets_new/single_targets"
 
 	imgs = load_images(directory, count=10)
@@ -149,10 +149,9 @@ if __name__ == '__main__':
 
 	for img in imgs:
 		test = ColorClassifier(directory + "/" + img)
-		results.append(test.get_color()[0])
+		results.append(test.get_color()[0]) # [0] for shape_color, [1] for alphanumeric_color
 
-
-	### color tester
-
+	# for shape color: "targets.0.shape_color"
+	# for text color:  "targets.0.alphanumeric_color"
 	main.compare_results(directory + "_answers/", "targets.0.shape_color", results, verbose=True)
 
