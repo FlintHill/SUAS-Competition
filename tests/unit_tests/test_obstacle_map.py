@@ -371,5 +371,5 @@ class TestObstacleMap(unittest.TestCase):
 		self.obstacle_map1.add_obstacle(test_obstacle)
 		self.obstacle_map1.set_drone_position(drone_point)
 
-		obstacle_in_path_boolean, avoidance_points = self.obstacle_map1.is_obstacle_in_path()
+		obstacle_in_path_boolean, avoidance_points = self.obstacle_map1.is_obstacle_in_path
 		self.assertEqual(obstacle_in_path_boolean, False)
