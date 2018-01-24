@@ -4,6 +4,7 @@ import cv2
 import numpy as np
 
 from logger import Logger
+from settings import ImgProcSettings
 
 from PIL import Image
 
@@ -22,19 +23,6 @@ class ColorClassifier(object):
 		:return:		Nothing.
 		"""
 		self.img = img
-
-		self.colors = {
-			"white": [255, 255, 255, 255],
-			"black": [0, 0, 0, 255],
-			"gray": [128, 128, 128, 255],
-			"red": [255, 0, 0, 255],
-			"blue": [0, 0, 255, 255],
-			"green": [0, 255, 0, 255],
-			"yellow": [255, 255, 0, 255],
-			"purple": [128, 0, 128, 255],
-			"brown": [165, 42, 42, 255],
-			"orange": [255, 165, 0, 255]
-		}
 
 	def get_color(self):
 		"""
@@ -212,10 +200,10 @@ class ColorClassifier(object):
 		distances = []
 		i = 0
 
-		for color in self.colors.keys():
+		for color in ImgProcSettings.COLORS.keys():
 			distances.append(0)
 
-			c = self.colors[color]
+			c = ImgProcSettings.COLORS[color]
 
 			distances[i] = self.three_dimesional_distance(
 				[rgba[0], rgba[1], rgba[2]],
@@ -236,7 +224,7 @@ class ColorClassifier(object):
 
 			j += 1
 
-		return self.colors.keys()[i]
+		return ImgProcSettings.COLORS.keys()[i]
 
 	def convert_color_name_to_rgba(self, color_name):
 		"""
@@ -253,4 +241,4 @@ class ColorClassifier(object):
 
 		:return:			rgba version of color.
 		"""
-		return self.colors[color_name]
+		return ImgProcSettings.COLORS[color_name]
