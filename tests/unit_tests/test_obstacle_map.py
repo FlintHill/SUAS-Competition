@@ -218,7 +218,7 @@ class TestObstacleMap(unittest.TestCase):
 		self.obstacle_map1.set_drone_position(self.drone_point1)
 		self.obstacle_map1.add_waypoint(self.test_waypoint1)
 		self.obstacle_map1.add_obstacle(self.test_obstacle1)
-		self.assertTrue(self.obstacle_map1.does_path_intersect_obstacle_2d(self.test_obstacle1, self.drone_point1, self.test_waypoint1))
+		self.assertFalse(self.obstacle_map1.does_path_intersect_obstacle_2d(self.test_obstacle1, self.drone_point1, self.test_waypoint1))
 
 		self.obstacle_map1.reset_waypoints()
 		self.obstacle_map1.reset_obstacles()
@@ -243,9 +243,14 @@ class TestObstacleMap(unittest.TestCase):
 		self.assertFalse(self.obstacle_map1.does_path_intersect_obstacle_2d(self.test_obstacle3, self.drone_point3, self.test_waypoint3))
 
 	def test_is_obstacle_in_path_of_drone(self):
-		self.assertTrue(self.obstacle_map1.is_obstacle_in_path_of_drone(numpy.array([-100, -100, 2]), numpy.array([-170, -170, 2])))
-		self.assertFalse(self.obstacle_map1.is_obstacle_in_path_of_drone(numpy.array([-100, 100, 2]), numpy.array([-170, -170, 2])))
-		self.assertTrue(self.obstacle_map1.is_obstacle_in_path_of_drone(numpy.array([100, -100, 2]), numpy.array([170, -170, 2])))
+		self.obstacle_map1.reset_obstacles()
+		self.test_obstacle = StationaryObstacle(numpy.array([-100, -100, 1]), 20, 10)
+		self.test_obstacle1 = StationaryObstacle(numpy.array([100, -100, 1]), 20, 10)
+		self.obstacle_map1.add_obstacle(self.test_obstacle)
+		self.obstacle_map1.add_obstacle(self.test_obstacle1)
+		self.assertTrue(self.obstacle_map1.is_obstacle_in_path_of_drone(numpy.array([-100, -100, 2]), numpy.array([-170, -170, 2]), self.test_obstacle))
+		self.assertFalse(self.obstacle_map1.is_obstacle_in_path_of_drone(numpy.array([-100, 100, 2]), numpy.array([-170, -170, 2]), self.test_obstacle))
+		self.assertTrue(self.obstacle_map1.is_obstacle_in_path_of_drone(numpy.array([100, -100, 2]), numpy.array([170, -170, 2]), self.test_obstacle))
 
 	def test_get_min_path(self):
 		self.obstacle_map1.reset_waypoints()
@@ -257,7 +262,7 @@ class TestObstacleMap(unittest.TestCase):
 		self.obstacle_map1.set_drone_position(self.drone_point)
 		self.obstacle_map1.add_obstacle(self.test_obstacle)
 		self.paths = self.obstacle_map1.generate_possible_paths(self.test_obstacle)
-		self.assertTrue(numpy.array_equal(self.obstacle_map1.get_min_path(self.paths), numpy.array([[90, 10, 2], [90, 90, 2]])))
+		self.assertTrue(numpy.array_equal(self.obstacle_map1.get_min_path(self.paths), numpy.array([[10, 10, 2], [90, 10, 2]])))
 
 		self.obstacle_map1.reset_waypoints()
 		self.obstacle_map1.reset_obstacles()
