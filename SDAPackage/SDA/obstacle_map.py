@@ -127,15 +127,10 @@ class ObstacleMap(object):
         """
         Return True if drone should avoid obstacle and False if not
         """
-        print("List of the obstacles", self.obstacles.tolist())
         for obstacle in self.obstacles.tolist():
-            print(obstacle)
             dist_to_obstacle = VectorMath.get_vector_magnitude(np.subtract(obstacle.get_point(), self.drone.get_point()))
-            print("Obstacle distance", dist_to_obstacle)
-            print("detection threshold stuff", obstacle.get_radius() + Constants.DETECTION_THRESHOLD)
             if dist_to_obstacle < obstacle.get_radius() + Constants.DETECTION_THRESHOLD:
                 if isinstance(obstacle, StationaryObstacle):
-                    print('passes is instance check')
                     paths = self.generate_possible_paths(obstacle)
                     if len(paths) != 0:
                         return True, np.array(paths)
@@ -172,10 +167,10 @@ class ObstacleMap(object):
                                         new_paths.append([new_pos_point, recursive_new_pos_point])
 
                 # Uncomment for DEBUGGING ONLY
-                for path in new_paths:
+                '''for path in new_paths:
                     print(self.get_path_distance(path))
                     print("Point:", str(path))
-                return new_paths
+                return new_paths'''
 
 
         return []
