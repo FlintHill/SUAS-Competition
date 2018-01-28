@@ -169,8 +169,8 @@ class ObstacleMap(object):
                 # Uncomment for DEBUGGING ONLY
                 '''for path in new_paths:
                     print(self.get_path_distance(path))
-                    print("Point:", str(path))
-                return new_paths'''
+                    print("Point:", str(path))'''
+                return new_paths
 
 
         return []
