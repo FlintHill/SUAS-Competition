@@ -19,7 +19,7 @@ def run_sda_process(logger_queue, waypoints, sda_status, sda_avoid_coords, UAV_s
     starting_coords = vehicle_state_data[0].get_location()
 
     while True:
-        if True:#if sda_status.value == "connected":
+        if sda_status.value == "connected":#if True:
             current_location = vehicle_state_data[0].get_location()
             current_location.alt = current_location.get_alt() - SUASSystem.GCSSettings.MSL_ALT
             current_waypoint_number = vehicle_state_data[0].get_current_waypoint_number()

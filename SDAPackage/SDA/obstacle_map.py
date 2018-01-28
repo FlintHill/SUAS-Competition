@@ -29,8 +29,6 @@ class ObstacleMap(object):
         """
         if self.obstacles.size != 0:
             final_obstacles = np.hstack((self.obstacles, obstacle_to_add))
-            #really_final_obstacles = np.array[]
-            #self.replace_overlapping_obstacles(final_obstacles)#, really_final_obstacles)
             self.obstacles = self.replace_overlapping_obstacles(final_obstacles)
         else:
             self.obstacles = np.array([obstacle_to_add])
@@ -44,15 +42,9 @@ class ObstacleMap(object):
             for second_obstacle_index in range(first_obstacle_index + 1, len(final_obstacles)):
                 if self.do_obstacles_overlap(final_obstacles[first_obstacle_index], final_obstacles[second_obstacle_index]):
                     encompassing_obstacle = self.make_encompassing_circle(final_obstacles[first_obstacle_index], final_obstacles[second_obstacle_index], final_obstacles)
-                    #ind2remove = [first_obstacle_index, second_obstacle_index]
-                    #final_obstacles = np.delete(final_obstacles, ind2remove)
-                    print("Pre first removal size:" + str(final_obstacles.shape))
                     final_obstacles = np.delete(final_obstacles, first_obstacle_index)
-                    print("Post first removal size:" + str(final_obstacles.shape))
                     final_obstacles = np.delete(final_obstacles, second_obstacle_index-1)
-                    print("Post 2nd removal size:" + str(final_obstacles.shape))
                     final_obstacles = np.hstack([final_obstacles, encompassing_obstacle])
-                    #return self.replace_overlapping_obstacles(final_obstacles)
                     return self.replace_overlapping_obstacles(final_obstacles)
 
         return final_obstacles
@@ -70,11 +62,6 @@ class ObstacleMap(object):
         return True
 
     def make_encompassing_circle(self, first_obstacle, second_obstacle, final_obstacles):
-        print('making an encompassing circle')
-        print('first obstacle points')
-        print(first_obstacle.get_point())
-        print('second obstacle points')
-        print(second_obstacle.get_point())
         circle1_x = first_obstacle.get_point()[0]
         circle1_y = first_obstacle.get_point()[1]
         circle1_z = first_obstacle.get_point()[2]
@@ -103,10 +90,6 @@ class ObstacleMap(object):
             new_z = first_obstacle.get_point()[2]
         else:
             new_z = second_obstacle.get_point()[2]
-        print('encompassing circle x', new_x)
-        print('encompassing circle y', new_y)
-        print('encompassing circle r', new_radius)
-        print('encompassing circle h', new_height)
         return StationaryObstacle(np.array([new_x, new_y, new_z]), new_radius, new_height)
 
     def add_waypoint(self, waypoint):
