@@ -1,4 +1,4 @@
-from UpdatedImageProcessing import Classifiers
+from UpdatedImageProcessing import *
 
 import sys
 from os import walk

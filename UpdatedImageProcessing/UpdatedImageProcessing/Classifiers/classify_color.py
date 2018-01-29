@@ -3,8 +3,8 @@ from os import walk
 import cv2
 import numpy as np
 
-from logger import Logger
-from settings import ImgProcSettings
+from .logger import Logger
+from .settings import ImgProcSettings
 
 from PIL import Image
 

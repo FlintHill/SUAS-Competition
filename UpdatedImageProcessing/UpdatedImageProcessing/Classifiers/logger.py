@@ -1,4 +1,4 @@
-from settings import ImgProcSettings
+from .settings import ImgProcSettings
 
 class Logger(object):
 
