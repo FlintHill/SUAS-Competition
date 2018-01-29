@@ -23,14 +23,9 @@ def run_sda_process(logger_queue, waypoints, sda_status, sda_avoid_coords, UAV_s
             current_location = vehicle_state_data[0].get_location()
             current_location.alt = current_location.get_alt() - SUASSystem.GCSSettings.MSL_ALT
             current_waypoint_number = vehicle_state_data[0].get_current_waypoint_number()
-            print("Pre add obstacles", mission_information_data[0]["stationary_obstacles"])
             if current_waypoint_number != 0:
                 current_uav_waypoint = waypoints[current_waypoint_number - 1]
                 current_uav_waypoint_location = SUASSystem.Location(current_uav_waypoint.x, current_uav_waypoint.y, current_uav_waypoint.z * 3.28084)
-                print('WAYPOINT INFO')
-                print(current_waypoint_number-1)
-                print('command number')
-                print(int(current_uav_waypoint.command))
                 if is_waypoint_avoidable(current_uav_waypoint) and not is_uav_at_location(current_location, current_uav_waypoint_location):
                     sda_converter.set_waypoint(current_uav_waypoint_location)
 
