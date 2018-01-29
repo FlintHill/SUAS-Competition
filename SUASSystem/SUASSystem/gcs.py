@@ -56,8 +56,7 @@ def gcs_process(sda_status, img_proc_status, interop_client_array, targets_to_su
             interop_client_array[0].post_telemetry(current_location, vehicle_state_data[0].get_direction())
             mission_information_data[0] = get_mission_json(interop_client_array[0].get_active_mission(), interop_client_array[0].get_obstacles())
 
-        if (vehicle.location.global_relative_frame.alt * 3.28084) > GCSSettings.SDA_MIN_ALT:# and sda_status.value.lower() == "connected":
-            print("Condition is TRUE")
+        if (vehicle.location.global_relative_frame.alt * 3.28084) > GCSSettings.SDA_MIN_ALT and sda_status.value.lower() == "connected":
             if (UAV_status.value == "GUIDED"):
                 sda_avoid_feet_height = Location(sda_avoid_coords[0].get_lat(), sda_avoid_coords[0].get_lon(), sda_avoid_coords[0].get_alt()*3.28084)
                 log("root", "Avoiding obstacles...")

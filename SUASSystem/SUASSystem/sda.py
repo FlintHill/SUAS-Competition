@@ -35,10 +35,6 @@ def run_sda_process(logger_queue, waypoints, sda_status, sda_avoid_coords, UAV_s
                     sda_converter.set_uav_position(current_location)
                     if not UAV_status.value == "GUIDED":
                         sda_converter.avoid_obstacles()
-                    print('The current xy coordinates of the UAV:')
-                    print(SUASSystem.convert_to_point(starting_coords, current_location))
-                    print('The current sda avoid coordinates for the UAV in regards to the obstacle:')
-                    print(sda_avoid_coords)
 
                     if not sda_converter.has_uav_completed_guided_path():
                         UAV_status.value = "GUIDED"
@@ -58,7 +54,6 @@ def is_waypoint_avoidable(uav_waypoint):
 
     for non_avoidable_waypoint_command_type in non_avoidable_waypoint_command_types:
         if int(uav_waypoint.command) == non_avoidable_waypoint_command_type:
-            print('Waypoint is not avoidable')
             return False
 
     return True
