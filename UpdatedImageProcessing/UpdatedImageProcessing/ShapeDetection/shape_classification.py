@@ -7,7 +7,6 @@ import cv2
 import numpy
 
 from ImgProcessingCLI.ImgStat import SimplePCA #not tested, will be removed
-from ImgProcessingCLI.ImgStat import Clusters, Cluster #not tested, will be removed
 
 CIRCLE_SCORE_THRESHOLD = 0.45 #needs to be optomized
 SQUARE_RECTANGLE_EIGEN_RATIO_THRESHOLD = 1.5 #not tested
@@ -31,10 +30,12 @@ class ShapeClassification(object):
 
     def load_polar_side_counter(self):
         self.polar_side_counter = PolarSideCounter(self.canny_img)
-        self.num_polar_side_maximums = self.polar_side_counter.get_polar_side_maximums()
-        self.num_polar_side_minimums = 0
+        self.polar_side_maximums = self.polar_side_counter.get_polar_side_maximums()
+        self.num_polar_side_maximums = len(self.polar_side_maximums)
+        self.polar_side_minimums = self.polar_side_counter.get_polar_side_minimums()
+        self.num_polar_side_minimums = len(self.polar_side_counter.get_polar_side_minimums())
         self.circle_score = self.polar_side_counter.get_circle_score()
-        self.origen = self.polar_side_counter.get_origin()
+        self.origin = self.polar_side_counter.get_origin()
 
     def determine_shape(self):
         if self.circle_score >= CIRCLE_SCORE_THRESHOLD:
@@ -52,7 +53,6 @@ class ShapeClassification(object):
             self.shape_type = "Heptagon"
         else:
             if self.num_polar_side_maximums == 4:
-                #simplePCA
                 pca = SimplePCA.init_with_monochrome_img(self.monochrome_pil_img, self.monochrome_pil_img.load())
                 eigenvalues = pca.get_eigenvalues()
                 eigen_ratio = abs(eigenvalues[0]/eigenvalues[1])
@@ -65,7 +65,7 @@ class ShapeClassification(object):
                 else:
                     self.shape_type = "Square"
             else:
-                num_harris_clusters = init_harris_corners_and_cluster(self.monochrome_pil_img, self.polar_side_maximums, self.polar_side_minimums, self.origen)
+                num_harris_clusters = init_harris_corners_and_cluster(self.monochrome_pil_img, self.polar_side_maximums, self.polar_side_minimums, self.origin)
 
                 if self.num_polar_side_maximums == 5:
                     if num_harris_clusters < PENTAGON_STAR_CLUSTER_THRESHOLD:

@@ -6,7 +6,7 @@ import math
 
 import plotly.plotly as py
 import plotly.graph_objs as go
-import peakutils
+import peakutils, peakutils.plot
 
 class PolarSideCounter(object):
 
@@ -14,15 +14,16 @@ class PolarSideCounter(object):
         self.canny_img = canny_img
         self.loaded_img = self.canny_img.load()
 
-        self.show_plot=show_plot
-
         self.origin = get_origin(self.canny_img)
         self.numpy_origin = numpy.asarray(self.origin)
 
         self.raycast_plot()
-        self.smooth_plot(6, 5) #NEEDS TO BE OPTOMIZED
-        self.set_maximums() #NEEDS TO BE OPTOMIZED
         self.set_circle_score()
+        self.smooth_plot(3, 2) #NEEDS TO BE OPTOMIZED
+        self.set_maximums_and_minimums() #NEEDS TO BE OPTOMIZED
+
+        if(show_plot):
+            self.show_plot()
 
     def raycast_plot(self):
         self.plot = []
@@ -53,36 +54,67 @@ class PolarSideCounter(object):
 
         return total/float(window)
 
-    def set_maximums(self):
+    def set_maximums_and_minimums(self):
         x, y, z = zip(*self.plot)
-        x=numpy.array(x)
-        y=numpy.array(y)
+        self.x = numpy.array(x)
+        self.y = numpy.array(y)
 
-        base = peakutils.baseline(y, 2)
+        self.base = peakutils.baseline(self.y, 2)
+        self.indices = peakutils.indexes(numpy.subtract(self.y,self.base), thres=0.3, min_dist=10)
 
-        indices = peakutils.indexes(numpy.subtract(y,base), thres=0.5, min_dist=10)
-        self.polar_side_maximums = len(indices)
+        self.polar_side_maximums = []
+        for i in range(len(self.indices)):
+            self.polar_side_maximums.append(self.plot[self.indices[i]])
 
-        if self.show_plot:
-            plot_trace = go.Scatter(
-                x=x,
-                y=numpy.subtract(y,base),
-                mode='lines',
-                name='Original Plot',
-            )
-            maximums_trace = go.Scatter(
-                x=[x[i] for i in indices],
-                y=[y[j]-base[j] for j in indices],
-                mode='markers',
-                marker=dict(
-                    size=8,
-                    color='rgb(255,0,0)',
-                    symbol='cross'
-                ),
-                name='Detected Maximums'
-            )
-            data = [plot_trace, maximums_trace]
-            py.plot(data, filename='psc')
+        #invert plot to find minimums
+        radius_range = self.y.max()-self.y.min()
+        print(radius_range)
+        inverted_y_plot = []
+        for i in range(len(self.y)):
+            difference_from_range = radius_range - self.y[i]
+            inverted_y_plot.append(difference_from_range + self.y.min())
+
+        self.inverted_y_plot = numpy.array(inverted_y_plot)
+
+        self.min_base = peakutils.baseline(self.inverted_y_plot, 2)
+        self.min_indices = peakutils.indexes(numpy.subtract(self.inverted_y_plot,self.min_base), thres=0.3, min_dist=10)
+
+        self.polar_side_minimums = []
+        for i in range(len(self.min_indices)):
+            self.polar_side_minimums.append(self.plot[self.min_indices[i]])
+
+
+    def show_plot(self):
+        plot_trace = go.Scatter(
+            x=self.x,
+            y=numpy.subtract(self.y,self.base),
+            mode='lines',
+            name='Original Plot',
+        )
+        maximums_trace = go.Scatter(
+            x=[self.x[i] for i in self.indices],
+            y=[self.y[j]-self.base[j] for j in self.indices],
+            mode='markers',
+            marker=dict(
+                size=8,
+                color='rgb(255,0,0)',
+                symbol='cross'
+            ),
+            name='Detected Maximums'
+        )
+        minimums_trace = go.Scatter(
+            x=[self.x[i] for i in self.min_indices],
+            y=[self.y[j]-self.base[j] for j in self.min_indices],
+            mode='markers',
+            marker=dict(
+                size=8,
+                color='rgb(0,0,255)',
+                symbol='cross'
+            ),
+            name='Detected Minimums'
+        )
+        data = [plot_trace, maximums_trace, minimums_trace]
+        py.plot(data, filename='psc')
 
     def set_circle_score(self):
         """
@@ -119,6 +151,9 @@ class PolarSideCounter(object):
 
     def get_polar_side_maximums(self):
         return self.polar_side_maximums
+
+    def get_polar_side_minimums(self):
+        return self.polar_side_minimums
 
     def get_origin(self):
         return self.origin

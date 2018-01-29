@@ -8,7 +8,7 @@ from ImgProcessingCLI.ImgStat import Clusters, Cluster
 CV_HARRIS_CORNER_THRESHOLD = 10e-03
 MIN_CORNER_CLUSTER = 1
 
-def init_harris_corners_and_cluster(monochrome_pil_img, polar_side_maximums, polar_side_minimums, origen):
+def init_harris_corners_and_cluster(monochrome_pil_img, polar_side_maximums, polar_side_minimums, origin):
     harris_img = cv2.cornerHarris(numpy.array(monochrome_pil_img), 3, 3, 0.04)
     harris_corners = []
     for x in range(0, harris_img.shape[0]):
@@ -19,7 +19,7 @@ def init_harris_corners_and_cluster(monochrome_pil_img, polar_side_maximums, pol
     for i in range(0, len(polar_side_minimums)):
         maxes_and_mins.append(polar_side_minimums[i])
     for i in range(0, len(maxes_and_mins)):
-        maxes_and_mins[i] = Cluster(maxes_and_mins[i].get_pixel(origen))
+        maxes_and_mins[i] = Cluster(maxes_and_mins[i].get_pixel(origin))
     clusters = Clusters(harris_corners, maxes_and_mins)
     clusters.fit_data_to_clusters(1, 0)
     #remove_clusters_with_corners_under_threshold
