@@ -4,7 +4,7 @@ class ModularTargetSettings(object):
     false. See specified_target for more information on the parameters.
     """
     RANDOM_SHAPE_TYPE = True
-    SHAPE_TYPE = "circle"
+    SHAPE_TYPE = "quarter_circle"
 
     RANDOM_SHAPE_ORIENTATION = True
     SHAPE_ORIENTATION = "N"

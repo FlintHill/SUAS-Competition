@@ -31,6 +31,6 @@ class Settings(object):
     Determine whether modular_target_with_background creates synthetic
     background or blank background.
     """
-    CREATE_SYNTHETIC_BACKGROUND = True
+    CREATE_SYNTHETIC_BACKGROUND = False
 
     LOGGING_ON = True

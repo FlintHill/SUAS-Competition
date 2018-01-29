@@ -4,7 +4,7 @@ import json
 from ImageProcessing2.TargetDetection import *
 from ImageProcessing2.TargetDetectionTester import *
 
-#start_time = timeit.default_timer()
+start_time = timeit.default_timer()
 
 #Run UpdatedImageProcessing here. More parameters can be changed in target_detection_settings.py.
 
