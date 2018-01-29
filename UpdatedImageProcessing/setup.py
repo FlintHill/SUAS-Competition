@@ -4,16 +4,16 @@ import os, sys
 from os import path
 
 setup(
-    name = 'UpdatedImageProcessing',
+    name = 'ImageProcessing2',
 
     version = '0.0.1',
 
-    description = 'Image processing algorithm for the SUAS Competition',
+    description = 'The updated image processing algorithm for the SUAS Competition',
 
     url = 'https://github.com/FlintHill/SUAS-Competition',
 
-    author = 'Zachary Yin',
-    author_email = 'zyin@flinthill.org',
+    author = 'Zachary Yin, John Moxley, James Villemarette',
+    author_email = 'zyin@flinthill.org, jmoxley@flinthill.org, jvillemarette@flinthill.org',
 
     license = 'MIT',
 

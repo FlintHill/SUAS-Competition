@@ -1,4 +1,4 @@
 from .ElementsCreator import *
 from .ImageCreator import *
 from .ImageOperations import *
-from .synthetic_dataset_maker import SyntheticDatasetMaker
+from .modular_synthetic_dataset_maker import ModularSyntheticDatasetMaker

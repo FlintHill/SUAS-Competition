@@ -61,7 +61,7 @@ class SpecifiedTargetWithBackground(object):
                    + "\norientation in degree from north: " + str(self.rotation)
                    + "\ncardinal orientation: " + CardinalDirectionConverter.convert_to_cardinal_direction(self.rotation)
                    + "\ntarget_center_coordinates: " + str(10+(self.new_target_width / 2)) + ", " + str(10 + (self.new_target_height / 2)) + "\n")
-        
+
         return self.background
 
     def record_specified_target_with_background(self, file_name):
@@ -76,7 +76,7 @@ class SpecifiedTargetWithBackground(object):
             "cardinal orientation": CardinalDirectionConverter.convert_to_cardinal_direction(self.rotation),
             "target_center_coordinates": ((10 + (self.new_target_width / 2)), (10 + (self.new_target_height / 2)))
         })
-        with open(Settings.SAVE_PATH + Settings.ANSWERS_DIRECTORY + "/single_targets_answers/" + file_name + ".json", 'w') as outfile:
+        with open(Settings.SAVE_PATH + Settings.ANSWERS_DIRECTORY + "/single_targets_with_background_answers/" + file_name + ".json", 'w') as outfile:
             json.dump(data, outfile, indent=4)
 
-        self.background.save(Settings.SAVE_PATH + Settings.ANSWERS_DIRECTORY + "/single_targets/" + file_name + ".jpg")
+        self.background.save(Settings.SAVE_PATH + Settings.ANSWERS_DIRECTORY + "/single_targets_with_background/" + file_name + ".jpg")

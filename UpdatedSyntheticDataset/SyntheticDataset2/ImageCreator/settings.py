@@ -2,9 +2,9 @@ import os
 
 class Settings(object):
     FONT_TYPE = "UpdatedSyntheticDataset/data/fonts/GothamBold.ttf"
-    BACKGROUND_DIRECTORY_PATH = os.path.expanduser("~/Desktop/Synthetic Dataset/Backgrounds")
+    BACKGROUND_DIRECTORY_PATH = os.path.expanduser("~/Desktop/Synthetic_Dataset/Backgrounds")
 
-    SAVE_PATH = os.path.expanduser("~/Desktop/Synthetic Dataset")
+    SAVE_PATH = os.path.expanduser("~/Desktop/Synthetic_Dataset")
     ANSWERS_DIRECTORY = "/Answers"
 
     PPSI = 1.5
@@ -19,10 +19,18 @@ class Settings(object):
 
     #See SpecifiedTarget
     SINGLE_TARGET_PROPORTIONALITY = 2.5
-    PROPORTIONALITY_RANGE = [1.5, 2.5]
+
+    PROPORTIONALITY_RANGE = [2.5, 2.5]
+
     #See ImageResizer
-    PIXELIZATION_LEVEL = 10
+    PIXELIZATION_LEVEL = 5
 
     NOISE_LEVEL = 2
+
+    """
+    Determine whether modular_target_with_background creates synthetic
+    background or blank background.
+    """
+    CREATE_SYNTHETIC_BACKGROUND = True
 
     LOGGING_ON = True

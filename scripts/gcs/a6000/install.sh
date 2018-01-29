@@ -22,5 +22,8 @@ cp a6000.service /etc/systemd/system/a6000.service
 # enable service
 systemctl enable a6000
 
+# enable auto-login for the odroid user
+sudo bash -c 'echo "autologin-user=odroid" >> /usr/share/lightdm/lightdm.conf.d/60-lightdm-gtk-greeter.conf'
+
 # ask for restart to test if service boots up correctly
 echo "Finished installation"

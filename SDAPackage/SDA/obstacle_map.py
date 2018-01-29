@@ -42,8 +42,8 @@ class ObstacleMap(object):
             for second_obstacle_index in range(first_obstacle_index + 1, len(final_obstacles)):
                 if self.do_obstacles_overlap(final_obstacles[first_obstacle_index], final_obstacles[second_obstacle_index]):
                     encompassing_obstacle = self.make_encompassing_circle(final_obstacles[first_obstacle_index], final_obstacles[second_obstacle_index], final_obstacles)
-                    ind2remove = [first_obstacle_index, second_obstacle_index]
-                    final_obstacles = np.delete(final_obstacles, ind2remove)
+                    final_obstacles = np.delete(final_obstacles, first_obstacle_index)
+                    final_obstacles = np.delete(final_obstacles, second_obstacle_index-1)
                     final_obstacles = np.hstack([final_obstacles, encompassing_obstacle])
                     return self.replace_overlapping_obstacles(final_obstacles)
 
@@ -134,8 +134,6 @@ class ObstacleMap(object):
                     paths = self.generate_possible_paths(obstacle)
                     if len(paths) != 0:
                         return True, np.array(paths)
-                #elif isinstance(obstacle, MovingObstacle):
-                #    pass
 
         return False, None
 
@@ -161,18 +159,19 @@ class ObstacleMap(object):
 
                 new_paths = []
                 for new_pos_point in new_attempt_pos_points:
-                    if not self.does_path_intersect_obstacle_3d(obstacle, self.drone.get_point(), new_pos_point) and self.flight_boundary.is_point_in_bounds(new_pos_point):
+                    if not self.does_path_intersect_obstacle_2d(obstacle, self.drone.get_point(), new_pos_point) and self.flight_boundary.is_point_in_bounds(new_pos_point):
                         for recursive_new_pos_point in new_attempt_pos_points:
                             if self.flight_boundary.is_point_in_bounds(recursive_new_pos_point) and abs(recursive_new_pos_point[2] - new_pos_point[2]) < 5:
                                 if recursive_new_pos_point[0] != new_pos_point[0] or recursive_new_pos_point[1] != new_pos_point[1]:
-                                    if not self.does_path_intersect_obstacle_3d(obstacle, new_pos_point, recursive_new_pos_point) and not self.does_path_intersect_obstacle_3d(obstacle, recursive_new_pos_point, self.drone.get_waypoint_holder().get_current_waypoint()):
+                                    if not self.does_path_intersect_obstacle_2d(obstacle, new_pos_point, recursive_new_pos_point) and not self.does_path_intersect_obstacle_2d(obstacle, recursive_new_pos_point, self.drone.get_waypoint_holder().get_current_waypoint()):
                                         new_paths.append([new_pos_point, recursive_new_pos_point])
 
                 # Uncomment for DEBUGGING ONLY
-                for path in new_paths:
-                    print("Point:", str(path))
-
+                '''for path in new_paths:
+                    print(self.get_path_distance(path))
+                    print("Point:", str(path))'''
                 return new_paths
+
 
         return []
 
@@ -216,50 +215,19 @@ class ObstacleMap(object):
         rejection_vector_magnitude = VectorMath.get_vector_magnitude(rejection_vector)
 
         # Uncomment for DEBUGGING ONLY
-        print("Waypoint Vector: " + str(waypoint_vector))
-        print("Obstacle Vector: " + str(obstacle_vector))
-        print("Rejection Vector: " + str(rejection_vector))
-        print("Rejection Vector Magnitude: " + str(rejection_vector_magnitude))
-        print("Obstacle Radius: " + str(obstacle.get_radius()))
-        print("Distance From Obstacle: " + str(VectorMath.get_vector_magnitude(np.subtract(uav_point, obstacle.get_point()))))
+        #print("Waypoint Vector: " + str(waypoint_vector))
+        #print("Obstacle Vector: " + str(obstacle_vector))
+        #print("Rejection Vector: " + str(rejection_vector))
+        #print("Rejection Vector Magnitude: " + str(rejection_vector_magnitude))
+        #print("Obstacle Radius: " + str(obstacle.get_radius()))
+        #print("Distance From Obstacle: " + str(VectorMath.get_vector_magnitude(np.subtract(uav_point, obstacle.get_point()[:2]))))
 
-        if self.is_obstacle_in_path_of_drone(obstacle_vector, waypoint_vector):
+        if self.is_obstacle_in_path_of_drone(obstacle_vector, waypoint_vector, obstacle):
             return rejection_vector_magnitude < obstacle.get_radius()
 
         return False
 
-    def does_path_intersect_obstacle_3d(self, obstacle, drone_point, waypoint):
-        """
-        Determine if the vector between a UAV's position and the current waypoint intersect
-        an obstacle.
-
-        :param obstacle: The obstacle to determine if the UAV intersects with
-        :type obstacle: StationaryObstacle or MovingObstacle
-        :param uav_point: The UAV's position
-        :type uav_point: Numpy Array
-        :param waypoint: The waypoint that the UAV is headed to
-        :type waypoint: Numpy Array
-        """
-        waypoint_vector = np.subtract(waypoint, drone_point)
-        obstacle_vector = np.subtract(obstacle.get_point(), drone_point)
-        obstacle_vector_magnitude = VectorMath.get_vector_magnitude(obstacle_vector)
-        rejection_vector = VectorMath.get_vector_rejection(obstacle_vector, waypoint_vector)
-        rejection_vector_magnitude = VectorMath.get_vector_magnitude(rejection_vector)
-
-        # Uncomment for DEBUGGING ONLY
-        print("Waypoint Vector: " + str(waypoint_vector))
-        print("Obstacle Vector: " + str(obstacle_vector))
-        print("Rejection Vector: " + str(rejection_vector))
-        print("Rejection Vector Magnitude: " + str(rejection_vector_magnitude))
-        print("Obstacle Radius: " + str(obstacle.get_radius()))
-        print("Distance From Obstacle: " + str(VectorMath.get_vector_magnitude(np.subtract(drone_point, obstacle.get_point()))))
-
-        if self.is_obstacle_in_path_of_drone(obstacle_vector, waypoint_vector):
-            return rejection_vector_magnitude < Constants.STATIONARY_OBSTACLE_SAFETY_RADIUS
-
-        return False
-
-    def is_obstacle_in_path_of_drone(self, obstacle_vector, waypoint_vector):
+    def is_obstacle_in_path_of_drone(self, obstacle_vector, waypoint_vector, obstacle):
         """
         Looks at the signs of the components of the vectors to determine if the
         direction of the obstacle is in the same direction as the waypoint
@@ -271,6 +239,11 @@ class ObstacleMap(object):
         for index in range(len(obstacle_list)):
             if all(item > 0 for item in [-1.0 * obstacle_list[index], waypoint_vector[index]]) or all(item < 0 for item in [-1.0 * obstacle_list[index], waypoint_vector[index]]):
                 return False
+
+        obstacle_vector_magnitude = VectorMath.get_vector_magnitude(obstacle_vector)
+        waypoint_vector_magnitude = VectorMath.get_vector_magnitude(waypoint_vector)
+        if waypoint_vector_magnitude < (obstacle_vector_magnitude + obstacle.get_safety_radius()):
+            return False
 
         return True
 
