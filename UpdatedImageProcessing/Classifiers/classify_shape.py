@@ -1,4 +1,4 @@
-from classifier import Classifier
+#from classifier import Classifier
 
 class ShapeClassifier(object):
 	"""

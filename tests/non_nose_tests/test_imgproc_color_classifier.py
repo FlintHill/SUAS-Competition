@@ -1,10 +1,10 @@
+from UpdatedImageProcessing import Classifiers
+
 import sys
 from os import walk
 import numpy as np
 import json
 import timeit
-
-from classify_color import ColorClassifier
 
 class ClassifierTester(object):
 	"""
