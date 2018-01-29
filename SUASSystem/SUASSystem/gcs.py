@@ -38,8 +38,8 @@ def gcs_process(sda_status, img_proc_status, interop_client_array, targets_to_su
 
     competition_viewer_process = initialize_competition_viewer_process(vehicle_state_data, mission_information_data)
     img_proc_process = initialize_image_processing_process(logger_queue, location_log, targets_to_submit, interop_client_array)
-    autonomous_img_proc_process = initialize_autonomous_image_processing_process(logger_queue, location_log, interop_client_array, img_proc_status)
-    sda_process = initialize_sda_process(logger_queue, sda_status, waypoints, sda_avoid_coords, vehicle_state_data, mission_information_data)
+    autonomous_img_proc_process = initialize_autonomous_image_processing_process(logger_queue, location_log, [], interop_client_array, img_proc_status)
+    sda_process = initialize_sda_process(logger_queue, sda_status, UAV_status, waypoints, sda_avoid_coords, vehicle_state_data, mission_information_data)
     log(gcs_logger_name, "Completed instantiation of all child processes")
 
     while True:
@@ -57,7 +57,6 @@ def gcs_process(sda_status, img_proc_status, interop_client_array, targets_to_su
             mission_information_data[0] = get_mission_json(interop_client_array[0].get_active_mission(), interop_client_array[0].get_obstacles())
 
         if (vehicle.location.global_relative_frame.alt * 3.28084) > GCSSettings.SDA_MIN_ALT and sda_status.value.lower() == "connected":
-            print("Condition is TRUE")
             if (UAV_status.value == "GUIDED"):
                 sda_avoid_feet_height = Location(sda_avoid_coords[0].get_lat(), sda_avoid_coords[0].get_lon(), sda_avoid_coords[0].get_alt()*3.28084)
                 log("root", "Avoiding obstacles...")

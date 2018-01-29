@@ -42,8 +42,8 @@ class ObstacleMap(object):
             for second_obstacle_index in range(first_obstacle_index + 1, len(final_obstacles)):
                 if self.do_obstacles_overlap(final_obstacles[first_obstacle_index], final_obstacles[second_obstacle_index]):
                     encompassing_obstacle = self.make_encompassing_circle(final_obstacles[first_obstacle_index], final_obstacles[second_obstacle_index], final_obstacles)
-                    ind2remove = [first_obstacle_index, second_obstacle_index]
-                    final_obstacles = np.delete(final_obstacles, ind2remove)
+                    final_obstacles = np.delete(final_obstacles, first_obstacle_index)
+                    final_obstacles = np.delete(final_obstacles, second_obstacle_index-1)
                     final_obstacles = np.hstack([final_obstacles, encompassing_obstacle])
                     return self.replace_overlapping_obstacles(final_obstacles)
 

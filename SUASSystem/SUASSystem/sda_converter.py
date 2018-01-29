@@ -60,7 +60,6 @@ class SDAConverter(object):
         :type new_waypoint: Location
         """
         converted_waypoint = convert_to_point(self.initial_coordinates, new_waypoint)
-        print(converted_waypoint)
         self.obstacle_map.reset_waypoints()
         self.obstacle_map.add_waypoint(converted_waypoint)
 
@@ -73,12 +72,9 @@ class SDAConverter(object):
         :param obstacle: The obstacle to add
         :type obstacle: interop.StationaryObstacle
         """
-        print(obstacle)
         obstacle_location = Location(obstacle["latitude"], obstacle["longitude"], 0)
         converted_obstacle_location = convert_to_point(self.initial_coordinates, obstacle_location)
         new_obstacle = StationaryObstacle(converted_obstacle_location, obstacle["cylinder_radius"], obstacle["cylinder_height"])
-        print('ADDS THE OBSTACLE TO THE OBSTACLE MAP')
-        print(converted_obstacle_location)
         self.obstacle_map.add_obstacle(new_obstacle)
 
     def reset_obstacles(self):
@@ -167,8 +163,6 @@ class SDAConverter(object):
         """
         Return True if the UAV has reached the current guided waypoint
         """
-        print(self.get_distance_to_current_guided_waypoint())
-        print(Constants.MAX_DISTANCE_TO_TARGET)
         return self.get_distance_to_current_guided_waypoint() < Constants.MAX_DISTANCE_TO_TARGET
 
     def get_distance_to_current_guided_waypoint(self):
