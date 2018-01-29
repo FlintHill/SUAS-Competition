@@ -1,4 +1,4 @@
-class ImgProcSettings(object):
+class ImageProcessingClassifierSettings(object):
 	"""
 	Settings used across all classifiers.
 	"""
@@ -17,4 +17,3 @@ class ImgProcSettings(object):
 		"brown": [165, 42, 42, 255],
 		"orange": [255, 165, 0, 255]
 	}
-

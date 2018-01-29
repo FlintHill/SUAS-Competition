@@ -4,7 +4,7 @@ import os, sys
 from os import path
 
 setup(
-    name = 'ImageProcessing2',
+    name = 'UpdatedImageProcessing',
 
     version = '0.0.1',
 

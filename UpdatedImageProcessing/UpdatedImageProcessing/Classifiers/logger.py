@@ -1,8 +1,8 @@
-from .settings import ImgProcSettings
+from .settings import ImageProcessingClassifierSettings
 
 class Logger(object):
 
     @staticmethod
     def log(message):
-        if ImgProcSettings.LOGGING_ON:
+        if ImageProcessingClassifierSettings.LOGGING_ON:
             print(message)

@@ -9,11 +9,11 @@ class AutomaticTester(object):
     def run_automatic_tester(positive_list, answer_sheet_path):
         """
         Compare the positive_list with the answers of the a target map and
-        return the list of the true and false positives.
+        return lists of true and false positives.
 
-        :param positive_list: the list holding the information of the blobs.
+        :param positive_list: the list holding the information of the blobs
         :param answer_sheet_path: the path to the json file of the answers of
-                                     the background image under detection.
+                                     the background image being detected
 
         :type positive_list: a list of four-tuples containing four elements for each
                              blob: (x, y, length, width)
@@ -24,6 +24,11 @@ class AutomaticTester(object):
         :type answer_sheet_path: a json file
         """
         answer_sheet = json.load(open(answer_sheet_path))
+        answer_list = []
+        banned_index_list = []
+
+        for index in range(len(answer_sheet["targets"])):
+            answer_list.append((answer_sheet["targets"][index]["target_center_coordinates"][0], answer_sheet["targets"][index]["target_center_coordinates"][1]))
 
         true_positive_list = []
         false_positive_list = []
@@ -31,19 +36,30 @@ class AutomaticTester(object):
         for index_1 in range(len(positive_list)):
             true_positive_found = False
 
-            for index_2 in range(len(answer_sheet["targets"])):
+            for index_2 in range(len(answer_list)):
+
+                is_index_2_banned = False
+
+                for index_3 in range(len(banned_index_list)):
+                    if (index_2 == banned_index_list[index_3]):
+                        is_index_2_banned = True
+
+                if (is_index_2_banned == True):
+                    continue
+
                 blob_center_x = positive_list[index_1][0] + (positive_list[index_1][2] / 2)
                 blob_center_y = positive_list[index_1][1] + (positive_list[index_1][3] / 2)
-                target_center_x = answer_sheet["targets"][index_2]["target_center_coordinates"][0]
-                target_center_y = answer_sheet["targets"][index_2]["target_center_coordinates"][1]
+                target_center_x = answer_list[index_2][0]
+                target_center_y = answer_list[index_2][1]
 
                 if ((abs(blob_center_x - target_center_x) <= 20) and (abs(blob_center_y - target_center_y) <= 20)):
                     true_positive_list.append(positive_list[index_1])
+                    banned_index_list.append(index_2)
                     true_positive_found = True
-                    
+                    continue
+
             if (true_positive_found == False):
                 false_positive_list.append(positive_list[index_1])
-
         return [true_positive_list, false_positive_list]
 
     @staticmethod
@@ -97,7 +113,7 @@ class AutomaticTester(object):
             total_true_positive_count += target_detection_report["true_positive_count"]
             total_false_positive_count += target_detection_report["false_positive_count"]
 
-        percentage = 100 * total_true_positive_count / (TargetDetectionSettings.NUMBER_OF_TARGET_MAPS * TargetDetectionSettings.NUMBER_OF_TARGETS_ON_EACH_MAP)
+        percentage = 100 * float(total_true_positive_count) / (TargetDetectionSettings.NUMBER_OF_TARGET_MAPS * TargetDetectionSettings.NUMBER_OF_TARGETS_ON_EACH_MAP)
 
         TargetDetectionLogger.log("--------------------------------------------------")
         TargetDetectionLogger.log("Total True Positive Count: " + str(total_true_positive_count))

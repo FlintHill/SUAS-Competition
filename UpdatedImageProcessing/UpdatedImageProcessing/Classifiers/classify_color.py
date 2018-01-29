@@ -4,7 +4,7 @@ import cv2
 import numpy as np
 
 from .logger import Logger
-from .settings import ImgProcSettings
+from .settings import ImageProcessingClassifierSettings
 
 from PIL import Image
 
@@ -28,7 +28,7 @@ class ColorClassifier(object):
 		"""
 		Gets the color of the background and text inside a target.
 
-		If no img is passed to get_color, then this function assumes to use the 
+		If no img is passed to get_color, then this function assumes to use the
 		PIL image passed in the constructor.
 
 		See section 3 for code source:
@@ -200,17 +200,17 @@ class ColorClassifier(object):
 		distances = []
 		i = 0
 
-		for color in ImgProcSettings.COLORS.keys():
+		for color in ImageProcessingClassifierSettings.COLORS.keys():
 			distances.append(0)
 
-			c = ImgProcSettings.COLORS[color]
+			c = ImageProcessingClassifierSettings.COLORS[color]
 
 			distances[i] = self.three_dimesional_distance(
 				[rgba[0], rgba[1], rgba[2]],
 				[c[0], c[1], c[2]]
 			)
 
-			i += 1 
+			i += 1
 
 		# approximate color name based on min-distance
 		d = sys.maxint
@@ -224,7 +224,7 @@ class ColorClassifier(object):
 
 			j += 1
 
-		return ImgProcSettings.COLORS.keys()[i]
+		return ImageProcessingClassifierSettings.COLORS.keys()[i]
 
 	def convert_color_name_to_rgba(self, color_name):
 		"""
@@ -233,12 +233,12 @@ class ColorClassifier(object):
 
 		:param color_name:	Cardinal name of color.
 
-							Either "white", "black", 
-							"gray", "red", "blue", "green", "yellow", "purple", 
+							Either "white", "black",
+							"gray", "red", "blue", "green", "yellow", "purple",
 							"brown", or "orange".
 
 		:type color_name:	String.
 
 		:return:			rgba version of color.
 		"""
-		return ImgProcSettings.COLORS[color_name]
+		return ImageProcessingClassifierSettings.COLORS[color_name]
