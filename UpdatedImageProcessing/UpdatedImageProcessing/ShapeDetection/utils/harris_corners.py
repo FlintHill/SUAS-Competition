@@ -1,6 +1,7 @@
 import cv2
 import numpy
 import collections
+import math
 
 #dependencies
 from ImgProcessingCLI.ImgStat import Clusters, Cluster
@@ -19,7 +20,12 @@ def init_harris_corners_and_cluster(monochrome_pil_img, polar_side_maximums, pol
     for i in range(0, len(polar_side_minimums)):
         maxes_and_mins.append(polar_side_minimums[i])
     for i in range(0, len(maxes_and_mins)):
-        maxes_and_mins[i] = Cluster(maxes_and_mins[i].get_pixel(origin))
+        radius = maxes_and_mins[i][1]
+        angle = maxes_and_mins[i][0]
+        dx = int(radius * math.cos(angle))
+        dy = int(radius * math.sin(angle))
+        pixel = (origin[0] + dx, origin[1] - dy)
+        maxes_and_mins[i] = Cluster(pixel)
     clusters = Clusters(harris_corners, maxes_and_mins)
     clusters.fit_data_to_clusters(1, 0)
     #remove_clusters_with_corners_under_threshold

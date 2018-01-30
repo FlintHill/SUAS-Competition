@@ -1,12 +1,11 @@
 from utils import alpha_trace
 from utils import init_harris_corners_and_cluster
 from utils.polar_side_counter import PolarSideCounter
+from utils.simple_pca import SimplePCA
 import collections
 from PIL import Image, ImageOps
 import cv2
 import numpy
-
-from ImgProcessingCLI.ImgStat import SimplePCA #not tested, will be removed
 
 CIRCLE_SCORE_THRESHOLD = 0.45 #needs to be optomized
 SQUARE_RECTANGLE_EIGEN_RATIO_THRESHOLD = 1.5 #not tested
@@ -53,7 +52,7 @@ class ShapeClassification(object):
             self.shape_type = "Heptagon"
         else:
             if self.num_polar_side_maximums == 4:
-                pca = SimplePCA.init_with_monochrome_img(self.monochrome_pil_img, self.monochrome_pil_img.load())
+                pca = SimplePCA.init_with_monochrome_img(self.monochrome_pil_img)
                 eigenvalues = pca.get_eigenvalues()
                 eigen_ratio = abs(eigenvalues[0]/eigenvalues[1])
 

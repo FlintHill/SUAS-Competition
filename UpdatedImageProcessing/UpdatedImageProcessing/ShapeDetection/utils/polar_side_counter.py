@@ -68,7 +68,6 @@ class PolarSideCounter(object):
 
         #invert plot to find minimums
         radius_range = self.y.max()-self.y.min()
-        print(radius_range)
         inverted_y_plot = []
         for i in range(len(self.y)):
             difference_from_range = radius_range - self.y[i]
