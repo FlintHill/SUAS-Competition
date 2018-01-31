@@ -1,8 +1,8 @@
 import os
 import timeit
 import json
-from ImageProcessing2.TargetDetection import *
-from ImageProcessing2.TargetDetectionTester import *
+from UpdatedImageProcessing.TargetDetection import *
+from UpdatedImageProcessing.TargetDetectionTester import *
 
 start_time = timeit.default_timer()
 
