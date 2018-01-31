@@ -1,0 +1,1 @@
+from .shape_classification import ShapeClassification
