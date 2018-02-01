@@ -78,10 +78,12 @@ class IntegratedTargetCapturingProcess(object):
 
             captured_image = target_map_image.crop((crop_x1, crop_y1, crop_x2, crop_y2))
 
+            '''
             if (FalsePositiveEliminators.eliminate_target_not_on_grass(captured_image) == 0):
                 list_to_eliminate.append(index)
                 continue
-
+            '''
+            
             captured_image_average_corner_color = TargetAnalyzer.find_average_corner_color(captured_image)
             captured_image_rim_average_color = TargetAnalyzer.find_rim_average_color(captured_image)
             percentage_difference = ColorOperations.find_percentage_difference(captured_image_average_corner_color, captured_image_rim_average_color)
@@ -91,7 +93,7 @@ class IntegratedTargetCapturingProcess(object):
                 continue
 
             else:
-                color_nullifying_result = BackgroundColorNullifier.nullify_color_and_recrop_target(captured_image, 15)
+                color_nullifying_result = BackgroundColorNullifier.nullify_color_and_recrop_target(captured_image, 10)
                 if (color_nullifying_result == 0):
                     list_to_eliminate.append(index)
                 else:
