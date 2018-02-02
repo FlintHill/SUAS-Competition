@@ -884,17 +884,17 @@ function resetWaypoints() { $("#reset-waypoints").modal("open") }
 function resetWaypointsConfirm() {
 
 	$.ajax({
-		url: "/post/waypoints/reset",
-		method: "POST",
+		url: "/get/waypoints/reset",
+		method: "GET",
 		timeout: 1000,
 		async: true,
 
 		dataType: "json",
 
 		success: function(data) {
-			if(data["status"] == "success") {
+			if(data["request_status"] == "success") {
 				Materialize.toast("Reset waypoints succesful.", 1000);
-			} else if(data["status"] == "failure") {
+			} else if(data["request_status"] == "failure") {
 				Materialize.toast("See console: Failed to reset waypoints.", 1000);
 				console.log("resetWaypointsConfirm(): Server-side failure, see data below:");
 				console.log(data);
