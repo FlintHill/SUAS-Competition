@@ -864,3 +864,54 @@ function enableMTSButtons() {
 
 };
 
+/**
+ * resetWaypoints()
+ *
+ * Opens a dialog to confirm a redownload/resetting of the waypoints sent to the
+ * drone.
+ *
+ * returns nothing
+ */
+function resetWaypoints() { $("#reset-waypoints").modal("open") }
+
+/**
+ * resetWaypoints()
+ *
+ * Redownloads/resets the waypoints sent to the drone.
+ *
+ * returns nothing.
+ */
+function resetWaypointsConfirm() {
+
+	$.ajax({
+		url: "/post/waypoints/reset",
+		method: "POST",
+		timeout: 1000,
+		async: true,
+
+		dataType: "json",
+
+		success: function(data) {
+			if(data["status"] == "success") {
+				Materialize.toast("Reset waypoints succesful.", 1000);
+			} else if(data["status"] == "failure") {
+				Materialize.toast("See console: Failed to reset waypoints.", 1000);
+				console.log("resetWaypointsConfirm(): Server-side failure, see data below:");
+				console.log(data);
+			} else {
+				Materialize.toast("See console: Received unknown status for waypoint reset.");
+				console.log("resetWaypointsConfirm(): Received unknown status, see data below:");
+				console.log(data);
+			}
+		},
+
+		error: function(data) {
+			// server side error
+			Materialize.toast('See console: /post/waypoints/reset failed.', 1000);
+			console.log("resetWaypointsConfirm(): /post/waypoints/reset failed, see data below:");
+			console.log(data);
+		}
+	});
+
+}
+

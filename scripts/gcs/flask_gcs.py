@@ -16,6 +16,7 @@ class Client(object):
         self.img_proc_start_time = self.manager.Value('i', int(datetime.utcnow().strftime("%s")))
         self.targets_to_submit = self.manager.list()
 
+        """
         self.interop_client = self.manager.list()
         self.interop_client.append(SUASSystem.InteropClientConverter())
         self.interop_data = self.manager.list()
@@ -28,6 +29,7 @@ class Client(object):
             self.targets_to_submit
         ))
         self.gcs_process.start()
+        """
 
     def get_interop_data(self):
         try:
