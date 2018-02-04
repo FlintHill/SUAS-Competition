@@ -19,8 +19,12 @@ class ResultRecorder(object):
         """
         data = {}
 
-        data["positive_list"] = []
+        data["image_processing_results"] = []
         for index in range(len(positive_list)):
-            data["positive_list"].append(positive_list[index])
+            current_target_name = "target_" + str(index)
+            data["image_processing_results"].append({
+                "target_location": (positive_list[index][0], positive_list[index][1], positive_list[index][2], positive_list[index][3]),
+                "target_shape_type": {}
+            })
 
         return data

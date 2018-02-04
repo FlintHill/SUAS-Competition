@@ -28,8 +28,8 @@ class AutomaticTester(object):
             target_detection_result = json.load(open(os.path.join(TargetDetectionTesterSettings.TARGET_DETECTION_REPORT_JSON_FILE_SAVE_PATH, str(index_0 + 1) + ".json")))
             result_list = []
 
-            for index_2 in range(len(target_detection_result["positive_list"])):
-                result_list.append((target_detection_result["positive_list"][index_2][0] + (target_detection_result["positive_list"][index_2][2] / 2), target_detection_result["positive_list"][index_2][1] + (target_detection_result["positive_list"][index_2][3] / 2)))
+            for index_2 in range(len(target_detection_result["image_processing_results"])):
+                result_list.append((target_detection_result["image_processing_results"][index_2]["target_location"][0] + (target_detection_result["image_processing_results"][index_2]["target_location"][2] / 2), target_detection_result["image_processing_results"][index_2]["target_location"][1] + (target_detection_result["image_processing_results"][index_2]["target_location"][3] / 2)))
 
             current_true_positive_count = 0
             current_false_positive_count = 0

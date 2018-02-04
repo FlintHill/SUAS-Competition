@@ -11,7 +11,7 @@ class SingleTargetMapDetector(object):
         positive_list = IntegratedTargetDetectionProcess.run_integrated_target_detection_process(target_map_image_path)
         capturing_results = IntegratedTargetCapturingProcess.run_integrated_target_capturing_process(target_map_image_path, positive_list)
         single_target_crops = capturing_results[0]
-        list_to_eliminate = single_target_capturer_results[1]
+        list_to_eliminate = capturing_results[1]
 
         index_2 = len(list_to_eliminate) - 1
         while(index_2 >= 0):
