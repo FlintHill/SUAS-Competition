@@ -1,6 +1,7 @@
 ./SyntheticDataset
 ./SUASSystem
 ./SDAPackage
+./ImgProcessingCLI
 ./UpdatedSyntheticDataset
 ./UpdatedImageProcessing
 nose
