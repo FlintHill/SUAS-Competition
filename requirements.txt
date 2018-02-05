@@ -1,9 +1,11 @@
 ./SyntheticDataset
 ./UpdatedSyntheticDataset
+./EigenFit
 ./ImgProcessingCLI
 ./UpdatedImageProcessing
 ./SUASSystem
 ./SDAPackage
+
 nose
 opencv-python
 scikit-learn
