@@ -1,9 +1,9 @@
 ./SyntheticDataset
+./UpdatedSyntheticDataset
+./ImgProcessingCLI
+./UpdatedImageProcessing
 ./SUASSystem
 ./SDAPackage
-./ImgProcessingCLI
-./UpdatedSyntheticDataset
-./UpdatedImageProcessing
 nose
 opencv-python
 scikit-learn
