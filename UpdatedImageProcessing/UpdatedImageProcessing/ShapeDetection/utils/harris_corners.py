@@ -4,7 +4,7 @@ import collections
 import math
 
 #dependencies
-from ImgProcessingCLI.ImgStat import Clusters, Cluster
+from ImgProcessingCLI.ImgProcessingCLI.ImgStat.KMeans import Clusters, Cluster
 
 CV_HARRIS_CORNER_THRESHOLD = 10e-03
 MIN_CORNER_CLUSTER = 1
