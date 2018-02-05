@@ -10,3 +10,4 @@ nose
 opencv-python
 scikit-learn
 scipy
+plotly
