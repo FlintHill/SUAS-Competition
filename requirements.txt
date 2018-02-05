@@ -11,3 +11,4 @@ opencv-python
 scikit-learn
 scipy
 plotly
+peakutils
