@@ -55,7 +55,15 @@ def gcs_process(sda_status, img_proc_status, interop_client_array, targets_to_su
         location_log.append(current_location_json)
 
         vehicle_state_data[0] = SUASSystem.get_vehicle_state(vehicle, GCSSettings.MSL_ALT)
+        ########
+        if user_force_waypoint_update.value and vehicle.armed == False:
+            waypoints = download_waypoints(vehicle)
+            sda_process.terminate()
+            sleep(1)
+            sda_process = initialize_sda_process(logger_queue, sda_status, UAV_status, waypoints, sda_avoid_coords, vehicle_state_data, mission_information_data)
+            user_force_waypoint_update.value = False
 
+        ##########
         if len(interop_client_array) != 0:
             interop_client_array[0].post_telemetry(current_location, vehicle_state_data[0].get_direction())
             mission_information_data[0] = get_mission_json(interop_client_array[0].get_active_mission(), interop_client_array[0].get_obstacles())
