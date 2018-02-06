@@ -14,7 +14,7 @@ class MassTargetDetector(object):
         number_of_target_maps = len(os.listdir(path_to_target_maps_folder))
 
         for index_in_number_of_target_maps in range(1, number_of_target_maps + 1):
-            current_target_map = os.path.join(path_to_target_maps_folder, str(index_of_number_of_target_maps) + ".jpg")
+            current_target_map = os.path.join(path_to_target_maps_folder, str(index_in_number_of_target_maps) + ".jpg")
 
             positive_list = IntegratedTargetDetectionProcess.run_integrated_target_detection_process(current_target_map)
             capturing_results = IntegratedTargetCapturingProcess.run_integrated_target_capturing_process(current_target_map, positive_list)
@@ -31,6 +31,6 @@ class MassTargetDetector(object):
             list_of_crops.append(single_target_crops)
             list_of_json_files.append(json_file)
 
-            Logger.log("Detection for Target Map " + str(index_of_number_of_target_maps) + " Completed")
+            Logger.log("Detection for Target Map " + str(index_in_number_of_target_maps) + " Completed")
 
         return [list_of_crops, list_of_json_files]

@@ -191,57 +191,6 @@ class BackgroundColorNullifier(object):
                                 except:
                                     pass
 
-                            '''
-                            try:
-                                if (pixel_access_recaptured_image[x - 1, y][3] == 0):
-                                    number_of_blanks_around_1 += 1
-                            except:
-                                pass
-
-                            try:
-                                if (pixel_access_recaptured_image[x + 1, y][3] == 0):
-                                    number_of_blanks_around_1 += 1
-                            except:
-                                pass
-
-                            try:
-                                if (pixel_access_recaptured_image[x, y - 1][3] == 0):
-                                    number_of_blanks_around_1 += 1
-                            except:
-                                pass
-
-                            try:
-                                if (pixel_access_recaptured_image[x, y + 1][3] == 0):
-                                    number_of_blanks_around_1 += 1
-                            except:
-                                pass
-
-
-                            try:
-                                if (pixel_access_recaptured_image[x - 2, y][3] == 0):
-                                    number_of_blanks_around_2 += 1
-                            except:
-                                pass
-
-                            try:
-                                if (pixel_access_recaptured_image[x + 2, y][3] == 0):
-                                    number_of_blanks_around_2 += 1
-                            except:
-                                pass
-
-                            try:
-                                if (pixel_access_recaptured_image[x, y - 2][3] == 0):
-                                    number_of_blanks_around_2 += 1
-                            except:
-                                pass
-
-                            try:
-                                if (pixel_access_recaptured_image[x, y + 2][3] == 0):
-                                    number_of_blanks_around_2 += 1
-                            except:
-                                pass
-                            '''
-
                             if ((number_of_blanks_around_1 >= 3) or (number_of_blanks_around_2 >= 4)):
                                 pixel_access_recaptured_image[x, y] = (255, 255, 255, 0)
                                 increased_empty_space_area += 1
