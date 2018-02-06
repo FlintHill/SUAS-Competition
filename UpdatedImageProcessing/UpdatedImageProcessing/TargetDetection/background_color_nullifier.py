@@ -6,6 +6,16 @@ class BackgroundColorNullifier(object):
 
     @staticmethod
     def recrop_target(captured_image):
+        """
+        Scan through a captured_image, recapture the image so that 5-pixel
+        margins from any non-transparent colors are left on all four directions.
+
+        :param captured_image: a captured image of a potential target
+
+        :type captured_image: a PIL image
+
+        :return: a recaptured PIL image
+        """
         pixel_access_captured_image = captured_image.load()
         stopping_x = []
         stopping_y = []
@@ -46,12 +56,21 @@ class BackgroundColorNullifier(object):
     @staticmethod
     def nullify_color_and_recrop_target(captured_image, color_difference_threshold):
         """
+        Scan through a captured_image, both line by line and column by column,
+        starting from all four directions. During this process, if the current
+        pixel under scanning is within the color_difference_threshold, this
+        current pixel is set to transparent. Otherwise, the location of the
+        current pixel is marked, and the elimination process on this specific
+        line or column is finished.
+
         :param captured_image: a captured image of a potential target
         :param color_difference_threshold: the threshold percentage difference
                                            between colors for determining
                                            the boundary of the target.
-        :type captured_image: an image file such as JPG and PNG
+        :type captured_image: a PIL image
         :type color_difference_threshold: int
+
+        :return: a recaptured and color-nullified PIL image
         """
         stopping_x = []
         stopping_y = []
@@ -154,6 +173,25 @@ class BackgroundColorNullifier(object):
                         number_of_blanks_around_2 = 0
 
                         if (pixel_access_recaptured_image[x, y][3] != 0):
+
+                            coordinates_to_scan_1 = [[x - 1, y], [x + 1, y], [x, y - 1], [x, y + 1]]
+                            coordinates_to_scan_2 = [[x - 2, y], [x + 2, y], [x, y - 2], [x, y + 2]]
+
+                            for index_1 in range(len(coordinates_to_scan_1)):
+                                try:
+                                    if (pixel_access_recaptured_image[coordinates_to_scan_1[index_1][0], coordinates_to_scan_1[index_1][1]][3] == 0):
+                                        number_of_blanks_around_1 += 1
+                                except:
+                                    pass
+
+                            for index_2 in range(len(coordinates_to_scan_2)):
+                                try:
+                                    if (pixel_access_recaptured_image[coordinates_to_scan_2[index_2][0], coordinates_to_scan_2[index_2][1]][3] == 0):
+                                        number_of_blanks_around_2 += 1
+                                except:
+                                    pass
+
+                            '''
                             try:
                                 if (pixel_access_recaptured_image[x - 1, y][3] == 0):
                                     number_of_blanks_around_1 += 1
@@ -202,6 +240,7 @@ class BackgroundColorNullifier(object):
                                     number_of_blanks_around_2 += 1
                             except:
                                 pass
+                            '''
 
                             if ((number_of_blanks_around_1 >= 3) or (number_of_blanks_around_2 >= 4)):
                                 pixel_access_recaptured_image[x, y] = (255, 255, 255, 0)

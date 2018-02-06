@@ -1,9 +1,9 @@
 import json
 
-class ResultRecorder(object):
+class DetectionResultRecorder(object):
 
     @staticmethod
-    def record_result(positive_list):
+    def record_detection_result(positive_list):
         """
         Return the result of target detection.
 

@@ -78,8 +78,9 @@ class IntegratedTargetCapturingProcess(object):
 
             captured_image = target_map_image.crop((crop_x1, crop_y1, crop_x2, crop_y2))
 
+            #Enabling eliminate_target_not_on_grass functions depending on the background color.
             '''
-            if (FalsePositiveEliminators.eliminate_target_not_on_grass(captured_image) == 0):
+            if FalsePositiveEliminators.eliminate_target_not_on_grass(captured_image) == False:
                 list_to_eliminate.append(index)
                 continue
             '''

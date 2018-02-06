@@ -2,7 +2,7 @@ from time import sleep
 from PIL import Image
 import os
 import math
-from utils import *
+from .utils import *
 from UpdatedImageProcessing.TargetDetection.single_target_map_detector import SingleTargetMapDetector
 from .settings import GCSSettings
 from .converter_functions import inverse_haversine
@@ -47,29 +47,29 @@ def run_img_proc_process(logger_queue, location_log, targets_to_submit, interop_
 
 def run_autonomous_img_proc_process(logger_queue, location_log, interop_client_array, img_proc_status):
     target_detected = []
-    target_map_path = "static/imgs"
-    autonomous_image_processing_save_path = "static/autonomous_crops"
+    TARGET_MAP_PATH = "static/imgs"
+    AUTONOMOUS_IMAGE_PROCESSING_SAVE_PATH = "static/autonomous_crops"
 
     while True:
-        amount_of_target_maps_present = len(set(os.listdir(target_map_path))) - len(set(target_detected))
+        amount_of_target_maps_present = len(set(os.listdir(TARGET_MAP_PATH))) - len(set(target_detected))
 
-        while (amount_of_target_maps_present > 0):
-            if (img_proc_status.value == "connected"):
+        while amount_of_target_maps_present > 0:
+            if img_proc_status.value == "connected":
                 current_target_map_name = ""
 
-                for index_1 in range(len(set(os.listdir(target_map_path)))):
-                    current_target_map_name = os.listdir(target_map_path)[index_1]
+                for index_in_target_map_path in range(len(set(os.listdir(TARGET_MAP_PATH)))):
+                    current_target_map_name = os.listdir(TARGET_MAP_PATH)[index_in_target_map_path]
 
                     is_current_target_map_detected = False
-                    for index_2 in range(len(target_detected)):
-                        if (target_detected[index_2] == current_target_map_name):
+                    for index_in_target_detected in range(len(target_detected)):
+                        if target_detected[index_in_target_detected] == current_target_map_name:
                             is_current_target_map_detected = True
 
-                    if (is_current_target_map_detected == False):
+                    if is_current_target_map_detected == False:
                         target_detected.append(current_target_map_name)
                         break
 
-                combo_target_detection_result_list = SingleTargetMapDetector.detect_single_target_map(os.path.join(target_map_path, current_target_map_name))
+                combo_target_detection_result_list = SingleTargetMapDetector.detect_single_target_map(os.path.join(TARGET_MAP_PATH, current_target_map_name))
                 single_target_crops = combo_target_detection_result_list[0]
                 json_file = combo_target_detection_result_list[1]
 
@@ -98,10 +98,10 @@ def run_autonomous_img_proc_process(logger_queue, location_log, interop_client_a
                 target_characteristics["longitude"] = target_location.get_lon()
                 '''
 
-                for index_3 in range(len(single_target_crops)):
-                    single_target_crops[index_3].save(os.path.join(autonomous_image_processing_save_path, current_target_map_name + " - " + str(index_3 + 1) + ".png"))
+                for index_in_single_target_crops in range(len(single_target_crops)):
+                    single_target_crops[index_in_single_target_crops].save(os.path.join(AUTONOMOUS_IMAGE_PROCESSING_SAVE_PATH, current_target_map_name + " - " + str(index_in_single_target_crops + 1) + ".png"))
 
-                with open(os.path.join(autonomous_image_processing_save_path, current_target_map_name + ".json"), 'w') as fp:
+                with open(os.path.join(AUTONOMOUS_IMAGE_PROCESSING_SAVE_PATH, current_target_map_name + ".json"), 'w') as fp:
                     json.dump(json_file, fp, indent=4)
 
                 amount_of_target_maps_present -= 1

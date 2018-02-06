@@ -1,6 +1,6 @@
 from .settings import Settings
 from .logger import Logger
-from .result_recorder import ResultRecorder
+from .detection_result_recorder import DetectionResultRecorder
 from .color_operations import ColorOperations
 from .target_analyzer import TargetAnalyzer
 from .background_color_nullifier import BackgroundColorNullifier

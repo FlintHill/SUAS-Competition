@@ -215,10 +215,17 @@ class FalsePositiveEliminators(object):
         return new_positive_list
 
     @staticmethod
-    def eliminate_target_not_on_grass(target_image):
-        average_rim_color = TargetAnalyzer.find_rim_average_color(target_image)
+    def eliminate_target_not_on_grass(captured_image):
+        """
+        :param captured_image: a captured image of a potential target
+
+        :type captured_image: a PIL image
+
+        :return: True (if the target is determined to be on grass) or False
+        """
+        average_rim_color = TargetAnalyzer.find_rim_average_color(captured_image)
         color_difference = ColorOperations.find_percentage_difference(average_rim_color, Settings.GRASS_COLOR)
         if (color_difference > 10):
-            return 0
+            return False
         else:
-            return 1
+            return True
