@@ -18,7 +18,6 @@ class Client(object):
 
 		self.waypoints_reset = False
 
-		"""
 		self.interop_client = self.manager.list()
 		self.interop_client.append(SUASSystem.InteropClientConverter())
 		self.interop_data = self.manager.list()
@@ -31,7 +30,6 @@ class Client(object):
 			self.targets_to_submit
 		))
 		self.gcs_process.start()
-		"""
 
 	def set_waypoint_reset(self):
 		if self.waypoints_reset is False:
