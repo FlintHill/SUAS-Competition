@@ -61,6 +61,7 @@ def gcs_process(sda_status, img_proc_status, interop_client_array, targets_to_su
             sda_process.terminate()
             sleep(1)
             sda_process = initialize_sda_process(logger_queue, sda_status, UAV_status, waypoints, sda_avoid_coords, vehicle_state_data, mission_information_data)
+            log("root", "Waypoints Force Updated")
             user_force_waypoint_update.value = False
 
         if len(interop_client_array) != 0:
