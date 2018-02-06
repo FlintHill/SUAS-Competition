@@ -15,8 +15,7 @@ class Client(object):
 		self.sda_start_time = self.manager.Value('i', int(datetime.utcnow().strftime("%s")))
 		self.img_proc_start_time = self.manager.Value('i', int(datetime.utcnow().strftime("%s")))
 		self.targets_to_submit = self.manager.list()
-
-		self.waypoints_reset = False
+		self.user_force_waypoint_update = self.manager.Value('i', False)
 
 		self.interop_client = self.manager.list()
 		self.interop_client.append(SUASSystem.InteropClientConverter())
@@ -27,13 +26,13 @@ class Client(object):
 			self.sda_status,
 			self.img_proc_status,
 			self.interop_client,
-			self.targets_to_submit
+			self.targets_to_submit,
+			self.user_force_waypoint_update
 		))
 		self.gcs_process.start()
 
-	def set_waypoint_reset(self):
-		if self.waypoints_reset is False:
-			self.waypoints_reset = True
+	def force_reset_waypoint(self):
+		self.user_force_waypoint_update = True
 
 	def get_waypoint_reset(self):
 		return self.waypoints_reset
@@ -97,7 +96,7 @@ def index():
 	except:
 		traceback.print_exc()
 
-@app.route('/get/waypoints/reset') # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+@app.route('/get/waypoints/reset', methods=["GET"])
 def update_waypoints():
 	try:
 		client.set_waypoint_reset()
