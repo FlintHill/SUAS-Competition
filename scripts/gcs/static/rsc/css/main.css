@@ -54,6 +54,16 @@
 	left:3em;
 }
 
+.orientation-compass-holder {
+	border-radius:50%;
+	border:3px solid gray;
+}
+
+.orientation-compass-pointer {
+	/* border bottom opaque, rest transparent */
+}
+
+
 .power-button-parent {
 	position:relative;
 }
