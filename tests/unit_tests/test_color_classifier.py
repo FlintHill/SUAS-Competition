@@ -67,7 +67,7 @@ class ColorClassifierTestCase(unittest.TestCase):
 		test_results = []
 
 		for rgba in test_rgba:
-			test_answers.append(cc.convert_rgba_to_color_name)
+			test_results.append(cc.convert_rgba_to_color_name(rgba))
 
 		i = 0
 
@@ -75,7 +75,6 @@ class ColorClassifierTestCase(unittest.TestCase):
 			self.assertEqual(test_results[i], test_answers[i])
 
 			i += 1
-
 
 	def test_convert_color_name_to_rgba(self):
 		cc = ColorClassifier()
@@ -106,7 +105,17 @@ class ColorClassifierTestCase(unittest.TestCase):
 			[255, 165, 0, 255]
 		]
 
-		self.assertEqual(True, True)
+		test_results = []
+
+		for color_name in test_color_names:
+			test_results.append(cc.convert_color_name_to_rgba(color_name))
+
+		i = 0
+
+		while i < len(test_results):
+			self.assertEqual(test_results[i], test_answers[i])
+
+			i += 1
 
 	def test_no_image(self):
 		cc = ColorClassifier()
