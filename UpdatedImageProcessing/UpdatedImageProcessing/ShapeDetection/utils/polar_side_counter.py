@@ -18,7 +18,9 @@ class PolarSideCounter(object):
         self.numpy_origin = numpy.asarray(self.origin)
 
         self.raycast_plot()
-        self.set_circle_score()
+        self.set_mean_radius()
+        self.set_scores()
+        #self.set_average_distance_from_previous()
         self.smooth_plot(3, 2) #NEEDS TO BE OPTOMIZED
         self.set_maximums_and_minimums() #NEEDS TO BE OPTOMIZED
 
@@ -115,15 +117,11 @@ class PolarSideCounter(object):
         data = [plot_trace, maximums_trace, minimums_trace]
         py.plot(data, filename='psc')
 
-    def set_circle_score(self):
-        """
-        Adapted from ImgProcessingCLI's PolarSideCounter by Peter Husisian
-        """
+    def set_scores(self):
+
         CIRCLE_DERIV_RANGE = (0.96, 1.04)
-        self.mean_radius = 0
-        for i in range(len(self.plot)):
-            self.mean_radius += self.plot[i][1]
-        self.mean_radius = self.mean_radius / float(len(self.plot))
+        NOISE_DERIV_RANGE = (0.85, 1.15)
+
         x_deriv = numpy.zeros((len(self.plot)))
         y_deriv = numpy.zeros((len(self.plot)))
         for i in range(1, x_deriv.shape[0]):
@@ -142,11 +140,26 @@ class PolarSideCounter(object):
 
         mag_derivs = numpy.sqrt(numpy.add(numpy.square(x_deriv), numpy.square(y_deriv)))
 
-        num_matches = 0
+        num_circle_matches = 0
+        num_noise_matches = 0
+
         for i in range(0, mag_derivs.shape[0]):
             if mag_derivs[i] >= CIRCLE_DERIV_RANGE[0] and mag_derivs[i] <= CIRCLE_DERIV_RANGE[1]:
-                num_matches += 1
-        self.circle_score = float(num_matches)/float(mag_derivs.shape[0])
+                num_circle_matches += 1
+            if mag_derivs[i] <= NOISE_DERIV_RANGE[0] or mag_derivs[i] >= NOISE_DERIV_RANGE[1]:
+                num_noise_matches +=1
+
+        self.circle_score = float(num_circle_matches)/float(mag_derivs.shape[0])
+        self.noise_score = float(num_noise_matches)/float(mag_derivs.shape[0])
+
+    def set_mean_radius(self):
+        self.mean_radius = 0
+        for i in range(len(self.plot)):
+            self.mean_radius += self.plot[i][1]
+        self.mean_radius = self.mean_radius / float(len(self.plot))
+
+    def get_raycast_plot(self):
+        return self.plot
 
     def get_polar_side_maximums(self):
         return self.polar_side_maximums
@@ -159,3 +172,6 @@ class PolarSideCounter(object):
 
     def get_circle_score(self):
         return self.circle_score
+
+    def get_noise_score(self):
+        return self.noise_score

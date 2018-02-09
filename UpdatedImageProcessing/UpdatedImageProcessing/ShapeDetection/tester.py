@@ -4,7 +4,8 @@ from utils import alpha_trace
 from PIL import Image
 import os
 
-testpath = "../../../../test_targets/1.png"
+testpath = "../../../../test_targets/squares/22.png"
+noise = "../../../../test_targets/noise_targets/1-1.png"
 DATASET_PATH = "/Users/jmoxley/Desktop/compsci/SUAS/test_targets/squares"
 
 
@@ -25,8 +26,10 @@ print(psc.get_circle_score())
 """
 
 
+
 #test 3
 for filename in os.listdir(DATASET_PATH):
     if filename.endswith(".jpg") or filename.endswith(".png"):
         sc = ShapeClassification(os.path.join(DATASET_PATH, filename))
+        #sc = PolarSideCounter(alpha_trace(os.path.join(DATASET_PATH, filename)))
         print(sc.get_shape_type())

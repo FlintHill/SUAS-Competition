@@ -8,6 +8,7 @@ import cv2
 import numpy
 
 CIRCLE_SCORE_THRESHOLD = 0.45 #needs to be optomized
+NOISE_SCORE_THRESHOLD = 0.6
 SQUARE_RECTANGLE_EIGEN_RATIO_THRESHOLD = 1.5 #not tested
 PENTAGON_STAR_CLUSTER_THRESHOLD = 8 #not tested
 OCTAGON_CROSS_CLUSTER_THRESHOLD = 10 #not tested
@@ -34,14 +35,14 @@ class ShapeClassification(object):
         self.polar_side_minimums = self.polar_side_counter.get_polar_side_minimums()
         self.num_polar_side_minimums = len(self.polar_side_counter.get_polar_side_minimums())
         self.circle_score = self.polar_side_counter.get_circle_score()
+        self.noise_score = self.polar_side_counter.get_noise_score()
         self.origin = self.polar_side_counter.get_origin()
 
     def determine_shape(self):
         if self.circle_score >= CIRCLE_SCORE_THRESHOLD:
             self.shape_type = "Circle"
-            """elif hough_vote_is_quartercircle(highest_vote_and_radius):
-                shape_type = "Quarter-Circle"
-            """
+        elif self.noise_score >= NOISE_SCORE_THRESHOLD:
+            self.shape_type = "Noise"
         elif self.num_polar_side_maximums == 2:
             self.shape_type = "Semi-Circle"
         elif self.num_polar_side_maximums == 3:
