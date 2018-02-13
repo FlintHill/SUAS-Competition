@@ -1,11 +1,10 @@
-import matplotlib.pyplot
+from settings import ShapeDetectionSettings
 from get_origin import get_origin
 from PIL import Image, ImageOps
 import numpy
 import math
-
-import plotly.plotly as py
-import plotly.graph_objs as go
+import plotly.plotly as plotly
+import plotly.graph_objs as graph_objs
 import peakutils, peakutils.plot
 
 class PolarSideCounter(object):
@@ -18,9 +17,10 @@ class PolarSideCounter(object):
         self.numpy_origin = numpy.asarray(self.origin)
 
         self.raycast_plot()
-        self.set_circle_score()
-        self.smooth_plot(3, 2) #NEEDS TO BE OPTOMIZED
-        self.set_maximums_and_minimums() #NEEDS TO BE OPTOMIZED
+        self.set_mean_radius()
+        self.set_scores()
+        self.smooth_plot(3, 2)
+        self.set_maximums_and_minimums()
 
         if(show_plot):
             self.show_plot()
@@ -66,7 +66,7 @@ class PolarSideCounter(object):
         for i in range(len(self.indices)):
             self.polar_side_maximums.append(self.plot[self.indices[i]])
 
-        #invert plot to find minimums
+        # invert plot to find minimums
         radius_range = self.y.max()-self.y.min()
         inverted_y_plot = []
         for i in range(len(self.y)):
@@ -84,13 +84,13 @@ class PolarSideCounter(object):
 
 
     def show_plot(self):
-        plot_trace = go.Scatter(
+        plot_trace = graph_objs.Scatter(
             x=self.x,
             y=numpy.subtract(self.y,self.base),
             mode='lines',
             name='Original Plot',
         )
-        maximums_trace = go.Scatter(
+        maximums_trace = graph_objs.Scatter(
             x=[self.x[i] for i in self.indices],
             y=[self.y[j]-self.base[j] for j in self.indices],
             mode='markers',
@@ -101,7 +101,7 @@ class PolarSideCounter(object):
             ),
             name='Detected Maximums'
         )
-        minimums_trace = go.Scatter(
+        minimums_trace = graph_objs.Scatter(
             x=[self.x[i] for i in self.min_indices],
             y=[self.y[j]-self.base[j] for j in self.min_indices],
             mode='markers',
@@ -113,17 +113,9 @@ class PolarSideCounter(object):
             name='Detected Minimums'
         )
         data = [plot_trace, maximums_trace, minimums_trace]
-        py.plot(data, filename='psc')
+        plotly.plot(data, filename='psc')
 
-    def set_circle_score(self):
-        """
-        Adapted from ImgProcessingCLI's PolarSideCounter by Peter Husisian
-        """
-        CIRCLE_DERIV_RANGE = (0.96, 1.04)
-        self.mean_radius = 0
-        for i in range(len(self.plot)):
-            self.mean_radius += self.plot[i][1]
-        self.mean_radius = self.mean_radius / float(len(self.plot))
+    def set_scores(self):
         x_deriv = numpy.zeros((len(self.plot)))
         y_deriv = numpy.zeros((len(self.plot)))
         for i in range(1, x_deriv.shape[0]):
@@ -142,11 +134,26 @@ class PolarSideCounter(object):
 
         mag_derivs = numpy.sqrt(numpy.add(numpy.square(x_deriv), numpy.square(y_deriv)))
 
-        num_matches = 0
+        num_circle_matches = 0
+        num_noise_matches = 0
+
         for i in range(0, mag_derivs.shape[0]):
-            if mag_derivs[i] >= CIRCLE_DERIV_RANGE[0] and mag_derivs[i] <= CIRCLE_DERIV_RANGE[1]:
-                num_matches += 1
-        self.circle_score = float(num_matches)/float(mag_derivs.shape[0])
+            if mag_derivs[i] >= ShapeDetectionSettings.CIRCLE_DERIV_RANGE[0] and mag_derivs[i] <= ShapeDetectionSettings.CIRCLE_DERIV_RANGE[1]:
+                num_circle_matches += 1
+            if mag_derivs[i] <= ShapeDetectionSettings.NOISE_DERIV_RANGE[0] or mag_derivs[i] >= ShapeDetectionSettings.NOISE_DERIV_RANGE[1]:
+                num_noise_matches +=1
+
+        self.circle_score = float(num_circle_matches)/float(mag_derivs.shape[0])
+        self.noise_score = float(num_noise_matches)/float(mag_derivs.shape[0])
+
+    def set_mean_radius(self):
+        self.mean_radius = 0
+        for i in range(len(self.plot)):
+            self.mean_radius += self.plot[i][1]
+        self.mean_radius = self.mean_radius / float(len(self.plot))
+
+    def get_raycast_plot(self):
+        return self.plot
 
     def get_polar_side_maximums(self):
         return self.polar_side_maximums
@@ -159,3 +166,6 @@ class PolarSideCounter(object):
 
     def get_circle_score(self):
         return self.circle_score
+
+    def get_noise_score(self):
+        return self.noise_score
