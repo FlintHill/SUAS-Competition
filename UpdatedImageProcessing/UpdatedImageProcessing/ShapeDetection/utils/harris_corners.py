@@ -1,9 +1,7 @@
 import cv2
 import numpy
-import collections
 import math
 
-#dependencies
 from ImgProcessingCLI.ImgStat import Clusters, Cluster
 
 CV_HARRIS_CORNER_THRESHOLD = 10e-03
