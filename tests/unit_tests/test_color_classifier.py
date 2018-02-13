@@ -5,7 +5,7 @@ import os
 class ColorClassifierTestCase(unittest.TestCase):
 
 	def test_get_color(self):
-		cc = ColorClassifier("test_color_classifier.png")
+		cc = ColorClassifier(os.path.join("tests", "images", "test_color_classifier.png"))
 		result = cc.get_color()
 
 		self.assertEqual(result, ["purple", "blue"])
