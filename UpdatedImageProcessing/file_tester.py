@@ -4,12 +4,23 @@ import pytesseract
 import argparse
 import cv2
 import os
+import timeit
 from UpdatedImageProcessing import *
 
+start_time = timeit.default_timer()
+
+IntegratedImageProcessingTester.complete_integrated_image_processing()
+IntegratedImageProcessingTester.run_integrated_image_processing_tester()
+
+Logger.format_time_report(timeit.default_timer() - start_time)
+
+#Run IntegratedImageProcessing
+"""
 target_map_path = os.path.expanduser("~/Desktop/Synthetic_Dataset/Answers/modular_target_maps")
 autonomous_image_processing_save_path = os.path.expanduser("~/Desktop/Save_Path")
 
-IntegratedImageProcessing.run_integrated_image_processing(target_map_path, autonomous_image_processing_save_path)
+_processing(target_map_path, autonomous_image_processing_save_path)
+"""
 
 #Find average color of an image
 '''

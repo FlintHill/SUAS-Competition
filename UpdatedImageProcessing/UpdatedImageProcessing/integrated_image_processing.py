@@ -1,5 +1,5 @@
 import os
-import timeit
+import time
 import json
 from .TargetDetection import *
 from .ShapeDetection import *
@@ -7,7 +7,7 @@ from .ShapeDetection import *
 class IntegratedImageProcessing(object):
 
     @staticmethod
-    def run_integrated_image_processing(target_map_path, autonomous_image_processing_save_path):
+    def run_integrated_image_processing(target_map_path, image_save_path, json_save_path):
         target_detected = []
         amount_of_target_maps_present = len(set(os.listdir(target_map_path))) - len(set(target_detected))
 
@@ -29,12 +29,14 @@ class IntegratedImageProcessing(object):
             json_file = combo_target_detection_result_list[1]
 
             for index_3 in range(len(single_target_crops)):
-                current_crop_path = os.path.join(autonomous_image_processing_save_path, current_target_map_name + " - " + str(index_3 + 1) + ".png")
+                current_crop_path = os.path.join(image_save_path, current_target_map_name + " - " + str(index_3 + 1) + ".png")
                 single_target_crops[index_3].save(current_crop_path)
+
                 shape_type = ShapeClassification(current_crop_path).get_shape_type()
+
                 json_file["image_processing_results"][index_3]["target_shape_type"] = shape_type
 
-            with open(os.path.join(autonomous_image_processing_save_path, current_target_map_name + ".json"), 'w') as fp:
+            with open(os.path.join(json_save_path, current_target_map_name + ".json"), 'w') as fp:
                 json.dump(json_file, fp, indent=4)
 
             amount_of_target_maps_present -= 1
