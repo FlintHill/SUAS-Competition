@@ -1,8 +1,10 @@
 import os
 import time
 import json
+from PIL import Image
 from .TargetDetection import *
 from .ShapeDetection import *
+from .Classifiers import *
 
 class IntegratedImageProcessing(object):
 
@@ -29,10 +31,19 @@ class IntegratedImageProcessing(object):
             json_file = combo_target_detection_result_list[1]
 
             for index_3 in range(len(single_target_crops)):
+                json_file["image_processing_results"][index_3]["target_index"] = index_3
+
                 current_crop_path = os.path.join(image_save_path, current_target_map_name + " - " + str(index_3 + 1) + ".png")
                 single_target_crops[index_3].save(current_crop_path)
 
                 shape_type = ShapeClassification(current_crop_path).get_shape_type()
+                json_file["image_processing_results"][index_3]["target_shape_type"] = shape_type
+
+                color_classifying_results = ColorClassifier(current_crop_path).get_color()
+                shape_color = color_classifying_results[0]
+                letter_color = color_classifying_results[1]
+                json_file["image_processing_results"][index_3]["target_shape_color"] = shape_color
+                json_file["image_processing_results"][index_3]["target_letter_color"] = letter_color
 
                 json_file["image_processing_results"][index_3]["target_shape_type"] = shape_type
 
@@ -40,3 +51,4 @@ class IntegratedImageProcessing(object):
                 json.dump(json_file, fp, indent=4)
 
             amount_of_target_maps_present -= 1
+            Logger.log("Target Maps Left to Detect: " + str(amount_of_target_maps_present))

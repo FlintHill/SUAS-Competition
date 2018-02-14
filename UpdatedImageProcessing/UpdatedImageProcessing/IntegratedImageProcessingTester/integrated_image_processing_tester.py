@@ -2,6 +2,7 @@ import os
 import json
 import timeit
 from ..integrated_image_processing import IntegratedImageProcessing
+from ..Classifiers import *
 from .settings import Settings
 from .logger import Logger
 
@@ -37,6 +38,12 @@ class IntegratedImageProcessingTester(object):
 
         true_shape_count = 0
         false_shape_count = 0
+
+        true_shape_color_count = 0
+        false_shape_color_count = 0
+
+        true_letter_color_count = 0
+        false_letter_color_count = 0
 
         overall_target_count = 0
 
@@ -88,10 +95,26 @@ class IntegratedImageProcessingTester(object):
                         current_target_shape = answer_list[index_3]["shape_type"]
                         detected_target_shape = result_list[index_4]["target_shape_type"]
 
+                        current_target_shape_color = ColorClassifier().convert_rgba_to_color_name(answer_list[index_3]["shape_color"])
+                        detected_target_shape_color = result_list[index_4]["target_shape_color"]
+
+                        current_target_letter_color = ColorClassifier().convert_rgba_to_color_name(answer_list[index_3]["alphanumeric_color"])
+                        detected_target_letter_color = result_list[index_4]["target_letter_color"]
+
                         if current_target_shape == detected_target_shape:
                             true_shape_count += 1
                         else:
                             false_shape_count += 1
+
+                        if current_target_shape_color == detected_target_shape_color:
+                            true_shape_color_count += 1
+                        else:
+                            false_shape_color_count += 1
+
+                        if current_target_letter_color == detected_target_letter_color:
+                            true_letter_color_count += 1
+                        else:
+                            false_letter_color_count += 1
 
                         continue
 
@@ -102,6 +125,8 @@ class IntegratedImageProcessingTester(object):
 
         target_detection_percentage = 100 * float(overall_true_positive_count) / (overall_target_count)
         shape_detection_percentage = 100 * float(true_shape_count) / (overall_target_count)
+        shape_color_detection_percentage = 100 * float(true_shape_color_count) / (overall_target_count)
+        letter_color_detection_percentage = 100 * float(true_letter_color_count) / (overall_target_count)
 
         Logger.log("--------------------------------------------------")
         Logger.log("Total True Positive Count: " + str(overall_true_positive_count))
@@ -111,4 +136,12 @@ class IntegratedImageProcessingTester(object):
         Logger.log("Total True Shape Count: " + str(true_shape_count))
         Logger.log("Total False Shape Count: " + str(false_shape_count))
         Logger.log("Percentage of Successfully Detected : " + str(shape_detection_percentage) + "%")
+        Logger.log("--------------------------------------------------")
+        Logger.log("Total True Shape Color Count: " + str(true_shape_color_count))
+        Logger.log("Total False Shape Color Count: " + str(false_shape_color_count))
+        Logger.log("Percentage of Successfully Detected : " + str(shape_color_detection_percentage) + "%")
+        Logger.log("--------------------------------------------------")
+        Logger.log("Total True Letter Color Count: " + str(true_letter_color_count))
+        Logger.log("Total False Letter Color Count: " + str(false_letter_color_count))
+        Logger.log("Percentage of Successfully Detected : " + str(letter_color_detection_percentage) + "%")
         Logger.log("--------------------------------------------------")
