@@ -17,8 +17,8 @@ class ColorClassifier(object):
 		"""
 		Constructor.
 
-		:param img:		Opened PIL (Python Image Library) image.
-		:type img:		PIL.Image.Image
+		:param img:		Relative path to image.
+		:type img:		String
 
 		:return:		Nothing.
 		"""

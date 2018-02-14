@@ -10,7 +10,7 @@ from .converter_functions import *
 
 gcs_logger_name = multiprocessing.current_process().name
 
-def gcs_process(sda_status, img_proc_status, interop_client_array, targets_to_submit):
+def gcs_process(sda_status, img_proc_status, interop_client_array, targets_to_submit, user_force_waypoint_update):
     # Setup logging information
     logger_queue = multiprocessing.Queue(-1)
     logger_listener_process = multiprocessing.Process(target=listener_process, args=(

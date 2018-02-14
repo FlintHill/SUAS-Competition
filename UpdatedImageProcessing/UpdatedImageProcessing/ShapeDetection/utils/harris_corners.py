@@ -1,6 +1,5 @@
 import cv2
 import numpy
-import collections
 import math
 from .kmeans import Clusters, Cluster
 

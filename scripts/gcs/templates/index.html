@@ -3,11 +3,10 @@
 	<head>
 		<meta charset="utf-8">
 
-		<title>GCS: Web UI</title>
-
+		<title>GCS: WebUI</title>
 		<link href="rsc/icons/favicon.ico" rel="icon" type="image/x-icon">
 
-		<meta name="description" content="">
+		<meta name="description" content="Ground Control Station: Web-based User Interface">
 		<meta name="author" content="James Villemarette">
 		<meta name="software" content="custom">
 
@@ -91,6 +90,22 @@
 			<div class="modal-footer">
 				<a class="waves-effect waves-light btn left red" onclick="$('#verification').modal('close');">Cancel</a>
 				<a href="#!" onclick="submitTarget();" class="modal-action modal-close waves-effect waves-green btn-flat">Submit</a>
+			</div>
+		</div>
+
+		<!-- Reset Waypoint -->
+		<div id="reset-waypoints" class="modal">
+			<div class="modal-content" style="padding-bottom:0">
+				<h4>Confirm Waypoints Reset</h4>
+				<p>
+					Are you sure you want to reset waypoints?
+				</p>
+			</div>
+			<div class="modal-footer">
+				<div class="center-align">
+					<a href="#!" class="modal-action modal-close waves-effect waves-green btn" onclick="resetWaypointsConfirm()">Reset</a>
+					<a href="#!" class="modal-action modal-close waves-effect waves-red btn-flat">Cancel</a>
+				</div>
 			</div>
 		</div>
 
@@ -374,15 +389,19 @@
 		<!-- Navbar -->
 		<nav>
 			<div class="nav-wrapper purple darken-1">
-				<a href="#" class="brand-logo">&nbsp;&nbsp;Ground Control Station</a>
+				<a href="/" class="brand-logo tooltipped" data-position="right" data-delay="50" data-tooltip="Reload Page">&nbsp;&nbsp;Ground Control Station</a>
 				<ul id="nav-mobile" class="right hide-on-med-and-down" style="height:64px;">
 					<li>
-						<a class="modal-trigger" href="#about">
+						<a href="#reset" onclick="resetWaypoints()" class="tooltipped" data-position="left" data-delay="50" data-tooltip="Reset Waypoints">
+							<i class="fa fa-refresh fa-2x" aria-hidden="true" style="line-height:60px"></i>
+						</a>
+					<li>
+						<a class="modal-trigger tooltipped" href="#about" data-position="left" data-delay="50" data-tooltip="Open Help Modal">
 							<i class="fa fa-question-circle fa-2x" aria-hidden="true" style="line-height:60px"></i>
 						</a>
 					</li>
 					<li>
-						<a href="https://google.com/">
+						<a href="https://google.com/" class="tooltipped" data-position="left" data-delay="50" data-tooltip="Exit">
 							<i class="fa fa-close fa-2x" aria-hidden="true" style="line-height:60px"></i>
 						</a>
 					</li>
@@ -540,7 +559,7 @@
 					</div>
 				</div>
 				<hr>
-				<p class="grey-text">v0.1 /// Flinthill SUAS /// Last modified: October 26th, 2017</p>
+				<p class="grey-text">v1.0 /// Flinthill SUAS /// Last modified: February 2nd, 2018</p>
 			</div>
 		</div>
 
