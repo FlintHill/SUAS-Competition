@@ -1,4 +1,4 @@
-from settings import ShapeDetectionSettings
+from ..settings import ShapeDetectionSettings
 from get_origin import get_origin
 from PIL import Image, ImageOps
 import numpy
