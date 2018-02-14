@@ -11,6 +11,5 @@ opencv-python
 scikit-learn
 scipy
 dronekit
-wxpython
 plotly
 peakutils
