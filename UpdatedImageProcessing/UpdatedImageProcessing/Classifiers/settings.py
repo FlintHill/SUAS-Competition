@@ -16,5 +16,4 @@ class ImageProcessingClassifierSettings(object):
 		"purple": [128, 0, 128, 255],
 		"brown": [165, 42, 42, 255],
 		"orange": [255, 165, 0, 255]
-
 	}
