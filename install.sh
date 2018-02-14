@@ -13,18 +13,4 @@ sudo -H python -m pip install . -U
 cd ../
 sudo rm -r simple-websocket-server
 
-sudo -H python -m pip install opencv-python
-sudo -H python -m pip install scikit-learn
-sudo -H python -m pip install scipy
-sudo -H python -m pip install dronekit
-sudo -H python -m pip install wxpython
-sudo -H python -m pip install plotly
-sudo -H python -m pip install peakutils
-
-sudo -H python -m pip install ./SyntheticDataset -U
-sudo -H python -m pip install ./UpdatedSyntheticDataset -U
-sudo -H python -m pip install ./EigenFit -U
-sudo -H python -m pip install ./ImgProcessingCLI -U
-sudo -H python -m pip install ./UpdatedImageProcessing -U
-sudo -H python -m pip install ./SUASSystem -U
-sudo -H python -m pip install ./SDAPackage -U
+sudo -H python -m pip install -U -r requirements.txt
