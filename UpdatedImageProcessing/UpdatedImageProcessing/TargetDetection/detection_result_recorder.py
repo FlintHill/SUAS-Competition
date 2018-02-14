@@ -21,10 +21,12 @@ class DetectionResultRecorder(object):
 
         data["image_processing_results"] = []
         for index in range(len(positive_list)):
-            current_target_name = "target_" + str(index)
             data["image_processing_results"].append({
+                "target_index": {},
                 "target_location": (positive_list[index][0], positive_list[index][1], positive_list[index][2], positive_list[index][3]),
-                "target_shape_type": {}
+                "target_shape_type": {},
+                "target_shape_color": {},
+                "target_letter_color": {}
             })
 
         return data
