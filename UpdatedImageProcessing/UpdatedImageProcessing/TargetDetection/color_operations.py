@@ -17,20 +17,6 @@ class ColorOperations(object):
         return (color_distance / numpy.sqrt([3 * (255 ** 2)])) * 100
 
     @staticmethod
-    def apply_color_quantization(rgb_image, kmeans_clusters_number):
-        lab_image = cv2.cvtColor(numpy.array(rgb_image), cv2.COLOR_RGB2LAB)
-        lab_image = lab_image.reshape((lab_image.shape[0] * lab_image.shape[1], 3))
-
-        clt = MiniBatchKMeans(n_clusters = kmeans_clusters_number)
-        labels = clt.fit_predict(lab_image)
-
-        lab_image = clt.cluster_centers_.astype("uint8")[labels]
-        lab_image = lab_image.reshape((rgb_image.height, rgb_image.width, 3))
-        bgr_image = cv2.cvtColor(lab_image, cv2.COLOR_LAB2BGR)
-        rgb_image = Image.fromarray(bgr_image, 'RGB')
-        return rgb_image
-
-    @staticmethod
     def apply_mean_blur(rgb_image, kernel_size):
         rgb_image = numpy.array(rgb_image)
         bgr_image = cv2.cvtColor(rgb_image, cv2.COLOR_RGB2BGR)
@@ -60,9 +46,32 @@ class ColorOperations(object):
                     list_of_x.append(x)
                     list_of_y.append(y)
 
+        if ((len(list_of_x) == 0) or (len(list_of_y) == 0)):
+            return -1
+
         left_x = min(list_of_x)
         right_x = max(list_of_x)
         up_y = min(list_of_y)
         low_y = max(list_of_y)
 
-        return (left_x - margin_length, up_y - margin_length, right_x + margin_length, low_y + margin_length)
+        if ((left_x - margin_length) < 0):
+            final_left_x = 0
+        else:
+            final_left_x = left_x - margin_length
+
+        if ((up_y - margin_length) < 0):
+            final_up_y = 0
+        else:
+            final_up_y = up_y - margin_length
+
+        if ((right_x + margin_length) >= image.width):
+            final_right_x = image.width - 1
+        else:
+            final_right_x = right_x + margin_length
+
+        if ((low_y + margin_length) >= image.height):
+            final_low_y = image.height - 1
+        else:
+            final_low_y = low_y + margin_length
+
+        return (final_left_x, final_up_y, final_right_x, final_low_y)

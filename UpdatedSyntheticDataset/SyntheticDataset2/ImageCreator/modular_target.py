@@ -1,6 +1,5 @@
 import math
 import random
-import json
 from PIL import Image
 from .settings import Settings
 from .modular_target_settings import ModularTargetSettings

@@ -1,5 +1,14 @@
 ./SyntheticDataset
+./UpdatedSyntheticDataset
+./EigenFit
+./ImgProcessingCLI
+./UpdatedImageProcessing
 ./SUASSystem
 ./SDAPackage
-./UpdatedSyntheticDataset
+
 nose
+opencv-python
+scikit-learn
+scipy
+plotly
+peakutils

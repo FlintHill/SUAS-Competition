@@ -1,19 +1,14 @@
-import os
 from SyntheticDataset2.ImageCreator.settings import Settings
 
-class TargetDetectionSettings(object):
-    TARGET_MAPS_PATH = os.path.expanduser("~/Desktop/Synthetic_Dataset/Answers/modular_target_maps")
-    TARGET_MAPS_ANSWERS_PATH = os.path.expanduser("~/Desktop/Synthetic_Dataset/Answers/modular_target_maps_answers")
+class Settings(object):
+    LOGGING_ON = True
 
-    TARGET_DETECTION_REPORT_SAVE_PATH = os.path.expanduser("~/Desktop/Target_Detection_Report")
+    GRASS_COLOR = (38, 37, 19)
 
-    NUMBER_OF_TARGET_MAPS = sum(os.path.isfile(os.path.join(os.path.expanduser("~/Desktop/Synthetic_Dataset/Answers/modular_target_maps"), f)) for f in os.listdir(os.path.expanduser("~/Desktop/Synthetic_Dataset/Answers/modular_target_maps")))
-    NUMBER_OF_TARGETS_ON_EACH_MAP = 10
     TARGET_SIZE_RANGE_IN_PIXELS = Settings.TARGET_SIZE_RANGE_IN_PIXELS
     TARGET_AVERAGE_SIZE = (TARGET_SIZE_RANGE_IN_PIXELS[0] + TARGET_SIZE_RANGE_IN_PIXELS[1]) / 2
 
-    LOGGING_ON = True
-
+    #For BlobDetector
     """
     Change thresholds for convering source image to binary images. See
     BlobDetector for more information.

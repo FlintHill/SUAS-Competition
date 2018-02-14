@@ -18,7 +18,6 @@ class BoundedImageCropperTestCase(unittest.TestCase):
         self.color2 = (0, 255, 0, 255)
         self.color3 = (0, 0, 255, 255)
         self.color4 = (255, 255, 255, 255)
-
         self.color5 = (0, 255, 255, 255)
         self.color6 = (252, 4, 163, 255)
         self.color7 = (254, 241, 2, 255)
