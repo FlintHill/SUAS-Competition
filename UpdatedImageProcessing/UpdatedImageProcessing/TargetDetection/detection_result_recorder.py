@@ -16,6 +16,8 @@ class DetectionResultRecorder(object):
         :type y: int
         :type length: int
         :type width: int
+
+        :return: a dictionary
         """
         data = {}
 

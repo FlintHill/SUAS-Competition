@@ -43,6 +43,8 @@ class TargetDetectors(object):
 
         Center & Radius Calculation: The centers and radii of the new merged
                                      blobs are computed and returned.
+
+        :return: a positive list
         """
         #Set up the detector with default parameters.
         params = cv2.SimpleBlobDetector_Params()
@@ -122,6 +124,9 @@ class TargetDetectors(object):
         return positive_list
 
     def detect_canny_edge_contours(self):
+        """
+        :return: a positive list
+        """
         kernel_size = Settings.KERNEL_SIZE
         minimum_threshold = Settings.CANNY_EDGE_CONTOUR_DETECTOR_MINIMUM_THRESHOLD
         maximum_threshold = Settings.CANNY_EDGE_CONTOUR_DETECTOR_MAXIMUM_THRESHOLD

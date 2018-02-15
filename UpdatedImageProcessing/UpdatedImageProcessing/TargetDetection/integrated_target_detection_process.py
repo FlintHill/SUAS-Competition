@@ -14,6 +14,8 @@ class IntegratedTargetDetectionProcess(object):
         :param target_map_image_path: the path to a target map image
 
         :type target_map_image_path: an image file such as JPG and PNG
+
+        :return: a positive list
         """
         pil_target_map_image = Image.open(target_map_image_path)
         mean_blurred_target_map_image = ColorOperations.apply_mean_blur(pil_target_map_image, 3)

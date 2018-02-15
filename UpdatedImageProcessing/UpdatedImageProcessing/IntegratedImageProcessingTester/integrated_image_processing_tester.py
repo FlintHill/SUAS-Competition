@@ -30,7 +30,6 @@ class IntegratedImageProcessingTester(object):
         Compare the image processing result with the answers of the target map
         and print out the results.
         """
-
         number_of_target_maps = len(os.listdir(Settings.JSON_SAVE_PATH))
 
         overall_true_positive_count = 0

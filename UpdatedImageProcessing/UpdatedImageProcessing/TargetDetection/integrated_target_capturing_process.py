@@ -13,19 +13,6 @@ class IntegratedTargetCapturingProcess(object):
         """
         Crop the single targets with information given by target_location.
 
-        :param target_map_image_path: the path to the target map image
-        :param positive_list: the list holding information of the locations of
-                              targets, which are four-tuples of the target's top
-                              left x, top left y, width, and height
-
-        :type target_map_image_path: an image file such as JPG and PNG
-        :type positive_list: list
-        :type target_location: (x, y, width, height)
-        :type x: int
-        :type y: int
-        :type length: int
-        :type width: int
-
         Concept:
         Stage 1
         Find the average color of the target_map.
@@ -44,6 +31,22 @@ class IntegratedTargetCapturingProcess(object):
         Stage 3
         Apply BackgroundColorNullifier.nullify_color_and_recrop_target to the
         image. For more detail see .background_color_nullifier.
+
+        :param target_map_image_path: the path to the target map image
+        :param positive_list: the list holding information of the locations of
+                              targets, which are four-tuples of the target's top
+                              left x, top left y, width, and height
+
+        :type target_map_image_path: an image file such as JPG and PNG
+        :type positive_list: list
+        :type target_location: (x, y, width, height)
+        :type x: int
+        :type y: int
+        :type length: int
+        :type width: int
+
+        :return: a list of a list of images and a list of false positives to 
+                 eliminate
         """
         target_map_image = Image.open(target_map_image_path)
         target_map_image_average_color = TargetAnalyzer.find_target_average_color(target_map_image, (0, 0, target_map_image.width, target_map_image.height))

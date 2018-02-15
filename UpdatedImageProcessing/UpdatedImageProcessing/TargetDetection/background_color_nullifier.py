@@ -14,7 +14,7 @@ class BackgroundColorNullifier(object):
 
         :type captured_image: a PIL image
 
-        :return: a recaptured PIL image
+        :return: a PIL image
         """
         pixel_access_captured_image = captured_image.load()
         stopping_x = []
@@ -60,8 +60,8 @@ class BackgroundColorNullifier(object):
         starting from all four directions. During this process, if the current
         pixel under scanning is within the color_difference_threshold, this
         current pixel is set to transparent. Otherwise, the location of the
-        current pixel is marked, and the elimination process on this specific
-        line or column is finished.
+        current pixel is marked, and the color-nullifying process on this
+        specific line or column from this specific direction is finished.
 
         :param captured_image: a captured image of a potential target
         :param color_difference_threshold: the threshold percentage difference
@@ -70,7 +70,7 @@ class BackgroundColorNullifier(object):
         :type captured_image: a PIL image
         :type color_difference_threshold: int
 
-        :return: a recaptured and color-nullified PIL image
+        :return: a PIL image
         """
         stopping_x = []
         stopping_y = []

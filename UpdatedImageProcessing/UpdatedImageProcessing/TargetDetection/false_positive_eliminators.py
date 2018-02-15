@@ -10,6 +10,13 @@ class FalsePositiveEliminators(object):
         """
         Eliminate false positives after target detection.
 
+        Concept:
+        Find the average color of all the targets. Compare that color to the color
+        of each target. Save all the targets with colors that stand out from the
+        rest and eliminate the rest. The colors of the targets differ from the
+        colors of the background. By eliminating the targets of the background,
+        targets remain.
+
         (This method works better when there are significantly more false
         positives than real targets)
 
@@ -24,12 +31,7 @@ class FalsePositiveEliminators(object):
         :type length: int
         :type width: int
 
-        Concept:
-        Find the average color of all the targets. Compare that color to the color
-        of each target. Save all the targets with colors that stand out from the
-        rest and eliminate the rest. The colors of the targets differ from the
-        colors of the background. By eliminating the targets of the background,
-        targets remain.
+        :return: a positive_list
         """
         target_color_list = []
         for index in range(len(positive_list)):
@@ -64,6 +66,12 @@ class FalsePositiveEliminators(object):
         """
         Eliminate false positives after target detection.
 
+        Concept:
+        For every target given by positive_list, if its surrounding color is below
+        a certain threshold, eliminate this target. The targets have colors that
+        stand out from the background, if a target's color conforms with the
+        background color, then it is not a target.
+
         (This method works better when there are less number of false positives.
         If this condition does not apply, use eliminate_overrepeated_colors
         first to ensure better results.)
@@ -79,11 +87,7 @@ class FalsePositiveEliminators(object):
         :type length: int
         :type width: int
 
-        Concept:
-        For every target given by positive_list, if its surrounding color is below
-        a certain threshold, eliminate this target. The targets have colors that
-        stand out from the background, if a target's color conforms with the
-        background color, then it is not a target.
+        :return: a positive_list
         """
         list_to_eliminate = []
         for index in range(len(positive_list)):
@@ -115,6 +119,8 @@ class FalsePositiveEliminators(object):
         :type y: int
         :type length: int
         :type width: int
+
+        :return: a list of a positive list and an int
         """
         close_by_targets = []
         list_to_append = []
@@ -183,6 +189,8 @@ class FalsePositiveEliminators(object):
         :type y: int
         :type length: int
         :type width: int
+
+        :return: a positive_list
         """
         for index_1 in range(len(positive_list)):
             for index_2 in range(index_1 + 1, len(positive_list)):
