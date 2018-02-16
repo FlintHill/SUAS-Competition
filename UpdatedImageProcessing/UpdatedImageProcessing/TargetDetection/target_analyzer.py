@@ -19,6 +19,8 @@ class TargetAnalyzer(object):
         :type y: int
         :type length: int
         :type width: int
+
+        :return: an rgb color
         """
         pixel_access_target_map_image = target_map_image.load()
 
@@ -89,6 +91,8 @@ class TargetAnalyzer(object):
         :type y: int
         :type length: int
         :type width: int
+
+        :return: an rgb color
         """
         left_x = target_location[0] - (target_location[2] / 4)
         right_x = target_location[0] + target_location[2] + (target_location[2] / 4)
@@ -132,6 +136,8 @@ class TargetAnalyzer(object):
         :param cropped_target_image: a captured image of a potential target.
 
         :type cropped_target_image: an image file such as JPG and PNG.
+
+        :return: an rgb color
         """
         pixel_access_cropped_target_image = cropped_target_image.load()
         first_two_line_colors = []
@@ -175,6 +181,8 @@ class TargetAnalyzer(object):
         :param cropped_target_image: a captured image of a potential target.
 
         :type cropped_target_image: an image file such as JPG and PNG.
+
+        :return: an rgb color
         """
         pixel_access_cropped_target_image = cropped_target_image.load()
 
