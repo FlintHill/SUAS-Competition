@@ -107,6 +107,15 @@ def update_waypoints():
 
 		return jsonify({"request_status" : "failure"})
 
+@app.route('/get/offset', methods=["GET"])
+def update_offset():
+	try:
+		return jsonify({"request_status" : "success", "offset": SUASSystem.GCSSettings.CAMERA_NORTH_OFFSET})
+	except:
+		traceback.print_exc()
+
+		return jsonify({"request_status" : "failure"})
+
 @app.route('/post/sda/<string:status>', methods=["POST"])
 def update_sda_status(status):
 	try:

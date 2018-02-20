@@ -342,7 +342,7 @@
 								<b>ZOOM</b>
 							</p>
 							<div class="row" style="padding-bottom:25px">
-								<!-- Zoom Buttons!! -->
+								<!-- Zoom Buttons! -->
 								<div class="col s6">
 									<a class="waves-effect waves-light btn tooltipped" data-position="left" data-tooltip="Command: +" data-delay="100" style="left:54px !important">
 										<i class="fa fa-plus" aria-hidden="true"></i>
@@ -416,6 +416,13 @@
 				</a>
 			</li>
 			<li class="tab col s3"><a class="active" href="#test-swipe-2">Manual Target Submission</a></li>
+			<!-- Camera Orienter -->
+			<div class="orientation-compass-holder tooltipped" data-position="left" data-delay="50" data-tooltip="Camera orientation offset from North">
+				<div id="compass-pointer" class="orientation-compass-pointer"></div>
+				<div class="orientation-compass-number">
+					<span id="compass-number">0</span>&deg;
+				</div>
+			</div>
 		</ul>
 
 		<!-- Slide 1: Control Panel -->
@@ -563,7 +570,7 @@
 			</div>
 		</div>
 
-		<!-- Slide 2: Image Preview and Cropper -->
+		<!-- Slide 2: Image Previewer and Cropper -->
 		<div id="test-swipe-2" class="col s12">
 			<div class="row">
 				<div class="col s1"></div>
