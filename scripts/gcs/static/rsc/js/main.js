@@ -35,6 +35,39 @@ $(document).ready(function(){
 
 	$("#target-content").attr("disabled", "")
 
+	// set compass direction
+	$.ajax({
+		url: "/get/offset",
+		method: "GET",
+		timeout: 3000,
+
+		dataType: "json",
+
+		success: function(data) {
+			// interop was enabled
+			if(data["request_status"] == "success")
+				setCompassDirection(data["offset"]);
+			else {
+				Materialize.toast("FAILURE: Failed to retrieve camera north offset; See console.");
+
+				console.log("$(document).ready() >> function(): '/get/offset' ajax data:");
+				console.log(data);
+
+				return;
+			}
+
+			console.log("got offset of " + data["offset"]);
+		},
+
+		error: function(data) {
+			// server side error
+			Materialize.toast("FAILURE: Unable to retrieve camera north offset; See console.");
+
+			console.log("$(document.ready() >> function(): '/get/offset/' ajax data:");
+			console.log(data);
+		}
+	});
+
 });
 
 // key combo watchdog
@@ -912,6 +945,21 @@ function resetWaypointsConfirm() {
 			console.log(data);
 		}
 	});
+
+}
+
+/**
+ * setCompassDirection(int degrees)
+ *
+ * Sets the direction that the compass is point in the Image Previewer and
+ * Cropper slide.
+ *
+ * returns nothing.
+ */
+function setCompassDirection(degrees) {
+
+	$("#compass-pointer").css("transform", "rotate(" + degrees + "deg)");
+	$("#compass-number").html(degrees);
 
 }
 

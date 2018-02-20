@@ -54,15 +54,36 @@
 	left:3em;
 }
 
+
+
 .orientation-compass-holder {
-	border-radius:50%;
-	border:3px solid gray;
+	position: absolute;
+	z-index: 999;
+	top: 4px;
+	right: 12px;
+	opacity: 0.2;
 }
 
 .orientation-compass-pointer {
-	/* border bottom opaque, rest transparent */
+	position: sticky;
+	z-index: 1000;
+	height: 40px;
+	width: 40px;
+	background: url(../icons/gps-directional.png);
+	background-size: 77%;
+	background-repeat: no-repeat;
+	border: 3px solid black;
+	display: inline-block;
+	border-radius: 50%;
+	background-position-x: 4px;
+	float: right;
 }
 
+.orientation-compass-number {
+	position: absolute;
+	right: 48px;
+	font-size: 1.85em;
+}
 
 .power-button-parent {
 	position:relative;
