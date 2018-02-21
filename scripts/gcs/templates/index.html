@@ -248,6 +248,7 @@
 					<div class="col s6">
 						<div class="special-container white lighten-4">
 							<h5 style="margin-top:0">Specifications</h5>
+							<!-- TODO: insert standard|emergent types -->
 							<select>
 								<option value="" selected>Shape&nbsp;</option>
 								<option value="circle">Circle</option>
@@ -307,6 +308,9 @@
 					</div>
 					<div class="col s6">
 						<ul class="collection">
+							<li class="collection-item">
+								<b>STANDARD | EMERGENT:</b> Select the options menu for a standard or emergent target.
+							</li>
 							<li class="collection-item">
 								<b>Shape:</b> The target's shape.
 							</li>
@@ -376,9 +380,29 @@
 				<p>
 					It would be best to practice using the zoom-in and zoom-out buttons before going into the competition, as a textual-based explanation like this can only do so much.
 				</p>
+				<h5>The Indicators</h5>
+				<p>
+					This section describes the indicators that are part of the GCS:WebUI, Manual Target Submission slide.
+				</p>
+				<h5><i>North Offset</i></h5>
+				<!-- TODO: insert north offset indicator, here -->
+				<p>
+					The camera on the drone will almost never always point to true north. As a consequence, it was necessary to implement a north offset indicator. It indicates how many degrees from north that the drone's camera is aligned with.
+				</p>
+				<p>
+					How this effects the end user is that, if a target looks like it's orientation is east and the offset is 90&deg;, then add the offset to the estimated orientation to get the final orientation (in this example, south.)
+				</p>
+				<h5><i>Images Counter and Zoom Level</i></h5>
+				<!-- TODO: insert image counter and zoom level indicator, here -->
+				<p>
+					It's important to keep track of the index of the current image that you are on in case multiple people are working on Manual Target Submission, as to not overlap and accidentallly resubmit the same targets from different devices. And it is also helpful to know the level of magnification (zoom level) of image. For such reasons, the images counter and zoom level indicators were implemented.
+				</p>
+				<p>
+					Reading the counter and level indicators is easy, as they're located on the top-right of the screen. Not intrusive or in the way, but easy to find.
+				</p>
 				<hr style="margin-bottom:1em">
 				<p>
-					<i>About page last updated October 26th, 2017.</i>
+					<i>About page last updated February 21st, 2017.</i>
 				</p>
 			</div>
 			<div class="modal-footer">
@@ -566,7 +590,7 @@
 					</div>
 				</div>
 				<hr>
-				<p class="grey-text">v1.0 /// Flinthill SUAS /// Last modified: February 2nd, 2018</p>
+				<p class="grey-text">v1.2 /// Flint Hill SUAS /// Last modified: February 21st, 2018</p>
 			</div>
 		</div>
 

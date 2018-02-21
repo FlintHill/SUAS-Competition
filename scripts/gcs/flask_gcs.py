@@ -17,6 +17,7 @@ class Client(object):
 		self.targets_to_submit = self.manager.list()
 		self.user_force_waypoint_update = self.manager.Value('i', False)
 
+		"""
 		self.interop_client = self.manager.list()
 		self.interop_client.append(SUASSystem.InteropClientConverter())
 		self.interop_data = self.manager.list()
@@ -30,6 +31,7 @@ class Client(object):
 			self.user_force_waypoint_update
 		))
 		self.gcs_process.start()
+		"""
 
 	def force_reset_waypoint(self):
 		self.user_force_waypoint_update = True
