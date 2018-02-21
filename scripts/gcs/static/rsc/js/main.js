@@ -893,6 +893,8 @@ function enableMTSButtons() {
 	$("#zoom-in-btn").removeClass("disabled");
 	$("#zoom-out-btn").removeClass("disabled");
 
+	$("#emergent-description").removeAttr("disabled");
+
 	updateZoomButtons();
 
 };
