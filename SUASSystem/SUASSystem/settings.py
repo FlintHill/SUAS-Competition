@@ -33,4 +33,4 @@ class GCSSettings(object):
     IMAGE_PROC_PPSI = 1.5
 
     UAV_VERSION_TYPES = ("9.1","10")
-    UAV_VERSION = UAV_VERSION_TYPES[1]
+    UAV_VERSION = UAV_VERSION_TYPES[0]

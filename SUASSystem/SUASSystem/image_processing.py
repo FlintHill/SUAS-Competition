@@ -41,7 +41,7 @@ def run_img_proc_process(logger_queue, location_log, targets_to_submit, interop_
             utils.crop_target(original_image_path, cropped_target_path, target_characteristics["target_top_left"], target_characteristics["target_bottom_right"])
             utils.save_json_data(cropped_target_data_path, target_characteristics)
 
-            interop_client_array[0].post_standard_target(target_characteristics, cropped_target_path)
+            #interop_client_array[0].post_standard_target(target_characteristics, cropped_target_path)
 
         sleep(0.1)
 
