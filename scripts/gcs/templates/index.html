@@ -385,7 +385,12 @@
 					This section describes the indicators that are part of the GCS:WebUI, Manual Target Submission slide.
 				</p>
 				<h5><i>North Offset</i></h5>
-				<!-- TODO: insert north offset indicator, here -->
+				<div class="orientation-compass-holder tooltipped" data-position="right" data-delay="50" data-tooltip="Camera orientation offset from North" style="position:inherit; z-index:inherit; top:inherit, right:inherit; opacity:inherit">
+					<div class="orientation-compass-pointer" style="float:left"></div>
+					<div class="orientation-compass-number" style="position:inherit; margin-left:50px">
+						90&deg;
+					</div>
+				</div>
 				<p>
 					The camera on the drone will almost never always point to true north. As a consequence, it was necessary to implement a north offset indicator. It indicates how many degrees from north that the drone's camera is aligned with.
 				</p>
@@ -393,7 +398,12 @@
 					How this effects the end user is that, if a target looks like it's orientation is east and the offset is 90&deg;, then add the offset to the estimated orientation to get the final orientation (in this example, south.)
 				</p>
 				<h5><i>Images Counter and Zoom Level</i></h5>
-				<!-- TODO: insert image counter and zoom level indicator, here -->
+				<div class="row">
+					<h5 class="left grey-text counter-fix">
+						(1/10) images<br>
+						1x zoom level
+					</h5>
+				</div>
 				<p>
 					It's important to keep track of the index of the current image that you are on in case multiple people are working on Manual Target Submission, as to not overlap and accidentallly resubmit the same targets from different devices. And it is also helpful to know the level of magnification (zoom level) of image. For such reasons, the images counter and zoom level indicators were implemented.
 				</p>
@@ -402,7 +412,7 @@
 				</p>
 				<hr style="margin-bottom:1em">
 				<p>
-					<i>About page last updated February 21st, 2017.</i>
+					<i>About page last updated February 22nd, 2017.</i>
 				</p>
 			</div>
 			<div class="modal-footer">
