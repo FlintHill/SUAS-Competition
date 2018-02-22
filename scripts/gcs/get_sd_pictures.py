@@ -1,9 +1,9 @@
 import os
 import shutil
 from time import sleep
+from SUASSystem import GCSSettings
 
-SD_CARD_NAME = "NX500"
-SD_PATH = os.path.join("/Volumes", SD_CARD_NAME, "DCIM")
+SD_PATH = os.path.join("/Volumes", GCSSettings.SD_CARD_NAME, "DCIM")
 
 if __name__ == '__main__':
     while True:
@@ -12,11 +12,10 @@ if __name__ == '__main__':
         if os.path.exists(SD_PATH):
             break
 
-        sleep(0.5)
+        sleep(1)
 
     print("SD Card loaded")
 
-    os.system("rm static/imgs/*.jpg")
     os.system("rm static/imgs/*.JPG")
 
     for pic_folder in os.listdir(SD_PATH):

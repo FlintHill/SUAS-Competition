@@ -3,8 +3,10 @@ from utils import alpha_trace
 from utils import init_harris_corners_and_cluster
 from utils.polar_side_counter import PolarSideCounter
 from utils.simple_pca import SimplePCA
+from utils.hough_lines import hough_side_counter
 from PIL import Image
 import cv2
+import random
 
 class ShapeClassification(object):
     def __init__(self, path_to_cropped_img_in):
@@ -14,8 +16,8 @@ class ShapeClassification(object):
 
     def load_images(self, path_to_cropped_img_in):
         self.pil_img = Image.open(path_to_cropped_img_in)
-        self.cv_img = cv2.imread(path_to_cropped_img_in,0) # loaded in greyscale
-        self.monochrome_pil_img = Image.fromarray(self.cv_img)
+        self.cv_img = cv2.imread(path_to_cropped_img_in)
+        self.monochrome_pil_img = Image.fromarray(cv2.imread(path_to_cropped_img_in,0))
         self.canny_img = alpha_trace(path_to_cropped_img_in)
 
     def load_polar_side_counter(self):
@@ -30,17 +32,22 @@ class ShapeClassification(object):
 
     def determine_shape(self):
         if self.circle_score >= ShapeDetectionSettings.CIRCLE_SCORE_THRESHOLD:
-            self.shape_type = "Circle"
+            self.shape_type = "circle"
         elif self.noise_score >= ShapeDetectionSettings.NOISE_SCORE_THRESHOLD:
-            self.shape_type = "Noise"
+            self.shape_type = "NOISE"
+        elif hough_side_counter(self.cv_img, self.canny_img) == 2:
+            self.shape_type = "quarter_circle"
+        elif self.num_polar_side_maximums not in range(2,8):
+            #panic -- chose random shape
+            self.shape_type = random.choice(ShapeDetectionSettings.SHAPE_CHOICES)
         elif self.num_polar_side_maximums == 2:
-            self.shape_type = "Semi-Circle"
+            self.shape_type = "semicircle"
         elif self.num_polar_side_maximums == 3:
-            self.shape_type = "Triangle"
+            self.shape_type = "triangle"
         elif self.num_polar_side_maximums == 6:
-            self.shape_type = "Hexagon"
+            self.shape_type = "hexagon"
         elif self.num_polar_side_maximums == 7:
-            self.shape_type = "Heptagon"
+            self.shape_type = "heptagon"
         else:
             if self.num_polar_side_maximums == 4:
                 pca = SimplePCA.init_with_monochrome_img(self.monochrome_pil_img)
@@ -51,24 +58,24 @@ class ShapeClassification(object):
                     eigen_ratio = 1.0/eigen_ratio
 
                 if eigen_ratio > ShapeDetectionSettings.SQUARE_RECTANGLE_EIGEN_RATIO_THRESHOLD:
-                    self.shape_type = "Rectangle"
+                    self.shape_type = "rectangle"
                 else:
-                    self.shape_type = "Square"
+                    self.shape_type = "square"
+
+                #self.shape_type = "trapezoid"
             else:
                 num_harris_clusters = init_harris_corners_and_cluster(self.monochrome_pil_img, self.polar_side_maximums, self.polar_side_minimums, self.origin)
 
                 if self.num_polar_side_maximums == 5:
                     if num_harris_clusters < ShapeDetectionSettings.PENTAGON_STAR_CLUSTER_THRESHOLD:
-                        self.shape_type = "Pentagon"
+                        self.shape_type = "pentagon"
                     else:
-                        self.shape_type = "Star"
+                        self.shape_type = "star"
                 elif self.num_polar_side_maximums == 8:
                     if num_harris_clusters < ShapeDetectionSettings.OCTAGON_CROSS_CLUSTER_THRESHOLD:
-                        self.shape_type = "Octagon"
+                        self.shape_type = "octagon"
                     else:
-                        self.shape_type = "Cross"
-                else:
-                    self.shape_type = "Unknown"
+                        self.shape_type = "cross"
 
     def get_shape_type(self):
         return self.shape_type

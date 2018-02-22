@@ -9,6 +9,8 @@ class ShapeDetectionSettings(object):
     PENTAGON_STAR_CLUSTER_THRESHOLD = 8
     OCTAGON_CROSS_CLUSTER_THRESHOLD = 10
 
+    SHAPE_CHOICES = ("circle", "semicircle", "quarter_circle", "triangle", "square", "rectangle", "trapezoid", "pentagon", "hexagon", "heptagon", "octagon", "star", "cross")
+
     # polar_side_counter.py
     CIRCLE_DERIV_RANGE = (0.96, 1.04)
-    NOISE_DERIV_RANGE = (0.85, 1.15)
+    NOISE_DERIV_RANGE = (0.80, 1.20)
