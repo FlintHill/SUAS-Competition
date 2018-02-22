@@ -2,8 +2,8 @@
  * main script file for gcs:web ui
  *
  * @author		James Villemarette
- * @version 	0.1
- * @since		2017-10-26
+ * @version 	1.2
+ * @since		2018-02-22
  */
 
 // page init
@@ -29,6 +29,9 @@ $(document).ready(function(){
 	});
 
 	// lockdown mts interface
+	$("#zoom-out-btn").addClass("disabled");
+	$("#zoom-in-btn").addClass("disabled");
+
 	MTSFields.forEach(function(element) {
 		$("[value='" + element + "']").attr("disabled", "");
 	});
@@ -74,14 +77,17 @@ $(document).ready(function(){
 
 $(document).keydown(function(event) {
 
-	if(event.ctrlKey == true) {
-		console.log("keydownWatchdog: Control keyed.");
+	if(event.shiftKey) {
+		console.log("keydownWatchdog: Shift keyed.");
 
 		// all key bindings use control key, first
-
 		switch(event.keyCode) {
+			//console.log("keydownWatchdog: keyCode " + event.keyCode + ".");
+
 			case 38: // up arrow
 				loadImages();
+				switchImageHeightLock();
+				switchImageHeightLock();
 				break;
 			case 37: // left arrow
 				if(!$("a[name='left-button']").hasClass("disabled"))
@@ -94,6 +100,14 @@ $(document).keydown(function(event) {
 			case 13: // enter
 				$('#verification').modal('open');
 				break;
+			case 189: // minus (-)
+				zoom("out");
+				break;
+			case 187: // plus (+)
+				zoom("in");
+				break;
+			default:
+				console.log("keydownWatchdog: Non-defined key " + event.keyCode + " triggered.");
 		}
 	};
 
@@ -212,6 +226,16 @@ function showImage(index) {
  */
 function imageSelect(dir) {
 
+	// prevent stretching
+	if(zoomLevel == 10) {
+		zoom('out');
+		zoom('in');
+	} else {
+		zoom('in');
+		zoom('out');
+	}
+
+	// normal select
 	var change = 0;
 
 	if(dir == "left")
@@ -563,7 +587,9 @@ function submitTarget() {
 			description: $("#emergent-description").val(),
 		};
 	} else {
-		Materialize.toast("FAILURE: Client-side failure on submitting target.");
+		var $toastContent = $('<span><b>FAILURE:</b> Client-side failure on submitting target.</span>');
+
+		Materialize.toast($toastContent);
 		console.log("submitTarget(): Unable to determine selected target type.");
 
 		throw "submitTarget(): Indeterminate error";
@@ -579,8 +605,10 @@ function submitTarget() {
 		dataType: "json",
 
 		success: function(data) {
-			// interop was enabled
-			Materialize.toast("SUCCESS: Sent target to backend script.");
+			// target submitted
+			var $toastContent = $('<span><b>SUCCESS:</b> Sent target to backend script.</span>').add($('<button class="btn-flat toast-action" onclick="( $(\'.toast\').first()[0] ).M_Toast.remove();">X</button>'));
+
+			Materialize.toast($toastContent);
 
 			console.log("submitTarget(): ajax data:")
 			console.log(data);
@@ -590,7 +618,9 @@ function submitTarget() {
 
 		error: function(data) {
 			// server side error
-			Materialize.toast("FAILURE: Unable to send target; See console.");
+			var $toastContent = $('<span><b>FAILURE:</b> Unable to send target; See console.</span>');
+
+			Materialize.toast($toastContent);
 
 			console.log("submitTarget(): ajax data:");
 			console.log(data);
@@ -885,7 +915,6 @@ function loadImages() {
 			updateDirectionalButtons();
 
 			// needs to be doubled
-			switchImageHeightLock();
 			switchImageHeightLock();
 
 			// indicate

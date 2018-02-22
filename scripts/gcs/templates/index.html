@@ -108,6 +108,7 @@
 				</div>
 			</div>
 		</div>
+		<!--/ Reset Waypoint -->
 
 		<!-- About Modal -->
 		<div id="about" class="modal">
@@ -346,7 +347,7 @@
 								<b>ZOOM</b>
 							</p>
 							<div class="row" style="padding-bottom:25px">
-								<!-- Zoom Buttons! -->
+								<!-- Zoom Buttons -->
 								<div class="col s6">
 									<a class="waves-effect waves-light btn tooltipped" data-position="left" data-tooltip="Command: +" data-delay="100" style="left:54px !important">
 										<i class="fa fa-plus" aria-hidden="true"></i>
@@ -357,6 +358,7 @@
 										<i class="fa fa-minus" aria-hidden="true"></i>
 									</a>
 								</div>
+								<!--/ Zoom Buttons -->
 							</div>
 						</div>
 					</div>
@@ -385,8 +387,8 @@
 					This section describes the indicators that are part of the GCS:WebUI, Manual Target Submission slide.
 				</p>
 				<h5><i>North Offset</i></h5>
-				<div class="orientation-compass-holder tooltipped" data-position="right" data-delay="50" data-tooltip="Camera orientation offset from North" style="position:inherit; z-index:inherit; top:inherit, right:inherit; opacity:inherit">
-					<div class="orientation-compass-pointer" style="float:left"></div>
+				<div class="orientation-compass-holder" style="position:inherit; z-index:inherit; top:inherit, right:inherit; opacity:inherit">
+					<div class="orientation-compass-pointer" style="float:left; transform: rotate(90deg)"></div>
 					<div class="orientation-compass-number" style="position:inherit; margin-left:50px">
 						90&deg;
 					</div>
@@ -419,6 +421,7 @@
 				<a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Exit</a>
 			</div>
 		</div>
+		<!--/ About Modal -->
 
 		<!-- Navbar -->
 		<nav>
@@ -443,6 +446,8 @@
 
 			</div>
 		</nav>
+		<!--/ Navbar -->
+		<!-- Swipe Bar -->
 		<ul id="tabs-swipe-demo" class="tabs grey lighten-5">
 			<li class="tab col s3">
 				<a href="#test-swipe-1" onclick="statusGet()">
@@ -458,6 +463,7 @@
 				</div>
 			</div>
 		</ul>
+		<!--/ Swipe Bar -->
 
 		<!-- Slide 1: Control Panel -->
 		<div id="test-swipe-1" class="col s12">
@@ -603,6 +609,7 @@
 				<p class="grey-text">v1.2 /// Flint Hill SUAS /// Last modified: February 21st, 2018</p>
 			</div>
 		</div>
+		<!--/ Slide 1: Control Panel -->
 
 		<!-- Slide 2: Image Previewer and Cropper -->
 		<div id="test-swipe-2" class="col s12">
@@ -624,19 +631,19 @@
 					<div class="special-container grey lighten-2">
 						<div class="row" style="margin-bottom:0">
 							<div class="col s8">
-								<a class="waves-effect waves-light btn tooltipped" name="load-images-button" data-position="right" data-tooltip="Command + Up" onclick="loadImages()">
+								<a class="waves-effect waves-light btn tooltipped" name="load-images-button" data-position="right" data-tooltip="Shift + Up" onclick="loadImages()">
 									<i class="fa fa-upload left"></i> load images
 								</a>
-								<a class="waves-effect waves-light btn green modal-trigger disabled tooltipped" name="crop-and-submit-button" data-position="right" data-delay="800" data-tooltip="Command + Enter" href="#verification" onclick="loadCropPreview()">
+								<a class="waves-effect waves-light btn green modal-trigger disabled imgareaselect-fix tooltipped" name="crop-and-submit-button" data-position="right" data-delay="800" data-tooltip="Shift + Enter" href="#verification" onclick="loadCropPreview()">
 									<i class="fa fa-sign-in left"></i> crop and submit
 								</a>
 							</div>
 							<div class="col s4">
 								<div class="right">
-									<a class="waves-effect waves-light btn tooltipped light-blue disabled" name="left-button" data-position="left" data-delay="760" data-tooltip="Command + Left" onclick="imageSelect('left')">
+									<a class="waves-effect waves-light btn tooltipped light-blue disabled" name="left-button" data-position="left" data-delay="760" data-tooltip="Shift + Left" onclick="imageSelect('left')">
 										<i class="fa fa-arrow-left"></i>
 									</a>
-									<a class="waves-effect waves-light btn tooltipped light-blue disabled" name="right-button" data-position="left" data-delay="760" data-tooltip="Command + Right" onclick="imageSelect('right')">
+									<a class="waves-effect waves-light btn tooltipped light-blue disabled" name="right-button" data-position="left" data-delay="760" data-tooltip="Shift + Right" onclick="imageSelect('right')">
 										<i class="fa fa-arrow-right"></i>
 									</a>
 								</div>
@@ -646,17 +653,17 @@
 					<div class="special-container grey lighten-3">
 						<div class="row" id="image-previewer-parent-container" style="margin-bottom:0">
 							<div class="col s9" id="image-previewer-container">
-								<!-- Lock Button -->
+								<!-- Lock Button /-->
 								<a class="waves-effect waves-light btn tooltipped disabled" style="position:absolute" id="size-lock-button" data-position="right" data-tooltip="Lock height of image to height of box: Command + L" onclick="switchImageHeightLock()">
 									<i class="fa fa-lock" id="size-lock-icon" aria-hidden="true"></i>
 								</a>
-								<!-- Image Previewer -->
+								<!-- Image Previewer /-->
 								<div id="image-previewer-holder">
 									<img id="image-previewer" src="">
 								</div>
 							</div>
 							<div class="col s3" id="specifications-pane-container">
-								<div class="special-container white lighten-4" style="padding:0 !important">
+								<div class="special-container white lighten-4 imgareaselect-fix" style="padding:0 !important; z-index: 100; position: sticky">
 									<div style="padding:1em; padding-bottom:0;">
 										<h5 style="margin-top:0">Specifications</h5>
 									</div>
@@ -746,15 +753,16 @@
 								<div class="row">
 									<!-- Zoom Buttons -->
 									<div class="col s6">
-										<a class="waves-effect waves-light btn tooltipped disabled" style="left:32px" data-position="left" data-tooltip="Command: +" data-delay="1000" id="zoom-in-btn" onclick="zoom('in')">
+										<a class="waves-effect waves-light btn tooltipped tooltipped"  style="left:32px" data-position="left" data-tooltip="Shift & +" data-delay="1000" id="zoom-in-btn" onclick="zoom('in')">
 											<i class="fa fa-plus" aria-hidden="true"></i>
 										</a>
 									</div>
 									<div class="col s6">
-										<a class="waves-effect waves-light btn tooltipped disabled" style="right:0" data-position="left" data-tooltip="Command: -" data-delay="1000" id="zoom-out-btn" onclick="zoom('out')">
+										<a class="waves-effect waves-light btn tooltipped" style="right:0" data-position="left" data-tooltip="Shift & -" data-delay="1000" id="zoom-out-btn" onclick="zoom('out')">
 											<i class="fa fa-minus" aria-hidden="true"></i>
 										</a>
 									</div>
+									<!--/ Zoom Buttons -->
 								</div>
 							</div>
 						</div>
@@ -763,5 +771,6 @@
 				<div class="col s1"></div>
 			</div>
 		</div>
+		<!--/ Slide 2: Image Previewer and Cropper -->
 	</body>
 </html>
