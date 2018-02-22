@@ -519,16 +519,20 @@ function loadCropPreview() {
  * Posts an AJAX request to back-end flask script the details of the crop, not
  * the actual crop itself. This also pushes the crop data (shape, color, etc.)
  *
+ * Automatically determines the target type based on which target type is 
+ * currently selected.
+ *
  * returns nothing.
  */
 function submitTarget() {
 
-	$.ajax({
-		url: "/post/target",
-		method: "POST",
-		timeout: 3000,
+	var targetData;
 
-		data: {
+	if( $("a[href='#standard-target']").hasClass("active") ) {
+		// if a standard target
+		targetData = {
+			type: "standard",
+
 			targetTopLeftX: cropData.targetTopLeftX,
 			targetTopLeftY: cropData.targetTopLeftY,
 
@@ -542,7 +546,35 @@ function submitTarget() {
 			targetContent: $("#target-content").val(),
 			contentColor: $("#content-color").val(),
 			targetOrientation: $("#target-orientation").val()
-		},
+		};
+	} else if( $("a[href='#emergent-target']").hasClass("active") ) {
+		// if an emergent target
+		targetData = {
+			type: "emergent",
+
+			targetTopLeftX: cropData.targetTopLeftX,
+			targetTopLeftY: cropData.targetTopLeftY,
+
+			targetBottomRightX: cropData.targetBottomRightX,
+			targetBottomRightY: cropData.targetBottomRightY,
+
+			imageFilename: cropData.imageFilename,
+
+			description: $("#emergent-description").val(),
+		};
+	} else {
+		Materialize.toast("FAILURE: Client-side failure on submitting target.");
+		console.log("submitTarget(): Unable to determine selected target type.");
+
+		throw "submitTarget(): Indeterminate error";
+	}
+
+	$.ajax({
+		url: "/post/target",
+		method: "POST",
+		timeout: 3000,
+
+		data: targetData,
 
 		dataType: "json",
 
