@@ -114,6 +114,7 @@ class IntegratedImageProcessingTester(object):
                             true_letter_color_count += 1
                         else:
                             false_letter_color_count += 1
+                            print str(index_0 + 1) + " - " + str(index_3 + 1)
 
                         continue
 
