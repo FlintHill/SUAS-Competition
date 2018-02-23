@@ -10,6 +10,12 @@
 	display: none; 
 }
 
+.progress {
+	margin: 0;
+	position: absolute;
+	z-index: 1000;
+}
+
 #toast-container {
 	margin: 0 auto;
 	max-width: 40em;

@@ -71,6 +71,9 @@ $(document).ready(function(){
 		}
 	});
 
+	// finished initializing
+	$("#loading-bar").addClass("hide");
+
 });
 
 // key combo watchdog
@@ -855,6 +858,8 @@ var imgs = [], ias = null, selectionPoints = [];
  */
 function loadImages() {
 
+	$("#loading-bar").removeClass("hide");
+
 	$.ajax({
 		url: "get/imgs",
 		
@@ -896,6 +901,10 @@ function loadImages() {
 			ias = $('#image-previewer').imgAreaSelect({ 
 				aspectRatio: '1:1', 
 				handles: true,
+				keys: false,
+				fadeSpeed: 0.4,
+				show: true,
+				//zIndex: -1,
 
 				onSelectEnd: function (img, selection) {
 					$("a[name='remove-crop-button']").removeClass("disabled");
@@ -907,6 +916,8 @@ function loadImages() {
 						[s.x1, s.y1],
 						[s.x2, s.y2]
 					];
+
+
 				}
 			});
 
@@ -918,11 +929,13 @@ function loadImages() {
 			switchImageHeightLock();
 
 			// indicate
+			$("#loading-bar").addClass("hide");
 			Materialize.toast('Images successfully loaded.', 2400);
 		},
 
 		error:function(data) {
 			// indicate
+			$("#loading-bar").addClass("hide");
 			Materialize.toast('Failed to load images, check console.', 4000);
 
 			console.log("loadImages(): Unknown connection error, see:");

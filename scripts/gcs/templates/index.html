@@ -153,7 +153,7 @@
 				<p>
 					Here is the toolbar as it appears on the Image Processing slide:
 				</p>
-				<div class="special-container grey lighten-2">
+				<div class="special-container grey lighten-2 z-depth-1">
 					<div class="row" style="margin-bottom:0">
 						<div class="col s8">
 							<a class="waves-effect waves-light btn tooltipped" name="load-images-button" data-position="right" data-tooltip="Command + Up" href="#">
@@ -423,6 +423,10 @@
 		</div>
 		<!--/ About Modal -->
 
+		<div class="progress" id="loading-bar">
+			<div class="indeterminate"></div>
+		</div>
+
 		<!-- Navbar -->
 		<nav>
 			<div class="nav-wrapper purple darken-1">
@@ -650,7 +654,7 @@
 							</div>
 						</div>
 					</div>
-					<div class="special-container grey lighten-3">
+					<div class="special-container grey lighten-3 z-depth-1">
 						<div class="row" id="image-previewer-parent-container" style="margin-bottom:0">
 							<div class="col s9" id="image-previewer-container">
 								<!-- Lock Button /-->
@@ -736,6 +740,8 @@
 												<option value="W">West</option>
 												<option value="NW">North-West</option>
 											</select>
+											<!-- TODO: MAKE APPEAR -->
+											<label>Make Sure to Check North Offset</label>
 										</div>
 										<div id="emergent-target">
 											<div class="row">
