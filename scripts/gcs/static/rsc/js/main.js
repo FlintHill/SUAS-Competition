@@ -89,25 +89,41 @@ $(document).keydown(function(event) {
 
 			case 38: // up arrow
 				loadImages();
-				switchImageHeightLock();
-				switchImageHeightLock();
+				//switchImageHeightLock();
+				//switchImageHeightLock();
 				break;
 			case 37: // left arrow
-				if(!$("a[name='left-button']").hasClass("disabled"))
+				if(!$("a[name='left-button']").hasClass("disabled")) {
 					imageSelect('left');
+					switchImageHeightLock();
+				}
+
 				break;
 			case 39: // right arrow
-				if(!$("a[name='right-button']").hasClass("disabled"))
+				if(!$("a[name='right-button']").hasClass("disabled")) {
 					imageSelect('right');
+					switchImageHeightLock();
+				}
+
 				break;
 			case 13: // enter
 				$('#verification').modal('open');
+
 				break;
 			case 189: // minus (-)
-				zoom("out");
+				if(!$("#zoom-out-btn").hasClass("disabled"))
+					zoom("out");
+
 				break;
 			case 187: // plus (+)
-				zoom("in");
+				if(!$("#zoom-in-btn").hasClass("disabled"))
+					zoom("in");
+
+				break;
+			case 76: // the letter L
+				if(zoomLevel != 1)
+					switchImageHeightLock();
+
 				break;
 			default:
 				console.log("keydownWatchdog: Non-defined key " + event.keyCode + " triggered.");
@@ -230,13 +246,15 @@ function showImage(index) {
 function imageSelect(dir) {
 
 	// prevent stretching
-	if(zoomLevel == 10) {
+	/*if(zoomLevel == 10) {
 		zoom('out');
 		zoom('in');
 	} else {
 		zoom('in');
 		zoom('out');
-	}
+	}*/
+
+	switchImageHeightLock();
 
 	// normal select
 	var change = 0;
@@ -903,7 +921,6 @@ function loadImages() {
 				handles: true,
 				keys: false,
 				fadeSpeed: 0.4,
-				show: true,
 				//zIndex: -1,
 
 				onSelectEnd: function (img, selection) {
