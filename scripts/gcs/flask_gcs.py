@@ -236,6 +236,8 @@ def post_target():
 	try:
 		# @TODO: Need to implement autnomous GPS coordinate calculation here
 		target_characteristics = {
+			"type" : request.form["type"],
+			"emergent_description" : request.form["description"],
 			"alphanumeric" : request.form["targetContent"],
 			"alphanumeric_color" : request.form["contentColor"],
 			"shape" : request.form["targetShape"],

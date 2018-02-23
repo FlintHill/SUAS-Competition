@@ -47,7 +47,7 @@ class InteropClientConverter(object):
 
         return None
 
-    def post_standard_target(self, target, image_file_path):
+    def post_manual_standard_target(self, target, image_file_path):
         """
         POST a standard ODLC object to the interoperability server.
 
@@ -63,7 +63,7 @@ class InteropClientConverter(object):
             "alphanumeric_color" : string,
         }
 
-        :param image_file_path: The OLC target image file name
+        :param image_file_path: The ODLC target image file name
         :type image_file_path: String
 
         :return: ID of the posted target
@@ -78,7 +78,36 @@ class InteropClientConverter(object):
             background_color=target["background_color"],
             alphanumeric=target["alphanumeric"],
             alphanumeric_color=target["alphanumeric_color"],
-            description='Flint Hill School -- ODLC Autonomous Target Submission')
+            description='Flint Hill School -- ODLC Standard Target Submission')
+
+        returned_odlc = self.client.post_odlc(odlc_target)
+
+        with open(image_file_path) as img_file:
+            self.client.post_odlc_image(returned_odlc.id, img_file.read())
+
+    def post_manual_emergent_target(self, target, image_file_path):
+        """
+        POST an emergent ODLC object to the interoperability server.
+
+        :param target: The ODLC target object
+        :type target: JSON, with the form:
+        {
+            "latitude" : float,
+            "longitude" : float,
+            "emergent_description" : String
+        }
+
+        :param image_file_path: The ODLC target image file name
+        :type image_file_path: String
+
+        :return: ID of the posted target
+        """
+        odlc_target = Odlc(
+            type="emergent",
+            autonomous=False,
+            latitude=target["latitude"],
+            longitude=target["longitude"],
+            description='Flint Hill School -- ODLC Emergent Target Submission: ' + str(target["emergent_description"]))
 
         returned_odlc = self.client.post_odlc(odlc_target)
 

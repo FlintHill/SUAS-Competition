@@ -26,8 +26,8 @@ def run_img_proc_process(logger_queue, location_log, targets_to_submit, interop_
                 if abs(difference_in_times) <= least_time_difference:
                     closest_time_index = index
                     least_time_difference = difference_in_times
-
             drone_gps_location = location_log[closest_time_index]["current_location"]
+
             image = Image.open("static/imgs/" + target_characteristics["base_image_filename"])
             image_midpoint = (image.width / 2, image.height / 2)
             target_midpoint = ((target_characteristics["target_top_left"][0] + target_characteristics["target_bottom_right"][0]) / 2, (target_characteristics["target_top_left"][1] + target_characteristics["target_bottom_right"][1]) / 2)
@@ -41,7 +41,10 @@ def run_img_proc_process(logger_queue, location_log, targets_to_submit, interop_
             utils.crop_target(original_image_path, cropped_target_path, target_characteristics["target_top_left"], target_characteristics["target_bottom_right"])
             utils.save_json_data(cropped_target_data_path, target_characteristics)
 
-            #interop_client_array[0].post_standard_target(target_characteristics, cropped_target_path)
+            if target_characteristics["type"] == "standard":
+                interop_client_array[0].post_manual_standard_target(target_characteristics, cropped_target_path)
+            elif target_characteristics["type"] == "emergent":
+                interop_client_array[0].post_manual_emergent_target(target_characteristics, cropped_target_path)
 
         sleep(0.1)
 
