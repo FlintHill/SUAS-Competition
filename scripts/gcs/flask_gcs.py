@@ -233,18 +233,31 @@ def is_file_an_image(file_name):
 def post_target():
 	try:
 		# @TODO: Need to implement autnomous GPS coordinate calculation here
-		target_characteristics = {
-			"alphanumeric" : request.form["targetContent"],
-			"alphanumeric_color" : request.form["contentColor"],
-			"shape" : request.form["targetShape"],
-			"orientation" : request.form["targetOrientation"],
-			"base_image_filename" : request.form["imageFilename"],
-			"background_color" : request.form["targetColor"],
-			"target_top_left" : [int(request.form["targetTopLeftX"]), int(request.form["targetTopLeftY"])],
-			"target_bottom_right" : [int(request.form["targetBottomRightX"]), int(request.form["targetBottomRightY"])],
-			"latitude" : 0,
-			"longitude" : 0
-		}
+		if request.form["type"] == "standard":
+			target_characteristics = {
+				"type" : "standard",
+				"alphanumeric" : request.form["targetContent"],
+				"alphanumeric_color" : request.form["contentColor"],
+				"shape" : request.form["targetShape"],
+				"orientation" : request.form["targetOrientation"],
+				"base_image_filename" : request.form["imageFilename"],
+				"background_color" : request.form["targetColor"],
+				"target_top_left" : [int(request.form["targetTopLeftX"]), int(request.form["targetTopLeftY"])],
+				"target_bottom_right" : [int(request.form["targetBottomRightX"]), int(request.form["targetBottomRightY"])],
+				"latitude" : 0,
+				"longitude" : 0
+			}
+		else:
+			target_characteristics = {
+				"type" : request.form["type"],
+				"emergent_description" : request.form["description"],
+				"base_image_filename" : request.form["imageFilename"],
+				"target_top_left" : [int(request.form["targetTopLeftX"]), int(request.form["targetTopLeftY"])],
+				"target_bottom_right" : [int(request.form["targetBottomRightX"]), int(request.form["targetBottomRightY"])],
+				"latitude" : 0,
+				"longitude" : 0
+			}
+
 		client.targets_to_submit.append(target_characteristics)
 
 		return jsonify({"request_status" : "success"})

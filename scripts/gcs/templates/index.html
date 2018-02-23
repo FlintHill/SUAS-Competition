@@ -108,6 +108,7 @@
 				</div>
 			</div>
 		</div>
+		<!--/ Reset Waypoint -->
 
 		<!-- About Modal -->
 		<div id="about" class="modal">
@@ -152,7 +153,7 @@
 				<p>
 					Here is the toolbar as it appears on the Image Processing slide:
 				</p>
-				<div class="special-container grey lighten-2">
+				<div class="special-container grey lighten-2 z-depth-1">
 					<div class="row" style="margin-bottom:0">
 						<div class="col s8">
 							<a class="waves-effect waves-light btn tooltipped" name="load-images-button" data-position="right" data-tooltip="Command + Up" href="#">
@@ -248,6 +249,7 @@
 					<div class="col s6">
 						<div class="special-container white lighten-4">
 							<h5 style="margin-top:0">Specifications</h5>
+							<!-- TODO: insert standard|emergent types -->
 							<select>
 								<option value="" selected>Shape&nbsp;</option>
 								<option value="circle">Circle</option>
@@ -308,6 +310,9 @@
 					<div class="col s6">
 						<ul class="collection">
 							<li class="collection-item">
+								<b>STANDARD | EMERGENT:</b> Select the options menu for a standard or emergent target.
+							</li>
+							<li class="collection-item">
 								<b>Shape:</b> The target's shape.
 							</li>
 							<li class="collection-item">
@@ -342,7 +347,7 @@
 								<b>ZOOM</b>
 							</p>
 							<div class="row" style="padding-bottom:25px">
-								<!-- Zoom Buttons! -->
+								<!-- Zoom Buttons -->
 								<div class="col s6">
 									<a class="waves-effect waves-light btn tooltipped" data-position="left" data-tooltip="Command: +" data-delay="100" style="left:54px !important">
 										<i class="fa fa-plus" aria-hidden="true"></i>
@@ -353,6 +358,7 @@
 										<i class="fa fa-minus" aria-hidden="true"></i>
 									</a>
 								</div>
+								<!--/ Zoom Buttons -->
 							</div>
 						</div>
 					</div>
@@ -376,14 +382,49 @@
 				<p>
 					It would be best to practice using the zoom-in and zoom-out buttons before going into the competition, as a textual-based explanation like this can only do so much.
 				</p>
+				<h5>The Indicators</h5>
+				<p>
+					This section describes the indicators that are part of the GCS:WebUI, Manual Target Submission slide.
+				</p>
+				<h5><i>North Offset</i></h5>
+				<div class="orientation-compass-holder" style="position:inherit; z-index:inherit; top:inherit, right:inherit; opacity:inherit">
+					<div class="orientation-compass-pointer" style="float:left; transform: rotate(90deg)"></div>
+					<div class="orientation-compass-number" style="position:inherit; margin-left:50px">
+						90&deg;
+					</div>
+				</div>
+				<p>
+					The camera on the drone will almost never always point to true north. As a consequence, it was necessary to implement a north offset indicator. It indicates how many degrees from north that the drone's camera is aligned with.
+				</p>
+				<p>
+					How this effects the end user is that, if a target looks like it's orientation is east and the offset is 90&deg;, then add the offset to the estimated orientation to get the final orientation (in this example, south.)
+				</p>
+				<h5><i>Images Counter and Zoom Level</i></h5>
+				<div class="row">
+					<h5 class="left grey-text counter-fix">
+						(1/10) images<br>
+						1x zoom level
+					</h5>
+				</div>
+				<p>
+					It's important to keep track of the index of the current image that you are on in case multiple people are working on Manual Target Submission, as to not overlap and accidentallly resubmit the same targets from different devices. And it is also helpful to know the level of magnification (zoom level) of image. For such reasons, the images counter and zoom level indicators were implemented.
+				</p>
+				<p>
+					Reading the counter and level indicators is easy, as they're located on the top-right of the screen. Not intrusive or in the way, but easy to find.
+				</p>
 				<hr style="margin-bottom:1em">
 				<p>
-					<i>About page last updated October 26th, 2017.</i>
+					<i>About page last updated February 22nd, 2017.</i>
 				</p>
 			</div>
 			<div class="modal-footer">
 				<a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Exit</a>
 			</div>
+		</div>
+		<!--/ About Modal -->
+
+		<div class="progress" id="loading-bar">
+			<div class="indeterminate"></div>
 		</div>
 
 		<!-- Navbar -->
@@ -409,6 +450,8 @@
 
 			</div>
 		</nav>
+		<!--/ Navbar -->
+		<!-- Swipe Bar -->
 		<ul id="tabs-swipe-demo" class="tabs grey lighten-5">
 			<li class="tab col s3">
 				<a href="#test-swipe-1" onclick="statusGet()">
@@ -424,6 +467,7 @@
 				</div>
 			</div>
 		</ul>
+		<!--/ Swipe Bar -->
 
 		<!-- Slide 1: Control Panel -->
 		<div id="test-swipe-1" class="col s12">
@@ -566,9 +610,10 @@
 					</div>
 				</div>
 				<hr>
-				<p class="grey-text">v1.0 /// Flinthill SUAS /// Last modified: February 2nd, 2018</p>
+				<p class="grey-text">v1.2 /// Flint Hill SUAS /// Last modified: February 21st, 2018</p>
 			</div>
 		</div>
+		<!--/ Slide 1: Control Panel -->
 
 		<!-- Slide 2: Image Previewer and Cropper -->
 		<div id="test-swipe-2" class="col s12">
@@ -590,95 +635,125 @@
 					<div class="special-container grey lighten-2">
 						<div class="row" style="margin-bottom:0">
 							<div class="col s8">
-								<a class="waves-effect waves-light btn tooltipped" name="load-images-button" data-position="right" data-tooltip="Command + Up" onclick="loadImages()">
+								<a class="waves-effect waves-light btn tooltipped" name="load-images-button" data-position="right" data-tooltip="Shift + Up" onclick="loadImages()">
 									<i class="fa fa-upload left"></i> load images
 								</a>
-								<a class="waves-effect waves-light btn green modal-trigger disabled tooltipped" name="crop-and-submit-button" data-position="right" data-delay="800" data-tooltip="Command + Enter" href="#verification" onclick="loadCropPreview()">
+								<a class="waves-effect waves-light btn green modal-trigger disabled imgareaselect-fix tooltipped" name="crop-and-submit-button" data-position="right" data-delay="800" data-tooltip="Shift + Enter" href="#verification" onclick="loadCropPreview()">
 									<i class="fa fa-sign-in left"></i> crop and submit
 								</a>
 							</div>
 							<div class="col s4">
 								<div class="right">
-									<a class="waves-effect waves-light btn tooltipped light-blue disabled" name="left-button" data-position="left" data-delay="760" data-tooltip="Command + Left" onclick="imageSelect('left')">
+									<a class="waves-effect waves-light btn tooltipped light-blue disabled" name="left-button" data-position="left" data-delay="760" data-tooltip="Shift + Left" onclick="imageSelect('left')">
 										<i class="fa fa-arrow-left"></i>
 									</a>
-									<a class="waves-effect waves-light btn tooltipped light-blue disabled" name="right-button" data-position="left" data-delay="760" data-tooltip="Command + Right" onclick="imageSelect('right')">
+									<a class="waves-effect waves-light btn tooltipped light-blue disabled" name="right-button" data-position="left" data-delay="760" data-tooltip="Shift + Right" onclick="imageSelect('right')">
 										<i class="fa fa-arrow-right"></i>
 									</a>
 								</div>
 							</div>
 						</div>
 					</div>
-					<div class="special-container grey lighten-3">
+					<div class="special-container grey lighten-3 z-depth-1">
 						<div class="row" id="image-previewer-parent-container" style="margin-bottom:0">
 							<div class="col s9" id="image-previewer-container">
-								<!-- Lock Button -->
+								<!-- Lock Button /-->
 								<a class="waves-effect waves-light btn tooltipped disabled" style="position:absolute" id="size-lock-button" data-position="right" data-tooltip="Lock height of image to height of box: Command + L" onclick="switchImageHeightLock()">
 									<i class="fa fa-lock" id="size-lock-icon" aria-hidden="true"></i>
 								</a>
-								<!-- Image Previewer -->
+								<!-- Image Previewer /-->
 								<div id="image-previewer-holder">
 									<img id="image-previewer" src="">
 								</div>
 							</div>
 							<div class="col s3" id="specifications-pane-container">
-								<div class="special-container white lighten-4">
-									<h5 style="margin-top:0">Specifications</h5>
-									<select id="target-shape">
-										<option value="" disabled selected>Shape</option>
-										<option value="circle">Circle</option>
-										<option value="cross">Cross</option>
-										<option value="heptagon">Heptagon</option>
-										<option value="hexagon">Hexagon</option>
-										<option value="octagon">Octagon</option>
-										<option value="pentagon">Pentagon</option>
-										<option value="quarter_circle">Quarter circle</option>
-										<option value="rectangle">Rectangle</option>
-										<option value="semicircle">Semicircle</option>
-										<option value="square">Square</option>
-										<option value="star">Star</option>
-										<option value="trapezoid">Trapezoid</option>
-										<option value="triangle">Triangle</option>
-									</select>
-									<select id="target-color" style="margin-bottom:4em">
-										<option value="" disabled selected>Shape Color</option>
-										<option value="red">Red</option>
-										<option value="orange">Orange</option>
-										<option value="yellow">Yellow</option>
-										<option value="green">Green</option>
-										<option value="blue">Blue</option>
-										<option value="purple">Purple</option>
-										<option value="white">White</option>
-										<option value="brown">Brown</option>
-										<option value="black">Black</option>
-									</select>
-									<div class="input-field input-text-fix">
-										<input placeholder="A letter or number" id="target-content" type="text" class="validate">
-										<label for="first_name">Alphanumeric Content</label>
+								<div class="special-container white lighten-4 imgareaselect-fix" style="padding:0 !important; z-index: 100; position: sticky">
+									<div style="padding:1em; padding-bottom:0;">
+										<h5 style="margin-top:0">Specifications</h5>
 									</div>
-									<select id="content-color" name="color">
-										<option value="" disabled selected>Alphanumeric Color</option>
-										<option value="red">Red</option>
-										<option value="orange">Orange</option>
-										<option value="yellow">Yellow</option>
-										<option value="green">Green</option>
-										<option value="blue">Blue</option>
-										<option value="purple">Purple</option>
-										<option value="white">White</option>
-										<option value="brown">Brown</option>
-										<option value="black">Black</option>
-									</select>
-									<select id="target-orientation" name="orientation">
-										<option value="" disabled selected>Orientation</option>
-										<option value="N">North</option>
-										<option value="NE">North-East</option>
-										<option value="E">East</option>
-										<option value="SE">South-East</option>
-										<option value="S">South</option>
-										<option value="SW">South-West</option>
-										<option value="W">West</option>
-										<option value="NW">North-West</option>
-									</select>
+									<ul class="tabs tabs-fixed-width tooltipped" data-delay="25" data-position="top" data-tooltip="Type of Target">
+										<li class="tab col s3">
+											<a class="active" href="#standard-target">
+												Standard
+											</a>
+										</li>
+										<li class="tab col s3">
+											<a href="#emergent-target">
+												Emergent
+											</a>
+										</li>
+									</ul>
+									<div style="padding:1em">
+										<div id="standard-target">
+											<select id="target-shape">
+												<option value="" disabled selected>Shape</option>
+												<option value="circle">Circle</option>
+												<option value="cross">Cross</option>
+												<option value="heptagon">Heptagon</option>
+												<option value="hexagon">Hexagon</option>
+												<option value="octagon">Octagon</option>
+												<option value="pentagon">Pentagon</option>
+												<option value="quarter_circle">Quarter circle</option>
+												<option value="rectangle">Rectangle</option>
+												<option value="semicircle">Semicircle</option>
+												<option value="square">Square</option>
+												<option value="star">Star</option>
+												<option value="trapezoid">Trapezoid</option>
+												<option value="triangle">Triangle</option>
+											</select>
+											<select id="target-color" style="margin-bottom:4em">
+												<option value="" disabled selected>Shape Color</option>
+												<option value="red">Red</option>
+												<option value="orange">Orange</option>
+												<option value="yellow">Yellow</option>
+												<option value="green">Green</option>
+												<option value="blue">Blue</option>
+												<option value="purple">Purple</option>
+												<option value="white">White</option>
+												<option value="brown">Brown</option>
+												<option value="black">Black</option>
+											</select>
+											<div class="input-field input-text-fix">
+												<input placeholder="A letter or number" id="target-content" type="text" class="validate">
+												<label for="first_name">Alphanumeric Content</label>
+											</div>
+											<select id="content-color" name="color">
+												<option value="" disabled selected>Alphanumeric Color</option>
+												<option value="red">Red</option>
+												<option value="orange">Orange</option>
+												<option value="yellow">Yellow</option>
+												<option value="green">Green</option>
+												<option value="blue">Blue</option>
+												<option value="purple">Purple</option>
+												<option value="white">White</option>
+												<option value="brown">Brown</option>
+												<option value="black">Black</option>
+											</select>
+											<div class="input-field" style="margin-top:0">
+												<select id="target-orientation" name="orientation">
+													<option value="" disabled selected>Orientation</option>
+													<option value="N">North</option>
+													<option value="NE">North-East</option>
+													<option value="E">East</option>
+													<option value="SE">South-East</option>
+													<option value="S">South</option>
+													<option value="SW">South-West</option>
+													<option value="W">West</option>
+													<option value="NW">North-West</option>
+												</select>
+											</div>
+											<label style="display: block; text-align: center;">Make sure to check<br>the North Offset for Orientation</label>
+											<!-- TODO: MAKE APPEAR -->
+										</div>
+										<div id="emergent-target">
+											<div class="row">
+												<div class="input-field col s12">
+													<textarea id="emergent-description" class="materialize-textarea" data-length="1000" disabled></textarea>
+													<label for="textarea1">Description</label>
+												</div>
+											</div>
+										</div>
+									</div>
 								</div>
 								<p class="center grey-text">
 									<b>ZOOM</b>
@@ -686,15 +761,16 @@
 								<div class="row">
 									<!-- Zoom Buttons -->
 									<div class="col s6">
-										<a class="waves-effect waves-light btn tooltipped disabled" style="left:32px" data-position="left" data-tooltip="Command: +" data-delay="1000" id="zoom-in-btn" onclick="zoom('in')">
+										<a class="waves-effect waves-light btn tooltipped tooltipped"  style="left:32px" data-position="left" data-tooltip="Shift & +" data-delay="1000" id="zoom-in-btn" onclick="zoom('in')">
 											<i class="fa fa-plus" aria-hidden="true"></i>
 										</a>
 									</div>
 									<div class="col s6">
-										<a class="waves-effect waves-light btn tooltipped disabled" style="right:0" data-position="left" data-tooltip="Command: -" data-delay="1000" id="zoom-out-btn" onclick="zoom('out')">
+										<a class="waves-effect waves-light btn tooltipped" style="right:0" data-position="left" data-tooltip="Shift & -" data-delay="1000" id="zoom-out-btn" onclick="zoom('out')">
 											<i class="fa fa-minus" aria-hidden="true"></i>
 										</a>
 									</div>
+									<!--/ Zoom Buttons -->
 								</div>
 							</div>
 						</div>
@@ -703,5 +779,6 @@
 				<div class="col s1"></div>
 			</div>
 		</div>
+		<!--/ Slide 2: Image Previewer and Cropper -->
 	</body>
 </html>

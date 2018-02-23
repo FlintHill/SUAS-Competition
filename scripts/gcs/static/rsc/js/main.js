@@ -2,8 +2,8 @@
  * main script file for gcs:web ui
  *
  * @author		James Villemarette
- * @version 	0.1
- * @since		2017-10-26
+ * @version 	1.2
+ * @since		2018-02-22
  */
 
 // page init
@@ -29,6 +29,9 @@ $(document).ready(function(){
 	});
 
 	// lockdown mts interface
+	$("#zoom-out-btn").addClass("disabled");
+	$("#zoom-in-btn").addClass("disabled");
+
 	MTSFields.forEach(function(element) {
 		$("[value='" + element + "']").attr("disabled", "");
 	});
@@ -68,32 +71,61 @@ $(document).ready(function(){
 		}
 	});
 
+	// finished initializing
+	$("#loading-bar").addClass("hide");
+
 });
 
 // key combo watchdog
 
 $(document).keydown(function(event) {
 
-	if(event.ctrlKey == true) {
-		console.log("keydownWatchdog: Control keyed.");
+	if(event.shiftKey) {
+		console.log("keydownWatchdog: Shift keyed.");
 
 		// all key bindings use control key, first
-
 		switch(event.keyCode) {
+			//console.log("keydownWatchdog: keyCode " + event.keyCode + ".");
+
 			case 38: // up arrow
 				loadImages();
+
 				break;
 			case 37: // left arrow
-				if(!$("a[name='left-button']").hasClass("disabled"))
+				if(!$("a[name='left-button']").hasClass("disabled")) {
 					imageSelect('left');
+					switchImageHeightLock();
+				}
+
 				break;
 			case 39: // right arrow
-				if(!$("a[name='right-button']").hasClass("disabled"))
+				if(!$("a[name='right-button']").hasClass("disabled")) {
 					imageSelect('right');
+					switchImageHeightLock();
+				}
+
 				break;
 			case 13: // enter
 				$('#verification').modal('open');
+
 				break;
+			case 189: // minus (-)
+				if(!$("#zoom-out-btn").hasClass("disabled"))
+					zoom("out");
+
+				break;
+			case 187: // plus (+)
+				if(!$("#zoom-in-btn").hasClass("disabled"))
+					zoom("in");
+
+				break;
+			case 76: // the letter L
+				if(zoomLevel != 1)
+					switchImageHeightLock();
+
+				break;
+			default:
+				console.log("keydownWatchdog: Non-defined key " + event.keyCode + " triggered.");
 		}
 	};
 
@@ -212,6 +244,18 @@ function showImage(index) {
  */
 function imageSelect(dir) {
 
+	// prevent stretching
+	/*if(zoomLevel == 10) {
+		zoom('out');
+		zoom('in');
+	} else {
+		zoom('in');
+		zoom('out');
+	}*/
+
+	switchImageHeightLock();
+
+	// normal select
 	var change = 0;
 
 	if(dir == "left")
@@ -519,16 +563,20 @@ function loadCropPreview() {
  * Posts an AJAX request to back-end flask script the details of the crop, not
  * the actual crop itself. This also pushes the crop data (shape, color, etc.)
  *
+ * Automatically determines the target type based on which target type is 
+ * currently selected.
+ *
  * returns nothing.
  */
 function submitTarget() {
 
-	$.ajax({
-		url: "/post/target",
-		method: "POST",
-		timeout: 3000,
+	var targetData;
 
-		data: {
+	if( $("a[href='#standard-target']").hasClass("active") ) {
+		// if a standard target
+		targetData = {
+			type: "standard",
+
 			targetTopLeftX: cropData.targetTopLeftX,
 			targetTopLeftY: cropData.targetTopLeftY,
 
@@ -542,13 +590,45 @@ function submitTarget() {
 			targetContent: $("#target-content").val(),
 			contentColor: $("#content-color").val(),
 			targetOrientation: $("#target-orientation").val()
-		},
+		};
+	} else if( $("a[href='#emergent-target']").hasClass("active") ) {
+		// if an emergent target
+		targetData = {
+			type: "emergent",
+
+			targetTopLeftX: cropData.targetTopLeftX,
+			targetTopLeftY: cropData.targetTopLeftY,
+
+			targetBottomRightX: cropData.targetBottomRightX,
+			targetBottomRightY: cropData.targetBottomRightY,
+
+			imageFilename: cropData.imageFilename,
+
+			description: $("#emergent-description").val(),
+		};
+	} else {
+		var $toastContent = $('<span><b>FAILURE:</b> Client-side failure on submitting target.</span>');
+
+		Materialize.toast($toastContent);
+		console.log("submitTarget(): Unable to determine selected target type.");
+
+		throw "submitTarget(): Indeterminate error";
+	}
+
+	$.ajax({
+		url: "/post/target",
+		method: "POST",
+		timeout: 3000,
+
+		data: targetData,
 
 		dataType: "json",
 
 		success: function(data) {
-			// interop was enabled
-			Materialize.toast("SUCCESS: Sent target to backend script.");
+			// target submitted
+			var $toastContent = $('<span><b>SUCCESS:</b> Sent target to backend script.</span>').add($('<button class="btn-flat toast-action" onclick="( $(\'.toast\').first()[0] ).M_Toast.remove();">X</button>'));
+
+			Materialize.toast($toastContent);
 
 			console.log("submitTarget(): ajax data:")
 			console.log(data);
@@ -558,7 +638,9 @@ function submitTarget() {
 
 		error: function(data) {
 			// server side error
-			Materialize.toast("FAILURE: Unable to send target; See console.");
+			var $toastContent = $('<span><b>FAILURE:</b> Unable to send target; See console.</span>');
+
+			Materialize.toast($toastContent);
 
 			console.log("submitTarget(): ajax data:");
 			console.log(data);
@@ -793,6 +875,8 @@ var imgs = [], ias = null, selectionPoints = [];
  */
 function loadImages() {
 
+	$("#loading-bar").removeClass("hide");
+
 	$.ajax({
 		url: "get/imgs",
 		
@@ -834,6 +918,9 @@ function loadImages() {
 			ias = $('#image-previewer').imgAreaSelect({ 
 				aspectRatio: '1:1', 
 				handles: true,
+				keys: false,
+				fadeSpeed: 0.4,
+				//zIndex: -1,
 
 				onSelectEnd: function (img, selection) {
 					$("a[name='remove-crop-button']").removeClass("disabled");
@@ -845,6 +932,8 @@ function loadImages() {
 						[s.x1, s.y1],
 						[s.x2, s.y2]
 					];
+
+
 				}
 			});
 
@@ -854,14 +943,15 @@ function loadImages() {
 
 			// needs to be doubled
 			switchImageHeightLock();
-			switchImageHeightLock();
 
 			// indicate
+			$("#loading-bar").addClass("hide");
 			Materialize.toast('Images successfully loaded.', 2400);
 		},
 
 		error:function(data) {
 			// indicate
+			$("#loading-bar").addClass("hide");
 			Materialize.toast('Failed to load images, check console.', 4000);
 
 			console.log("loadImages(): Unknown connection error, see:");
@@ -892,6 +982,8 @@ function enableMTSButtons() {
 
 	$("#zoom-in-btn").removeClass("disabled");
 	$("#zoom-out-btn").removeClass("disabled");
+
+	$("#emergent-description").removeAttr("disabled");
 
 	updateZoomButtons();
 
