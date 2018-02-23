@@ -89,8 +89,7 @@ $(document).keydown(function(event) {
 
 			case 38: // up arrow
 				loadImages();
-				//switchImageHeightLock();
-				//switchImageHeightLock();
+
 				break;
 			case 37: // left arrow
 				if(!$("a[name='left-button']").hasClass("disabled")) {
