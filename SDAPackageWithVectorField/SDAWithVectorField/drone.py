@@ -25,8 +25,6 @@ class Drone(object):
         """
         self.point = new_point
 
-        self.waypoint_holder.reached_current_waypoint(self.point)
-
     def add_waypoint(self, waypoint):
         """
         Add a waypoint to the WaypointHolder

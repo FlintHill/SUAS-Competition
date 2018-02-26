@@ -71,5 +71,31 @@ class VectorMath(object):
         Return the force vector between two points
         """
         distance_vector = np.subtract(vector_one, vector_two)
-        force_vector = np.array([1.0/pow(distance_vector[0],2),1.0/pow(distance_vector[1],2),1.0/pow(distance_vector[2],2)])
+
+        if distance_vector[2]:
+            force_vector = np.array([1000.0/pow(distance_vector[0],2),1000.0/pow(distance_vector[1],2),1000.0/pow(distance_vector[2],2)])
+        else:
+            force_vector = np.array([1000.0/pow(distance_vector[0],2),1000.0/pow(distance_vector[1],2), 0])
         return force_vector
+
+    @staticmethod
+    def get_attractive_force(vector_one, vector_two):
+        """
+        Return the force vector between two points
+        """
+        distance_vector = np.subtract(vector_one, vector_two)
+
+        if distance_vector[2]:
+            force_vector = np.array([10000000.0/pow(distance_vector[0],2),10000000.0/pow(distance_vector[1],2),10000000.0/pow(distance_vector[2],2)])
+        else:
+            force_vector = np.array([10000000.0/pow(distance_vector[0],2),10000000.0/pow(distance_vector[1],2), 0])
+        return force_vector
+
+    # @staticmethod
+    # def get_attractive_force(vector_one, vector_two):
+    #     """
+    #     Return the attractive force vector between waypoints and drone
+    #     """
+    #     distance_vector = np.subtract(vector_one, vector_two)
+    #     force_vector = np.array([10.0/pow(distance_vector[0],2),10.0/pow(distance_vector[1],2),10.0/pow(distance_vector[2],2)])
+    #     return force_vector

@@ -27,7 +27,6 @@ class TestObstacleMap(unittest.TestCase):
 		self.obstacle_map1.add_obstacle(self.obstacle1)
 		self.obstacle_map1.add_obstacle(self.obstacle2)
 
-		initial_force = numpy.array([0,0,0])
 		repulsive_force1 = VectorMath.get_force(self.obstacle_map1.drone.point, self.obstacle1.get_point())
 		repulsive_force2 = VectorMath.get_force(self.obstacle_map1.drone.point, self.obstacle2.get_point())
 
