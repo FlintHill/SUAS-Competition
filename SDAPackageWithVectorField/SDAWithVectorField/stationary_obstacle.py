@@ -19,13 +19,14 @@ class StationaryObstacle(Obstacle):
 
         self.radius = radius
         self.height = height
+        self.type = "StationaryObstacle"
 
 
     def get_radius(self):
         """
         Return the radius of the obstacle plus that of the safety radius
         """
-        return self.radius + self.get_safety_radius()
+        return self.radius
 
     def get_height(self):
         """

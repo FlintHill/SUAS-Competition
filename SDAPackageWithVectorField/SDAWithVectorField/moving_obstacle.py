@@ -24,6 +24,7 @@ class MovingObstacle(Obstacle):
         super(MovingObstacle, self).__init__(point)
 
         self.radius = radius
+        self.type = "MovingObstacle"
 
     def get_radius(self):
         """
@@ -32,4 +33,4 @@ class MovingObstacle(Obstacle):
         return self.radius + self.get_safety_radius()
 
     def get_type(self):
-        return self.__class__.__name__ 
+        return self.type
