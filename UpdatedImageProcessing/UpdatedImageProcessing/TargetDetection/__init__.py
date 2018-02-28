@@ -4,6 +4,7 @@ from .detection_result_recorder import DetectionResultRecorder
 from .color_operations import ColorOperations
 from .target_analyzer import TargetAnalyzer
 from .background_color_nullifier import BackgroundColorNullifier
+from .shape_color_nullifier import ShapeColorNullifier
 from .target_detectors import TargetDetectors
 from .false_positive_eliminators import FalsePositiveEliminators
 from .integrated_target_detection_process import IntegratedTargetDetectionProcess

@@ -14,6 +14,9 @@ class IntegratedImageProcessing(object):
         amount_of_target_maps_present = len(set(os.listdir(target_map_path))) - len(set(target_detected))
 
         while (amount_of_target_maps_present > 0):
+
+            print "Target Maps Left to Detect: " + str(amount_of_target_maps_present)
+
             for index_1 in range(len(set(os.listdir(target_map_path)))):
                 current_target_map_name = os.listdir(target_map_path)[index_1]
 
@@ -49,4 +52,3 @@ class IntegratedImageProcessing(object):
                 json.dump(json_file, fp, indent=4)
 
             amount_of_target_maps_present -= 1
-            Logger.log("Target Maps Left to Detect: " + str(amount_of_target_maps_present))

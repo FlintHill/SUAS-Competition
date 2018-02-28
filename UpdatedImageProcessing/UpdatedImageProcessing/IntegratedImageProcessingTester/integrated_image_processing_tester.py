@@ -11,15 +11,15 @@ class IntegratedImageProcessingTester(object):
     @staticmethod
     def complete_integrated_image_processing():
         if (os.path.isdir(Settings.IMAGE_PROCESSING_REPORT_SAVE_PATH)):
-            raise Exception("Cannot create Target_Detection_Report: Save directory already exists")
+            raise Exception("Cannot create Image Processing Report Save Path: Save directory already exists")
         os.mkdir(Settings.IMAGE_PROCESSING_REPORT_SAVE_PATH)
 
         if (os.path.isdir(Settings.IMAGE_SAVE_PATH)):
-            raise Exception("Cannot create Target_Map_Reports: Save directory already exists")
+            raise Exception("Cannot create Image Save Path: Save directory already exists")
         os.mkdir(Settings.IMAGE_SAVE_PATH)
 
         if (os.path.isdir(Settings.JSON_SAVE_PATH)):
-            raise Exception("Cannot create Single_Target_Crops: Save directory already exists")
+            raise Exception("Cannot create Json Save Path: Save directory already exists")
         os.mkdir(Settings.JSON_SAVE_PATH)
 
         IntegratedImageProcessing.run_integrated_image_processing(Settings.TARGET_MAP_PATH, Settings.IMAGE_SAVE_PATH, Settings.JSON_SAVE_PATH)
@@ -114,7 +114,6 @@ class IntegratedImageProcessingTester(object):
                             true_letter_color_count += 1
                         else:
                             false_letter_color_count += 1
-                            print str(index_0 + 1) + " - " + str(index_3 + 1)
 
                         continue
 
@@ -124,9 +123,9 @@ class IntegratedImageProcessingTester(object):
             overall_false_positive_count += current_false_positive_count
 
         target_detection_percentage = 100 * float(overall_true_positive_count) / (overall_target_count)
-        shape_detection_percentage = 100 * float(true_shape_count) / (overall_target_count)
-        shape_color_detection_percentage = 100 * float(true_shape_color_count) / (overall_target_count)
-        letter_color_detection_percentage = 100 * float(true_letter_color_count) / (overall_target_count)
+        shape_detection_percentage = 100 * float(true_shape_count) / (overall_true_positive_count)
+        shape_color_detection_percentage = 100 * float(true_shape_color_count) / (overall_true_positive_count)
+        letter_color_detection_percentage = 100 * float(true_letter_color_count) / (overall_true_positive_count)
 
         Logger.log("--------------------------------------------------")
         Logger.log("Total True Positive Count: " + str(overall_true_positive_count))
