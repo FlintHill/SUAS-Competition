@@ -48,23 +48,23 @@ sides = []
 if type(lines) != "NoneType":
     print len(lines)
     for i in range(len(lines)):
-        hl = HoughLines(lines[i])
+        hl = HoughLine(lines[i])
 
         if len(sides) == 0:
             sides.append(hl)
             points = hl.get_plot_points()
-            cv2.line(img,points[0],points[1],(0,0,255),2)
+            cv2.line(img,points[0],points[1],(0,255,),2)
         else:
             unique_line = True
             for i in range(len(sides)):
                 if abs(sides[i].get_theta() - hl.get_theta()) < 0.5:
-                    if abs(sides[i].get_rho() - hl.get_rho()) < 10:
+                    if abs(sides[i].get_rho() - hl.get_rho()) < 50:
                         unique_line = False
                         break
             if unique_line:
                 sides.append(hl)
                 points = hl.get_plot_points()
-                cv2.line(img,points[0],points[1],(0,0,255),2)
+                cv2.line(img,points[0],points[1],(0,255,),2)
 
 print(len(sides))
 cv2.imshow('image',img)
