@@ -3,7 +3,7 @@ from utils import alpha_trace
 from utils import init_harris_corners_and_cluster
 from utils.polar_side_counter import PolarSideCounter
 from utils.simple_pca import SimplePCA
-from utils.hough_lines import hough_side_counter
+from utils.hough_lines import HoughSideCounter
 from PIL import Image
 import cv2
 import random
@@ -35,7 +35,7 @@ class ShapeClassification(object):
             self.shape_type = "circle"
         elif self.noise_score >= ShapeDetectionSettings.NOISE_SCORE_THRESHOLD:
             self.shape_type = "NOISE"
-        elif hough_side_counter(self.cv_img, self.canny_img) == 2:
+        elif len(HoughSideCounter(self.cv_img, self.canny_img, ShapeDetectionSettings.QUARTER_CIRCLE_HOUGH_THRESHOLD).get_sides()) == 2:
             self.shape_type = "quarter_circle"
         elif self.num_polar_side_maximums not in range(2,8):
             #panic -- chose random shape
@@ -50,6 +50,7 @@ class ShapeClassification(object):
             self.shape_type = "heptagon"
         else:
             if self.num_polar_side_maximums == 4:
+                #self.shape_type = "trapezoid"
                 pca = SimplePCA.init_with_monochrome_img(self.monochrome_pil_img)
                 eigenvalues = pca.get_eigenvalues()
                 eigen_ratio = abs(eigenvalues[0]/eigenvalues[1])
@@ -62,7 +63,6 @@ class ShapeClassification(object):
                 else:
                     self.shape_type = "square"
 
-                #self.shape_type = "trapezoid"
             else:
                 num_harris_clusters = init_harris_corners_and_cluster(self.monochrome_pil_img, self.polar_side_maximums, self.polar_side_minimums, self.origin)
 

@@ -1,45 +1,55 @@
 import numpy
 import cv2
 
-def hough_side_counter(img, canny_img, show_plot=False):
+class HoughSideCounter(object):
 
-    canny_img = numpy.array(canny_img)
-    
-    rho = 1
-    theta = 1*numpy.pi/180
-    threshold = 20
+    def __init__(self, img, canny_img, threshold, show_plot=False):
+        self.img = img
+        self.canny_img = numpy.array(canny_img)
+        self.threshold = threshold
 
-    lines = cv2.HoughLines(canny_img, rho, theta, threshold)
-    sides = []
-    if type(lines) == "NoneType":
-        return 0
-    else:
-        for i in range(len(lines)):
-            hl = HoughLine(lines[i])
+        self.sides = self.side_counter()
 
-            if len(sides) == 0:
-                sides.append(hl)
+        if show_plot:
+            self.plot_lines()
 
-            else:
-                unique_line = True
-                for i in range(len(sides)):
-                    if abs(sides[i].get_theta() - hl.get_theta()) < 0.5:
-                        if abs(sides[i].get_rho() - hl.get_rho()) < 10:
-                            unique_line = False
-                            break
-                if unique_line:
+    def side_counter(self):
+        rho = 1
+        theta = numpy.pi/180
+
+        lines = cv2.HoughLines(self.canny_img, rho, theta, self.threshold)
+        sides = []
+        if type(lines) == "NoneType":
+            return 0
+        else:
+            for i in range(len(lines)):
+                hl = HoughLine(lines[i])
+
+                if len(sides) == 0:
                     sides.append(hl)
 
-    if show_plot:
-        for i in range(len(sides)):
-            points = sides[i].get_plot_points()
-            cv2.line(img,points[0],points[1],(0,0,255),2)
+                else:
+                    unique_line = True
+                    for i in range(len(sides)):
+                        if abs(sides[i].get_theta() - hl.get_theta()) < 0.5:
+                            if abs(sides[i].get_rho() - hl.get_rho()) < 50:
+                                unique_line = False
+                                break
+                    if unique_line:
+                        sides.append(hl)
+            return sides
 
-        cv2.imshow('image',img)
+    def plot_lines(self):
+        for i in range(len(self.sides)):
+            points = self.sides[i].get_plot_points()
+            cv2.line(self.img,points[0],points[1],(0,0,255),2)
+
+        cv2.imshow('image',self.img)
         cv2.waitKey(0)
         cv2.destroyAllWindows()
 
-    return len(sides)
+    def get_sides(self):
+        return self.sides
 
 class HoughLine(object):
     def __init__(self, lines_array):

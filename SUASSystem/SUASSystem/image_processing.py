@@ -72,22 +72,12 @@ def run_autonomous_img_proc_process(logger_queue, location_log, interop_client_a
             single_target_crops = combo_target_detection_result_list[0]
             json_file = combo_target_detection_result_list[1]
 
-            '''
-            if GCSSettings.UAV_VERSION == "10":
-                target_time = utils.get_image_timestamp_from_filename(target_characteristics["base_image_filename"])
-            elif GCSSettings.UAV_VERSION == "9.1":
-                target_time = utils.get_image_timestamp_from_metadata("static/imgs/" + target_characteristics["base_image_filename"])
-            else:
-                raise Exception("Unknown drone type")
+            image = Image.open(os.path.join(TARGET_MAP_PATH, current_target_map_name))
+            json_file["target_map_center_location"] = (image.width / 2, image.height / 2)
+            json_file["target_map_timestamp"] = utils.get_image_timestamp_from_metadata(os.path.join(TARGET_MAP_PATH, current_target_map_name))
 
-            closest_time_index = 0
-            least_time_difference = location_log[0]["epoch_time"]
-            for index in range(len(location_log)):
-                difference_in_times = target_time - location_log[closest_time_index]["epoch_time"]
-                if abs(difference_in_times) <= least_time_difference:
-                    closest_time_index = index
-                    least_time_difference = difference_in_times
 
+            """
             drone_gps_location = location_log[closest_time_index]["current_location"]
             image = Image.open("static/imgs/" + target_characteristics["base_image_filename"])
             image_midpoint = (image.width / 2, image.height / 2)
@@ -95,7 +85,7 @@ def run_autonomous_img_proc_process(logger_queue, location_log, interop_client_a
             target_location = utils.get_target_gps_location(image_midpoint, target_midpoint, drone_gps_location)
             target_characteristics["latitude"] = target_location.get_lat()
             target_characteristics["longitude"] = target_location.get_lon()
-            '''
+            """
 
             for index_in_single_target_crops in range(len(single_target_crops)):
                 json_file["image_processing_results"][index_in_single_target_crops]["target_index"] = index_in_single_target_crops + 1
@@ -112,17 +102,26 @@ def run_autonomous_img_proc_process(logger_queue, location_log, interop_client_a
                 json_file["image_processing_results"][index_in_single_target_crops]["target_shape_color"] = shape_color
                 json_file["image_processing_results"][index_in_single_target_crops]["target_letter_color"] = letter_color
 
+                # adds target location
+                target_map_center_pixel_coordinates = json_file["target_map_center_location"]
+                target_pixel_coordinates = json_file["image_processing_results"][index_in_single_target_crops]["target_location"]
+                target_time = json_file["target_map_timestamp"]
+
+                closest_time_index = 0
+                least_time_difference = location_log[0]["epoch_time"]
+                for index in range(len(location_log)):
+                    difference_in_times = target_time - location_log[closest_time_index]["epoch_time"]
+                    if abs(difference_in_times) <= least_time_difference:
+                        closest_time_index = index
+                        least_time_difference = difference_in_times
+
+                drone_gps_location = location_log[closest_time_index]["current_location"]
+
+                target_location = utils.get_target_gps_location(target_map_center_pixel_coordinates, target_pixel_coordinates, drone_gps_location)
+                json_file["image_processing_results"][index_in_single_target_crops]["latitude"] = target_location.get_lat()
+                json_file["image_processing_results"][index_in_single_target_crops]["longitude"] = target_location.get_lon()
+
             with open(os.path.join(AUTONOMOUS_IMAGE_PROCESSING_SAVE_PATH, current_target_map_name + ".json"), 'w') as fp:
                 json.dump(json_file, fp, indent=4)
 
             amount_of_target_maps_present -= 1
-
-            '''
-            original_image_path = "static/imgs/" + target_characteristics["base_image_filename"]
-            cropped_target_path = "static/autonomous_crops/" + str(len(os.listdir('static/autonomous_crops'))) + ".jpg"
-            cropped_target_data_path = "static/autonomous_crops/" + str(len(os.listdir('static/autonomous_crops'))) + ".json"
-            #utils.crop_target(original_image_path, cropped_target_path, target_characteristics["target_top_left"], target_characteristics["target_bottom_right"])
-            utils.save_json_data(cropped_target_data_path, target_characteristics)
-
-            interop_client_array[0].post_standard_target(target_characteristics, cropped_target_path)
-            '''
