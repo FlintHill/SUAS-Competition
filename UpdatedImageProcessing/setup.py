@@ -27,7 +27,7 @@ setup(
 
     packages = find_packages(),
 
-    install_requires = ['numpy'],
+    install_requires = ['numpy', 'peakutils', 'plotly'],
 
     keywords = ['SUAS'],
 )
