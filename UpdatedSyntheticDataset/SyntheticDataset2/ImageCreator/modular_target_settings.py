@@ -3,8 +3,8 @@ class ModularTargetSettings(object):
     For the parameters below, specify the values if the booleans are set to
     false. See specified_target for more information on the parameters.
     """
-    RANDOM_SHAPE_TYPE = True
-    SHAPE_TYPE = "quarter_circle"
+    RANDOM_SHAPE_TYPE = False
+    SHAPE_TYPE = "trapezoid"
 
     RANDOM_SHAPE_ORIENTATION = True
     SHAPE_ORIENTATION = "N"
