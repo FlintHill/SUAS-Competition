@@ -7,15 +7,16 @@ import numpy
 testpath = "../../../../test_targets/22.png"
 noise = "../../../../test_targets/noise_targets/1-1.png"
 DATASET_PATH = "/Users/jmoxley/Desktop/compsci/SUAS/test_targets/squares"
+full_dataset = "../../../../targets_full_dataset/circle"
 
 
-
+"""
 #test 1
 sc = ShapeClassification(testpath)
 #canny_img = alpha_trace(testpath)
 #print(PolarSideCounter(canny_img, show_plot=True).get_circle_score())
 print(sc.get_shape_type())
-
+"""
 
 """
 #test 2
@@ -25,14 +26,18 @@ psc = PolarSideCounter(canny_img, show_plot=True)
 print(psc.get_circle_score())
 """
 
-"""
+
 #test 3
-for filename in os.listdir(DATASET_PATH):
+for filename in os.listdir(full_dataset):
     if filename.endswith(".jpg") or filename.endswith(".png"):
         sc = ShapeClassification(os.path.join(DATASET_PATH, filename))
-        #sc = PolarSideCounter(alpha_trace(os.path.join(DATASET_PATH, filename)))
-        print(sc.get_shape_type())
-"""
+        if(sc.get_shape_type() != "circle"):
+            print(filename)
+            print(sc.get_shape_type())
+            psc = PolarSideCounter(alpha_trace(os.path.join(DATASET_PATH, filename)))
+            print(psc.get_circle_score())
+
+
 
 """
 # test 4

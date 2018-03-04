@@ -76,17 +76,6 @@ def run_autonomous_img_proc_process(logger_queue, location_log, interop_client_a
             json_file["target_map_center_location"] = (image.width / 2, image.height / 2)
             json_file["target_map_timestamp"] = utils.get_image_timestamp_from_metadata(os.path.join(TARGET_MAP_PATH, current_target_map_name))
 
-
-            """
-            drone_gps_location = location_log[closest_time_index]["current_location"]
-            image = Image.open("static/imgs/" + target_characteristics["base_image_filename"])
-            image_midpoint = (image.width / 2, image.height / 2)
-            target_midpoint = ((target_characteristics["target_top_left"][0] + target_characteristics["target_bottom_right"][0]) / 2, (target_characteristics["target_top_left"][1] + target_characteristics["target_bottom_right"][1]) / 2)
-            target_location = utils.get_target_gps_location(image_midpoint, target_midpoint, drone_gps_location)
-            target_characteristics["latitude"] = target_location.get_lat()
-            target_characteristics["longitude"] = target_location.get_lon()
-            """
-
             for index_in_single_target_crops in range(len(single_target_crops)):
                 json_file["image_processing_results"][index_in_single_target_crops]["target_index"] = index_in_single_target_crops + 1
 
