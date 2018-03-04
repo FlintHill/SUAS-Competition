@@ -26,7 +26,8 @@ class ObstacleMap(object):
 				self.repulsive_forces = numpy.sum([self.repulsive_forces, force], axis=0)
 
 	def update_attractive_force(self):
-		self.attractive_force = VectorMath.get_attractive_force(self.drone.point, self.drone.waypoint_holder.get_current_waypoint())
+		waypoint_in_3D = numpy.hstack([self.drone.waypoint_holder.get_current_waypoint(),0])
+		self.attractive_force = VectorMath.get_attractive_force(self.drone.point, waypoint_in_3D)
 
 	def reset_attractive_force(self):
 		self.attractive_force = numpy.array([0.0,0.0,0.0])
@@ -38,8 +39,6 @@ class ObstacleMap(object):
 		self.stationary_obstacles = numpy.array([])
 		
 	def get_avoidance_vector(self):
-		print(self.attractive_force)
-		print(self.repulsive_forces)
 		avoidance_vector = numpy.sum([self.attractive_force, self.repulsive_forces], axis= 0)
 		return avoidance_vector
 

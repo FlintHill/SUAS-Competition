@@ -4,6 +4,7 @@ import numpy
 
 class TestObstacleMap(unittest.TestCase):
 	def setUp(self):
+		# waypoint is fucking 2DDDDDDDDDD	!!!@@123i2094utorug089rgwgy89erowgry7-
 		self.test_drone_point = numpy.array([0, 0, 0])
 		self.test_fly_zones = numpy.array([numpy.array([(-400, -400),  (-400, 300),  (300, 300),  (300, -400)])])
 		self.test_drone_point2 = numpy.array([300, 300, 100])
@@ -16,7 +17,7 @@ class TestObstacleMap(unittest.TestCase):
 		self.obstacle_map3 = ObstacleMap(self.test_drone_point3, self.test_fly_zones2)
 		self.obstacle1 = MovingObstacle(numpy.array([50,50,50]), 10)
 		self.obstacle2 = MovingObstacle(numpy.array([200,200,200]), 10)
-		self.waypoint = numpy.array([100,100,100])
+		self.waypoint = numpy.array([100,100])
 	
 	def test_update_repulsive_forces(self):
 		self.obstacle_map1.reset_obstacles()
@@ -47,7 +48,8 @@ class TestObstacleMap(unittest.TestCase):
 		self.obstacle_map1.add_waypoint(self.waypoint)
 		self.obstacle_map1.update_attractive_force()
 
-		attractive_force = VectorMath.get_force(self.test_drone_point, self.waypoint)
+		waypoint_in_3D = numpy.hstack([self.waypoint, 0])
+		attractive_force = VectorMath.get_attractive_force(self.test_drone_point, waypoint_in_3D)
 
 		self.assertEqual(self.obstacle_map1.get_attractive_force()[0], attractive_force[0])
 		self.assertEqual(self.obstacle_map1.get_attractive_force()[1], attractive_force[1])
@@ -64,8 +66,9 @@ class TestObstacleMap(unittest.TestCase):
 		self.obstacle_map1.update_attractive_force()
 		result = self.obstacle_map1.get_avoidance_vector()
 
+		waypoint_in_3D = numpy.hstack([self.waypoint, 0])
 		repulsive_forces = VectorMath.get_force(self.test_drone_point, self.obstacle1.get_point())
-		attractive_force = VectorMath.get_force(self.test_drone_point, self.waypoint)
+		attractive_force = VectorMath.get_attractive_force(self.test_drone_point, waypoint_in_3D)
 		avoidance_vector = numpy.sum([attractive_force, repulsive_forces], axis=0)
 
 		self.assertEqual(result[0], avoidance_vector[0])
