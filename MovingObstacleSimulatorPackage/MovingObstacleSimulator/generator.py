@@ -72,7 +72,7 @@ class Generator(object):
 			else:
 				if element < shortest:
 					shortest = element
-		waypoint = numpy.hstack([random.uniform(self.bottom_left_boundary_point[0], self.top_left_boundary_point[1]), random.uniform(self.bottom_left_boundary_point[0], self.bottom_right_boundary_point[0]), 0])
+		waypoint = numpy.hstack([random.uniform(self.bottom_left_boundary_point[0], self.top_left_boundary_point[1]), random.uniform(self.bottom_left_boundary_point[0], self.bottom_right_boundary_point[0])])
 		return waypoint
 
 	def generate_moving_obstacle_values(self):

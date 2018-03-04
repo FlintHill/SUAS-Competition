@@ -100,11 +100,14 @@ waypoint = generator.generate_waypoint()
 obstacle_map.add_waypoint(waypoint)
 obstacle_map.reset_repulsive_forces()
 obstacle_map.reset_attractive_force()
-
+obstacle_map.update_attractive_force()
+obstacle_map.update_repulsive_forces()
 
 def makeUpdates(x, y, obstacle_map):
     index = 0
     while True:
+        obstacle_map.update_repulsive_forces()
+        obstacle_map.update_attractive_force()
     	avoidance_vector = obstacle_map.get_avoidance_vector()
     	unit_velocity = VectorMath.get_single_unit_vector(avoidance_vector)
     	# print(unit_velocity)

@@ -37,9 +37,9 @@ class VectorMathTestCase(unittest.TestCase):
         test_vector5 = numpy.array([1,2,3])
         test_vector6 = numpy.array([-3,-2,-1])
 
-        print(VectorMath.get_vector_projection(test_vector1, test_vector2))
-        print(VectorMath.get_vector_projection(test_vector3, test_vector4))
-        print(VectorMath.get_vector_projection(test_vector5, test_vector6))
+        # print(VectorMath.get_vector_projection(test_vector1, test_vector2))
+        # print(VectorMath.get_vector_projection(test_vector3, test_vector4))
+        # print(VectorMath.get_vector_projection(test_vector5, test_vector6))
 
         self.assertTrue(numpy.array_equal(numpy.round(VectorMath.get_vector_projection(test_vector1, test_vector2), decimals = 5, out = None), numpy.round(numpy.array([8.0/3.0, 8.0/3.0, 8.0/3.0]), decimals = 5, out = None)))
         self.assertTrue(numpy.array_equal(numpy.round(VectorMath.get_vector_projection(test_vector3, test_vector4), decimals = 5, out = None), numpy.round(numpy.array([-0., -21.5878621, 7.96113467]), decimals = 5, out = None)))
@@ -55,9 +55,9 @@ class VectorMathTestCase(unittest.TestCase):
         test_vector5 = numpy.array([1,2,3])
         test_vector6 = numpy.array([-3,-2,-1])
 
-        print(VectorMath.get_vector_rejection(test_vector1, test_vector2))
-        print(VectorMath.get_vector_rejection(test_vector3, test_vector4))
-        print(VectorMath.get_vector_rejection(test_vector5, test_vector6))
+        # print(VectorMath.get_vector_rejection(test_vector1, test_vector2))
+        # print(VectorMath.get_vector_rejection(test_vector3, test_vector4))
+        # print(VectorMath.get_vector_rejection(test_vector5, test_vector6))
 
         self.assertTrue(numpy.array_equal(numpy.round(VectorMath.get_vector_rejection(test_vector1, test_vector2), decimals = 5, out = None), numpy.round(numpy.array([-2.0/3.0, 1.0/3.0, 1.0/3.0]), decimals = 5, out = None)))
         self.assertTrue(numpy.array_equal(numpy.round(VectorMath.get_vector_rejection(test_vector3, test_vector4), decimals = 5, out = None), numpy.round(numpy.array([-33, 21.5878621, 58.53886533]), decimals = 5, out = None)))
