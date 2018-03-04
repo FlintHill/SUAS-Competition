@@ -83,8 +83,8 @@ class IntegratedImageProcessingTester(object):
                     correct_target_center_x = answer_list[index_3]["target_center_coordinates"][0]
                     correct_target_center_y = answer_list[index_3]["target_center_coordinates"][1]
 
-                    detected_target_center_x = result_list[index_4]["target_location"][0] + (result_list[index_4]["target_location"][2] / 2)
-                    detected_target_center_y = result_list[index_4]["target_location"][1] + (result_list[index_4]["target_location"][3] / 2)
+                    detected_target_center_x = result_list[index_4]["target_location"][0]
+                    detected_target_center_y = result_list[index_4]["target_location"][1]
 
                     if (abs(correct_target_center_x - detected_target_center_x) <= 20) and (abs(correct_target_center_y - detected_target_center_y) <= 20):
                         current_true_positive_count += 1

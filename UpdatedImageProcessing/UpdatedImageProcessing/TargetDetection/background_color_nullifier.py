@@ -78,7 +78,7 @@ class BackgroundColorNullifier(object):
         pixel_access_captured_image = captured_image.load()
         threshold_color = TargetAnalyzer.find_rim_average_color(captured_image)
 
-        initial_image_area = captured_image.width * captured_image.height
+        captured_image_area = captured_image.width * captured_image.height
         empty_space_area = 0
 
         to_eliminate = False
@@ -163,6 +163,15 @@ class BackgroundColorNullifier(object):
 
             recaptured_image = captured_image.crop((x_min - 5, y_min - 5, x_max + 5, y_max + 5))
 
+            recaptured_image_area = recaptured_image.width * recaptured_image.height
+            space_decreased = captured_image_area - recaptured_image_area
+
+            if (100.0 * (empty_space_area - space_decreased) / recaptured_image_area) > 80:
+                return 0
+
+            if (space_decreased <= 0):
+                return 0
+
             index = 0
             while (index < 5):
                 pixel_access_recaptured_image = recaptured_image.load()
@@ -194,6 +203,7 @@ class BackgroundColorNullifier(object):
                             if ((number_of_blanks_around_1 >= 3) or (number_of_blanks_around_2 >= 4)):
                                 pixel_access_recaptured_image[x, y] = (255, 255, 255, 0)
                                 increased_empty_space_area += 1
+                                empty_space_area += 1
 
                 recaptured_image = BackgroundColorNullifier.recrop_target(recaptured_image)
                 if (increased_empty_space_area == 0):

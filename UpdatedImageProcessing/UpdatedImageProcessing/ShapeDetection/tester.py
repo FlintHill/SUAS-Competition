@@ -7,6 +7,7 @@ import numpy
 testpath = "../../../../test_targets/22.png"
 noise = "../../../../test_targets/noise_targets/1-1.png"
 DATASET_PATH = "/Users/jmoxley/Desktop/compsci/SUAS/test_targets/squares"
+full_dataset = "../../../../targets_full_dataset/circle"
 
 
 

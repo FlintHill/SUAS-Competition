@@ -19,8 +19,8 @@ class HoughSideCounter(object):
 
         lines = cv2.HoughLines(self.canny_img, rho, theta, self.threshold)
         sides = []
-        if type(lines) == "NoneType":
-            return 0
+        if lines is None:
+            return []
         else:
             for i in range(len(lines)):
                 hl = HoughLine(lines[i])
