@@ -6,8 +6,8 @@ class Settings(object):
     """
     This path contains the target maps to be used for image processing.
     """
-    #TARGET_MAP_PATH = os.path.expanduser("~/Desktop/Synthetic_Dataset/Answers/modular_target_maps")
-    TARGET_MAP_PATH = os.path.expanduser("~/Desktop/manual_dataset/target_map")
+    TARGET_MAP_PATH = os.path.expanduser("~/Desktop/Synthetic_Dataset/Answers/modular_target_maps")
+    #TARGET_MAP_PATH = os.path.expanduser("~/Desktop/manual_dataset/target_map")
 
     """
     This path contains the following paths for saving single target crops and
@@ -31,5 +31,5 @@ class Settings(object):
     the path to the directory that stores the json file each holding the
     correct information of the targets on to its corresponding target map.
     """
-    #TARGET_MAP_ANSWER_SHEET_PATH = os.path.expanduser("~/Desktop/Synthetic_Dataset/Answers/modular_target_maps_answers")
-    TARGET_MAP_ANSWER_SHEET_PATH = os.path.expanduser("~/Desktop/manual_dataset/target_map_answers")
+    TARGET_MAP_ANSWER_SHEET_PATH = os.path.expanduser("~/Desktop/Synthetic_Dataset/Answers/modular_target_maps_answers")
+    #TARGET_MAP_ANSWER_SHEET_PATH = os.path.expanduser("~/Desktop/manual_dataset/target_map_answers")

@@ -203,7 +203,6 @@ class BackgroundColorNullifier(object):
                             if ((number_of_blanks_around_1 >= 3) or (number_of_blanks_around_2 >= 4)):
                                 pixel_access_recaptured_image[x, y] = (255, 255, 255, 0)
                                 increased_empty_space_area += 1
-                                empty_space_area += 1
 
                 recaptured_image = BackgroundColorNullifier.recrop_target(recaptured_image)
                 if (increased_empty_space_area == 0):
