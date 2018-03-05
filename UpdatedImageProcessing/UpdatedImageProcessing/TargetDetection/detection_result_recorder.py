@@ -21,15 +21,20 @@ class DetectionResultRecorder(object):
         """
         data = {}
 
+        data["target_map_center_location"] = []
+        data["target_map_timestamp"] = []
         data["image_processing_results"] = []
+
         for index in range(len(positive_list)):
             data["image_processing_results"].append({
                  "target_index": {},
-                 "target_location": (positive_list[index][0], positive_list[index][1], positive_list[index][2], positive_list[index][3]),
+                 "target_location": (positive_list[index][0] + (positive_list[index][2] / 2), positive_list[index][1] + (positive_list[index][3] / 2)),
                  "target_shape_type": {},
                  "target_shape_color": {},
                  "target_letter_color": {},
-                 "target_shape_type": {}
+                 "target_shape_type": {},
+                 "latitude": {},
+                 "longitude": {}
             })
 
         return data

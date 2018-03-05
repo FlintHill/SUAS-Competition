@@ -1,18 +1,21 @@
 import numpy
 from PIL import Image
-import pytesseract
 import argparse
 import cv2
 import os
 import timeit
 from UpdatedImageProcessing import *
 
-start_time = timeit.default_timer()
 
-IntegratedImageProcessingTester.complete_integrated_image_processing()
-IntegratedImageProcessingTester.run_integrated_image_processing_tester()
+image = Image.open("/Users/zyin/Desktop/Image_Processing_Report/Images/1.jpg - 3.png")
 
-Logger.format_time_report(timeit.default_timer() - start_time)
+ShapeColorNullifier.nullify_shape_color(image, 15)
+
+
+#image_2 = ColorOperations.apply_color_quantization(image, 3)
+
+#image_2 = BackgroundColorNullifier.nullify_color_and_recrop_target(image, 5)
+#image_2.show()
 
 #Run IntegratedImageProcessing
 """

@@ -1,3 +1,4 @@
+import os
 from PIL import Image
 from PIL import ImageFilter
 from collections import Counter
@@ -45,7 +46,7 @@ class IntegratedTargetCapturingProcess(object):
         :type length: int
         :type width: int
 
-        :return: a list of a list of images and a list of false positives to 
+        :return: a list of a list of images and a list of false positives to
                  eliminate
         """
         target_map_image = Image.open(target_map_image_path)
@@ -80,7 +81,7 @@ class IntegratedTargetCapturingProcess(object):
                 crop_y2 = target_map_image.height - 1
 
             captured_image = target_map_image.crop((crop_x1, crop_y1, crop_x2, crop_y2))
-
+            
             #Enabling eliminate_target_not_on_grass functions depending on the background color.
             '''
             if FalsePositiveEliminators.eliminate_target_not_on_grass(captured_image) == False:

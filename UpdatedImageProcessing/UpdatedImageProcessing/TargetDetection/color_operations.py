@@ -35,6 +35,20 @@ class ColorOperations(object):
         return rgb_image
 
     @staticmethod
+    def apply_color_quantization(rgb_image, kmeans_clusters_number):
+        lab_image = cv2.cvtColor(numpy.array(rgb_image), cv2.COLOR_RGB2LAB)
+        lab_image = lab_image.reshape((lab_image.shape[0] * lab_image.shape[1], 3))
+
+        clt = MiniBatchKMeans(n_clusters = kmeans_clusters_number)
+        labels = clt.fit_predict(lab_image)
+
+        lab_image = clt.cluster_centers_.astype("uint8")[labels]
+        lab_image = lab_image.reshape((rgb_image.height, rgb_image.width, 3))
+        bgr_image = cv2.cvtColor(lab_image, cv2.COLOR_LAB2BGR)
+        rgb_image = Image.fromarray(bgr_image, 'RGB')
+        return rgb_image
+
+    @staticmethod
     def find_boundary_of_color(image, color, margin_length):
         list_of_x = []
         list_of_y = []
