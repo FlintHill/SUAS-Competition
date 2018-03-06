@@ -41,6 +41,10 @@ class ObstacleMap(object):
 	def get_avoidance_vector(self):
 		avoidance_vector = numpy.sum([self.attractive_force, self.repulsive_forces], axis= 0)
 		return avoidance_vector
+	def get_unit_velocity(self):
+		velocity = self.get_avoidance_vector()
+		unit_velocity = VectorMath.get_single_unit_vector(velocity)
+		return unit_velocity
 
 	def get_attractive_force(self):
 		return self.attractive_force

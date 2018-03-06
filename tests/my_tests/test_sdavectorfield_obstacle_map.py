@@ -72,3 +72,20 @@ class TestObstacleMap(unittest.TestCase):
 		avoidance_vector = numpy.sum([attractive_force, repulsive_forces], axis=0)
 
 		self.assertEqual(result[0], avoidance_vector[0])
+
+	def test_get_unit_velocity(self):
+		self.obstacle_map1.reset_obstacles()
+		self.obstacle_map1.reset_waypoints()
+		self.obstacle_map1.reset_repulsive_forces()
+		self.obstacle_map1.reset_attractive_force()
+		self.obstacle_map1.add_obstacle(self.obstacle1)
+		self.obstacle_map1.add_waypoint(self.waypoint)
+		self.obstacle_map1.update_repulsive_forces()
+		self.obstacle_map1.update_attractive_force()
+		result = self.obstacle_map1.get_avoidance_vector()
+
+		expected_unit_velocity = VectorMath.get_single_unit_vector(result)
+		result_unit_velocity = self.obstacle_map1.get_unit_velocity()
+
+		self.assertEqual(expected_unit_velocity[0], result_unit_velocity[0])
+		self.assertEqual(expected_unit_velocity[1], result_unit_velocity[1])
