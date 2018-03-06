@@ -35,6 +35,8 @@ class IntegratedTargetDetectionProcess(object):
         #Combine results from the two detectors
         positive_list = positive_list_1 + positive_list_2
 
+        positive_list = FalsePositiveEliminators.eliminate_oversized_target(positive_list)
+        
         positive_list = FalsePositiveEliminators.eliminate_overlapping_targets(positive_list)
 
         #Enabling combine_close_by_targets sometimes reduce the detection ratio.

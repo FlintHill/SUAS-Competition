@@ -223,6 +223,31 @@ class FalsePositiveEliminators(object):
         return new_positive_list
 
     @staticmethod
+    def eliminate_oversized_target(positive_list):
+        """
+        :param positive_list: the list holding the information of the targets.
+
+        :type positive_list: a list of four-tuples containing four elements for each
+                             target: (x, y, length, width)
+        :type x: int
+        :type y: int
+        :type length: int
+        :type width: int
+
+        :return: a positive_list
+        """
+        new_positive_list = []
+
+        for index in range(len(positive_list)):
+            length = positive_list[index][2]
+            width = positive_list[index][3]
+            area = length * width
+            if (area < Settings.THRESHOLD_TARGET_AREA):
+                new_positive_list.append(positive_list[index])
+
+        return new_positive_list
+        
+    @staticmethod
     def eliminate_target_not_on_grass(captured_image):
         """
         :param captured_image: a captured image of a potential target
