@@ -4,11 +4,11 @@ import os, sys
 from os import path
 
 setup(
-    name = 'MovingObstacleSimulator',
+    name = 'VectorFieldSDASimulator',
 
     version = '0.0.1',
 
-    description = 'Testing obstacle avoidance for SUAS Competition',
+    description = 'New vector field SDA testing program for SUAS Competition',
 
     url = 'https://github.com/FlintHill/SUAS-Competition',
 
