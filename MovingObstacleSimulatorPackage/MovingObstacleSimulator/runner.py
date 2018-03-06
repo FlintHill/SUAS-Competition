@@ -63,7 +63,6 @@ if __name__ == '__main__':
 	# print(waypoint)
 	for obstacle in obstacle_map.obstacles:
 			plt.plot(obstacle.get_point()[0], obstacle.get_point()[1], "bx")
-			print("add_circle_initial")
 			circle_figure = plt.Circle(obstacle.get_point(), obstacle.get_radius(), color="r")
 			ax.add_artist(circle_figure)
 			# print(obstacle.get_point()[0], obstacle.get_point()[1], obstacle.get_radius()) 
