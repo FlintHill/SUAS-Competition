@@ -94,11 +94,17 @@ class ColorClassifier(object):
 		im_width, im_height = im.size
 		pixels = list(im.getdata())
 
-		count = {
-			colors_from_img.pop(): 0,
-			colors_from_img.pop(): 0,
-			colors_from_img.pop(): 0
-		}
+		try:
+			count = {
+				list(colors_from_img)[0]: 0,
+				list(colors_from_img)[1]: 0,
+				list(colors_from_img)[2]: 0
+			}
+		except:
+			count = {
+				list(colors_from_img)[0]: 0,
+				list(colors_from_img)[1]: 0
+			}
 
 		Logger.log("classify_color.py: Count before: ")
 		Logger.log("classify_color.py: " + str(count))
