@@ -7,12 +7,10 @@ import timeit
 from UpdatedImageProcessing import *
 
 image = Image.open("/Users/zyin/Desktop/Image_Processing_Report/Images/9.jpg - 1.png")
-print image.size
 
-#image_2 = ColorOperations.apply_color_quantization(image, 3)
-
+image_2 = ColorOperations.apply_color_quantization(image, 3)
 #image_2 = BackgroundColorNullifier.nullify_color_and_recrop_target(image, 5)
-#image_2.show()
+image_2.show()
 
 #Run IntegratedImageProcessing
 """

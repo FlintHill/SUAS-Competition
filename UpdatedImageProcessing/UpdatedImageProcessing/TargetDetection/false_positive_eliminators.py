@@ -246,7 +246,7 @@ class FalsePositiveEliminators(object):
                 new_positive_list.append(positive_list[index])
 
         return new_positive_list
-        
+
     @staticmethod
     def eliminate_target_not_on_grass(captured_image):
         """
