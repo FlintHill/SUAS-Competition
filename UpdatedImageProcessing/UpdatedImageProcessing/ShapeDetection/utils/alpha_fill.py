@@ -1,7 +1,7 @@
 from PIL import Image
 import numpy
 
-def alpha_trace(pil_img):
+def alpha_fill(pil_img):
     cvimg = numpy.array(pil_img)
 
     pil_output = Image.new("L", (pil_img.width, pil_img.height))
@@ -15,10 +15,6 @@ def alpha_trace(pil_img):
             if(cvimg[i][j][3] == 0):
                 output_img[i][j] = 0
             else:
-                if(cvimg[i-1][j][3] == 0 or cvimg[i][j-1][3] == 0):
-                    output_img[i][j] = 255
-                elif(cvimg[i+1][j][3] == 0 or cvimg[i][j+1][3] == 0):
-                    output_img[i][j] = 255
-                else:
-                    output_img[i][j] = 0
-    return Image.fromarray(output_img)
+                output_img[i][j] = 255
+
+    return output_img
