@@ -4,7 +4,7 @@ import cv2
 class HoughSideCounter(object):
 
     def __init__(self, img, canny_img, threshold, show_plot=False):
-        self.img = img
+        self.img = numpy.array(img)
         self.canny_img = numpy.array(canny_img)
         self.threshold = threshold
 

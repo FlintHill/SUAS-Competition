@@ -1,9 +1,7 @@
 from PIL import Image
-import cv2
 import numpy
 
-def alpha_trace(file_path):
-    pil_img = Image.open(file_path)
+def alpha_trace(pil_img):
     cvimg = numpy.array(pil_img)
 
     pil_output = Image.new("L", (pil_img.width, pil_img.height))

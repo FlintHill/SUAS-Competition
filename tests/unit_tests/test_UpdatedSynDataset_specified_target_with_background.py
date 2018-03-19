@@ -11,7 +11,7 @@ class SpecifiedTargetWithBackgroundTestCase(unittest.TestCase):
     def setUp(self):
         self.path_to_background = "tests/images/competition_grass_1.JPG"
         self.test_image1 = SpecifiedTargetWithBackground("circle", "?", "A", (255, 255, 255, 255), (255, 0, 0, 255), 0).create_specified_target_with_background()
-        self.test_image2 = SpecifiedTargetWithBackground("half_circle", "E", "E", (0, 255, 0, 255), (0, 0, 255, 255), 45).create_specified_target_with_background()
+        self.test_image2 = SpecifiedTargetWithBackground("semicircle", "E", "E", (0, 255, 0, 255), (0, 0, 255, 255), 45).create_specified_target_with_background()
         self.test_image3 = SpecifiedTargetWithBackground("cross", "D", "I", (255, 255, 0, 255), (255, 0, 255, 255), 90).create_specified_target_with_background()
         self.test_image4 = SpecifiedTargetWithBackground("heptagon", "S", "O", (0, 255, 255, 255), (0, 0, 0, 255), 135).create_specified_target_with_background()
         self.test_image5 = SpecifiedTargetWithBackground("star", "N", "U", (66, 66, 66, 255), (233, 233, 233, 255), 180).create_specified_target_with_background()

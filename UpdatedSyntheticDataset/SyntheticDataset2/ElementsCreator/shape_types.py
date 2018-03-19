@@ -2,7 +2,7 @@ class ShapeTypes(object):
 
     CIRCLE = "circle"
     QUARTERCIRCLE = "quarter_circle"
-    HALFCIRCLE = "half_circle"
+    HALFCIRCLE = "semicircle"
     CROSS = "cross"
     TRIANGLE = "triangle"
     SQUARE = "square"

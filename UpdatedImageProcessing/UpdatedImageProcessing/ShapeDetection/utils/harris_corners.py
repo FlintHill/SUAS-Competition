@@ -1,7 +1,7 @@
 import cv2
 import numpy
 import math
-from .kmeans import Clusters, Cluster
+from .cluster import Clusters, Cluster
 
 CV_HARRIS_CORNER_THRESHOLD = 10e-03
 MIN_CORNER_CLUSTER = 1

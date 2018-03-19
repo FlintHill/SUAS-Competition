@@ -17,6 +17,8 @@ setup(
 
     license = 'MIT',
 
+    include_package_data=True,
+
     classifiers = [
         'Development Status :: 3 - Alpha',
 
