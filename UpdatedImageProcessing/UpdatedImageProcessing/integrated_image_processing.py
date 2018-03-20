@@ -39,7 +39,7 @@ class IntegratedImageProcessing(object):
                 current_crop_path = os.path.join(image_save_path, current_target_map_name + " - " + str(index_3 + 1) + ".png")
                 single_target_crops[index_3].save(current_crop_path)
 
-                shape_type = ShapeClassification(current_crop_path).get_shape_type()
+                shape_type = ShapeClassificationTwo(current_crop_path).get_shape_type()
                 json_file["image_processing_results"][index_3]["target_shape_type"] = shape_type
 
                 color_classifying_results = ColorClassifier(current_crop_path).get_color()
