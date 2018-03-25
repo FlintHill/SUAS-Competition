@@ -23,7 +23,7 @@ class ShapeClassificationTwo(object):
         self.contour_list = []
 
         for shape in self.shape_choices:
-            dataset = os.path.abspath(utils.__file__)[:-12] + "target_detection_masks/" + shape + "/"
+            dataset = os.path.abspath(utils.__file__)[:-12] + "/target_detection_masks/" + shape + "/"
 
             for filename in os.listdir(dataset):
                 if filename.endswith(".png"):
