@@ -36,7 +36,7 @@ class IntegratedTargetDetectionProcess(object):
         positive_list = positive_list_1 + positive_list_2
 
         positive_list = FalsePositiveEliminators.eliminate_oversized_target(positive_list)
-        
+
         positive_list = FalsePositiveEliminators.eliminate_overlapping_targets(positive_list)
 
         #Enabling combine_close_by_targets sometimes reduce the detection ratio.
@@ -50,7 +50,6 @@ class IntegratedTargetDetectionProcess(object):
             positive_list = combine_close_by_targets_result[0]
             number_of_close_by_targets = combine_close_by_targets_result[1]
         '''
-
         positive_list = FalsePositiveEliminators.eliminate_by_surrounding_color(pil_target_map_image, positive_list)
 
         return positive_list
