@@ -6,7 +6,7 @@ import json
 import time
 
 DATASET_PATH = "/Users/jmoxley/Desktop/compsci/SUAS/targets_full_dataset/"
-TEST_THRESHOLD = [0.5]
+TEST_THRESHOLD = [0]
 choices = ("circle", "semicircle", "quarter_circle", "triangle", "square", "rectangle", "trapezoid", "pentagon", "hexagon", "heptagon", "octagon", "star", "cross")
 
 
@@ -44,7 +44,7 @@ for x in range(len(TEST_THRESHOLD)):
                         data[detected][0]["False Positives"] +=1
     results.append((TEST_THRESHOLD[x], correct_answers, false_answers))
     t1 = time.time()
-    print("Test_Threshold:%s \nCorrect:%s Incorrect:%s" % (TEST_THRESHOLD[x], correct_answers, false_answers))
+    print("Correct:%s Incorrect:%s" % (correct_answers, false_answers))
     pprint(data)
-    print(t1-t0)
+    print("Time taken: %s" % (t1-t0))
     print("-----------\n")

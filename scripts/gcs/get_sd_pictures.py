@@ -16,7 +16,9 @@ if __name__ == '__main__':
 
     print("SD Card loaded")
 
-    os.system("rm static/all_imgs/*.JPG")
+    os.system("rm static/all_imgs/*")
+    os.system("rm static/imgs/*")
+    os.system("rm static/crops/*")
 
     for pic_folder in os.listdir(SD_PATH):
             pictures_dir_path = os.path.join(SD_PATH, pic_folder)

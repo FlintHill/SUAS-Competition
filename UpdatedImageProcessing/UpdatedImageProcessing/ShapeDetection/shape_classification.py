@@ -41,6 +41,7 @@ class ShapeClassification(object):
         elif self.num_polar_side_maximums not in range(2,8):
             #panic -- chose random shape
             self.shape_type = random.choice(ShapeDetectionSettings.SHAPE_CHOICES)
+            self.shape_type = "random"
         elif self.num_polar_side_maximums == 2:
             self.shape_type = "semicircle"
         elif self.num_polar_side_maximums == 3:
