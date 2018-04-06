@@ -4,6 +4,7 @@ from settings import ShapeDetectionSettings
 from PIL import Image
 import cv2
 import os
+import numpy
 
 class ShapeClassificationTwo(object):
     def __init__(self, path_to_cropped_img_in):
@@ -15,6 +16,7 @@ class ShapeClassificationTwo(object):
     def load_target(self,path_to_cropped_img_in):
         self.pil_img = Image.open(path_to_cropped_img_in)
         self.canny_img = utils.alpha_trace(self.pil_img)
+
         target_mask_img = utils.alpha_fill(self.pil_img)
         _,contours,_ = cv2.findContours(target_mask_img,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
         self.target_contour = contours[0]
@@ -42,15 +44,16 @@ class ShapeClassificationTwo(object):
 
         self.shape_type = self.contour_list[smallest_difference_index][0]
 
+
     def load_polar_side_counter(self):
         self.polar_side_counter = utils.PolarSideCounter(self.canny_img)
-        #self.polar_side_maximums = self.polar_side_counter.get_polar_side_maximums()
-        #self.num_polar_side_maximums = len(self.polar_side_maximums)
+        self.polar_side_maximums = self.polar_side_counter.get_polar_side_maximums()
+        self.num_polar_side_maximums = len(self.polar_side_maximums)
         #self.polar_side_minimums = self.polar_side_counter.get_polar_side_minimums()
         #self.num_polar_side_minimums = len(self.polar_side_counter.get_polar_side_minimums())
-        self.circle_score = self.polar_side_counter.get_circle_score()
-        self.noise_score = self.polar_side_counter.get_noise_score()
-        self.origin = self.polar_side_counter.get_origin()
+        #self.circle_score = self.polar_side_counter.get_circle_score()
+        #self.noise_score = self.polar_side_counter.get_noise_score()
+        #self.origin = self.polar_side_counter.get_origin()
 
     def determine_shape(self):
         self.load_shape_comparison()
@@ -61,6 +64,16 @@ class ShapeClassificationTwo(object):
             if self.circle_score >= ShapeDetectionSettings.CIRCLE_SCORE_THRESHOLD:
                 self.shape_type = "circle"
         """
+
+        if self.shape_type == "cross":
+            self.load_polar_side_counter()
+            if self.num_polar_side_maximums < 4:
+                self.shape_type = "triangle"
+
+        if self.shape_type == "rectangle":
+            self.load_polar_side_counter()
+            if self.num_polar_side_maximums < 3:
+                self.shape_type = "semicircle"
 
 
     def get_shape_type(self):
