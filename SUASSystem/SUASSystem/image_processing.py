@@ -52,14 +52,12 @@ def run_autonomous_img_proc_process(logger_queue, location_log, interop_client_a
     target_detected = []
     TARGET_MAP_PATH = "static/imgs"
     AUTONOMOUS_IMAGE_PROCESSING_SAVE_PATH = "static/autonomous_crops"
-    print("got here 1")
     while True:
         amount_of_target_maps_present = len(set(os.listdir(TARGET_MAP_PATH))) - len(set(target_detected))
 
         while (amount_of_target_maps_present > 0):
-            print("got here 2")
             for index_in_target_map_path in range(len(set(os.listdir(TARGET_MAP_PATH)))):
-                #add checks for jpeg
+
                 current_target_map_name = os.listdir(TARGET_MAP_PATH)[index_in_target_map_path]
 
                 is_current_target_map_detected = False
