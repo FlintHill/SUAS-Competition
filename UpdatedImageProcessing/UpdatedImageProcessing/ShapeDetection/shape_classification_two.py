@@ -30,11 +30,6 @@ class ShapeClassificationTwo(object):
             for filename in os.listdir(dataset):
                 if filename.endswith(".png"):
                     shape_mask_img = cv2.imread(os.path.join(dataset, filename),0)
-                    """
-                    shape_mask_img = Image.open(os.path.join(dataset, filename))
-                    shape_mask_img = utils.generate_gaussian_noise_by_level(shape_mask_img, 3, shape_mask_img.width)
-                    shape_mask_img = numpy.array(shape_mask_img)
-                    """
 
                     _,contours,_ = cv2.findContours(shape_mask_img,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
                     shape_contour = contours[0]
