@@ -1,6 +1,7 @@
 import sys
 from os import walk
 import cv2
+import imutils
 import numpy as np
 
 from .logger import Logger
@@ -41,9 +42,11 @@ class ColorClassifier(object):
 						or, simply:
 							[<background color>, <text color>]
 		"""
+		# preconditions
 		if self.img is None:
 			raise Exception("classify_color.py: No image was passed in the constructor.")
 
+		# initialize
 		opened_img = Image.open(self.img)
 		lines_to_grab = 6
 
@@ -61,7 +64,7 @@ class ColorClassifier(object):
 		# define criteria, number of clusters(K) and apply kmeans()
 		criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 10, 1.0)
 		K = 3
-		ret,label,center = cv2.kmeans(Z, K, None, criteria, 10, cv2.KMEANS_RANDOM_CENTERS)
+		ret,label,center = cv2.kmeans(Z, K, None, criteria, 9, cv2.KMEANS_RANDOM_CENTERS)
 
 		# now convert back into uint8, and make original image
 		center = np.uint8(center)
@@ -82,7 +85,7 @@ class ColorClassifier(object):
 		if "white" in color_names_from_img:
 			color_names_from_img.remove("white") # remove background
 
-		# figure out which color comes first, reading from the center row outwards
+		# figure out which color comes first, reading from the vertical center row, outwards
 		height, width, channels = img.shape
 		row_factor = int(round(height/(float(lines_to_grab) + 1.0)))
 
@@ -135,7 +138,7 @@ class ColorClassifier(object):
 		Logger.log("classify_color.py: Count color rgb convert to names: ")
 		Logger.log("classify_color.py: " + str(new_count))
 
-		# determine shape and content color based on max and min
+		# determine shape color based on max and min
 		maximum = 0
 		minimum = 0
 
@@ -154,11 +157,52 @@ class ColorClassifier(object):
 				minimum = new_count.keys()[0]
 
 		Logger.log("classify_color.py: Determined shape color to be '" + maximum + "'")
-		Logger.log("classify_color.py: Determined text color to be '" + minimum + "'")
+		Logger.log("classify_color.py: Assumed text color to be '" + minimum + "'")
+		Logger.log("classify_color.py: Checking text color...")
 
-		result = [maximum, minimum]
+		# confirm the text color is, indeed, the text color
+		original_text_color_pixels = []
+
+		for x in range(1, im_width): # grab pixel locations of assumed text color
+			for y in range(1, im_height):
+				if self.convert_rgba_to_color_name(list(corrected_img[x, y])) == minimum:
+					original_text_color_pixels.append([x, y])
+
+		filtered_pixels = []
+
+		for x in range(1, opened_img.size[0]): # find every pixel that is surrounded by similar pixels
+			for y in range(1, opened_img.size[1]): # [0] is width, [1] is height
+				if [x, y] in original_text_color_pixels:
+					if [x, y + 1] in original_text_color_pixels: # above
+						if [x + 1, y] in original_text_color_pixels: # right
+							if [x, y - 1] in original_text_color_pixels: # below
+								if [x - 1, y] in original_text_color_pixels: # left
+									filtered_pixels.append(list(opened_img.getpixel((y, x))))
+
+		minimum = self.convert_rgba_to_color_name( list( np.mean(np.array(filtered_pixels), axis=0) ) )
+
+		result = [maximum, minimum] # shape color, text color
 
 		return result
+
+
+	"""
+	Converts a standard [X, Y] pixel location to OpenCVs one
+	dimensional pixel list.
+
+	:param width:	The width of the OpenCV image.
+	:param x:		Column position.
+	:param y:		Row position:
+
+	:type width:	Integer.
+	:type x:		Integer.
+	:type y:		Integer.
+
+	:return:		Integer.
+	"""
+	def x_y_to_single(self, width, x, y):
+		return (width * y) + x
+
 
 	def three_dimesional_distance(self, p1, p2):
 		"""
@@ -202,6 +246,8 @@ class ColorClassifier(object):
 
 		:return:		"white", "black", etc.
 		"""
+		if isinstance(rgba, list) is False:
+			raise TypeError("Expected a list, was passed a " + str(type(rgba)))
 
 		distances = []
 		i = 0

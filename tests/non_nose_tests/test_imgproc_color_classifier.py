@@ -126,8 +126,14 @@ def load_images(image_dir, count=sys.maxint):
 						["1.jpg", "2.jpg", "3.jpg"]
 	"""
 	for (dirpath, dirnames, filenames) in walk(image_dir):
-		imgs = filenames
+		potential_imgs = filenames
 		break
+
+	imgs = []
+
+	for potential in potential_imgs:
+		if potential.find(".png") >= 0:
+			imgs.append(potential)
 
 	imgs.sort(key=lambda f: int(filter(str.isdigit, f)))
 
@@ -149,9 +155,8 @@ if __name__ == '__main__':
 
 	for img in imgs:
 		test = ColorClassifier(directory + "/" + img)
-		results.append(test.get_color()[0]) # [0] for shape_color, [1] for alphanumeric_color
+		results.append(test.get_color()[1]) # [0] for shape_color, [1] for alphanumeric_color
 
 	# for shape color: "targets.0.shape_color"
 	# for text color:  "targets.0.alphanumeric_color"
-	main.compare_results(directory + "_answers/", "targets.0.shape_color", results, verbose=True)
-
+	main.compare_results(directory + "_answers/", "targets.0.alphanumeric_color", results, verbose=True)
