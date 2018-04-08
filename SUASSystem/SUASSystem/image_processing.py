@@ -5,7 +5,7 @@ import math
 from .utils import *
 from UpdatedImageProcessing.TargetDetection.single_target_map_detector import SingleTargetMapDetector
 from .settings import GCSSettings
-from .converter_functions import inverse_haversine
+from .converter_functions import inverse_haversine, get_mission_json
 
 def run_img_proc_process(logger_queue, location_log, targets_to_submit, interop_client_array):
     while True:
@@ -79,20 +79,6 @@ def run_autonomous_img_proc_process(logger_queue, location_log, interop_client_a
 
 
             for index_in_single_target_crops in range(len(single_target_crops)):
-                json_file["image_processing_results"][index_in_single_target_crops]["target_index"] = index_in_single_target_crops + 1
-
-                current_crop_path = os.path.join(AUTONOMOUS_IMAGE_PROCESSING_SAVE_PATH, current_target_map_name + " - " + str(index_in_single_target_crops + 1) + ".png")
-                single_target_crops[index_in_single_target_crops].save(current_crop_path)
-
-                shape_type = ShapeClassificationTwo(current_crop_path).get_shape_type()
-                json_file["image_processing_results"][index_in_single_target_crops]["target_shape_type"] = shape_type
-
-                color_classifying_results = ColorClassifier(current_crop_path).get_color()
-                shape_color = color_classifying_results[0]
-                letter_color = color_classifying_results[1]
-                json_file["image_processing_results"][index_in_single_target_crops]["target_shape_color"] = shape_color
-                json_file["image_processing_results"][index_in_single_target_crops]["target_letter_color"] = letter_color
-
                 # adds target location
                 target_map_center_pixel_coordinates = json_file["target_map_center_location"]
                 target_pixel_coordinates = json_file["image_processing_results"][index_in_single_target_crops]["target_location"]
@@ -111,6 +97,29 @@ def run_autonomous_img_proc_process(logger_queue, location_log, interop_client_a
                 target_location = utils.get_target_gps_location(target_map_center_pixel_coordinates, target_pixel_coordinates, drone_gps_location)
                 json_file["image_processing_results"][index_in_single_target_crops]["latitude"] = target_location.get_lat()
                 json_file["image_processing_results"][index_in_single_target_crops]["longitude"] = target_location.get_lon()
+
+
+
+                #Eliminate the target if its location is not in the boundary of competition."
+                mission_information_data = (get_mission_json(interop_client_array[0].get_active_mission(), interop_client_array[0].get_obstacles()))
+                mission_information_data["search_grid_points"]
+
+
+
+                json_file["image_processing_results"][index_in_single_target_crops]["target_index"] = index_in_single_target_crops + 1
+
+                current_crop_path = os.path.join(AUTONOMOUS_IMAGE_PROCESSING_SAVE_PATH, current_target_map_name + " - " + str(index_in_single_target_crops + 1) + ".png")
+                single_target_crops[index_in_single_target_crops].save(current_crop_path)
+
+                shape_type = ShapeClassificationTwo(current_crop_path).get_shape_type()
+                json_file["image_processing_results"][index_in_single_target_crops]["target_shape_type"] = shape_type
+
+                color_classifying_results = ColorClassifier(current_crop_path).get_color()
+                shape_color = color_classifying_results[0]
+                letter_color = color_classifying_results[1]
+                json_file["image_processing_results"][index_in_single_target_crops]["target_shape_color"] = shape_color
+                json_file["image_processing_results"][index_in_single_target_crops]["target_letter_color"] = letter_color
+
 
             with open(os.path.join(AUTONOMOUS_IMAGE_PROCESSING_SAVE_PATH, current_target_map_name + ".json"), 'w') as fp:
                 json.dump(json_file, fp, indent=4)
