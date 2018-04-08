@@ -252,14 +252,6 @@ class ColorClassifier(object):
 
 		:return:		"white", "black", etc.
 		"""
-		#print("HELPELPELPEPLELPELPE")
-		#print("convert_rgba_to_color_name: was passed rgba -> ")
-		#print(str(rgba))
-		#print("it's type is -> ")
-		#print(str(type(rgba)))
-		#print("it's length is -> ")
-		#print(str(len(rgba)))
-
 		if isinstance(rgba, list) is False:
 			raise TypeError("Expected a list, was passed a " + str(type(rgba)))
 
