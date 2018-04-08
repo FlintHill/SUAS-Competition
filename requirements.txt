@@ -14,3 +14,4 @@ dronekit
 plotly
 peakutils
 imutils
+shapely
