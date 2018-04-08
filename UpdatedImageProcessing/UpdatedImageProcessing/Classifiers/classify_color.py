@@ -163,6 +163,8 @@ class ColorClassifier(object):
 		# confirm the text color is, indeed, the text color
 		original_text_color_pixels = []
 
+		im_width, im_height = corrected_img.shape[:2]
+
 		for x in range(1, im_width): # grab pixel locations of assumed text color
 			for y in range(1, im_height):
 				if self.convert_rgba_to_color_name(list(corrected_img[x, y])) == minimum:
@@ -179,7 +181,11 @@ class ColorClassifier(object):
 								if [x - 1, y] in original_text_color_pixels: # left
 									filtered_pixels.append(list(opened_img.getpixel((y, x))))
 
-		minimum = self.convert_rgba_to_color_name( list( np.mean(np.array(filtered_pixels), axis=0) ) )
+		if len(filtered_pixels) == 0:
+			Logger.log("classify_color.py: Found no suitable pixels to double-check text color.")
+			Logger.log("classify_color.py: Assumed text color of '" + minimum + "' is assumed to be correct")
+		else:
+			minimum = self.convert_rgba_to_color_name( [float(sum(col))/len(col) for col in zip(*filtered_pixels)] )
 
 		result = [maximum, minimum] # shape color, text color
 
@@ -246,6 +252,14 @@ class ColorClassifier(object):
 
 		:return:		"white", "black", etc.
 		"""
+		#print("HELPELPELPEPLELPELPE")
+		#print("convert_rgba_to_color_name: was passed rgba -> ")
+		#print(str(rgba))
+		#print("it's type is -> ")
+		#print(str(type(rgba)))
+		#print("it's length is -> ")
+		#print(str(len(rgba)))
+
 		if isinstance(rgba, list) is False:
 			raise TypeError("Expected a list, was passed a " + str(type(rgba)))
 
