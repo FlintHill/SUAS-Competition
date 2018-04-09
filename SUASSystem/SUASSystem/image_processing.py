@@ -2,9 +2,7 @@ from time import sleep
 from PIL import Image
 import os
 import math
-from shapely.geometry import MultiPoint, Point
 from .utils import *
-#from UpdatedImageProcessing.TargetDetection.single_target_map_detector import SingleTargetMapDetector
 from UpdatedImageProcessing import *
 from .settings import GCSSettings
 from .converter_functions import inverse_haversine, get_mission_json

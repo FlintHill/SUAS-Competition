@@ -3,9 +3,9 @@ from .utils import *
 from time import sleep
 import os
 import shutil
+from shapely.geometry import MultiPoint, Point
 
-
-def load_sd_card(send_image_filenames, location_log):
+def load_sd_card(send_image_filenames, location_log, interop_client_array):
 
     SD_PATH = os.path.join("/Volumes", GCSSettings.SD_CARD_NAME, "DCIM")
 
@@ -54,7 +54,21 @@ def load_sd_card(send_image_filenames, location_log):
                             least_time_difference = difference_in_times
                     drone_gps_location = location_log[closest_time_index]["current_location"]
 
+                    fly_zones = construct_fly_zone_polygon(interop_client_array)
 
-                    ###CHECK IF IS IN THE SEARCH AREA
+                    if (Point(drone_gps_location).within(fly_zones)) == False:
+                         continue
+
                     shutil.copy2(pic_path, "static/imgs")
                     send_image_filenames.send(pic_name)
+
+def construct_fly_zone_polygon(interop_client_array):
+    mission_information_data = (get_mission_json(interop_client_array[0].get_active_mission(), interop_client_array[0].get_obstacles()))
+    #mission_information_data["search_grid_points"]
+    boundary_points = mission_information_data["fly_zones"]["boundary_pts"]
+    point_list = []
+
+    for point_count in range(boundary_points):
+        point_list.append([boundary_points[point_count]["latitude"], boundary_points[point_count]["longitude"]])
+
+    return MultiPoint(point_list).convex_hull
