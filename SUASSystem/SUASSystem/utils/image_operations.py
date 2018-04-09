@@ -1,4 +1,4 @@
-import math 
+import math
 import exifread
 from datetime import datetime
 from SUASSystem import GCSSettings, inverse_haversine

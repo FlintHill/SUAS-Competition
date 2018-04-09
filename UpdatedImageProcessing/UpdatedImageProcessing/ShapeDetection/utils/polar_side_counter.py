@@ -11,7 +11,8 @@ class PolarSideCounter(object):
 
     def __init__(self, canny_img, show_plot=False):
         self.canny_img = canny_img
-        self.loaded_img = self.canny_img.load()
+        #self.loaded_img = self.canny_img.load()
+        self.loaded_img = numpy.array(self.canny_img)
 
         self.origin = get_origin(self.canny_img)
         self.numpy_origin = numpy.asarray(self.origin)
@@ -29,7 +30,7 @@ class PolarSideCounter(object):
         self.plot = []
         for x in range(0, self.canny_img.size[0]):
             for y in range(0, self.canny_img.size[1]):
-                if self.loaded_img[x,y] == 255:
+                if self.loaded_img[y,x] == 255:
                     distance_vector = numpy.subtract(numpy.array([x,y]), self.numpy_origin)
                     distance_from_origin = math.hypot(distance_vector[0], distance_vector[1])
 
