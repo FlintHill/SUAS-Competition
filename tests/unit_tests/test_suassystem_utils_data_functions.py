@@ -1,8 +1,7 @@
 import unittest
-import SUASSystem
 import os
 from PIL import Image
-from SUASSystem import utils
+from SUASSystem.utils import crop_target
 
 class SUASSystemUtilsDataFunctionsTestCase(unittest.TestCase):
 
@@ -15,7 +14,7 @@ class SUASSystemUtilsDataFunctionsTestCase(unittest.TestCase):
         top_left_coords = [250.0, 200.0]
         bottom_right_coords = [350.0, 300.0]
 
-        utils.crop_target(input_image_path, output_crop_image_path, top_left_coords, bottom_right_coords)
+        crop_target(input_image_path, output_crop_image_path, top_left_coords, bottom_right_coords)
 
         saved_crop = Image.open(output_crop_image_path).load()
         input_image = Image.open(input_image_path).load()
