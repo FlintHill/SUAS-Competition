@@ -2,6 +2,7 @@ from time import sleep
 from PIL import Image
 import os
 import math
+import random
 from .utils import *
 from UpdatedImageProcessing import *
 from .settings import GCSSettings
@@ -80,9 +81,12 @@ def run_autonomous_img_proc_process(logger_queue, location_log, interop_client_a
 
             drone_gps_location = location_log[closest_time_index]["current_location"]
             target_location = get_target_gps_location(target_map_center_pixel_coordinates, target_pixel_coordinates, drone_gps_location)
+
+
             fly_zones = construct_fly_zone_polygon(interop_client_array)
             if (Point(target_location).within(fly_zones)) == False:
                  continue
+
 
             json_file["image_processing_results"][index_in_single_target_crops]["latitude"] = target_location.get_lat()
             json_file["image_processing_results"][index_in_single_target_crops]["longitude"] = target_location.get_lon()
@@ -94,6 +98,10 @@ def run_autonomous_img_proc_process(logger_queue, location_log, interop_client_a
             letter_color = color_classifying_results[1]
             json_file["image_processing_results"][index_in_single_target_crops]["target_shape_color"] = shape_color
             json_file["image_processing_results"][index_in_single_target_crops]["target_letter_color"] = letter_color
+            json_file["image_processing_results"][index_in_single_target_crops]["target_orientation"] = random.choice(["n","ne","e","se","s","sw","w","nw"])
+            json_file["image_processing_results"][index_in_single_target_crops]["target_letter"] = "a"
+
+            interop_client_array[0].post_autonomous_target(json_file, current_crop_path, index_in_single_target_crops)
 
         with open(os.path.join(AUTONOMOUS_IMAGE_PROCESSING_SAVE_PATH, current_target_map_name[:-4] + ".json"), 'w') as fp:
             json.dump(json_file, fp, indent=4)

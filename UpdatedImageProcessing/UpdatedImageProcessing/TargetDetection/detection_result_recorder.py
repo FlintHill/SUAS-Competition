@@ -33,6 +33,8 @@ class DetectionResultRecorder(object):
                  "target_shape_color": {},
                  "target_letter_color": {},
                  "target_shape_type": {},
+                 "target_orientation": {},
+                 "target_letter": {},
                  "latitude": {},
                  "longitude": {}
             })
