@@ -3,7 +3,8 @@ from .utils import *
 from time import sleep
 import os
 import shutil
-from shapely.geometry import MultiPoint, Point
+import numpy
+import matplotlib.path
 
 def load_sd_card(send_image_filenames, location_log, interop_client_array):
 
@@ -55,8 +56,7 @@ def load_sd_card(send_image_filenames, location_log, interop_client_array):
                     drone_gps_location = location_log[closest_time_index]["current_location"]
 
                     fly_zones = construct_fly_zone_polygon(interop_client_array)
-
-                    if (Point(drone_gps_location).within(fly_zones)) == False:
+                    if fly_zones.contains_point([drone_gps_location.get_lat(), drone_gps_location.get_lon()]) == 0:
                          continue
 
                     shutil.copy2(pic_path, "static/imgs")
@@ -71,4 +71,5 @@ def construct_fly_zone_polygon(interop_client_array):
     for point_count in range(boundary_points):
         point_list.append([boundary_points[point_count]["latitude"], boundary_points[point_count]["longitude"]])
 
-    return MultiPoint(point_list).convex_hull
+    vertices = numpy.array(point_list)
+    return matplotlib.path.Path(vertices)

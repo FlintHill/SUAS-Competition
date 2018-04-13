@@ -7,7 +7,8 @@ from .utils import *
 from UpdatedImageProcessing import *
 from .settings import GCSSettings
 from .converter_functions import inverse_haversine, get_mission_json
-from shapely.geometry import MultiPoint, Point
+import matplotlib.path
+import numpy
 
 def run_img_proc_process(logger_queue, location_log, targets_to_submit, interop_client_array):
     while True:
@@ -82,11 +83,9 @@ def run_autonomous_img_proc_process(logger_queue, location_log, interop_client_a
             drone_gps_location = location_log[closest_time_index]["current_location"]
             target_location = get_target_gps_location(target_map_center_pixel_coordinates, target_pixel_coordinates, drone_gps_location)
 
-
             fly_zones = construct_fly_zone_polygon(interop_client_array)
-            if (Point(target_location).within(fly_zones)) == False:
+            if fly_zones.contains_point([target_location.get_lat(), target_location.get_lon()]) == 0:
                  continue
-
 
             json_file["image_processing_results"][index_in_single_target_crops]["latitude"] = target_location.get_lat()
             json_file["image_processing_results"][index_in_single_target_crops]["longitude"] = target_location.get_lon()
@@ -115,4 +114,5 @@ def construct_fly_zone_polygon(interop_client_array):
     for point_count in range(boundary_points):
         point_list.append([boundary_points[point_count]["latitude"], boundary_points[point_count]["longitude"]])
 
-    return MultiPoint(point_list).convex_hull
+    vertices = numpy.array(point_list)
+    return matplotlib.path.Path(vertices)
