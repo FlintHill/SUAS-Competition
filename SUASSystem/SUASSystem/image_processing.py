@@ -6,9 +6,6 @@ import random
 from .utils import *
 from UpdatedImageProcessing import *
 from .settings import GCSSettings
-from .converter_functions import inverse_haversine, get_mission_json
-import matplotlib.path
-import numpy
 
 def run_img_proc_process(logger_queue, location_log, targets_to_submit, interop_client_array):
     while True:
@@ -51,9 +48,11 @@ def run_autonomous_img_proc_process(logger_queue, location_log, interop_client_a
     AUTONOMOUS_IMAGE_PROCESSING_SAVE_PATH = "static/autonomous_crops"
     while True:
         current_target_map_name = recieve_image_filenames.recv()
+        print(current_target_map_name)
         current_target_map_path = os.path.join(TARGET_MAP_PATH, current_target_map_name)
 
         combo_target_detection_result_list = TargetDetection.SingleTargetMapDetector.detect_single_target_map(current_target_map_path)
+        print("result list created")
         single_target_crops = combo_target_detection_result_list[0]
         json_file = combo_target_detection_result_list[1]
 
@@ -85,7 +84,8 @@ def run_autonomous_img_proc_process(logger_queue, location_log, interop_client_a
 
             fly_zones = construct_fly_zone_polygon(interop_client_array)
             if fly_zones.contains_point([target_location.get_lat(), target_location.get_lon()]) == 0:
-                 continue
+                # not in range
+                continue
 
             json_file["image_processing_results"][index_in_single_target_crops]["latitude"] = target_location.get_lat()
             json_file["image_processing_results"][index_in_single_target_crops]["longitude"] = target_location.get_lon()
@@ -104,15 +104,3 @@ def run_autonomous_img_proc_process(logger_queue, location_log, interop_client_a
 
         with open(os.path.join(AUTONOMOUS_IMAGE_PROCESSING_SAVE_PATH, current_target_map_name[:-4] + ".json"), 'w') as fp:
             json.dump(json_file, fp, indent=4)
-
-def construct_fly_zone_polygon(interop_client_array):
-    mission_information_data = (get_mission_json(interop_client_array[0].get_active_mission(), interop_client_array[0].get_obstacles()))
-    #mission_information_data["search_grid_points"]
-    boundary_points = mission_information_data["fly_zones"]["boundary_pts"]
-    point_list = []
-
-    for point_count in range(boundary_points):
-        point_list.append([boundary_points[point_count]["latitude"], boundary_points[point_count]["longitude"]])
-
-    vertices = numpy.array(point_list)
-    return matplotlib.path.Path(vertices)
