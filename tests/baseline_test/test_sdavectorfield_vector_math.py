@@ -1,7 +1,7 @@
 import math
 import numpy
 import unittest
-from SDAWithVectorField import VectorMath
+from SDAWithVectorField import *
 
 class VectorMathTestCase(unittest.TestCase):
 
@@ -71,9 +71,19 @@ class VectorMathTestCase(unittest.TestCase):
         force_one = VectorMath.get_force(test_vector1, test_vector2)
         force_two = VectorMath.get_force(test_vector2, test_vector3)
 
-        print(force_one)
-        print(force_two)
+        # print(force_one)
+        # print(force_two)
 
         self.assertEqual(force_one[0],force_two[0])
         self.assertEqual(force_one[1],force_two[1])
         self.assertEqual(force_one[2],force_two[2])
+
+    def test_get_repulsive_force(self):
+        test_obstacle = StationaryObstacle(numpy.array([10,10,10]), 10, 0)
+        drone_point = numpy.array([50,50,50])
+        force_vector = VectorMath.get_repulsive_force(test_obstacle, drone_point)
+
+        print(force_vector)
+
+        decimals
+        
