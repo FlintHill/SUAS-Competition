@@ -1,6 +1,7 @@
 from SUASSystem import GCSSettings, inverse_haversine, get_mission_json
 import matplotlib.path
 import numpy
+import math
 
 def get_target_gps_location(image_midpoint, target_midpoint, drone_gps_location):
     difference_x = target_midpoint[0] - image_midpoint[0]
