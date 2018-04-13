@@ -85,5 +85,4 @@ class VectorMathTestCase(unittest.TestCase):
 
         print(force_vector)
 
-        decimals
         

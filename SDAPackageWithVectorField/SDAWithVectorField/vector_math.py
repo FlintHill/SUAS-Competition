@@ -71,21 +71,29 @@ class VectorMath(object):
         Return the force vector between two points
         """
         distance_vector = np.subtract(vector_one, vector_two)
+        force_vector = np.array([])
 
         if distance_vector[2]:
-            force_vector = np.array([100.0/pow(distance_vector[0],1),100.0/pow(distance_vector[1],1),100.0/pow(distance_vector[2],1)])
+            for distance in distance_vector:
+                if distance != 0:
+                    force = 100/distance
+                    force_vector = np.hstack([force_vector, force])
+                else:
+                    force_vector = np.hstack([force_vector, 100000])
         else:
-            force_vector = np.array([100.0/pow(distance_vector[0],1),100.0/pow(distance_vector[1],1), 0])
+            for distance in distance_vector:
+                if distance != 0:
+                    force = 100/distance
+                    force_vector = np.hstack([force_vector, force])
+                else:
+                    force_vector = np.hstack([force_vector, 100000])
         return force_vector
 
     @staticmethod
     def get_repulsive_force(obstacle, waypoint):
         distance_vector = np.subtract(waypoint, obstacle.point)
-
         distance_vector_magnitude = VectorMath.get_vector_magnitude(distance_vector)
-
         distance_vector_unit_vector = VectorMath.get_single_unit_vector(distance_vector)
-
         detection_magnitude = distance_vector_magnitude - obstacle.radius
 
         force_vector = np.array([])
@@ -93,17 +101,14 @@ class VectorMath(object):
             detection_vector = np.array([distance_vector_unit_vector[0]*detection_magnitude, distance_vector_unit_vector[1]*detection_magnitude])
             for distance in detection_vector:
                 if distance != 0:
-                    print(distance)
                     force = 100.0/distance
                     force_vector = np.hstack([force_vector, force])
                 else: 
                     np.hstack([force_vector, 100000])
           
         else:
-            print("2 elements bottom loop")
             detection_vector = np.array([distance_vector_unit_vector[0]*detection_magnitude, distance_vector_unit_vector[1]*detection_magnitude])
             for distance in detection_vector:
-                print("entered the for loop")
                 if distance != 0:
                     print(distance)
                     force = 100.0/distance
@@ -111,6 +116,7 @@ class VectorMath(object):
                 else:
                     np.hstack([force_vector, 100000])
         # else:
+           # old method
         #     detection_vector = np.array([distance_vector_unit_vector[0]*detection_magnitude, distance_vector_unit_vector[1]*detection_magnitude])
         #     force_vector = np.array([100.0/pow(detection_vector[0],1),100.0/pow(detection_vector,1), 0])
         #     print(force_vector)
@@ -126,11 +132,16 @@ class VectorMath(object):
         """
         distance_vector = np.subtract(vector_one, vector_two)
         force_multiplier = obstacles.size
+        force_vector = np.array([])
 
         if distance_vector[2]:
-            force_vector = np.array([(100.0*force_multiplier)/pow(distance_vector[0],1), (100.0*force_multiplier)/pow(distance_vector[1],1), (100.0*force_multiplier)/pow(distance_vector[2],1)])
+            for distance in distance_vector:
+                force = (100* force_multiplier)/distance
+                force_vector = np.hstack([force_vector, force])
         else:
-            force_vector = np.array([(100.0*force_multiplier)/pow(distance_vector[0],1), (100.0*force_multiplier)/pow(distance_vector[1],1), 0])
+            for distance in distance_vector:
+                force = (100*force_multiplier)/distance
+                force_vector = np.hstack([force_vector, force])
         return force_vector
 
    
