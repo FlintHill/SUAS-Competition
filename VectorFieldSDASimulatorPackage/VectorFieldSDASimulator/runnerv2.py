@@ -34,16 +34,20 @@ def makeUpdates(multi_array):
     index = 0
     while True:
         obstacle_map = multi_array[0]
-        print(multi_array[0].drone.point)
+        # print(multi_array[0].drone.point)
+        obstacle_map.reset_repulsive_forces()
         obstacle_map.update_repulsive_forces()
         obstacle_map.update_attractive_force()
+        print(obstacle_map.drone.point)
+        print(obstacle_map.attractive_force)
+        print(obstacle_map.repulsive_forces)
     	unit_velocity = obstacle_map.get_unit_velocity()
         uav_position = obstacle_map.drone.point
         obstacle_map.set_drone_position(numpy.array([uav_position[0]+unit_velocity[0], uav_position[1]+unit_velocity[1], 0]))
         multi_array[0] = obstacle_map
         index += 1
 
-        time.sleep(0.01)
+        time.sleep(0.001)
 
 def animate(i, multi_array):
     ax1.clear()
