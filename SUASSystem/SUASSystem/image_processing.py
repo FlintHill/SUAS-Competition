@@ -46,6 +46,7 @@ def run_img_proc_process(logger_queue, location_log, targets_to_submit, interop_
 def run_autonomous_img_proc_process(logger_queue, interop_client_array, img_proc_status, autonomous_targets_to_submit):
     TARGET_MAP_PATH = "static/imgs/"
     AUTONOMOUS_IMAGE_PROCESSING_SAVE_PATH = "static/autonomous_crops"
+    submitted_target_locations = []
     while True:
         current_target_map_name = recieve_image_filenames.recv()
         current_target_map_path = os.path.join(TARGET_MAP_PATH, current_target_map_name)
@@ -79,14 +80,26 @@ def run_autonomous_img_proc_process(logger_queue, interop_client_array, img_proc
 
             drone_gps_location = location_log[closest_time_index]["current_location"]
             target_location = get_target_gps_location(target_map_center_pixel_coordinates, target_pixel_coordinates, drone_gps_location)
+            target_latitude = target_location.get_lat()
+            target_longitude = target_location.get_lon()
 
-            fly_zones = construct_fly_zone_polygon(interop_client_array)
-            if fly_zones.contains_point([target_location.get_lat(), target_location.get_lon()]) == 0:
-                # not in range
+            # Check if current target is already submitted
+            is_current_target_already_submitted = False
+            for index in range(len(submitted_target_locations)):
+                if [target_latitude, target_longitude] == submitted_target_locations[index]:
+                    is_current_target_already_submitted = True
+                    break
+
+            if is_current_target_already_submitted:
                 continue
 
-            json_file["image_processing_results"][index_in_single_target_crops]["latitude"] = target_location.get_lat()
-            json_file["image_processing_results"][index_in_single_target_crops]["longitude"] = target_location.get_lon()
+            # Check if current target is outside of fly_zones
+            fly_zones = construct_fly_zone_polygon(interop_client_array)
+            if fly_zones.contains_point([target_latitude, target_longitude]) == 0:
+                 continue
+
+            json_file["image_processing_results"][index_in_single_target_crops]["latitude"] = target_latitude
+            json_file["image_processing_results"][index_in_single_target_crops]["longitude"] = target_longitude
 
             shape_type = ShapeDetection.ShapeClassificationTwo(current_crop_path).get_shape_type()
             json_file["image_processing_results"][index_in_single_target_crops]["target_shape_type"] = shape_type
@@ -97,6 +110,8 @@ def run_autonomous_img_proc_process(logger_queue, interop_client_array, img_proc
             json_file["image_processing_results"][index_in_single_target_crops]["target_letter_color"] = letter_color
             json_file["image_processing_results"][index_in_single_target_crops]["target_orientation"] = random.choice(["n","ne","e","se","s","sw","w","nw"])
             json_file["image_processing_results"][index_in_single_target_crops]["target_letter"] = "a"
+
+            submitted_target_locations.append([target_latitude, target_longitude])
 
             interop_client_array[0].post_autonomous_target(json_file, current_crop_path, index_in_single_target_crops)
 
