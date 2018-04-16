@@ -158,6 +158,7 @@ class InteropClientConverter(object):
 
         with open(image_file_path) as img_file:
             self.client.post_odlc_image(returned_odlc.id, img_file.read())
+<<<<<<< HEAD
         """
         missing_data = True
 
@@ -185,3 +186,44 @@ class InteropClientConverter(object):
                         self.client = Client(GCSSettings.INTEROP_URL, GCSSettings.INTEROP_USERNAME, GCSSettings.INTEROP_PASSWORD)
                     except:
                         print("Failed to connect to Interop., retrying...")
+=======
+
+
+    def post_autonomous_target(self, target, image_file_path, index):
+        """
+        POST a standard ODLC object to the interoperability server.
+
+        :param target: The ODLC target object
+        :type target: JSON, with the form:
+        {
+            "latitude" : float,
+            "longitude" : float,
+            "orientation" : string,
+            "shape" : string,
+            "background_color" : string,
+            "alphanumeric" : string,
+            "alphanumeric_color" : string,
+        }
+
+        :param image_file_path: The ODLC target image file name
+        :type image_file_path: String
+
+        :return: ID of the posted target
+        """
+        odlc_target = Odlc(
+            type="standard",
+            autonomous=True,
+            latitude=target["image_processing_results"][index]["latitude"],
+            longitude=target["image_processing_results"][index]["longitude"],
+            orientation=target["image_processing_results"][index]["target_orientation"],
+            shape=target["image_processing_results"][index]["target_shape_type"],
+            background_color=target["image_processing_results"][index]["target_shape_color"],
+            alphanumeric=target["image_processing_results"][index]["target_letter"],
+            alphanumeric_color=target["image_processing_results"][index]["target_letter_color"],
+            description="Flint Hill School -- ODLC Standard Target Submission")
+
+        returned_odlc = self.client.post_odlc(odlc_target)
+
+        with open(image_file_path) as img_file:
+            self.client.post_odlc_image(returned_odlc.id, img_file.read())
+>>>>>>> 5174d419d0c0aac01820fa853c3e27f7fb34daa9
