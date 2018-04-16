@@ -122,6 +122,10 @@ small {
 	width: 300px;
 }
 
+div.collection, a.active > span.badge {
+	color: white !important;
+}
+
 .noselect {
 	-webkit-touch-callout: none;
 	-webkit-user-select: none;

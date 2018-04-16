@@ -5,6 +5,7 @@ if __name__ == '__main__':
     interop_client = InteropClientConverter()
 
     while True:
-        print(interop_client.get_obstacles())
+        # get_obstacles()
+        print(interop_client.get_active_mission())
 
         sleep(1)

@@ -36,6 +36,7 @@ def gcs_process(sda_status, img_proc_status, interop_client_array, targets_to_su
     else:
         print("[Error] : The GCS process is unable to load mission data from the Interoperability server")
         mission_information_data.append({})
+
     vehicle_state_data.append(SUASSystem.get_vehicle_state(vehicle, GCSSettings.MSL_ALT))
     competition_viewer_process = initialize_competition_viewer_process(vehicle_state_data, mission_information_data)
     sd_card_process = load_sd_card(send_image_filenames, location_log, interop_client_array)
@@ -43,12 +44,15 @@ def gcs_process(sda_status, img_proc_status, interop_client_array, targets_to_su
     autonomous_img_proc_process = initialize_autonomous_image_processing_process(logger_queue, location_log, interop_client_array, img_proc_status, recieve_image_filenames)
     sda_process = initialize_sda_process(logger_queue, sda_status, UAV_status, waypoints, sda_avoid_coords, vehicle_state_data, mission_information_data)
     log(gcs_logger_name, "Completed instantiation of all child processes")
+
     while True:
         current_location = get_location(vehicle)
+        
         current_location_json = {
             "current_location": current_location,
             "epoch_time": time.time()
         }
+
         location_log.append(current_location_json)
 
         vehicle_state_data[0] = SUASSystem.get_vehicle_state(vehicle, GCSSettings.MSL_ALT)

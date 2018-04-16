@@ -2,8 +2,8 @@
  * main script file for gcs:web ui
  *
  * @author		James Villemarette
- * @version 	1.2
- * @since		2018-02-22
+ * @version 	1.3
+ * @since		2018-04-12
  */
 
 // page init
@@ -185,7 +185,7 @@ var currentImage = 0, totalImages = 0, zoomLevel = 1;
 /**
  * updateCounters()
  *
- * Reflect the counters directly above this function onto the web 
+ * Reflect the counters directly above this function onto the web
  * page.
  */
 function updateCounters() {
@@ -236,6 +236,8 @@ function showImage(index) {
 
 /**
  * imageSelect(string dir)
+ *
+ * dir in this function stands for direction.
  *
  * Moves "left" or "right" (dir:direction) by one image.
  *		  ^			^
@@ -303,7 +305,7 @@ function updateDirectionalButtons() {
  *
  * dir in this function stands for direction.
  *
- * Maintains the correct height and width pixel measurements for the 
+ * Maintains the correct height and width pixel measurements for the
  * #image-previewer-container div before and after unlocking or locking
  * the image size ratio.
  *
@@ -422,7 +424,7 @@ var zoomLevel = 1, zoomFactor = 1.5, zoomLimit = 10;
  *
  * zoom("in") zooms in on the image-preview by 1x.
  * zoom("out") zooms out of the image-preview by 1x.
- * 
+ *
  * No preconditions.
  *
  * zoomLevel is > 0 and <= zoomLimit
@@ -458,7 +460,7 @@ function zoom(dir) {
 			// zoom in
 			zoomLevel++;
 
-			updateImagePreviewDimensions(dir);			
+			updateImagePreviewDimensions(dir);
 		}
 	} else if(dir == "out") {
 		if(zoomLevel > 0) {
@@ -500,7 +502,7 @@ function loadCropPreview() {
 	// display crop preview
 	$(document).ready(function() {
 
-		var imageW = $('#image-previewer')[0].naturalWidth; 
+		var imageW = $('#image-previewer')[0].naturalWidth;
 		var imageH = $('#image-previewer')[0].naturalHeight;
 
 		var cropperW = $("#image-previewer").width();
@@ -528,8 +530,8 @@ function loadCropPreview() {
 			"background-attachment": "scroll",
 
 			"background-size": transformedW + "px " + transformedH + "px",
-			"background-position": 
-				"-" + (transformed_topLeftX + 50) + "px " + 
+			"background-position":
+				"-" + (transformed_topLeftX + 50) + "px " +
 				"-" + (transformed_topLeftY + 34) + "px"
 		});
 
@@ -563,7 +565,7 @@ function loadCropPreview() {
  * Posts an AJAX request to back-end flask script the details of the crop, not
  * the actual crop itself. This also pushes the crop data (shape, color, etc.)
  *
- * Automatically determines the target type based on which target type is 
+ * Automatically determines the target type based on which target type is
  * currently selected.
  *
  * returns nothing.
@@ -646,6 +648,47 @@ function submitTarget() {
 			console.log(data);
 		}
 	});
+
+};
+
+dupliatedTargetsInfo = [
+	{
+		name: "target002",
+		matches: 3,
+
+		imageURL: "static/imgs/291012.jpg",
+		shape: "rectangle",
+		shapeColor: "red",
+		textColor: "blue",
+		alphanumericColor: "G"
+	}
+];
+
+/**
+ * duplicateTargets(Array info)
+ *
+ * Open and fill the duplicate targets modal with submitted target info.
+ * passed from info.
+ *
+ *
+ *
+ * returns nothing.
+ */
+function duplicateTargets(info) {
+
+};
+
+/**
+ * showDuplicateTarget(String id)
+ *
+ * Displays a selected duplicate target on the potential match
+ * visualizer inside of the Duplicate Targets modal.
+ *
+ *
+ *
+ * returns nothing.
+ */
+function showDuplicateTarget(id) {
 
 };
 
@@ -748,7 +791,7 @@ function statusPush(process, cmd) {
 		throw "statusChange(process, cmd ): Unknown String cmd '" + process + "'";
 
 	var program = "", friendlyProgramName = "";
-	
+
 	switch(process) {
 		case "sda":
 			program = "sda";
@@ -810,7 +853,7 @@ function statusPush(process, cmd) {
 /**
  * statusGet()
  *
- * Retrieves the status informaition of the different subprocesses for the 
+ * Retrieves the status informaition of the different subprocesses for the
  * control panel.
  *
  * returns nothing.
@@ -879,7 +922,7 @@ function loadImages() {
 
 	$.ajax({
 		url: "get/imgs",
-		
+
 		success:function(data) {
 			console.log("loadImages(): Images Loaded:");
 			console.log(data);
@@ -900,7 +943,7 @@ function loadImages() {
 
 				$("#current-image").html(0);
 				Materialize.toast("LOAD IMAGES SUCESS: No images available.", 3700);
-				
+
 				return;
 			} else {
 				enableMTSButtons();
@@ -915,8 +958,8 @@ function loadImages() {
 				showImage(0);
 
 			// initialize image area selector
-			ias = $('#image-previewer').imgAreaSelect({ 
-				aspectRatio: '1:1', 
+			ias = $('#image-previewer').imgAreaSelect({
+				aspectRatio: '1:1',
 				handles: true,
 				keys: false,
 				fadeSpeed: 0.4,
@@ -1054,4 +1097,3 @@ function setCompassDirection(degrees) {
 	$("#compass-number").html(degrees);
 
 }
-
