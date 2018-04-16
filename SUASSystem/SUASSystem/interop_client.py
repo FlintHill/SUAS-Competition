@@ -158,7 +158,6 @@ class InteropClientConverter(object):
 
         with open(image_file_path) as img_file:
             self.client.post_odlc_image(returned_odlc.id, img_file.read())
-<<<<<<< HEAD
         """
         missing_data = True
 
@@ -186,8 +185,6 @@ class InteropClientConverter(object):
                         self.client = Client(GCSSettings.INTEROP_URL, GCSSettings.INTEROP_USERNAME, GCSSettings.INTEROP_PASSWORD)
                     except:
                         print("Failed to connect to Interop., retrying...")
-=======
-
 
     def post_autonomous_target(self, target, image_file_path, index):
         """
@@ -226,4 +223,3 @@ class InteropClientConverter(object):
 
         with open(image_file_path) as img_file:
             self.client.post_odlc_image(returned_odlc.id, img_file.read())
->>>>>>> 5174d419d0c0aac01820fa853c3e27f7fb34daa9
