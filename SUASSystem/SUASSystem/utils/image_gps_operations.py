@@ -19,8 +19,17 @@ def construct_fly_zone_polygon(interop_client_array):
     boundary_points = mission_information_data["fly_zones"][0]["boundary_pts"]
     point_list = []
 
-    for point_count in range(len(boundary_points)):
-        point_list.append([boundary_points[point_count]["latitude"], boundary_points[point_count]["longitude"]])
+    num_points = len(boundary_points)
+    order = 1
+    count = 0
+    while num_points > 0:
+        if(count = len(boundary_points)):
+            count = 0
+        if(boundary_points[count]["order"] == order):
+            point_list.append([boundary_points[count]["latitude"], boundary_points[count]["longitude"]])
+            order+=1
+            num_points-=1
+        count+=1
 
     vertices = numpy.array(point_list)
 

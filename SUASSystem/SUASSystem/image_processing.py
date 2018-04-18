@@ -48,11 +48,9 @@ def run_autonomous_img_proc_process(logger_queue, location_log, interop_client_a
     AUTONOMOUS_IMAGE_PROCESSING_SAVE_PATH = "static/autonomous_crops"
     while True:
         current_target_map_name = recieve_image_filenames.recv()
-        print(current_target_map_name)
         current_target_map_path = os.path.join(TARGET_MAP_PATH, current_target_map_name)
 
-        combo_target_detection_result_list = TargetDetection.SingleTargetMapDetector.detect_single_target_map(current_target_map_path)
-        print("result list created")
+        combo_target_detection_result_list = SingleTargetMapDetector.detect_single_target_map(current_target_map_path)
         single_target_crops = combo_target_detection_result_list[0]
         json_file = combo_target_detection_result_list[1]
 
