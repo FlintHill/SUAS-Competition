@@ -23,7 +23,7 @@ def construct_fly_zone_polygon(interop_client_array):
     order = 1
     count = 0
     while num_points > 0:
-        if(count = len(boundary_points)):
+        if(count == len(boundary_points)):
             count = 0
         if(boundary_points[count]["order"] == order):
             point_list.append([boundary_points[count]["latitude"], boundary_points[count]["longitude"]])
