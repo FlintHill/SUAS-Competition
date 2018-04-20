@@ -48,7 +48,9 @@ def run_autonomous_img_proc_process(logger_queue, interop_client_array, img_proc
     AUTONOMOUS_IMAGE_PROCESSING_SAVE_PATH = "static/autonomous_crops"
     submitted_target_locations = []
     while True:
+        print "0"
         current_target_map_name = recieve_image_filenames.recv()
+        print current_target_map_name
         current_target_map_path = os.path.join(TARGET_MAP_PATH, current_target_map_name)
 
         combo_target_detection_result_list = SingleTargetMapDetector.detect_single_target_map(current_target_map_path)

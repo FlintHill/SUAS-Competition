@@ -33,6 +33,7 @@ def load_sd_card(location_log, interop_client_array):
         shutil.rmtree("static/autonomous_crops")
     os.makedirs("static/autonomous_crops")
 
+    fly_zones = construct_fly_zone_polygon(interop_client_array)
 
     fly_zones = construct_fly_zone_polygon(interop_client_array)
 

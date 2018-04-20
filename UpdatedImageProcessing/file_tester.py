@@ -6,9 +6,28 @@ import os
 import timeit
 from UpdatedImageProcessing import *
 
+<<<<<<< HEAD
 image_path = (os.path.expanduser("~/Desktop/2.jpg"))
 print SingleTargetMapDetector.detect_single_target_map(image_path)
 
+||||||| merged common ancestors
+image = Image.open("/Users/zyin/Desktop/Image_Processing_Report/Images/9.jpg - 1.png")
+
+image_2 = ColorOperations.apply_color_quantization(image, 3)
+#image_2 = BackgroundColorNullifier.nullify_color_and_recrop_target(image, 5)
+image_2.show()
+
+=======
+image_path = (os.path.expanduser("~/Desktop/Synthetic_Dataset/Answers/modular_target_maps/2.jpg"))
+print SingleTargetMapDetector.detect_single_target_map(image_path)
+'''
+image = Image.open("/Users/zyin/Desktop/Image_Processing_Report/Images/9.jpg - 1.png")
+
+image_2 = ColorOperations.apply_color_quantization(image, 3)
+#image_2 = BackgroundColorNullifier.nullify_color_and_recrop_target(image, 5)
+image_2.show()
+'''
+>>>>>>> For rebase
 #Run IntegratedImageProcessing
 """
 target_map_path = os.path.expanduser("~/Desktop/Synthetic_Dataset/Answers/modular_target_maps")
