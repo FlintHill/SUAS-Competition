@@ -17,6 +17,10 @@ class WaypointHolder(object):
     def get_current_waypoint(self):
         return self.waypoints[self.waypoint_index]
 
+    def increase_waypoint_number(self):
+        if self.waypoint_index + 1 < len(self.waypoints):
+            self.waypoint_index += 1
+
     def reached_current_waypoint(self, drone_point):
         """
         Return True if the drone mass has reached the current waypoint

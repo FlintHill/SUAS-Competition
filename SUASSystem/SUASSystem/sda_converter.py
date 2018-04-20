@@ -183,6 +183,6 @@ class SDAConverter(object):
         """
         Return whether obstacle is in path of UAV
         """
-        obstacle_in_path_boolean, avoid_coords = self.obstacle_map.is_obstacle_in_path()
+        obstacle_in_path_boolean, avoid_coords, obstacle_in_path = self.obstacle_map.is_obstacle_in_path()
 
         return obstacle_in_path_boolean

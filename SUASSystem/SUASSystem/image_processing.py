@@ -4,7 +4,11 @@ import os
 import math
 import random
 from .utils import *
+<<<<<<< 4892ef052d58e1ac24d003b915095fdec5b1e0b2
 from UpdatedImageProcessing import *
+=======
+#from UpdatedImageProcessing.TargetDetection.single_target_map_detector import SingleTargetMapDetector
+>>>>>>> Final SDA
 from .settings import GCSSettings
 
 def run_img_proc_process(logger_queue, location_log, targets_to_submit, interop_client_array):
