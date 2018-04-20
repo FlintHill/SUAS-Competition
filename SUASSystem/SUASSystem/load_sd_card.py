@@ -3,7 +3,6 @@ from .utils import *
 from time import sleep
 import os
 import shutil
-from shapely.geometry import MultiPoint, Point
 
 def load_sd_card(send_image_filenames, location_log, interop_client_array):
 
@@ -15,7 +14,7 @@ def load_sd_card(send_image_filenames, location_log, interop_client_array):
         if os.path.exists(SD_PATH):
             break
 
-        sleep(1)
+        sleep(5)
 
     print("SD Card loaded")
 
@@ -36,7 +35,10 @@ def load_sd_card(send_image_filenames, location_log, interop_client_array):
     os.makedirs("static/autonomous_crops")
 
 
+    fly_zones = construct_fly_zone_polygon(interop_client_array)
+
     for pic_folder in os.listdir(SD_PATH):
+        if not "." in pic_folder:
             pictures_dir_path = os.path.join(SD_PATH, pic_folder)
             for pic_name in os.listdir(pictures_dir_path):
                 if ".jpg" in pic_name.lower() and pic_name[:1] != ".":
@@ -54,21 +56,9 @@ def load_sd_card(send_image_filenames, location_log, interop_client_array):
                             least_time_difference = difference_in_times
                     drone_gps_location = location_log[closest_time_index]["current_location"]
 
-                    fly_zones = construct_fly_zone_polygon(interop_client_array)
-
-                    if (Point(drone_gps_location).within(fly_zones)) == False:
-                         continue
+                    if fly_zones.contains_point([drone_gps_location.get_lat(), drone_gps_location.get_lon()]) == 0:
+                        # not in range
+                        continue
 
                     shutil.copy2(pic_path, "static/imgs")
                     send_image_filenames.send(pic_name)
-
-def construct_fly_zone_polygon(interop_client_array):
-    mission_information_data = (get_mission_json(interop_client_array[0].get_active_mission(), interop_client_array[0].get_obstacles()))
-    #mission_information_data["search_grid_points"]
-    boundary_points = mission_information_data["fly_zones"]["boundary_pts"]
-    point_list = []
-
-    for point_count in range(boundary_points):
-        point_list.append([boundary_points[point_count]["latitude"], boundary_points[point_count]["longitude"]])
-
-    return MultiPoint(point_list).convex_hull
