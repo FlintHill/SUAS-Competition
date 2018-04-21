@@ -4,8 +4,7 @@ from time import sleep
 import os
 import shutil
 
-def load_sd_card(send_image_filenames, location_log, interop_client_array):
-
+def load_sd_card(location_log, interop_client_array):
     SD_PATH = os.path.join("/Volumes", GCSSettings.SD_CARD_NAME, "DCIM")
 
     while True:
@@ -45,7 +44,6 @@ def load_sd_card(send_image_filenames, location_log, interop_client_array):
                     pic_path = os.path.join(pictures_dir_path, pic_name)
                     shutil.copy2(pic_path, "static/all_imgs")
 
-
                     target_time = get_image_timestamp_from_metadata(pic_path)
                     closest_time_index = 0
                     least_time_difference = location_log[0]["epoch_time"]
@@ -61,4 +59,3 @@ def load_sd_card(send_image_filenames, location_log, interop_client_array):
                         continue
 
                     shutil.copy2(pic_path, "static/imgs")
-                    send_image_filenames.send(pic_name)

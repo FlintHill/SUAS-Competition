@@ -43,7 +43,7 @@ def run_img_proc_process(logger_queue, location_log, targets_to_submit, interop_
 
         sleep(0.1)
 
-def run_autonomous_img_proc_process(logger_queue, location_log, interop_client_array, img_proc_status, recieve_image_filenames):
+def run_autonomous_img_proc_process(logger_queue, interop_client_array, img_proc_status, autonomous_targets_to_submit):
     TARGET_MAP_PATH = "static/imgs/"
     AUTONOMOUS_IMAGE_PROCESSING_SAVE_PATH = "static/autonomous_crops"
     while True:

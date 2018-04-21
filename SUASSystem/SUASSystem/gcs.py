@@ -10,7 +10,7 @@ from .converter_functions import *
 
 gcs_logger_name = multiprocessing.current_process().name
 
-def gcs_process(sda_status, img_proc_status, interop_client_array, targets_to_submit, user_force_waypoint_update):
+def gcs_process(sda_status, img_proc_status, interop_client_array, targets_to_submit, location_log, autonomous_targets_to_submit):
     # Setup logging information
     logger_queue = multiprocessing.Queue(-1)
     logger_listener_process = multiprocessing.Process(target=listener_process, args=(
@@ -23,14 +23,11 @@ def gcs_process(sda_status, img_proc_status, interop_client_array, targets_to_su
     manager = multiprocessing.Manager()
     vehicle_state_data = manager.list()
     mission_information_data = manager.list()
-    location_log = manager.list()
     vehicle = connect_to_vehicle()
     # SDA
     #waypoints = download_waypoints(vehicle)
     #sda_avoid_coords = manager.list()
     #UAV_status = manager.Value('s', "AUTO")
-
-    recieve_image_filenames, send_image_filenames = multiprocessing.Pipe(False)
 
     if len(interop_client_array) != 0:
         mission_information_data.append(get_mission_json(interop_client_array[0].get_active_mission(), interop_client_array[0].get_obstacles()))
@@ -40,9 +37,9 @@ def gcs_process(sda_status, img_proc_status, interop_client_array, targets_to_su
 
     vehicle_state_data.append(SUASSystem.get_vehicle_state(vehicle, GCSSettings.MSL_ALT))
     competition_viewer_process = initialize_competition_viewer_process(vehicle_state_data, mission_information_data)
-    sd_card_process = load_sd_card(send_image_filenames, location_log, interop_client_array)
+    sd_card_process = load_sd_card(location_log, interop_client_array)
     img_proc_process = initialize_image_processing_process(logger_queue, location_log, targets_to_submit, interop_client_array)
-    autonomous_img_proc_process = initialize_autonomous_image_processing_process(logger_queue, location_log, interop_client_array, img_proc_status, recieve_image_filenames)
+    autonomous_img_proc_process = initialize_autonomous_image_processing_process(logger_queue, interop_client_array, img_proc_status, autonomous_targets_to_submit)
     # SDA
     #sda_process = initialize_sda_process(logger_queue, sda_status, UAV_status, waypoints, sda_avoid_coords, vehicle_state_data, mission_information_data)
     log(gcs_logger_name, "Completed instantiation of all child processes")
@@ -114,14 +111,13 @@ def initialize_image_processing_process(logger_queue, location_log, targets_to_s
 
     return img_proc_process
 
-def initialize_autonomous_image_processing_process(logger_queue, location_log, interop_client_array, img_proc_status, recieve_image_filenames):
+def initialize_autonomous_image_processing_process(logger_queue, interop_client_array, img_proc_status, autonomous_targets_to_submit):
     log(gcs_logger_name, "Instantiating Autonomous Image Processing process")
     auto_img_proc_process = multiprocessing.Process(target=SUASSystem.run_autonomous_img_proc_process, args=(
         logger_queue,
-        location_log,
         interop_client_array,
         img_proc_status,
-        recieve_image_filenames
+        autonomous_targets_to_submit
     ))
     auto_img_proc_process.start()
     log(gcs_logger_name, "Autonomous Image Processing process instantiated")
