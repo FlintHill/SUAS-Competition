@@ -81,8 +81,11 @@ class VectorMathTestCase(unittest.TestCase):
     def test_get_repulsive_force(self):
         test_obstacle = StationaryObstacle(numpy.array([10,10,10]), 10, 0)
         drone_point = numpy.array([50,50,50])
-        force_vector = VectorMath.get_repulsive_force(test_obstacle, drone_point)
+        force_vector = VectorMath.get_repulsive_force(numpy.array([10,10,10]), drone_point, 10)
+        array = numpy.array([4,5,0])
 
+        print(array)
         print(force_vector)
+        dafaka
 
         

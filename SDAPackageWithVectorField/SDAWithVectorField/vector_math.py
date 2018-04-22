@@ -90,11 +90,16 @@ class VectorMath(object):
         return force_vector
 
     @staticmethod
-    def get_repulsive_force(obstacle, waypoint):
-        distance_vector = np.subtract(waypoint, obstacle.point)
+    def get_repulsive_force(obstacle_point, waypoint, obstacle_radius):
+    # """
+    # the method that returns repulsive force between obstacles and drone
+    # Inputs: obstacle and drone's current point
+    # Output: force_vector; the force vector between force and obstacle; in 3D
+    # """
+        distance_vector = np.subtract(waypoint, obstacle_point)
         distance_vector_magnitude = VectorMath.get_vector_magnitude(distance_vector)
         distance_vector_unit_vector = VectorMath.get_single_unit_vector(distance_vector)
-        detection_magnitude = distance_vector_magnitude - obstacle.radius
+        detection_magnitude = distance_vector_magnitude - obstacle_radius
 
         force_vector = np.array([])
         if distance_vector[2]:
@@ -107,14 +112,13 @@ class VectorMath(object):
                     np.hstack([force_vector, 100000])
           
         else:
-            detection_vector = np.array([distance_vector_unit_vector[0]*detection_magnitude, distance_vector_unit_vector[1]*detection_magnitude])
+            detection_vector = np.array([distance_vector_unit_vector[0]*detection_magnitude, distance_vector_unit_vector[1]*detection_magnitude, 0])
             for distance in detection_vector:
                 if distance != 0:
-                    print(distance)
                     force = 100.0/distance
                     force_vector = np.hstack([force_vector, force])
                 else:
-                    np.hstack([force_vector, 100000])
+                    force_vector = np.hstack([force_vector, 100000])
         # else:
            # old method
         #     detection_vector = np.array([distance_vector_unit_vector[0]*detection_magnitude, distance_vector_unit_vector[1]*detection_magnitude])
@@ -122,8 +126,6 @@ class VectorMath(object):
         #     print(force_vector)
         print(force_vector)
         return force_vector
-
-
 
     @staticmethod
     def get_attractive_force(vector_one, vector_two, obstacles):
