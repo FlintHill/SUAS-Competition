@@ -1,23 +1,38 @@
 from PIL import Image
 import os
 import random
+from .flask_gcs import *
 from ...SUASSystem.SUASSystem.utils import *
 from UpdatedImageProcessing import *
 from ...SUASSystem.SUASSystem.settings import GCSSettings
 
-def initialize_autonomous_image_processing_process()
-    location_log =
-    interop_client_array =
-    recieve_image_filenames =
-    run_autonomous_img_proc_process(location_log, interop_client_array, recieve_image_filenames)
+def initialize_autonomous_image_processing_process():
+    clear_to_run = True
 
-def run_autonomous_img_proc_process(location_log, interop_client_array, recieve_image_filenames):
+    location_log_json = get_uav_location_log()
+
+    if location_log_json["request_status"] == "success":
+        location_log = location_log_json["location_log"]:
+    else:
+        clear_to_run = False
+
+    interop_client_array = get_interop_client_array()
+
+    if interop_client_array_json["request_status"] == "success":
+        interop_client_array = interop_client_array_json["interop_client"]:
+    else:
+        clear_to_run = False
+
+    if clear_to_run:
+        run_autonomous_img_proc_process(location_log, interop_client_array)
+
+def run_autonomous_img_proc_process(location_log, interop_client_array):
     TARGET_MAP_PATH = "static/imgs/"
     AUTONOMOUS_IMAGE_PROCESSING_SAVE_PATH = "static/autonomous_crops"
     submitted_target_locations = []
 
     while True:
-        current_target_map_name = recieve_image_filenames.recv()
+        current_target_map_name = receive_image_filenames.recv()
         current_target_map_path = os.path.join(TARGET_MAP_PATH, current_target_map_name)
         combo_target_detection_result_list = SingleTargetMapDetector.detect_single_target_map(current_target_map_path)
         single_target_crops = combo_target_detection_result_list[0]

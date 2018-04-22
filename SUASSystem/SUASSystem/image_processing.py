@@ -49,7 +49,7 @@ def run_autonomous_img_proc_process(logger_queue, interop_client_array, img_proc
     submitted_target_locations = []
 
     while True:
-        current_target_map_name = recieve_image_filenames.recv()
+        current_target_map_name = receive_image_filenames.recv()
         current_target_map_path = os.path.join(TARGET_MAP_PATH, current_target_map_name)
         combo_target_detection_result_list = SingleTargetMapDetector.detect_single_target_map(current_target_map_path)
         single_target_crops = combo_target_detection_result_list[0]
@@ -86,7 +86,7 @@ def run_autonomous_img_proc_process(logger_queue, interop_client_array, img_proc
 
             # Check if current target is already submitted
             is_current_target_already_submitted = False
-            
+
             for index in range(len(submitted_target_locations)):
                 if [target_latitude, target_longitude] == submitted_target_locations[index]:
                     is_current_target_already_submitted = True
