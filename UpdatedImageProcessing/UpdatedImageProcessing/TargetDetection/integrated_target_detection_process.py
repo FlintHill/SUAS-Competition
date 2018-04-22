@@ -18,8 +18,9 @@ class IntegratedTargetDetectionProcess(object):
         :return: a positive list
         """
         pil_target_map_image = Image.open(target_map_image_path)
-        mean_blurred_target_map_image = ColorOperations.apply_mean_blur(pil_target_map_image, 3)
 
+        mean_blurred_target_map_image = ColorOperations.apply_mean_blur(pil_target_map_image, 3)
+        
         #Application of BlobDetector
         positive_list_1 = TargetDetectors(mean_blurred_target_map_image).detect_blobs()
 

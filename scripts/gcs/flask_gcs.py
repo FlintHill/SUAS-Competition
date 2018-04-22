@@ -35,6 +35,9 @@ class Client(object):
 	def get_location_log(self):
 		return self.location_log
 
+	def get_interop_client(self):
+		return self.interop_client
+
 	def submit_autonomous_target(self, target):
 		self.autonomous_targets_to_submit.append(target)
 
@@ -110,6 +113,15 @@ def index():
 def get_uav_location_log():
 	try:
 		return jsonify({"request_status" : "success", "location_log" : client.get_location_log()})
+	except:
+		traceback.print_exc()
+
+		return jsonify({"request_status" : "failure"})
+
+@app.route('/get/interop_client_array', methods=["GET"])
+def get_interop_client_array():
+	try:
+		return jsonify({"request_status" : "success", "interop_client" : client.get_interop_client()})
 	except:
 		traceback.print_exc()
 

@@ -1,53 +1,35 @@
-from time import sleep
 from PIL import Image
 import os
-import math
 import random
-from .utils import *
+from .flask_gcs import *
+from ...SUASSystem.SUASSystem.utils import *
 from UpdatedImageProcessing import *
-from .settings import GCSSettings
+from ...SUASSystem.SUASSystem.settings import GCSSettings
 
-def run_img_proc_process(logger_queue, location_log, targets_to_submit, interop_client_array):
-    while True:
-        if len(targets_to_submit) > 0:
-            target_characteristics = targets_to_submit.pop(0)
+def initialize_autonomous_image_processing_process():
+    clear_to_run = True
 
-            target_time = get_image_timestamp_from_metadata("static/imgs/" + target_characteristics["base_image_filename"])
+    location_log_json = get_uav_location_log()
 
-            closest_time_index = 0
-            least_time_difference = location_log[0]["epoch_time"]
-            for index in range(len(location_log)):
-                difference_in_times = target_time - location_log[closest_time_index]["epoch_time"]
-                if abs(difference_in_times) <= least_time_difference:
-                    closest_time_index = index
-                    least_time_difference = difference_in_times
-            drone_gps_location = location_log[closest_time_index]["current_location"]
+    if location_log_json["request_status"] == "success":
+        location_log = location_log_json["location_log"]:
+    else:
+        clear_to_run = False
 
-            image = Image.open("static/imgs/" + target_characteristics["base_image_filename"])
-            image_midpoint = (image.width / 2, image.height / 2)
-            target_midpoint = ((target_characteristics["target_top_left"][0] + target_characteristics["target_bottom_right"][0]) / 2, (target_characteristics["target_top_left"][1] + target_characteristics["target_bottom_right"][1]) / 2)
-            target_location = get_target_gps_location(image_midpoint, target_midpoint, drone_gps_location)
-            target_characteristics["latitude"] = target_location.get_lat()
-            target_characteristics["longitude"] = target_location.get_lon()
+    interop_client_array = get_interop_client_array()
 
-            original_image_path = "static/imgs/" + target_characteristics["base_image_filename"]
-            cropped_target_path = "static/crops/" + str(len(os.listdir('static/crops'))) + ".jpg"
-            cropped_target_data_path = "static/crops/" + str(len(os.listdir('static/crops'))) + ".json"
-            crop_target(original_image_path, cropped_target_path, target_characteristics["target_top_left"], target_characteristics["target_bottom_right"])
-            save_json_data(cropped_target_data_path, target_characteristics)
+    if interop_client_array_json["request_status"] == "success":
+        interop_client_array = interop_client_array_json["interop_client"]:
+    else:
+        clear_to_run = False
 
-            if target_characteristics["type"] == "standard":
-                interop_client_array[0].post_manual_standard_target(target_characteristics, cropped_target_path)
-            elif target_characteristics["type"] == "emergent":
-                interop_client_array[0].post_manual_emergent_target(target_characteristics, cropped_target_path)
+    if clear_to_run:
+        run_autonomous_img_proc_process(location_log, interop_client_array)
 
-        sleep(0.1)
-
-def run_autonomous_img_proc_process(logger_queue, interop_client_array, img_proc_status, autonomous_targets_to_submit):
+def run_autonomous_img_proc_process(location_log, interop_client_array):
     TARGET_MAP_PATH = "static/imgs/"
     AUTONOMOUS_IMAGE_PROCESSING_SAVE_PATH = "static/autonomous_crops"
     submitted_target_locations = []
-    fly_zones = construct_fly_zone_polygon(interop_client_array)
 
     while True:
         current_target_map_name = receive_image_filenames.recv()
@@ -85,10 +67,6 @@ def run_autonomous_img_proc_process(logger_queue, interop_client_array, img_proc
             target_latitude = target_location.get_lat()
             target_longitude = target_location.get_lon()
 
-            # Check if current target is outside of fly_zones
-            if fly_zones.contains_point([target_latitude, target_longitude]) == 0:
-                 continue
-
             # Check if current target is already submitted
             is_current_target_already_submitted = False
 
@@ -99,6 +77,11 @@ def run_autonomous_img_proc_process(logger_queue, interop_client_array, img_proc
 
             if is_current_target_already_submitted:
                 continue
+
+            # Check if current target is outside of fly_zones
+            fly_zones = construct_fly_zone_polygon(interop_client_array)
+            if fly_zones.contains_point([target_latitude, target_longitude]) == 0:
+                 continue
 
             json_file["image_processing_results"][index_in_single_target_crops]["latitude"] = target_latitude
             json_file["image_processing_results"][index_in_single_target_crops]["longitude"] = target_longitude

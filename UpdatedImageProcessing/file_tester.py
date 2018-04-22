@@ -6,9 +6,6 @@ import os
 import timeit
 from UpdatedImageProcessing import *
 
-image_path = (os.path.expanduser("~/Desktop/2.jpg"))
-print SingleTargetMapDetector.detect_single_target_map(image_path)
-
 #Run IntegratedImageProcessing
 """
 target_map_path = os.path.expanduser("~/Desktop/Synthetic_Dataset/Answers/modular_target_maps")

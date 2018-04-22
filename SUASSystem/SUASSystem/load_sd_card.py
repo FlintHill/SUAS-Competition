@@ -33,7 +33,6 @@ def load_sd_card(location_log, interop_client_array):
         shutil.rmtree("static/autonomous_crops")
     os.makedirs("static/autonomous_crops")
 
-
     fly_zones = construct_fly_zone_polygon(interop_client_array)
 
     for pic_folder in os.listdir(SD_PATH):
@@ -56,6 +55,7 @@ def load_sd_card(location_log, interop_client_array):
 
                     if fly_zones.contains_point([drone_gps_location.get_lat(), drone_gps_location.get_lon()]) == 0:
                         # not in range
-                        continue
+                        #continue
+                        pass
 
                     shutil.copy2(pic_path, "static/imgs")
