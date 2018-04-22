@@ -103,7 +103,8 @@ class VectorMath(object):
 
         force_vector = np.array([])
         if distance_vector[2]:
-            detection_vector = np.array([distance_vector_unit_vector[0]*detection_magnitude, distance_vector_unit_vector[1]*detection_magnitude])
+            detection_vector = np.array([distance_vector_unit_vector[0]*detection_magnitude, distance_vector_unit_vector[1]*detection_magnitude, distance_vector_unit_vector[2]*detection_magnitude])
+            print(detection_vector)
             for distance in detection_vector:
                 if distance != 0:
                     force = 100.0/distance
@@ -113,6 +114,7 @@ class VectorMath(object):
           
         else:
             detection_vector = np.array([distance_vector_unit_vector[0]*detection_magnitude, distance_vector_unit_vector[1]*detection_magnitude, 0])
+            print(detection_vector)
             for distance in detection_vector:
                 if distance != 0:
                     force = 100.0/distance
