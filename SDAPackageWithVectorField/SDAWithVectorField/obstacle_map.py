@@ -40,17 +40,18 @@ class ObstacleMap(object):
 		self.detection_distance = min_distance
 
 	def update_repulsive_forces(self):
+		waypoint = numpy.hstack([self.drone.waypoint_holder.get_current_waypoint(),0])
 		for obstacle in self.obstacles:
 			if VectorMath.get_magnitude(obstacle.point, self.drone.point) - obstacle.radius <= self.detection_distance:
-				radius = obstacle.radius
-				distance = VectorMath.get_magnitude(numpy.subtract(self.drone_point, obstacle.point))
-				
-				force = VectorMath.get_force(self.drone.get_point(), obstacle.get_point())
+				force = VectorMath.get_repulsive_force(obstacle, self.drone.get_point())
+				print(obstacle.point)
+				print(force)
+				print(self.repulsive_forces)
 				self.repulsive_forces = numpy.sum([self.repulsive_forces, force], axis=0)
 
 	def update_attractive_force(self):
 		waypoint_in_3D = numpy.hstack([self.drone.waypoint_holder.get_current_waypoint(),0])
-		self.attractive_force = VectorMath.get_attractive_force(waypoint_in_3D, self.drone.point)
+		self.attractive_force = VectorMath.get_attractive_force(waypoint_in_3D, self.drone.point, self.obstacles)
 
 	def reset_attractive_force(self):
 		self.attractive_force = numpy.array([0.0,0.0,0.0])
