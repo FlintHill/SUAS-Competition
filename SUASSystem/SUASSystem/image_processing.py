@@ -47,6 +47,7 @@ def run_autonomous_img_proc_process(logger_queue, interop_client_array, img_proc
     TARGET_MAP_PATH = "static/imgs/"
     AUTONOMOUS_IMAGE_PROCESSING_SAVE_PATH = "static/autonomous_crops"
     submitted_target_locations = []
+    fly_zones = construct_fly_zone_polygon(interop_client_array)
 
     while True:
         current_target_map_name = receive_image_filenames.recv()
@@ -84,6 +85,10 @@ def run_autonomous_img_proc_process(logger_queue, interop_client_array, img_proc
             target_latitude = target_location.get_lat()
             target_longitude = target_location.get_lon()
 
+            # Check if current target is outside of fly_zones
+            if fly_zones.contains_point([target_latitude, target_longitude]) == 0:
+                 continue
+
             # Check if current target is already submitted
             is_current_target_already_submitted = False
 
@@ -94,11 +99,6 @@ def run_autonomous_img_proc_process(logger_queue, interop_client_array, img_proc
 
             if is_current_target_already_submitted:
                 continue
-
-            # Check if current target is outside of fly_zones
-            fly_zones = construct_fly_zone_polygon(interop_client_array)
-            if fly_zones.contains_point([target_latitude, target_longitude]) == 0:
-                 continue
 
             json_file["image_processing_results"][index_in_single_target_crops]["latitude"] = target_latitude
             json_file["image_processing_results"][index_in_single_target_crops]["longitude"] = target_longitude

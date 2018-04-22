@@ -35,8 +35,6 @@ def load_sd_card(location_log, interop_client_array):
 
     fly_zones = construct_fly_zone_polygon(interop_client_array)
 
-    fly_zones = construct_fly_zone_polygon(interop_client_array)
-
     for pic_folder in os.listdir(SD_PATH):
         if not "." in pic_folder:
             pictures_dir_path = os.path.join(SD_PATH, pic_folder)
