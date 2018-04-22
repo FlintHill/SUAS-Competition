@@ -1,0 +1,51 @@
+{
+    "target_map_center_location": [
+        1824, 
+        1368
+    ], 
+    "target_map_timestamp": 1515680759.0, 
+    "image_processing_results": [
+        {
+            "target_location": [
+                34, 
+                536
+            ], 
+            "target_letter_color": "black", 
+            "target_letter": "a", 
+            "latitude": 38.87044882343277, 
+            "target_shape_type": "star", 
+            "target_orientation": "se", 
+            "longitude": -77.32272072094656, 
+            "target_index": 1, 
+            "target_shape_color": "gray"
+        }, 
+        {
+            "target_location": [
+                2340, 
+                1913
+            ], 
+            "target_letter_color": "black", 
+            "target_letter": "a", 
+            "latitude": 38.87070564811195, 
+            "target_shape_type": "rectangle", 
+            "target_orientation": "ne", 
+            "longitude": -77.32216828435298, 
+            "target_index": 2, 
+            "target_shape_color": "gray"
+        }, 
+        {
+            "target_location": [
+                2254, 
+                1898
+            ], 
+            "target_letter_color": "black", 
+            "target_letter": "a", 
+            "latitude": 38.87070285045749, 
+            "target_shape_type": "triangle", 
+            "target_orientation": "se", 
+            "longitude": -77.32218888696285, 
+            "target_index": 3, 
+            "target_shape_color": "gray"
+        }
+    ]
+}

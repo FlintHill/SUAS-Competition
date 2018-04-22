@@ -28,12 +28,13 @@ class Client(object):
 			self.img_proc_status,
 			self.interop_client,
 			self.targets_to_submit,
-			self.location_log
+			self.location_log,
+			self.autonomous_targets_to_submit
 		))
 		self.gcs_process.start()
 
 	def get_location_log(self):
-		return self.location_log
+		return list(self.location_log)
 
 	def submit_autonomous_target(self, target):
 		self.autonomous_targets_to_submit.append(target)
@@ -58,15 +59,15 @@ class Client(object):
 					active_interop_mission_json["off_axis_target_pos"]["latitude"],
 					active_interop_mission_json["off_axis_target_pos"]["longitude"]
 				],
-				"search_grid_points" = [
+				"search_grid_points": [
 			        {
-			            "altitude_msl" : search_grid_point.altitude_msl,
-			            "latitude" : search_grid_point.latitude,
-			            "longitude" : search_grid_point.longitude,
-			            "order" : search_grid_point.order
+			            "latitude" : search_grid_point["latitude"],
+			            "longitude" : search_grid_point["longitude"],
+			            "order" : search_grid_point["order"]
 			        } for search_grid_point in active_interop_mission_json["search_grid_points"]
 			    ]
 			}
+
 		except:
 			data = {
 				"status": "disconnected",
@@ -116,7 +117,7 @@ def get_uav_location_log():
 		return jsonify({"request_status" : "failure"})
 
 @app.route('/post/autonomous_img_proc_target', methods=["POST"])
-def update_img_proc_status():
+def update_auto_img_proc_status():
 	try:
 		client.submit_autonomous_target(request.json)
 

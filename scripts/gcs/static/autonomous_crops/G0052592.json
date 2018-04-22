@@ -1,0 +1,23 @@
+{
+    "target_map_center_location": [
+        1824, 
+        1368
+    ], 
+    "target_map_timestamp": 1515680743.0, 
+    "image_processing_results": [
+        {
+            "target_location": [
+                2002, 
+                1220
+            ], 
+            "target_letter_color": "black", 
+            "target_letter": "a", 
+            "latitude": 38.87057639647602, 
+            "target_shape_type": "rectangle", 
+            "target_orientation": "se", 
+            "longitude": -77.32224925743185, 
+            "target_index": 1, 
+            "target_shape_color": "gray"
+        }
+    ]
+}
