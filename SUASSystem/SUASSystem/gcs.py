@@ -47,7 +47,9 @@ def gcs_process(sda_status, img_proc_status, interop_client_array, targets_to_su
     while True:
         current_location = get_location(vehicle)
         current_location_json = {
-            "current_location": current_location,
+            "latitude": current_location.get_lat(),
+            "longitude": current_location.get_lon(),
+            "altitude": current_location.get_alt(),
             "epoch_time": time.time()
         }
         location_log.append(current_location_json)
@@ -124,10 +126,9 @@ def initialize_autonomous_image_processing_process(logger_queue, interop_client_
 
     return auto_img_proc_process
 
-def load_sd_card(send_image_filenames, location_log, interop_client_array):
+def load_sd_card(location_log, interop_client_array):
     log(gcs_logger_name, "Instantiating SD Card Process")
     sd_card_process = multiprocessing.Process(target=SUASSystem.load_sd_card, args=(
-        send_image_filenames,
         location_log,
         interop_client_array
     ))

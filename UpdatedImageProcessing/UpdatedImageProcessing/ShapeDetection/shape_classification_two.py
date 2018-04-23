@@ -8,7 +8,6 @@ import numpy
 
 class ShapeClassificationTwo(object):
     def __init__(self, path_to_cropped_img_in):
-        #self.shape_choices = ShapeDetectionSettings.SHAPE_COMPARISON_CHOICES
         self.shape_choices = ShapeDetectionSettings.SHAPE_CHOICES
         self.load_target(path_to_cropped_img_in)
         self.determine_shape()
@@ -31,11 +30,9 @@ class ShapeClassificationTwo(object):
                 if filename.endswith(".png"):
                     shape_mask_img = cv2.imread(os.path.join(dataset, filename),0)
 
-                    """
                     shape_mask_img = Image.open(os.path.join(dataset, filename))
                     shape_mask_img = utils.generate_gaussian_noise_by_level(shape_mask_img, 3, shape_mask_img.width)
                     shape_mask_img = numpy.array(shape_mask_img)
-                    """
 
                     _,contours,_ = cv2.findContours(shape_mask_img,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
                     shape_contour = contours[0]

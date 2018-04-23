@@ -1,4 +1,4 @@
-from SUASSystem import GCSSettings
+from SUASSystem import GCSSettings, Location
 from .utils import *
 from time import sleep
 import os
@@ -33,7 +33,6 @@ def load_sd_card(location_log, interop_client_array):
         shutil.rmtree("static/autonomous_crops")
     os.makedirs("static/autonomous_crops")
 
-
     fly_zones = construct_fly_zone_polygon(interop_client_array)
 
     for pic_folder in os.listdir(SD_PATH):
@@ -52,7 +51,7 @@ def load_sd_card(location_log, interop_client_array):
                         if abs(difference_in_times) <= least_time_difference:
                             closest_time_index = index
                             least_time_difference = difference_in_times
-                    drone_gps_location = location_log[closest_time_index]["current_location"]
+                    drone_gps_location = Location(location_log[closest_time_index]["latitude"], location_log[closest_time_index]["longitude"], location_log[closest_time_index]["altitude"])
 
                     if fly_zones.contains_point([drone_gps_location.get_lat(), drone_gps_location.get_lon()]) == 0:
                         # not in range

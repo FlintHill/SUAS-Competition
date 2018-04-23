@@ -34,3 +34,22 @@ def construct_fly_zone_polygon(interop_client_array):
     vertices = numpy.array(point_list)
 
     return matplotlib.path.Path(vertices)
+
+def construct_fly_zone_polygon_from_json(interop_json):
+    boundary_points = interop_json["search_grid_points"]
+    point_list = []
+    num_points = len(boundary_points)
+    order = 1
+    count = 0
+    while num_points > 0:
+        if(count == len(boundary_points)):
+            count = 0
+        if(boundary_points[count]["order"] == order):
+            point_list.append([boundary_points[count]["latitude"], boundary_points[count]["longitude"]])
+            order+=1
+            num_points-=1
+        count+=1
+
+    vertices = numpy.array(point_list)
+
+    return matplotlib.path.Path(vertices)
