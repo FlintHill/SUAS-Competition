@@ -136,17 +136,18 @@ class InteropClientConverter(object):
 
         :return: ID of the posted target
         """
-        image_file_path = target_info["target"]["current_crop_path"]
+
+        image_file_path = target_info["target"][0]["current_crop_path"]
         odlc_target = Odlc(
             type="standard",
             autonomous=True,
-            latitude=target_info["target"]["latitude"],
-            longitude=target_info["target"]["longitude"],
-            orientation=target_info["target"]["target_orientation"],
-            shape=target_info["target"]["target_shape_type"],
-            background_color=target_info["target"]["target_shape_color"],
-            alphanumeric=target_info["target"]["target_letter"],
-            alphanumeric_color=target_info["target"]["target_letter_color"],
+            latitude=target_info["target"][0]["latitude"],
+            longitude=target_info["target"][0]["longitude"],
+            orientation=target_info["target"][0]["target_orientation"],
+            shape=target_info["target"][0]["target_shape_type"],
+            background_color=target_info["target"][0]["target_shape_color"],
+            alphanumeric=target_info["target"][0]["target_letter"],
+            alphanumeric_color=target_info["target"][0]["target_letter_color"],
             description="Flint Hill School -- ODLC Standard Target Submission")
 
         returned_odlc = self.client.post_odlc(odlc_target)

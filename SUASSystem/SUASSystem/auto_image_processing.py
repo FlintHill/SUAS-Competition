@@ -34,10 +34,9 @@ def autonomous_image_processing():
                 break
 
         current_target_map_path = os.path.join(TARGET_MAP_PATH, current_target_map_name)
-        print(current_target_map_name)
 
         combo_target_detection_result_list = SingleTargetMapDetector.detect_single_target_map(current_target_map_path)
-        print("continue to crop")
+
         single_target_crops = combo_target_detection_result_list[0]
         json_file = combo_target_detection_result_list[1]
 
@@ -85,7 +84,6 @@ def autonomous_image_processing():
             json_file["image_processing_results"][index_in_single_target_crops]["target_letter_color"] = letter_color
             json_file["image_processing_results"][index_in_single_target_crops]["target_orientation"] = orientation
             json_file["image_processing_results"][index_in_single_target_crops]["target_letter"] = letter
-
             # create the specific target post
             posting_json = {}
             posting_json["target"] = []
@@ -99,7 +97,7 @@ def autonomous_image_processing():
                  "longitude": target_location.get_lon(),
                  "current_crop_path": current_crop_path
             })
-            requests.post("http://localhost:5000/post/autonomous_img_proc_target", posting_json)
+            requests.post("http://localhost:5000/post/autonomous_img_proc_target", json=posting_json)
 
         with open(os.path.join(AUTONOMOUS_IMAGE_PROCESSING_SAVE_PATH, current_target_map_name[:-4] + ".json"), 'w') as fp:
             json.dump(json_file, fp, indent=4)
