@@ -2,7 +2,6 @@ from interop import Client
 from interop import Telemetry
 from interop import Odlc
 from .settings import GCSSettings
-import time
 
 class InteropClientConverter(object):
 
