@@ -3,8 +3,25 @@
  *
  * @author		James Villemarette
  * @version 	1.3
- * @since		2018-04-12
+ * @since		2018-04-17
  */
+
+// helper functions
+
+/**
+ * capitalizeFirstLetter(String str)
+ *
+ * Capitalizes the first letter of a string and returns of it.
+ *
+ * @param	str		String to be fixed.
+ * @returns	propery upper-cased string.
+ */
+function capitalizeFirstLetter(str) {
+	return str.toLowerCase().replace(/\b[a-z]/g, function(letter) {
+		return letter.toUpperCase();
+	});
+}
+
 
 // page init
 
@@ -156,7 +173,7 @@ $(document).ready(function() {
  * and there by as tall (within the aspect ratio) as it can be
  * within the viewer box.
  *
- * returns nothing.
+ * @returns nothing.
  */
 function switchImageHeightLock() {
 
@@ -187,6 +204,8 @@ var currentImage = 0, totalImages = 0, zoomLevel = 1;
  *
  * Reflect the counters directly above this function onto the web
  * page.
+ *
+ * @returns	nothing.
  */
 function updateCounters() {
 
@@ -199,10 +218,13 @@ function updateCounters() {
 /**
  * indexExistsIn(array arr, int i)
  *
- * arr is an array [] containing at least one element.
- * i is index.
+ * Determines if an index exists in an array, because this is somehow
+ * not a built-in function.
  *
- * returns true if an index, i, exists within array, arr.
+ * @param	arr		is an array [] containing at least one element.
+ * @param	i		is index.
+ *
+ * @returns true if an index, i, exists within array, arr.
  */
 function indexExistsIn(arr, i) {
 
@@ -218,7 +240,9 @@ function indexExistsIn(arr, i) {
  *
  * throws error if index below or beyond array elements.
  *
- * returns nothing.
+ * @param	index	the index of the image to display.
+ *
+ * @returns nothing.
  */
 function showImage(index) {
 
@@ -242,18 +266,12 @@ function showImage(index) {
  * Moves "left" or "right" (dir:direction) by one image.
  *		  ^			^
  *
- * returns nothing.
+ * @param	dir		the direction to select images, either "left" or
+ *					"right".
+ *
+ * @returns nothing.
  */
 function imageSelect(dir) {
-
-	// prevent stretching
-	/*if(zoomLevel == 10) {
-		zoom('out');
-		zoom('in');
-	} else {
-		zoom('in');
-		zoom('out');
-	}*/
 
 	switchImageHeightLock();
 
@@ -280,7 +298,7 @@ function imageSelect(dir) {
  * Updates the directional buttons for switching between images
  * appropriately.
  *
- * returns nothing.
+ * @returns nothing.
  */
 function updateDirectionalButtons() {
 
@@ -309,7 +327,9 @@ function updateDirectionalButtons() {
  * #image-previewer-container div before and after unlocking or locking
  * the image size ratio.
  *
- * returns nothing.
+ * @param	dir		the depth to zoom in the image to.
+ *
+ * @returns nothing.
  */
 function updateImagePreviewDimensions(dir) {
 
@@ -386,7 +406,7 @@ function updateImagePreviewDimensions(dir) {
  *
  * Enables/disables the zoom in buttons, depending upon the zoomLevel.
  *
- * returns nothing.
+ * @returns nothing.
  */
 function updateZoomButtons() {
 
@@ -437,7 +457,10 @@ var zoomLevel = 1, zoomFactor = 1.5, zoomLimit = 10;
  *  deltaZ * Width of the actual image = new Width
  *  deltaZ * Height of the actual image = new Height
  *
- * returns nothing.
+ * @param	dir		the depth of the zoom, with 1 being regular fit, and
+ *					10 being a 10x zoom.
+ *
+ * @returns nothing.
  */
 function zoom(dir) {
 
@@ -496,6 +519,8 @@ var cropData = {
  *
  * Adds CSS stylings to a #image-preview div box that displays a rough preview
  * of the crop that was selected in MTS.
+ *
+ * @returns nothing.
  */
 function loadCropPreview() {
 
@@ -568,7 +593,7 @@ function loadCropPreview() {
  * Automatically determines the target type based on which target type is
  * currently selected.
  *
- * returns nothing.
+ * @returns nothing.
  */
 function submitTarget() {
 
@@ -651,16 +676,28 @@ function submitTarget() {
 
 };
 
-dupliatedTargetsInfo = [
+duplicatedTargetsInfo = [
 	{
 		name: "target002",
 		matches: 3,
 
 		imageURL: "static/imgs/291012.jpg",
+		geo: "38.38101 N, 78.12919 W",
 		shape: "rectangle",
 		shapeColor: "red",
 		textColor: "blue",
-		alphanumericColor: "G"
+		alphanumeric: "G"
+	},
+	{
+		name: "target003",
+		matches: 3,
+
+		imageURL: "static/imgs/291015.jpg",
+		geo: "38.38101 N, 78.12919 W",
+		shape: "triangle",
+		shapeColor: "blue",
+		textColor: "red",
+		alphanumeric: "Z"
 	}
 ];
 
@@ -670,25 +707,77 @@ dupliatedTargetsInfo = [
  * Open and fill the duplicate targets modal with submitted target info.
  * passed from info.
  *
+ * @param	info	the array of duplicateTargetsInfo in the format of:
+ *					[
+ *						{
+ *							name: "target001",
+ *							matches: 3, // characteristics that match
  *
+ * 							imageURL: "static/imgs/001.jpg",
+ *							geo: "38.38101 N, 78.12919 W",
+ *							shape: "rectangle",
+ *							shapeColor: "red",
+ *							textColor: "blue",
+ *							alphanumeric: "G"
+ *						},
+ *						...
+ *					]
  *
- * returns nothing.
+ * @returns nothing.
  */
 function duplicateTargets(info) {
+
+	$("#duplicate-target-collection").html("");
+	firstActive = " active";
+
+	duplicatedTargetsInfo.forEach(function(item, index) {
+		$("#duplicate-target-collection").html(
+			$("#duplicate-target-collection").html() + "<a id='dt-i-" + index + "' href='#!' class='collection-item" + firstActive + "' onclick='showDuplicateTarget(" + index + ")'>" + item.name +
+			"<span class='badge'>STANDARD</span> <span class='new badge red' data-badge-caption='Matches'>4</span></a>"
+		);
+
+		if(firstActive.length > 0) {
+			showDuplicateTarget(0);
+			firstActive = "";
+		}
+	});
+
+	$("#duplicate-target").modal("open");
 
 };
 
 /**
- * showDuplicateTarget(String id)
+ * showDuplicateTarget(int index)
  *
  * Displays a selected duplicate target on the potential match
  * visualizer inside of the Duplicate Targets modal.
  *
+ * @param	index	the index of the duplcate target in
+ *					duplicateTargetsInfo.
  *
+ * @throws	Error	index is not a valid duplicate target. out of
+ *						bounds.
  *
- * returns nothing.
+ * @returns nothing.
  */
-function showDuplicateTarget(id) {
+function showDuplicateTarget(index) {
+
+	// update collection
+	duplicatedTargetsInfo.forEach(function(item, i) {
+		$("#dt-i-" + i).removeClass("active");
+	});
+
+	$("#dt-i-" + index).addClass("active");
+
+	// update table
+	$("#duplicate-target-compare-image").html(duplicatedTargetsInfo[index].imageURL);
+	$("#duplicate-target-compare-location").html(duplicatedTargetsInfo[index].geo);
+	$("#duplicate-target-compare-shape").html(capitalizeFirstLetter(duplicatedTargetsInfo[index].shape));
+	$("#duplicate-target-compare-shape-color").html(capitalizeFirstLetter(duplicatedTargetsInfo[index].shapeColor));
+	$("#duplicate-target-compare-text-color").html(capitalizeFirstLetter(duplicatedTargetsInfo[index].textColor));
+	$("#duplicate-target-compare-alphanumeric-content").html(duplicatedTargetsInfo[index].alphanumeric);
+
+	// check and highlight the similarities and differences
 
 };
 
@@ -701,7 +790,7 @@ var refresh = null;
  *
  * Enable or disable the automatic control panel refresh.
  *
- * returns nothing.
+ * @returns nothing.
  */
 function switchControlPanelRefresh() {
 
@@ -726,10 +815,14 @@ function switchControlPanelRefresh() {
  *
  * Front-end update function that's used by statusPush() and statusGet().
  *
- * Updates the Control Panel slide with the data that was received by the back-
- * end script.
+ * Updates the Control Panel slide with the data that was received by
+ * the back-end script.
  *
- * returns nothing.
+ * # TODO: expand
+ * @param	programName		"interop", "img"
+ * @param	data			...
+ *
+ * @returns nothing.
  */
 function statusDisplay(programName, data) {
 
@@ -780,7 +873,7 @@ function statusDisplay(programName, data) {
  *	- "image-processing"
  * by posting an AJAX request to the back-end script.
  *
- * returns nothing.
+ * @returns nothing.
  */
 function statusPush(process, cmd) {
 
@@ -856,7 +949,9 @@ function statusPush(process, cmd) {
  * Retrieves the status informaition of the different subprocesses for the
  * control panel.
  *
- * returns nothing.
+ * @param	programName		either "interop", "img_proc", or "sda".
+ *
+ * @returns nothing.
  */
 function statusGet(programName) {
 
@@ -912,9 +1007,9 @@ var imgs = [], ias = null, selectionPoints = [];
  *		n => ...
  * 	]
  *
- * throws nothing.
+ * @throws nothing.
  *
- * returns nothing.
+ * @returns nothing.
  */
 function loadImages() {
 
@@ -1038,7 +1133,7 @@ function enableMTSButtons() {
  * Opens a dialog to confirm a redownload/resetting of the waypoints sent to the
  * drone.
  *
- * returns nothing
+ * @returns nothing
  */
 function resetWaypoints() { $("#reset-waypoints").modal("open") }
 
@@ -1047,7 +1142,7 @@ function resetWaypoints() { $("#reset-waypoints").modal("open") }
  *
  * Redownloads/resets the waypoints sent to the drone.
  *
- * returns nothing.
+ * @returns nothing.
  */
 function resetWaypointsConfirm() {
 
@@ -1089,7 +1184,9 @@ function resetWaypointsConfirm() {
  * Sets the direction that the compass is point in the Image Previewer and
  * Cropper slide.
  *
- * returns nothing.
+ * @param	degrees		Degrees as an integer or double.
+ *
+ * @returns nothing.
  */
 function setCompassDirection(degrees) {
 

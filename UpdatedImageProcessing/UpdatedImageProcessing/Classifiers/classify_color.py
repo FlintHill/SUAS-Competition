@@ -1,7 +1,6 @@
 import sys
 from os import walk
 import cv2
-import imutils
 import numpy as np
 
 from .logger import Logger

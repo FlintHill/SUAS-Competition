@@ -7,7 +7,6 @@ from .utils import *
 from UpdatedImageProcessing import *
 from .settings import GCSSettings
 from .converter_functions import inverse_haversine, get_mission_json
-from shapely.geometry import MultiPoint, Point
 
 def run_img_proc_process(logger_queue, location_log, targets_to_submit, interop_client_array):
     while True:

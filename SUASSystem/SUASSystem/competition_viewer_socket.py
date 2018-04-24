@@ -12,14 +12,6 @@ class CompetitionViewerSocket(WebSocket):
 
 	def handleMessage(self):
 		try:
-			# TODO: remove print statements after testing
-			print("vehicle_state_data")
-			print(str(type(self.vehicle_state_data)))
-			print(str(self.vehicle_state_data))
-			print("mission_data")
-			print(str(type(self.mission_data)))
-			print(str(self.mission_data))
-
 			data = '{"obstacle_present":' + str(self.vehicle_state_data[0].get_obstacle_in_path()).lower() +  ', '
 			data += '"0": ' + str(self.mission_data[0]) + ', '
 			data += '"alt": ' + str(self.vehicle_state_data[0].get_alt())

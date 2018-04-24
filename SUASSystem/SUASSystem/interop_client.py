@@ -3,6 +3,7 @@ from interop import Telemetry
 from interop import Odlc
 from .settings import GCSSettings
 from time import sleep
+from time import time
 from requests.exceptions import ConnectionError
 
 class InteropClientConverter(object):
@@ -19,7 +20,21 @@ class InteropClientConverter(object):
         :param heading:     The UAV's heading.
         :type heading:      Float
         """
-        telem_upload_data = Telemetry(location.get_lat(), location.get_lon(), location.get_alt() + GCSSettings.MSL_ALT, heading)
+        # TODO: remove after testing
+        # telem_upload_data = Telemetry(location.get_lat(), location.get_lon(), location.get_alt() + GCSSettings.MSL_ALT, heading)
+        missing_data = True
+
+        while missing_data:
+            try:
+                telem_upload_data = Telemetry(location.get_lat(), location.get_lon(), location.get_alt() + GCSSettings.MSL_ALT, heading)
+                missing_data = False
+            except ConnectionError:
+                sleep(GCSSettings.INTEROP_DISCONNECT_RETRY_RATE)
+
+                try:
+                    self.client = Client(GCSSettings.INTEROP_URL, GCSSettings.INTEROP_USERNAME, GCSSettings.INTEROP_PASSWORD)
+                except:
+                    print("Failed to connect to Interop., retrying...")
 
         self.client.post_telemetry(telem_upload_data)
 
@@ -117,6 +132,7 @@ class InteropClientConverter(object):
         while missing_data:
             try:
                 returned_odlc = self.client.post_odlc(odlc_target)
+                missing_data = False
             except ConnectionError:
                 sleep(GCSSettings.INTEROP_DISCONNECT_RETRY_RATE) # todo: 0.5
 
@@ -164,6 +180,7 @@ class InteropClientConverter(object):
         while missing_data:
             try:
                 returned_odlc = self.client.post_odlc(odlc_target)
+                missing_data = False
             except ConnectionError:
                 sleep(GCSSettings.INTEROP_DISCONNECT_RETRY_RATE)
 
@@ -178,6 +195,7 @@ class InteropClientConverter(object):
             while missing_data:
                 try:
                     self.client.post_odlc_image(returned_odlc.id, img_file.read())
+                    missing_data = False
                 except:
                     sleep(GCSSettings.INTEROP_DISCONNECT_RETRY_RATE)
 

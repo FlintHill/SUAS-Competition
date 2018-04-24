@@ -105,7 +105,7 @@
 				</p>
 				<hr style="margin:2em 0;">
 				<h5 style="margin-bottom:1em;">Potentially Matching Targets</h5>
-				<div class="collection" style="margin-bottom:2em">
+				<div class="collection" style="margin-bottom:2em; border-bottom:1px solid rgb(224, 224, 224)" id="duplicate-target-collection">
 					<a href="#!" class="collection-item active">
 						target003
 						<span class="badge">STANDARD</span>
@@ -141,39 +141,39 @@
 					<tbody>
 						<tr>
 							<td><i>Images</i></td>
-							<td>image1</td>
+							<td id="duplicate-target-pending-image">image1</td>
 							<td></td>
-							<td>image2</td>
+							<td id="duplicate-target-compare-image">image2</td>
 						</tr>
 						<tr>
 							<td><i>Geolocation</i></td>
-							<td>38.58281 N, 12.13134 W</td>
+							<td id="duplicate-target-pending-location">38.58281 N, 12.13134 W</td>
 							<td>d = 15 feet</td>
-							<td>38.58351 N, 12.13250 W</td>
+							<td id="duplicate-target-compare-location">38.58351 N, 12.13250 W</td>
 						</tr>
-						<tr class="green lighten-3">
+						<tr id="duplicate-target-shape" class="green lighten-3">
 							<td><i>Shape</i></td>
-							<td>Rectangle</td>
+							<td id="duplicate-target-pending-shape">Rectangle</td>
 							<th>Different</th>
-							<td>Triangle</td>
+							<td id="duplicate-target-compare-shape">Triangle</td>
 						</tr>
-						<tr class="red lighten-3">
+						<tr id="duplicate-target-shape-color" class="red lighten-3">
 							<td><i>Shape Color</i></td>
-							<td>Red</td>
+							<td id="duplicate-target-pending-shape-color">Red</td>
 							<th>Same</th>
-							<td>Red</td>
+							<td id="duplicate-target-compare-shape-color">Red</td>
 						</tr>
-						<tr class="red lighten-3">
+						<tr id="duplicate-target-text-color" class="red lighten-3">
 							<td><i>Text Color</i></td>
-							<td>Blue</td>
+							<td id="duplicate-target-pending-text-color">Blue</td>
 							<th>Same</th>
-							<td>Blue</td>
+							<td id="duplicate-target-compare-text-color">Blue</td>
 						</tr>
-						<tr>
+						<tr id="duplicate-target-alphanumeric-content" class="green lighten-3">
 							<td><i>Alphanumeric Content</i></td>
-							<td>L</td>
+							<td id="duplicate-target-pending-alphanumeric-content">L</td>
 							<td>Different</td>
-							<td>G</td>
+							<td id="duplicate-target-compare-alphanumeric-content">G</td>
 						</tr>
 					</tbody>
 				</table>
@@ -702,7 +702,7 @@
 					</div>
 				</div>
 				<hr>
-				<p class="grey-text">v1.3 /// Flint Hill SUAS /// Last modified: April 13th, 2018</p>
+				<p class="grey-text">v1.3 /// Flint Hill SUAS /// Last modified: April 23rd, 2018</p>
 			</div>
 		</div>
 		<!--/ Slide 1: Control Panel -->
@@ -733,7 +733,7 @@
 								<a class="waves-effect waves-light btn green modal-trigger disabled imgareaselect-fix tooltipped" name="crop-and-submit-button" data-position="right" data-delay="800" data-tooltip="Shift + Enter" href="#verification" onclick="loadCropPreview()">
 									<i class="fa fa-sign-in left"></i> crop and submit
 								</a>
-								<a class="waves-effect waves-light btn modal-trigger" href="#duplicate-target" onclick="$('#duplicate-target').modal('modal').options.dismissible = false;">Modal</a>
+								<a class="waves-effect waves-light btn modal-trigger" href="#duplicate-target" onclick="duplicateTargets(duplicatedTargetsInfo)">Modal</a>
 							</div>
 							<div class="col s4">
 								<div class="right">

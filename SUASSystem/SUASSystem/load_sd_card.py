@@ -3,7 +3,6 @@ from .utils import *
 from time import sleep
 import os
 import shutil
-from shapely.geometry import MultiPoint, Point
 
 def load_sd_card(send_image_filenames, location_log, interop_client_array):
 
