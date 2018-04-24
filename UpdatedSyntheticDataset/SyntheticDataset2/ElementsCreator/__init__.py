@@ -1,3 +1,4 @@
+from .background import BackgroundGenerator
 from .raw_image_generator import RawImageGenerator
 from .letter_generator import LetterGenerator
 from .random_letter_generator import RandomLetterGenerator
@@ -19,4 +20,3 @@ from .star import Star
 from .hexagon import Hexagon
 from .heptagon import Heptagon
 from .octagon import Octagon
-from .background import BackgroundGenerator

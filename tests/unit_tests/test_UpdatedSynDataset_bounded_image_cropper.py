@@ -1,3 +1,6 @@
+"""
+//Running Successfully
+
 import unittest
 from PIL import Image
 from SyntheticDataset2.ImageOperations import *
@@ -15,7 +18,6 @@ class BoundedImageCropperTestCase(unittest.TestCase):
         self.color2 = (0, 255, 0, 255)
         self.color3 = (0, 0, 255, 255)
         self.color4 = (255, 255, 255, 255)
-
         self.color5 = (0, 255, 255, 255)
         self.color6 = (252, 4, 163, 255)
         self.color7 = (254, 241, 2, 255)
@@ -97,3 +99,4 @@ class BoundedImageCropperTestCase(unittest.TestCase):
         self.assertTrue(self.test_image17.load()[self.test_image17.width/2, self.test_image17.height/2] == self.color4)
 
         self.assertTrue(self.test_image18.load()[self.test_image18.width/2, self.test_image18.height/2] == self.color4)
+"""

@@ -1,3 +1,6 @@
+"""
+//Running Successfully
+
 import unittest
 from SyntheticDataset2.ElementsCreator import *
 from SyntheticDataset2.ImageOperations import *
@@ -34,3 +37,4 @@ class ImageExtenderTestCase(unittest.TestCase):
 
         self.assertTrue(self.test_image5.width + 200 == self.test_image10.width)
         self.assertTrue(self.test_image5.height + 2 == self.test_image10.height)
+"""

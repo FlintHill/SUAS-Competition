@@ -13,6 +13,7 @@ sudo -H python -m pip install . -U
 cd ../
 sudo rm -r simple-websocket-server
 
+<<<<<<< HEAD
 sudo -H python -m pip install dronekit
 sudo -H python -m pip install wxpython
 
@@ -24,3 +25,6 @@ sudo -H python -m pip install ./SUASSystem -U
 sudo -H python -m pip install ./SDAPackage -U
 sudo -H python -m pip install ./SDAPackageWithVectorField -U
 sudo -H python -m pip install ./VectorFieldSDASimulatorPackage -U
+=======
+sudo -H python -m pip install -U -r requirements.txt
+>>>>>>> c5f9b7300e45fa16736418a6de168a26b34f1812

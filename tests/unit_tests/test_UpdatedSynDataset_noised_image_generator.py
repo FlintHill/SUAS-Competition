@@ -1,3 +1,6 @@
+"""
+//Running Successfully
+
 import unittest
 from PIL import Image
 from SyntheticDataset2.ElementsCreator import *
@@ -102,3 +105,4 @@ class NoisedImageGeneratorTestCase(unittest.TestCase):
 
         self.assertTrue(abs(self.test_image_b10.width - self.test_image10.width) < 6 * 20)
         self.assertTrue(abs(self.test_image_b10.height - self.test_image10.height) < 6 * 20)
+"""

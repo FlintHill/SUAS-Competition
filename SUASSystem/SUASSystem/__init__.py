@@ -8,5 +8,6 @@ from .sda_converter import *
 from .settings import *
 from .competition_viewer import *
 from .image_processing import *
+from .load_sd_card import *
 from .sda import *
 from .gcs import gcs_process

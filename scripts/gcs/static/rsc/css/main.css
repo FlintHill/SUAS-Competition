@@ -1,95 +1,142 @@
 /**
- * main style sheet
- * v0.1
+ * main style sheet for gcs:web ui
+ *
+ * @author		James Villemarette
+ * @version 	1.2
+ * @since		2018-02-22
  */
 
 ::-webkit-scrollbar { 
 	display: none; 
 }
 
+.progress {
+	margin: 0;
+	position: absolute;
+	z-index: 1000;
+}
+
 #toast-container {
-	margin:0 auto;
-	max-width:40em;
-	top:20px !important;
-	left:0% !important;
-	right:0% !important;
+	margin: 0 auto;
+	max-width: 40em;
+	top: 20px !important;
+	left: 0% !important;
+	right: 0% !important;
+}
+
+.imgareaselect-fix {
+	position: sticky;
+	z-index: 100 !important;
+}
+
+.imgareaselect-outer {
+	z-index: 50 !important;
 }
 
 .home-button-pos-fix {
-	position:absolute;
-	top:9px;
-	left:13px;
+	position: absolute;
+	top: 9px;
+	left: 13px;
 }
 
 .counter-fix {
-	text-align:right;
-	margin-top:0.65em;
-	margin-bottom:0;
+	text-align: right;
+	margin-top: 0.65em;
+	margin-bottom: 0;
 }
 
 .special-container {
-	border-radius:5px;
-	padding:1em;
-	margin-bottom:1em;
+	border-radius: 5px;
+	padding: 1em;
+	margin-bottom: 1em;
 }
 
 .no-margins {
-	margin:0;
+	margin: 0;
 }
 
 .input-text-fix {
-	top:10px;
-	margin-top:25px;
+	top: 10px;
+	margin-top: 25px;
 }
 
 #image-previewer {
-	display:block;
-	margin:auto;
+	display: block;
+	margin: auto;
 }
 
 .shift-lock-icon {
-	left:3em;
+	left: 3em;
+}
+
+.orientation-compass-holder {
+	position: absolute;
+	z-index: 999;
+	top: 4px;
+	right: 12px;
+	opacity: 0.2;
+}
+
+.orientation-compass-pointer {
+	position: sticky;
+	z-index: 1000;
+	height: 40px;
+	width: 40px;
+	background: url(../icons/gps-directional.png);
+	background-size: 77%;
+	background-repeat: no-repeat;
+	border: 3px solid black;
+	display: inline-block;
+	border-radius: 50%;
+	background-position-x: 4px;
+	float: right;
+}
+
+.orientation-compass-number {
+	position: absolute;
+	right: 48px;
+	font-size: 1.85em;
 }
 
 .power-button-parent {
-	position:relative;
+	position: relative;
 }
 
 .power-button-anchor {
-	position:absolute;
-	right:0;
+	position: absolute;
+	right: 0;
 }
 
 .power-button {
-	width:0px;
-	padding-left:14px;
+	width: 0px;
+	padding-left: 14px;
 }
 
 small {
-	font-style:italic;
-	color:rgb(180,180,180);
+	font-style: italic;
+	color: rgb(180,180,180);
 }
 
 #crop-previewer {
-	height:300px;
-	width:300px;
+	height: 300px;
+	width: 300px;
 }
 
 .noselect {
-	-webkit-touch-callout:none;
-	-webkit-user-select:none;
-	-khtml-user-select:none;
-	-moz-user-select:none;
-	-ms-user-select:none;
-	user-select:none;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
 }
 
 .select {
-	-webkit-touch-callout:auto;
-	-webkit-user-select:auto;
-	-khtml-user-select:auto;
-	-moz-user-select:auto;
-	-ms-user-select:auto;
-	user-select:auto;
+	-webkit-touch-callout: auto;
+	-webkit-user-select: auto;
+	-khtml-user-select: auto;
+	-moz-user-select: auto;
+	-ms-user-select: auto;
+	user-select: auto;
 }
 

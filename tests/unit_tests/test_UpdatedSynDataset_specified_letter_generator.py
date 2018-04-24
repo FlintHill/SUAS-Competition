@@ -1,3 +1,6 @@
+"""
+//Running Successfully
+
 import unittest
 from PIL import Image
 from SyntheticDataset2.ElementsCreator import *
@@ -112,3 +115,4 @@ class SpecifiedLetterGeneratorTestCase(unittest.TestCase):
         self.assertTrue(test_image_x.load()[0, 0] == (self.test_color_x))
         self.assertTrue(test_image_x.load()[test_image_x.width-1, test_image_x.height-1] == (self.test_color_x))
         self.assertTrue(test_image_x.load()[test_image_x.width/2, test_image_x.height/2] == (self.test_color_x))
+"""
