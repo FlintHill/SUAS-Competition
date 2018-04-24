@@ -402,8 +402,6 @@ class TestObstacleMap(unittest.TestCase):
 		self.min_path1 = self.obstacle_map1.get_min_path(self.paths1)
 		self.assertEqual(self.obstacle_map1.get_path_distance(self.min_path1), 236.44394938110665)
 
-<<<<<<< HEAD
-=======
 		self.obstacle_map1.reset_waypoints()
 		self.obstacle_map1.reset_obstacles()
 		self.test_obstacle2 = StationaryObstacle(numpy.array([-70, 70, 2]), 10, 30)
@@ -415,7 +413,6 @@ class TestObstacleMap(unittest.TestCase):
 		self.paths2 = self.obstacle_map1.generate_possible_paths(self.test_obstacle2)
 		self.assertEqual(len(self.paths2), 0)
 
->>>>>>> c5f9b7300e45fa16736418a6de168a26b34f1812
 	def test_obstacle_further_than_waypoint(self):
 		self.obstacle_map1.reset_waypoints()
 		self.obstacle_map1.reset_obstacles()
@@ -428,10 +425,9 @@ class TestObstacleMap(unittest.TestCase):
 		self.obstacle_map1.add_obstacle(test_obstacle)
 		self.obstacle_map1.set_drone_position(drone_point)
 
-<<<<<<< HEAD
 		obstacle_in_path_boolean, avoidance_points = self.obstacle_map1.is_obstacle_in_path
 		self.assertEqual(obstacle_in_path_boolean, False)
-=======
+
 		obstacle_in_path_boolean, avoidance_points = self.obstacle_map1.is_obstacle_in_path()
 		self.assertEqual(obstacle_in_path_boolean, False)
 
@@ -448,4 +444,3 @@ class TestObstacleMap(unittest.TestCase):
 
 		obstacle_in_path_boolean, avoidance_points = self.obstacle_map1.is_obstacle_in_path()
 		self.assertEqual(obstacle_in_path_boolean, True)
->>>>>>> c5f9b7300e45fa16736418a6de168a26b34f1812
