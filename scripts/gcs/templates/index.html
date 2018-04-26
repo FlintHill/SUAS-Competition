@@ -101,7 +101,7 @@
 			<div class="modal-content" style="padding-bottom:0">
 				<h4>Duplicate Targets Detected</h4>
 				<p>
-					The target that you're trying to submit closely matches a previously submitted target. Please check over the details below before you submit.
+					The target that you're trying to submit closely matches <span id="dt-g-0">a</span> previously submitted <span id="dt-g-1">target</span>. Please check over the details below before you submit.
 				</p>
 				<hr style="margin:2em 0;">
 				<h5 style="margin-bottom:1em;">Potentially Matching Targets</h5>
@@ -133,7 +133,7 @@
 						<tr>
 							<th>Characteristic</th>
 							<th>Your Pending Target</th>
-							<th></th>
+							<th>Comparison</th>
 							<th>Submitted Target</th>
 						</tr>
 					</thead>
@@ -145,34 +145,28 @@
 							<td></td>
 							<td id="duplicate-target-compare-image">image2</td>
 						</tr>
-						<tr>
-							<td><i>Geolocation</i></td>
-							<td id="duplicate-target-pending-location">38.58281 N, 12.13134 W</td>
-							<td>d = 15 feet</td>
-							<td id="duplicate-target-compare-location">38.58351 N, 12.13250 W</td>
-						</tr>
 						<tr id="duplicate-target-shape" class="green lighten-3">
 							<td><i>Shape</i></td>
 							<td id="duplicate-target-pending-shape">Rectangle</td>
-							<th>Different</th>
+							<th id="duplicate-target-identifier-shape">Different</th>
 							<td id="duplicate-target-compare-shape">Triangle</td>
 						</tr>
 						<tr id="duplicate-target-shape-color" class="red lighten-3">
 							<td><i>Shape Color</i></td>
 							<td id="duplicate-target-pending-shape-color">Red</td>
-							<th>Same</th>
+							<th id="duplicate-target-identifier-shape-color">Same</th>
 							<td id="duplicate-target-compare-shape-color">Red</td>
 						</tr>
 						<tr id="duplicate-target-text-color" class="red lighten-3">
 							<td><i>Text Color</i></td>
 							<td id="duplicate-target-pending-text-color">Blue</td>
-							<th>Same</th>
+							<th id="duplicate-target-identifier-text-color">Same</th>
 							<td id="duplicate-target-compare-text-color">Blue</td>
 						</tr>
 						<tr id="duplicate-target-alphanumeric-content" class="green lighten-3">
 							<td><i>Alphanumeric Content</i></td>
 							<td id="duplicate-target-pending-alphanumeric-content">L</td>
-							<td>Different</td>
+							<th id="duplicate-target-identifier-alphanumeric-content">Different</th>
 							<td id="duplicate-target-compare-alphanumeric-content">G</td>
 						</tr>
 					</tbody>

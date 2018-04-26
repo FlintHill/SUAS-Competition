@@ -4,6 +4,7 @@ import SUASSystem
 from SUASSystem import utils
 from datetime import datetime
 import os
+import json
 import traceback
 
 class Client(object):
@@ -232,7 +233,46 @@ def is_file_an_image(file_name):
 @app.route('/post/target', methods=["POST"])
 def post_target():
 	try:
-		# @TODO: Need to implement autnomous GPS coordinate calculation here
+		# check for duplicates
+		submitted_target_characteristics = [];
+
+		path_to_json = 'static/crops/'
+		submitted_json_files = [pos_json for pos_json in os.listdir(path_to_json) if pos_json.endswith('.json')]
+
+		for json_file in submitted_json_files:
+			submitted_target_characteristics.append({"id": json_file[0:json_file.find(".")]}.update(json.load(open(json_file))))
+
+		targets_with_similar_characteristics = []
+
+		for target in submitted_target_characteristics:
+			matched_characteristics = 0
+
+			if target["shape"] == request.form["targetShape"]:
+				matched_characteristics += 1
+			if target["background_color"] == request.form["targetColor"]:
+				matched_characteristics += 1
+			if target["alphanumeric_color"] == request.form["contentColor"]:
+				matched_characteristics += 1
+			if target["alphanumeric"] == request.form["targetContent"]:
+				matched_characteristics += 1
+
+			if matches > 0:
+				if target["type"] == "standard":
+					targets_with_similar_characteristics.append({
+						name: ("target" + ("%03d" % (i,)) ),
+						matches: matched_characteristics,
+
+						type: "standard",
+
+						imageURL: "static/crops/" + target["id"] + ".jpg",
+						geo: target["latitude"] + ", " + target["longitude"],
+						shape: target["shape"],
+						shapeColor: target["background_color"],
+						textColor: target["alphanumeric_color"],
+						alphanumeric: target["alphanumeric"]
+					})
+
+		# create and submit target data to be cropped
 		if request.form["type"] == "standard":
 			target_characteristics = {
 				"type" : "standard",
@@ -247,7 +287,7 @@ def post_target():
 				"latitude" : 0,
 				"longitude" : 0
 			}
-		else:
+		else: # emergent target
 			target_characteristics = {
 				"type" : request.form["type"],
 				"emergent_description" : request.form["description"],

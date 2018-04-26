@@ -1,0 +1,15 @@
+{
+    "base_image_filename": "G0092758.JPG", 
+    "emergent_description": "hh", 
+    "latitude": 38.87062588123566, 
+    "longitude": -77.32238717864176, 
+    "target_bottom_right": [
+        1512, 
+        1547
+    ], 
+    "target_top_left": [
+        1394, 
+        1429
+    ], 
+    "type": "emergent"
+}

@@ -3,7 +3,7 @@
  *
  * @author		James Villemarette
  * @version 	1.3
- * @since		2018-04-17
+ * @since		2018-04-26
  */
 
 // helper functions
@@ -14,12 +14,56 @@
  * Capitalizes the first letter of a string and returns of it.
  *
  * @param	str		String to be fixed.
- * @returns	propery upper-cased string.
+ *
+ * @returns	properly upper-cased string.
  */
 function capitalizeFirstLetter(str) {
 	return str.toLowerCase().replace(/\b[a-z]/g, function(letter) {
 		return letter.toUpperCase();
 	});
+}
+
+/**
+ * calcCrow(double lat1, double lon1, double lat2, double lon2)
+ *
+ * Calculate the distance between two geographic coordinates; as the
+ * crow flies.
+ *
+ * Source: https://stackoverflow.com/a/18883819
+ *
+ * @param	lat1	first point's latitude.
+ * @param	lon1	first point's longitude.
+ * @param	lat2	second point's latitude.
+ * @param	lon2	second point's longitude.
+ *
+ * @returns	distance in kilometers.
+ */
+function calcCrow(lat1, lon1, lat2, lon2) {
+    var R = 6371; // km
+
+    var dLat = toRad(lat2 - lat1);
+	var dLon = toRad(lon2 - lon1);
+    var lat1 = toRad(lat1);
+    var lat2 = toRad(lat2);
+
+    var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+		Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2);
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    var d = R * c;
+
+    return d;
+}
+
+/**
+ * toRad(integer/double value)
+ *
+ * Converts numeric degrees to radians.
+ *
+ * @param	degrees.
+ * @returns	radians.
+ */
+function toRad(Value) {
+    return Value * Math.PI / 180;
 }
 
 
@@ -679,25 +723,29 @@ function submitTarget() {
 duplicatedTargetsInfo = [
 	{
 		name: "target002",
-		matches: 3,
+		matches: 0,
 
-		imageURL: "static/imgs/291012.jpg",
-		geo: "38.38101 N, 78.12919 W",
-		shape: "rectangle",
-		shapeColor: "red",
-		textColor: "blue",
-		alphanumeric: "G"
-	},
-	{
-		name: "target003",
-		matches: 3,
+		type: "standard",
 
 		imageURL: "static/imgs/291015.jpg",
-		geo: "38.38101 N, 78.12919 W",
+		geo: "38.38093, 78.12923",
 		shape: "triangle",
 		shapeColor: "blue",
 		textColor: "red",
 		alphanumeric: "Z"
+	},
+	{
+		name: "target003",
+		matches: 2,
+
+		type: "standard",
+
+		imageURL: "static/imgs/291012.jpg",
+		geo: "38.38109, 78.12915",
+		shape: "rectangle",
+		shapeColor: "blue",
+		textColor: "blue",
+		alphanumeric: "G"
 	}
 ];
 
@@ -727,20 +775,66 @@ duplicatedTargetsInfo = [
  */
 function duplicateTargets(info) {
 
+	// reset
 	$("#duplicate-target-collection").html("");
 	firstActive = " active";
 
+	// determine number of matches and sort by them
+	//newDuplicatedTargetsInfo = [];
+
+	//newDuplicatedTargetsInfo.forEach(function(item) {
+
+
+
+	//})
+
+	//dulpicatedTargetsInfo = newDuplicatedTargetsInfo;
+
+	// fill collection
 	duplicatedTargetsInfo.forEach(function(item, index) {
+		var badgeColor = "";
+
+		switch(item.matches) {
+			case 4:
+				badgeColor = "red";
+				break;
+			case 3:
+				badgeColor = "orange";
+				break;
+			case 2:
+				badgeColor = "yellow darken-2";
+				break;
+			case 1:
+				badgeColor = "green";
+				break;
+			default:
+				badgeColor = "blue";
+				break;
+		}
+
 		$("#duplicate-target-collection").html(
-			$("#duplicate-target-collection").html() + "<a id='dt-i-" + index + "' href='#!' class='collection-item" + firstActive + "' onclick='showDuplicateTarget(" + index + ")'>" + item.name +
-			"<span class='badge'>STANDARD</span> <span class='new badge red' data-badge-caption='Matches'>4</span></a>"
+			$("#duplicate-target-collection").html() + "<a id='dt-i-" + index +
+			"' href='#!' class='collection-item" + firstActive +
+			"' onclick='showDuplicateTarget(" + index + ")'>" + item.name +
+			"<span class='badge'>STANDARD</span> <span class='new badge " + badgeColor + "' data-badge-caption='Matches'>" + item.matches +"</span></a>"
 		);
 
+		// set first item to active
 		if(firstActive.length > 0) {
 			showDuplicateTarget(0);
 			firstActive = "";
 		}
+
 	});
+
+	// fix grammar on notice text
+	if(info.length > 1) {
+		$("#dt-g-0").html("some");
+		$("#dt-g-1").html("targets");
+	} else {
+		$("#dt-g-0").html("a");
+		$("#dt-g-1").html("target");
+	}
 
 	$("#duplicate-target").modal("open");
 
@@ -764,20 +858,41 @@ function showDuplicateTarget(index) {
 
 	// update collection
 	duplicatedTargetsInfo.forEach(function(item, i) {
+
 		$("#dt-i-" + i).removeClass("active");
+
 	});
 
 	$("#dt-i-" + index).addClass("active");
 
 	// update table
 	$("#duplicate-target-compare-image").html(duplicatedTargetsInfo[index].imageURL);
-	$("#duplicate-target-compare-location").html(duplicatedTargetsInfo[index].geo);
 	$("#duplicate-target-compare-shape").html(capitalizeFirstLetter(duplicatedTargetsInfo[index].shape));
 	$("#duplicate-target-compare-shape-color").html(capitalizeFirstLetter(duplicatedTargetsInfo[index].shapeColor));
 	$("#duplicate-target-compare-text-color").html(capitalizeFirstLetter(duplicatedTargetsInfo[index].textColor));
 	$("#duplicate-target-compare-alphanumeric-content").html(duplicatedTargetsInfo[index].alphanumeric);
 
 	// check and highlight the similarities and differences
+	fieldsToCheck = [
+		"#duplicate-target*shape",
+		"#duplicate-target*shape-color",
+		"#duplicate-target*text-color",
+		"#duplicate-target*alphanumeric-content"
+	];
+
+	fieldsToCheck.forEach(function(item) {
+
+		if( ($(item.replace("*", "-pending-"))).html() == $(item.replace("*", "-compare-")).html() ) { // if they are the same
+			$(item.replace("*", "-")).removeClass("green");
+			$(item.replace("*", "-")).addClass("red");
+			$(item.replace("*", "-identifier-")).html("Same");
+		} else { // if they are different
+			$(item.replace("*", "-")).removeClass("red");
+			$(item.replace("*", "-")).addClass("green");
+			$(item.replace("*", "-identifier-")).html("Different");
+		}
+
+	});
 
 };
 
