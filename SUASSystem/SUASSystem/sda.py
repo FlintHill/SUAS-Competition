@@ -19,7 +19,7 @@ def run_sda_process(logger_queue, waypoints, sda_status, sda_avoid_coords, UAV_s
     starting_coords = vehicle_state_data[0].get_location()
 
     while True:
-        if sda_status.value == "connected":#if True:
+        if sda_status.value == "connected":
             current_location = vehicle_state_data[0].get_location()
             current_location.alt = current_location.get_alt() - SUASSystem.GCSSettings.MSL_ALT
             current_waypoint_number = vehicle_state_data[0].get_current_waypoint_number()
@@ -35,7 +35,6 @@ def run_sda_process(logger_queue, waypoints, sda_status, sda_avoid_coords, UAV_s
                     sda_converter.set_uav_position(current_location)
                     if not UAV_status.value == "GUIDED":
                         sda_converter.avoid_obstacles()
-
                     if not sda_converter.has_uav_completed_guided_path():
                         UAV_status.value = "GUIDED"
                         try:
@@ -44,6 +43,7 @@ def run_sda_process(logger_queue, waypoints, sda_status, sda_avoid_coords, UAV_s
                             sda_avoid_coords.append(sda_converter.get_uav_avoid_coordinates())
 
                     if sda_converter.has_uav_completed_guided_path():
+                        print("changing to auto")
                         UAV_status.value = "AUTO"
                         sda_converter.current_path = numpy.array([])
 

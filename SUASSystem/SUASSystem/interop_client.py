@@ -114,7 +114,6 @@ class InteropClientConverter(object):
         with open(image_file_path) as img_file:
             self.client.post_odlc_image(returned_odlc.id, img_file.read())
 
-
     def post_autonomous_target(self, target_info):
         """
         POST a standard ODLC object to the interoperability server.
@@ -154,3 +153,8 @@ class InteropClientConverter(object):
 
         with open(image_file_path) as img_file:
             self.client.post_odlc_image(returned_odlc.id, img_file.read())
+"""my_client = InteropClientConverter()
+
+while True:
+    print(my_client.get_obstacles())
+    time.sleep(1)"""
