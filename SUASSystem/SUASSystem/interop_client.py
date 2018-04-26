@@ -114,8 +114,6 @@ class InteropClientConverter(object):
         with open(image_file_path) as img_file:
             self.client.post_odlc_image(returned_odlc.id, img_file.read())
 
-<<<<<<< b6bb25399aa95b1f7bf20a300726cb842037b6b4
-
     def post_autonomous_target(self, target_info):
         """
         POST a standard ODLC object to the interoperability server.
