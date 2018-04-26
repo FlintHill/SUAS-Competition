@@ -1,7 +1,4 @@
-./SyntheticDataset
 ./UpdatedSyntheticDataset
-./EigenFit
-./ImgProcessingCLI
 ./UpdatedImageProcessing
 ./SUASSystem
 ./SDAPackage
@@ -11,7 +8,5 @@ opencv-python
 scikit-learn
 scipy
 dronekit
-plotly
-peakutils
 imutils
 shapely
