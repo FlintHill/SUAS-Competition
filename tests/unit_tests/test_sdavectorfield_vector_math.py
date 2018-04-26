@@ -37,9 +37,9 @@ class VectorMathTestCase(unittest.TestCase):
         test_vector5 = numpy.array([1,2,3])
         test_vector6 = numpy.array([-3,-2,-1])
 
-        # print(VectorMath.get_vector_projection(test_vector1, test_vector2))
-        # print(VectorMath.get_vector_projection(test_vector3, test_vector4))
-        # print(VectorMath.get_vector_projection(test_vector5, test_vector6))
+        print(VectorMath.get_vector_projection(test_vector1, test_vector2))
+        print(VectorMath.get_vector_projection(test_vector3, test_vector4))
+        print(VectorMath.get_vector_projection(test_vector5, test_vector6))
 
         self.assertTrue(numpy.array_equal(numpy.round(VectorMath.get_vector_projection(test_vector1, test_vector2), decimals = 5, out = None), numpy.round(numpy.array([8.0/3.0, 8.0/3.0, 8.0/3.0]), decimals = 5, out = None)))
         self.assertTrue(numpy.array_equal(numpy.round(VectorMath.get_vector_projection(test_vector3, test_vector4), decimals = 5, out = None), numpy.round(numpy.array([-0., -21.5878621, 7.96113467]), decimals = 5, out = None)))
@@ -55,9 +55,9 @@ class VectorMathTestCase(unittest.TestCase):
         test_vector5 = numpy.array([1,2,3])
         test_vector6 = numpy.array([-3,-2,-1])
 
-        # print(VectorMath.get_vector_rejection(test_vector1, test_vector2))
-        # print(VectorMath.get_vector_rejection(test_vector3, test_vector4))
-        # print(VectorMath.get_vector_rejection(test_vector5, test_vector6))
+        print(VectorMath.get_vector_rejection(test_vector1, test_vector2))
+        print(VectorMath.get_vector_rejection(test_vector3, test_vector4))
+        print(VectorMath.get_vector_rejection(test_vector5, test_vector6))
 
         self.assertTrue(numpy.array_equal(numpy.round(VectorMath.get_vector_rejection(test_vector1, test_vector2), decimals = 5, out = None), numpy.round(numpy.array([-2.0/3.0, 1.0/3.0, 1.0/3.0]), decimals = 5, out = None)))
         self.assertTrue(numpy.array_equal(numpy.round(VectorMath.get_vector_rejection(test_vector3, test_vector4), decimals = 5, out = None), numpy.round(numpy.array([-33, 21.5878621, 58.53886533]), decimals = 5, out = None)))
@@ -71,21 +71,9 @@ class VectorMathTestCase(unittest.TestCase):
         force_one = VectorMath.get_force(test_vector1, test_vector2)
         force_two = VectorMath.get_force(test_vector2, test_vector3)
 
-        # print(force_one)
-        # print(force_two)
+        print(force_one)
+        print(force_two)
 
         self.assertEqual(force_one[0],force_two[0])
         self.assertEqual(force_one[1],force_two[1])
         self.assertEqual(force_one[2],force_two[2])
-
-    def test_get_repulsive_force(self):
-        test_obstacle = StationaryObstacle(numpy.array([10,10,10]), 10, 0)
-        drone_point = numpy.array([50,50,50])
-        force_vector = VectorMath.get_repulsive_force(numpy.array([10,10,10]), drone_point, 10)
-        array = numpy.array([4,5,0])
-
-        print(array)
-        print(force_vector)
-        dafaka
-
-        
