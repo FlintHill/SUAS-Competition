@@ -2,6 +2,7 @@ from interop import Client
 from interop import Telemetry
 from interop import Odlc
 from .settings import GCSSettings
+import time
 
 class InteropClientConverter(object):
 
@@ -114,6 +115,7 @@ class InteropClientConverter(object):
         with open(image_file_path) as img_file:
             self.client.post_odlc_image(returned_odlc.id, img_file.read())
 
+<<<<<<< b6bb25399aa95b1f7bf20a300726cb842037b6b4
 
     def post_autonomous_target(self, target_info):
         """
@@ -154,3 +156,10 @@ class InteropClientConverter(object):
 
         with open(image_file_path) as img_file:
             self.client.post_odlc_image(returned_odlc.id, img_file.read())
+=======
+"""my_client = InteropClientConverter()
+
+while True:
+    print(my_client.get_obstacles())
+    time.sleep(1)"""
+>>>>>>> working on interop connection test cases

@@ -56,7 +56,7 @@ def gcs_process(sda_status, img_proc_status, interop_client_array, targets_to_su
 
         vehicle_state_data[0] = SUASSystem.get_vehicle_state(vehicle, GCSSettings.MSL_ALT)
 
-        if user_force_waypoint_update.value and vehicle.armed == False:
+        if bool(user_force_waypoint_update.value) == True and vehicle.armed == False:
             waypoints = download_waypoints(vehicle)
             sda_process.terminate()
             sleep(1)
