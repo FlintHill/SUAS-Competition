@@ -13,16 +13,5 @@ sudo -H python -m pip install . -U
 cd ../
 sudo rm -r simple-websocket-server
 
-
-sudo -H python -m pip install dronekit
-sudo -H python -m pip install wxpython
-sudo -H python -m pip install ./SyntheticDataset -U
-sudo -H python -m pip install ./UpdatedSyntheticDataset -U
-sudo -H python -m pip install ./EigenFit -U
-sudo -H python -m pip install ./ImgProcessingCLI -U
-sudo -H python -m pip install ./SUASSystem -U
-sudo -H python -m pip install ./SDAPackage -U
-sudo -H python -m pip install ./SDAPackageWithVectorField -U
-sudo -H python -m pip install ./VectorFieldSDASimulatorPackage -U
 sudo -H python -m pip install -U -r requirements.txt
 

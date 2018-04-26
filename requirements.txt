@@ -5,6 +5,8 @@
 ./UpdatedImageProcessing
 ./SUASSystem
 ./SDAPackage
+./SDAPackageWithVectorField
+./VectorFieldSDASimulatorPackage
 
 nose
 opencv-python
