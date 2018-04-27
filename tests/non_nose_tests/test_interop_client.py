@@ -3,7 +3,7 @@ from time import sleep
 from SUASSystem import InteropClientConverter
 
 if __name__ == '__main__':
-    interop_client = InteropClientConverter(interop_status)
+    interop_client = InteropClientConverter()
 
     while True:
         # get_obstacles()
