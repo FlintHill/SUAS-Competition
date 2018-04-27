@@ -217,19 +217,26 @@ class InteropClientConverter(object):
 
         :return: ID of the posted target
         """
+
+        image_file_path = target_info["target"][0]["current_crop_path"]
         odlc_target = Odlc(
             type="standard",
             autonomous=True,
-            latitude=target["image_processing_results"][index]["latitude"],
-            longitude=target["image_processing_results"][index]["longitude"],
-            orientation=target["image_processing_results"][index]["target_orientation"],
-            shape=target["image_processing_results"][index]["target_shape_type"],
-            background_color=target["image_processing_results"][index]["target_shape_color"],
-            alphanumeric=target["image_processing_results"][index]["target_letter"],
-            alphanumeric_color=target["image_processing_results"][index]["target_letter_color"],
+            latitude=target_info["target"][0]["latitude"],
+            longitude=target_info["target"][0]["longitude"],
+            orientation=target_info["target"][0]["target_orientation"],
+            shape=target_info["target"][0]["target_shape_type"],
+            background_color=target_info["target"][0]["target_shape_color"],
+            alphanumeric=target_info["target"][0]["target_letter"],
+            alphanumeric_color=target_info["target"][0]["target_letter_color"],
             description="Flint Hill School -- ODLC Standard Target Submission")
 
         returned_odlc = self.client.post_odlc(odlc_target)
 
         with open(image_file_path) as img_file:
             self.client.post_odlc_image(returned_odlc.id, img_file.read())
+"""my_client = InteropClientConverter()
+
+while True:
+    print(my_client.get_obstacles())
+    time.sleep(1)"""

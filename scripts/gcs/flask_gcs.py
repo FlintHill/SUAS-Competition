@@ -16,7 +16,8 @@ class Client(object):
 		self.sda_start_time = self.manager.Value('i', int(datetime.utcnow().strftime("%s")))
 		self.img_proc_start_time = self.manager.Value('i', int(datetime.utcnow().strftime("%s")))
 		self.targets_to_submit = self.manager.list()
-		self.user_force_waypoint_update = self.manager.Value('i', False)
+		self.autonomous_targets_to_submit = self.manager.list()
+		self.location_log = self.manager.list()
 
 		self.interop_client = self.manager.list()
 		self.interop_client.append(SUASSystem.InteropClientConverter())
@@ -28,15 +29,16 @@ class Client(object):
 			self.img_proc_status,
 			self.interop_client,
 			self.targets_to_submit,
-			self.user_force_waypoint_update
+			self.location_log,
+			self.autonomous_targets_to_submit
 		))
 		self.gcs_process.start()
 
-	def force_reset_waypoint(self):
-		self.user_force_waypoint_update = True
+	def get_location_log(self):
+		return list(self.location_log)
 
-	def get_waypoint_reset(self):
-		return self.waypoints_reset
+	def submit_autonomous_target(self, target):
+		self.autonomous_targets_to_submit.append(target)
 
 	def get_interop_data(self):
 		try:
@@ -57,14 +59,23 @@ class Client(object):
 				"off-axis_position": [
 					active_interop_mission_json["off_axis_target_pos"]["latitude"],
 					active_interop_mission_json["off_axis_target_pos"]["longitude"]
-				]
+				],
+				"search_grid_points": [
+			        {
+			            "latitude" : search_grid_point["latitude"],
+			            "longitude" : search_grid_point["longitude"],
+			            "order" : search_grid_point["order"]
+			        } for search_grid_point in active_interop_mission_json["search_grid_points"]
+			    ]
 			}
+
 		except:
 			data = {
 				"status": "disconnected",
 				"emergent_position": [0, 0],
 				"airdrop_position": [0, 0],
-				"off-axis_position": [0, 0]
+				"off-axis_position": [0, 0],
+				"search_grid_points": []
 			}
 
 		return data
@@ -97,10 +108,19 @@ def index():
 	except:
 		traceback.print_exc()
 
-@app.route('/get/waypoints/reset', methods=["GET"])
-def update_waypoints():
+@app.route('/get/uav_location_log', methods=["GET"])
+def get_uav_location_log():
 	try:
-		client.set_waypoint_reset()
+		return jsonify({"request_status" : "success", "location_log" : client.get_location_log()})
+	except:
+		traceback.print_exc()
+
+		return jsonify({"request_status" : "failure"})
+
+@app.route('/post/autonomous_img_proc_target', methods=["POST"])
+def update_auto_img_proc_status():
+	try:
+		client.submit_autonomous_target(request.json)
 
 		return jsonify({"request_status" : "success"})
 	except:

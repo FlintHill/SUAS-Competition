@@ -1,17 +1,14 @@
-./SyntheticDataset
 ./UpdatedSyntheticDataset
-./EigenFit
-./ImgProcessingCLI
 ./UpdatedImageProcessing
 ./SUASSystem
 ./SDAPackage
+./SDAPackageWithVectorField
+./VectorFieldSDASimulatorPackage
 
 nose
 opencv-python
 scikit-learn
 scipy
 dronekit
-plotly
-peakutils
 imutils
 shapely

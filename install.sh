@@ -14,3 +14,4 @@ cd ../
 sudo rm -r simple-websocket-server
 
 sudo -H python -m pip install -U -r requirements.txt
+

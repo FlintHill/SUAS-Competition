@@ -10,7 +10,7 @@ from .converter_functions import *
 
 gcs_logger_name = multiprocessing.current_process().name
 
-def gcs_process(sda_status, img_proc_status, interop_client_array, targets_to_submit, user_force_waypoint_update):
+def gcs_process(sda_status, img_proc_status, interop_client_array, targets_to_submit, location_log, autonomous_targets_to_submit):
     # Setup logging information
     logger_queue = multiprocessing.Queue(-1)
     logger_listener_process = multiprocessing.Process(target=listener_process, args=(
@@ -23,13 +23,11 @@ def gcs_process(sda_status, img_proc_status, interop_client_array, targets_to_su
     manager = multiprocessing.Manager()
     vehicle_state_data = manager.list()
     mission_information_data = manager.list()
-    sda_avoid_coords = manager.list()
-    UAV_status = manager.Value('s', "AUTO")
-    location_log = manager.list()
     vehicle = connect_to_vehicle()
-    waypoints = download_waypoints(vehicle)
-
-    recieve_image_filenames, send_image_filenames = multiprocessing.Pipe(False)
+    # SDA
+    #waypoints = download_waypoints(vehicle)
+    #sda_avoid_coords = manager.list()
+    #UAV_status = manager.Value('s', "AUTO")
 
     if len(interop_client_array) != 0:
         mission_information_data.append(get_mission_json(interop_client_array[0].get_active_mission(), interop_client_array[0].get_obstacles()))
@@ -39,36 +37,41 @@ def gcs_process(sda_status, img_proc_status, interop_client_array, targets_to_su
 
     vehicle_state_data.append(SUASSystem.get_vehicle_state(vehicle, GCSSettings.MSL_ALT))
     competition_viewer_process = initialize_competition_viewer_process(vehicle_state_data, mission_information_data)
-    sd_card_process = load_sd_card(send_image_filenames, location_log, interop_client_array)
+    sd_card_process = load_sd_card(location_log, interop_client_array)
     img_proc_process = initialize_image_processing_process(logger_queue, location_log, targets_to_submit, interop_client_array)
-    autonomous_img_proc_process = initialize_autonomous_image_processing_process(logger_queue, location_log, interop_client_array, img_proc_status, recieve_image_filenames)
-    sda_process = initialize_sda_process(logger_queue, sda_status, UAV_status, waypoints, sda_avoid_coords, vehicle_state_data, mission_information_data)
+    autonomous_img_proc_process = initialize_autonomous_image_processing_process(logger_queue, interop_client_array, img_proc_status, autonomous_targets_to_submit)
+    # SDA
+    #sda_process = initialize_sda_process(logger_queue, sda_status, UAV_status, waypoints, sda_avoid_coords, vehicle_state_data, mission_information_data)
     log(gcs_logger_name, "Completed instantiation of all child processes")
 
     while True:
         current_location = get_location(vehicle)
 
         current_location_json = {
-            "current_location": current_location,
+            "latitude": current_location.get_lat(),
+            "longitude": current_location.get_lon(),
+            "altitude": current_location.get_alt(),
             "epoch_time": time.time()
         }
 
         location_log.append(current_location_json)
 
         vehicle_state_data[0] = SUASSystem.get_vehicle_state(vehicle, GCSSettings.MSL_ALT)
-
+        
         if len(interop_client_array) != 0:
             interop_client_array[0].post_telemetry(current_location, vehicle_state_data[0].get_direction())
             mission_information_data[0] = get_mission_json(interop_client_array[0].get_active_mission(), interop_client_array[0].get_obstacles())
 
-        if (vehicle.location.global_relative_frame.alt * 3.28084) > GCSSettings.SDA_MIN_ALT and sda_status.value.lower() == "connected":
-            if (UAV_status.value == "GUIDED"):
-                sda_avoid_feet_height = Location(sda_avoid_coords[0].get_lat(), sda_avoid_coords[0].get_lon(), sda_avoid_coords[0].get_alt()*3.28084)
-                log("root", "Avoiding obstacles...")
-                vehicle.mode = dronekit.VehicleMode("GUIDED")
-                vehicle.simple_goto(sda_avoid_coords[0].as_global_relative_frame())
-            if UAV_status.value == 'AUTO' and vehicle.mode.name != "AUTO":
-                vehicle.mode = dronekit.VehicleMode("AUTO")
+        # NOTE: The following commented code enables autonomous SDA. It has been left in this codebase to make it easier for future teams to
+        #   understand the code. Please do not remove from codebase 2017/2018
+        #if (vehicle.location.global_relative_frame.alt * 3.28084) > GCSSettings.SDA_MIN_ALT and sda_status.value.lower() == "connected":
+        #    if (UAV_status.value == "GUIDED"):
+        #        sda_avoid_feet_height = Location(sda_avoid_coords[0].get_lat(), sda_avoid_coords[0].get_lon(), sda_avoid_coords[0].get_alt()*3.28084)
+        #        log("root", "Avoiding obstacles...")
+        #        vehicle.mode = dronekit.VehicleMode("GUIDED")
+        #        vehicle.simple_goto(sda_avoid_coords[0].as_global_relative_frame())
+        #    if UAV_status.value == 'AUTO' and vehicle.mode.name != "AUTO":
+        #        vehicle.mode = dronekit.VehicleMode("AUTO")
 
         sleep(0.25)
 
@@ -112,24 +115,22 @@ def initialize_image_processing_process(logger_queue, location_log, targets_to_s
 
     return img_proc_process
 
-def initialize_autonomous_image_processing_process(logger_queue, location_log, interop_client_array, img_proc_status, recieve_image_filenames):
+def initialize_autonomous_image_processing_process(logger_queue, interop_client_array, img_proc_status, autonomous_targets_to_submit):
     log(gcs_logger_name, "Instantiating Autonomous Image Processing process")
     auto_img_proc_process = multiprocessing.Process(target=SUASSystem.run_autonomous_img_proc_process, args=(
         logger_queue,
-        location_log,
         interop_client_array,
         img_proc_status,
-        recieve_image_filenames
+        autonomous_targets_to_submit
     ))
     auto_img_proc_process.start()
     log(gcs_logger_name, "Autonomous Image Processing process instantiated")
 
     return auto_img_proc_process
 
-def load_sd_card(send_image_filenames, location_log, interop_client_array):
+def load_sd_card(location_log, interop_client_array):
     log(gcs_logger_name, "Instantiating SD Card Process")
     sd_card_process = multiprocessing.Process(target=SUASSystem.load_sd_card, args=(
-        send_image_filenames,
         location_log,
         interop_client_array
     ))

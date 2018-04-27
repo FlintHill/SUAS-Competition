@@ -45,74 +45,10 @@ def run_img_proc_process(logger_queue, location_log, targets_to_submit, interop_
 
         sleep(0.1)
 
-def run_autonomous_img_proc_process(logger_queue, location_log, interop_client_array, img_proc_status, recieve_image_filenames):
-    TARGET_MAP_PATH = "static/imgs/"
-    AUTONOMOUS_IMAGE_PROCESSING_SAVE_PATH = "static/autonomous_crops"
+def run_autonomous_img_proc_process(logger_queue, interop_client_array, img_proc_status, autonomous_targets_to_submit):
     while True:
-        current_target_map_name = recieve_image_filenames.recv()
-        current_target_map_path = os.path.join(TARGET_MAP_PATH, current_target_map_name)
+        if len(autonomous_targets_to_submit) > 0:
+            target_info = autonomous_targets_to_submit.pop()
+            interop_client_array[0].post_autonomous_target(target_info)
 
-        combo_target_detection_result_list = TargetDetection.SingleTargetMapDetector.detect_single_target_map(current_target_map_path)
-        single_target_crops = combo_target_detection_result_list[0]
-        json_file = combo_target_detection_result_list[1]
-
-        image = Image.open(current_target_map_path)
-        json_file["target_map_center_location"] = (image.width / 2, image.height / 2)
-        json_file["target_map_timestamp"] = get_image_timestamp_from_metadata(current_target_map_path)
-
-        for index_in_single_target_crops in range(len(single_target_crops)):
-            json_file["image_processing_results"][index_in_single_target_crops]["target_index"] = index_in_single_target_crops + 1
-
-            current_crop_path = os.path.join(AUTONOMOUS_IMAGE_PROCESSING_SAVE_PATH, current_target_map_name + " - " + str(index_in_single_target_crops + 1) + ".png")
-            single_target_crops[index_in_single_target_crops].save(current_crop_path)
-
-            # adds target location
-            target_map_center_pixel_coordinates = json_file["target_map_center_location"]
-            target_pixel_coordinates = json_file["image_processing_results"][index_in_single_target_crops]["target_location"]
-            target_time = json_file["target_map_timestamp"]
-
-            closest_time_index = 0
-            least_time_difference = location_log[0]["epoch_time"]
-            for index in range(len(location_log)):
-                difference_in_times = abs(target_time - location_log[closest_time_index]["epoch_time"])
-                if difference_in_times <= least_time_difference:
-                    closest_time_index = index
-                    least_time_difference = difference_in_times
-
-            drone_gps_location = location_log[closest_time_index]["current_location"]
-            target_location = get_target_gps_location(target_map_center_pixel_coordinates, target_pixel_coordinates, drone_gps_location)
-
-
-            fly_zones = construct_fly_zone_polygon(interop_client_array)
-            if (Point(target_location).within(fly_zones)) == False:
-                 continue
-
-
-            json_file["image_processing_results"][index_in_single_target_crops]["latitude"] = target_location.get_lat()
-            json_file["image_processing_results"][index_in_single_target_crops]["longitude"] = target_location.get_lon()
-
-            shape_type = ShapeDetection.ShapeClassificationTwo(current_crop_path).get_shape_type()
-            json_file["image_processing_results"][index_in_single_target_crops]["target_shape_type"] = shape_type
-            color_classifying_results = Classifiers.ColorClassifier(current_crop_path).get_color()
-            shape_color = color_classifying_results[0]
-            letter_color = color_classifying_results[1]
-            json_file["image_processing_results"][index_in_single_target_crops]["target_shape_color"] = shape_color
-            json_file["image_processing_results"][index_in_single_target_crops]["target_letter_color"] = letter_color
-            json_file["image_processing_results"][index_in_single_target_crops]["target_orientation"] = random.choice(["n","ne","e","se","s","sw","w","nw"])
-            json_file["image_processing_results"][index_in_single_target_crops]["target_letter"] = "a"
-
-            interop_client_array[0].post_autonomous_target(json_file, current_crop_path, index_in_single_target_crops)
-
-        with open(os.path.join(AUTONOMOUS_IMAGE_PROCESSING_SAVE_PATH, current_target_map_name[:-4] + ".json"), 'w') as fp:
-            json.dump(json_file, fp, indent=4)
-
-def construct_fly_zone_polygon(interop_client_array):
-    mission_information_data = (get_mission_json(interop_client_array[0].get_active_mission(), interop_client_array[0].get_obstacles()))
-    #mission_information_data["search_grid_points"]
-    boundary_points = mission_information_data["fly_zones"]["boundary_pts"]
-    point_list = []
-
-    for point_count in range(boundary_points):
-        point_list.append([boundary_points[point_count]["latitude"], boundary_points[point_count]["longitude"]])
-
-    return MultiPoint(point_list).convex_hull
+        sleep(0.5)
