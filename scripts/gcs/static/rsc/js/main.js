@@ -647,6 +647,7 @@ function submitTarget() {
 		// if a standard target
 		targetData = {
 			type: "standard",
+			ignoreDuplicates: "false",
 
 			targetTopLeftX: cropData.targetTopLeftX,
 			targetTopLeftY: cropData.targetTopLeftY,
@@ -666,6 +667,7 @@ function submitTarget() {
 		// if an emergent target
 		targetData = {
 			type: "emergent",
+			ignoreDuplicates: "false",
 
 			targetTopLeftX: cropData.targetTopLeftX,
 			targetTopLeftY: cropData.targetTopLeftY,
@@ -696,7 +698,19 @@ function submitTarget() {
 		dataType: "json",
 
 		success: function(data) {
-			// target submitted
+			// target is potential duplicate; prompt user
+			if(data[0] != null) {
+				duplicatedTargetsInfo = [];
+
+				data.forEach(function(item) {
+					if(item["duplicatesPossible"] == null) // if not a duplicatesPossible notice
+						duplicatedTargetsInfo.push(item) // add duplicate target info
+
+					duplicateTargets(duplicatedTargetsInfo);
+				});
+			}
+
+			// target submitted and was successful
 			var $toastContent = $('<span><b>SUCCESS:</b> Sent target to backend script.</span>').add($('<button class="btn-flat toast-action" onclick="( $(\'.toast\').first()[0] ).M_Toast.remove();">X</button>'));
 
 			Materialize.toast($toastContent);
@@ -727,7 +741,7 @@ duplicatedTargetsInfo = [
 
 		type: "standard",
 
-		imageURL: "static/imgs/291015.jpg",
+		imageURL: "get/crop/291015.jpg",
 		geo: "38.38093, 78.12923",
 		shape: "triangle",
 		shapeColor: "blue",
@@ -740,7 +754,7 @@ duplicatedTargetsInfo = [
 
 		type: "standard",
 
-		imageURL: "static/imgs/291012.jpg",
+		imageURL: "get/crop/291012.jpg",
 		geo: "38.38109, 78.12915",
 		shape: "rectangle",
 		shapeColor: "blue",
@@ -761,7 +775,7 @@ duplicatedTargetsInfo = [
  *							name: "target001",
  *							matches: 3, // characteristics that match
  *
- * 							imageURL: "static/imgs/001.jpg",
+ * 							imageURL: "get/crop/001.jpg",
  *							geo: "38.38101 N, 78.12919 W",
  *							shape: "rectangle",
  *							shapeColor: "red",
@@ -779,15 +793,11 @@ function duplicateTargets(info) {
 	$("#duplicate-target-collection").html("");
 	firstActive = " active";
 
+	// @TODO: add sort by number of matches per target
 	// determine number of matches and sort by them
 	//newDuplicatedTargetsInfo = [];
-
 	//newDuplicatedTargetsInfo.forEach(function(item) {
-
-
-
 	//})
-
 	//dulpicatedTargetsInfo = newDuplicatedTargetsInfo;
 
 	// fill collection
@@ -812,11 +822,18 @@ function duplicateTargets(info) {
 				break;
 		}
 
+		match_grammar = "";
+
+		if(item.matches > 1)
+			match_grammar = "Matches";
+		else
+			match_grammar = "Match"
+
 		$("#duplicate-target-collection").html(
 			$("#duplicate-target-collection").html() + "<a id='dt-i-" + index +
 			"' href='#!' class='collection-item" + firstActive +
 			"' onclick='showDuplicateTarget(" + index + ")'>" + item.name +
-			"<span class='badge'>STANDARD</span> <span class='new badge " + badgeColor + "' data-badge-caption='Matches'>" + item.matches +"</span></a>"
+			"<span class='badge'>" + (item.type).toUpperCase() + "</span> <span class='new badge " + badgeColor + "' data-badge-caption='" + match_grammar + "'>" + item.matches +"</span></a>"
 		);
 
 		// set first item to active
@@ -827,6 +844,33 @@ function duplicateTargets(info) {
 
 	});
 
+	// show cropped selection
+	$("#crop-duplicate-preview").attr("src", "/get/imgs/" + cropData.imageFilename);
+
+	$("#crop-duplicate-preview").attr(
+		"src",
+		$("#crop-duplicate-preview").cropper(
+			"getCroppedCanvas",
+			{
+				"width": 100,
+				"height": 100,
+			}
+		)
+	)
+
+	// list characteristics
+	if( $("a[href='#standard-target']").hasClass("active") ) { // if standard target
+		$("#duplicate-target-pending-shape").html(capitalizeFirstLetter($("#target-shape").val()));
+		$("#duplicate-target-pending-shape-color").html(capitalizeFirstLetter($("#target-color").val()));
+		$("#duplicate-target-pending-text-color").html(capitalizeFirstLetter($("#content-color").val()));
+		$("#duplicate-target-pending-alphanumeric-content").html($("#target-content").val());
+	} else if( $("a[href='#emergent-target']").hasClass("active") ) { // if emergent target
+		$("#duplicate-target-pending-shape").html("<i>N/a</i>");
+		$("#duplicate-target-pending-shape-color").html("<i>N/a</i>");
+		$("#duplicate-target-pending-text-color").html("<i>N/a</i>");
+		$("#duplicate-target-pending-alphanumeric-content").html("<i>N/a</i>");
+	}
+
 	// fix grammar on notice text
 	if(info.length > 1) {
 		$("#dt-g-0").html("some");
@@ -836,6 +880,7 @@ function duplicateTargets(info) {
 		$("#dt-g-1").html("target");
 	}
 
+	// show
 	$("#duplicate-target").modal("open");
 
 };
@@ -866,11 +911,20 @@ function showDuplicateTarget(index) {
 	$("#dt-i-" + index).addClass("active");
 
 	// update table
-	$("#duplicate-target-compare-image").html(duplicatedTargetsInfo[index].imageURL);
-	$("#duplicate-target-compare-shape").html(capitalizeFirstLetter(duplicatedTargetsInfo[index].shape));
-	$("#duplicate-target-compare-shape-color").html(capitalizeFirstLetter(duplicatedTargetsInfo[index].shapeColor));
-	$("#duplicate-target-compare-text-color").html(capitalizeFirstLetter(duplicatedTargetsInfo[index].textColor));
-	$("#duplicate-target-compare-alphanumeric-content").html(duplicatedTargetsInfo[index].alphanumeric);
+	$("#duplicate-target-compare-image").html("<img src='" + duplicatedTargetsInfo[index].imageURL + "'>");
+
+	// handle for different target types
+	if(duplicatedTargetsInfo[index].type == "standard") {
+		$("#duplicate-target-compare-shape").html(capitalizeFirstLetter(duplicatedTargetsInfo[index].shape));
+		$("#duplicate-target-compare-shape-color").html(capitalizeFirstLetter(duplicatedTargetsInfo[index].shapeColor));
+		$("#duplicate-target-compare-text-color").html(capitalizeFirstLetter(duplicatedTargetsInfo[index].textColor));
+		$("#duplicate-target-compare-alphanumeric-content").html(duplicatedTargetsInfo[index].alphanumeric);
+	} else if(duplicatedTargetsInfo[index].type == "emergent") {
+		$("#duplicate-target-compare-shape").html("<i>N/a</i>");
+		$("#duplicate-target-compare-shape-color").html("<i>N/a</i>");
+		$("#duplicate-target-compare-text-color").html("<i>N/a</i>");
+		$("#duplicate-target-compare-alphanumeric-content").html("<i>N/a</i>");
+	}
 
 	// check and highlight the similarities and differences
 	fieldsToCheck = [
@@ -881,6 +935,11 @@ function showDuplicateTarget(index) {
 	];
 
 	fieldsToCheck.forEach(function(item) {
+
+		if(duplicatedTargetsInfo[index].type == "emergent") {
+			$(item.replace("*", "-")).removeClass("green red");
+			return null;
+		}
 
 		if( ($(item.replace("*", "-pending-"))).html() == $(item.replace("*", "-compare-")).html() ) { // if they are the same
 			$(item.replace("*", "-")).removeClass("green");

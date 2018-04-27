@@ -6,8 +6,8 @@
  * @since		2018-02-22
  */
 
-::-webkit-scrollbar { 
-	display: none; 
+::-webkit-scrollbar {
+	display: none;
 }
 
 .progress {
@@ -122,6 +122,15 @@ small {
 	width: 300px;
 }
 
+#crop-duplicate-preview {
+	max-width: 100%;
+}
+
+#duplicate-target-compare-image {
+	max-width: 100%;
+	min-width: 100%;
+}
+
 div.collection, a.active > span.badge {
 	color: white !important;
 }
@@ -143,4 +152,3 @@ div.collection, a.active > span.badge {
 	-ms-user-select: auto;
 	user-select: auto;
 }
-
