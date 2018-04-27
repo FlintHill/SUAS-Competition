@@ -428,6 +428,9 @@ class TestObstacleMap(unittest.TestCase):
 		obstacle_in_path_boolean, avoidance_points = self.obstacle_map1.is_obstacle_in_path()
 		self.assertEqual(obstacle_in_path_boolean, False)
 
+		obstacle_in_path_boolean, avoidance_points = self.obstacle_map1.is_obstacle_in_path()
+		self.assertEqual(obstacle_in_path_boolean, False)
+
 		self.obstacle_map1.reset_waypoints()
 		self.obstacle_map1.reset_obstacles()
 

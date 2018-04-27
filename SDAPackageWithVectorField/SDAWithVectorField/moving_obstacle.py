@@ -1,5 +1,5 @@
-from SDA import Obstacle
-from SDA import Constants
+from SDAWithVectorField import Obstacle
+from SDAWithVectorField import Constants
 
 class MovingObstacle(Obstacle):
     """
@@ -21,13 +21,16 @@ class MovingObstacle(Obstacle):
         :param radius: The radius of the obstacle
         :type radius: Float
         """
-        super(MovingObstacle, self).__init__(point, Constants.MOVING_OBSTACLE_SAFETY_RADIUS)
+        super(MovingObstacle, self).__init__(point)
 
         self.radius = radius
+        self.type = "MovingObstacle"
 
     def get_radius(self):
         """
         Return the radius of the obstacle plus that of the safety radius
         """
         return self.radius + self.get_safety_radius()
-    
+
+    def get_type(self):
+        return self.type
