@@ -845,6 +845,43 @@ function duplicateTargets(info) {
 	});
 
 	// show cropped selection
+	$("#duplicate-target-pending-image").html($("#crop-previewer").clone()).attr("transform", "scale(.5)");
+	/*$("#cropper-holder-image").attr("src", "get/imgs/" + cropData.imageFilename);
+
+	var pending_potential_duplicate = document.getElementById("cropper-holder-image");
+
+	var cropper = new Cropper(pending_potential_duplicate, {
+		autoCrop: true,
+		aspectRatio: 1 / 1,
+		viewMode: 1
+	});
+
+	$(document).ready(function() {
+		setTimeout(function() {
+			cropper.moveTo(1005, -50);
+			cropper.zoom(2);
+
+			$("#crop-duplicate-preview").html(
+				cropper.getCroppedCanvas({
+				   	width: 160,
+				   	height: 90,
+				    minWidth: 256,
+				    minHeight: 256,
+				  	maxWidth: 4096,
+				  	maxHeight: 4096,
+				   	fillColor: '#fff',
+				   	imageSmoothingEnabled: false,
+				   	imageSmoothingQuality: 'high',
+				})
+			);
+
+			$("#cropper-holder").css({
+				"display": "none"
+		    });
+		}, 100);
+	});*/
+
+	/*
 	$("#crop-duplicate-preview").attr("src", "/get/imgs/" + cropData.imageFilename);
 
 	$("#crop-duplicate-preview").attr(
@@ -856,7 +893,7 @@ function duplicateTargets(info) {
 				"height": 100,
 			}
 		)
-	)
+	)*/
 
 	// list characteristics
 	if( $("a[href='#standard-target']").hasClass("active") ) { // if standard target
