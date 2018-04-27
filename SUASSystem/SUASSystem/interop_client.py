@@ -20,8 +20,6 @@ class InteropClientConverter(object):
         :param heading:     The UAV's heading.
         :type heading:      Float
         """
-        # TODO: remove after testing
-        # telem_upload_data = Telemetry(location.get_lat(), location.get_lon(), location.get_alt() + GCSSettings.MSL_ALT, heading)
         missing_data = True
 
         while missing_data:
@@ -68,9 +66,6 @@ class InteropClientConverter(object):
         :return:        Active Mission.
         :return type:   Mission / None
         """
-        # TODO: remove after testing
-        #missions = self.client.get_missions()
-
         missing_data = True
 
         while missing_data:
@@ -123,9 +118,6 @@ class InteropClientConverter(object):
             alphanumeric=target["alphanumeric"],
             alphanumeric_color=target["alphanumeric_color"],
             description='Flint Hill School -- ODLC Standard Target Submission')
-
-        # TODO: remove after testing
-        #returned_odlc = self.client.post_odlc(odlc_target)
 
         missing_data = True
 

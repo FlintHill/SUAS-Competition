@@ -19,7 +19,7 @@ class Client(object):
 		self.user_force_waypoint_update = self.manager.Value('i', False)
 
 		self.interop_client = self.manager.list()
-		#self.interop_client.append(SUASSystem.InteropClientConverter()) # self.interop_status
+		self.interop_client.append(SUASSystem.InteropClientConverter())
 		self.interop_data = self.manager.list()
 		self.interop_data.append(self.get_interop_data())
 
