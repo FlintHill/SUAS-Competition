@@ -92,7 +92,7 @@
 			</div>
 			<div class="modal-footer">
 				<a class="waves-effect waves-light btn left red" onclick="$('#verification').modal('close');">Cancel</a>
-				<a href="#!" onclick="submitTarget();" class="modal-action modal-close waves-effect waves-green btn-flat">Submit</a>
+				<a href="#!" onclick="submitTarget('false');" class="modal-action modal-close waves-effect waves-green btn-flat">Submit</a>
 			</div>
 		</div>
 
@@ -176,7 +176,7 @@
 			</div>
 			<div class="modal-footer">
 				<a href="#!" class="modal-action modal-close waves-effect waves-red btn-flat left">Cancel</a>
-				<a href="#!" class="modal-action modal-close waves-effect waves-green btn" onclick="">Submit Anyways</a>
+				<a href="#!" class="modal-action modal-close waves-effect waves-green btn" onclick="submitTarget('true')">Submit Anyways</a>
 			</div>
 		</div>
 		<!--/ Duplicate Target Modal -->
@@ -729,7 +729,6 @@
 								<a class="waves-effect waves-light btn green modal-trigger disabled imgareaselect-fix tooltipped" name="crop-and-submit-button" data-position="right" data-delay="800" data-tooltip="Shift + Enter" href="#verification" onclick="loadCropPreview()">
 									<i class="fa fa-sign-in left"></i> crop and submit
 								</a>
-								<a class="waves-effect waves-light btn modal-trigger" href="#duplicate-target" onclick="duplicateTargets(duplicatedTargetsInfo)">Modal</a>
 							</div>
 							<div class="col s4">
 								<div class="right">

@@ -637,9 +637,13 @@ function loadCropPreview() {
  * Automatically determines the target type based on which target type is
  * currently selected.
  *
+ * @param	ignoreDuplicatesCommand		instructs the backend to ignore the
+ *										possibility that the selected crop is
+ *										a duplicate.
+ *
  * @returns nothing.
  */
-function submitTarget() {
+function submitTarget(ignoreDuplicatesCommand) {
 
 	var targetData;
 
@@ -647,7 +651,7 @@ function submitTarget() {
 		// if a standard target
 		targetData = {
 			type: "standard",
-			ignoreDuplicates: "false",
+			ignoreDuplicates: ignoreDuplicatesCommand,
 
 			targetTopLeftX: cropData.targetTopLeftX,
 			targetTopLeftY: cropData.targetTopLeftY,
@@ -667,7 +671,7 @@ function submitTarget() {
 		// if an emergent target
 		targetData = {
 			type: "emergent",
-			ignoreDuplicates: "false",
+			ignoreDuplicates: ignoreDuplicatesCommand,
 
 			targetTopLeftX: cropData.targetTopLeftX,
 			targetTopLeftY: cropData.targetTopLeftY,
@@ -708,17 +712,17 @@ function submitTarget() {
 
 					duplicateTargets(duplicatedTargetsInfo);
 				});
+			} else {
+				// target submitted and was successful
+				var $toastContent = $('<span><b>SUCCESS:</b> Sent target to backend script.</span>').add($('<button class="btn-flat toast-action" onclick="( $(\'.toast\').first()[0] ).M_Toast.remove();">X</button>'));
+
+				Materialize.toast($toastContent);
+
+				console.log("submitTarget(): ajax data:")
+				console.log(data);
+
+				updateCounters();
 			}
-
-			// target submitted and was successful
-			var $toastContent = $('<span><b>SUCCESS:</b> Sent target to backend script.</span>').add($('<button class="btn-flat toast-action" onclick="( $(\'.toast\').first()[0] ).M_Toast.remove();">X</button>'));
-
-			Materialize.toast($toastContent);
-
-			console.log("submitTarget(): ajax data:")
-			console.log(data);
-
-			updateCounters();
 		},
 
 		error: function(data) {
@@ -846,54 +850,6 @@ function duplicateTargets(info) {
 
 	// show cropped selection
 	$("#duplicate-target-pending-image").html($("#crop-previewer").clone()).attr("transform", "scale(.5)");
-	/*$("#cropper-holder-image").attr("src", "get/imgs/" + cropData.imageFilename);
-
-	var pending_potential_duplicate = document.getElementById("cropper-holder-image");
-
-	var cropper = new Cropper(pending_potential_duplicate, {
-		autoCrop: true,
-		aspectRatio: 1 / 1,
-		viewMode: 1
-	});
-
-	$(document).ready(function() {
-		setTimeout(function() {
-			cropper.moveTo(1005, -50);
-			cropper.zoom(2);
-
-			$("#crop-duplicate-preview").html(
-				cropper.getCroppedCanvas({
-				   	width: 160,
-				   	height: 90,
-				    minWidth: 256,
-				    minHeight: 256,
-				  	maxWidth: 4096,
-				  	maxHeight: 4096,
-				   	fillColor: '#fff',
-				   	imageSmoothingEnabled: false,
-				   	imageSmoothingQuality: 'high',
-				})
-			);
-
-			$("#cropper-holder").css({
-				"display": "none"
-		    });
-		}, 100);
-	});*/
-
-	/*
-	$("#crop-duplicate-preview").attr("src", "/get/imgs/" + cropData.imageFilename);
-
-	$("#crop-duplicate-preview").attr(
-		"src",
-		$("#crop-duplicate-preview").cropper(
-			"getCroppedCanvas",
-			{
-				"width": 100,
-				"height": 100,
-			}
-		)
-	)*/
 
 	// list characteristics
 	if( $("a[href='#standard-target']").hasClass("active") ) { // if standard target

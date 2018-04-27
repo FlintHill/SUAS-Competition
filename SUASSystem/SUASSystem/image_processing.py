@@ -37,6 +37,7 @@ def run_img_proc_process(logger_queue, location_log, targets_to_submit, interop_
             crop_target(original_image_path, cropped_target_path, target_characteristics["target_top_left"], target_characteristics["target_bottom_right"])
             save_json_data(cropped_target_data_path, target_characteristics)
 
+            # comment out these lines if testing w/o interop
             if target_characteristics["type"] == "standard":
                 interop_client_array[0].post_manual_standard_target(target_characteristics, cropped_target_path)
             elif target_characteristics["type"] == "emergent":
