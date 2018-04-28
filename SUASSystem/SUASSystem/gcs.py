@@ -46,12 +46,14 @@ def gcs_process(sda_status, img_proc_status, interop_client_array, targets_to_su
 
     while True:
         current_location = get_location(vehicle)
+
         current_location_json = {
             "latitude": current_location.get_lat(),
             "longitude": current_location.get_lon(),
             "altitude": current_location.get_alt(),
             "epoch_time": time.time()
         }
+
         location_log.append(current_location_json)
 
         vehicle_state_data[0] = SUASSystem.get_vehicle_state(vehicle, GCSSettings.MSL_ALT)
@@ -70,7 +72,6 @@ def gcs_process(sda_status, img_proc_status, interop_client_array, targets_to_su
         #        vehicle.simple_goto(sda_avoid_coords[0].as_global_relative_frame())
         #    if UAV_status.value == 'AUTO' and vehicle.mode.name != "AUTO":
         #        vehicle.mode = dronekit.VehicleMode("AUTO")
-
 
         sleep(0.25)
 

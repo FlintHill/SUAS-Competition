@@ -506,8 +506,6 @@ class WebsocketHandler {
 					data["off_axis_target_pos"], "Off Axis Target Position", Icon_markerRed
 				);
 
-			/*obstacles_circles: [],*/
-
 			// obstacles
 				// stationary obstacles
 				leafletData.obstacles_circles =

@@ -4,9 +4,11 @@ class GCSSettings(object):
 
     UAV_CONNECTION_STRING = "tcp:127.0.0.1:14551"
 
-    INTEROP_URL = "http://10.10.130.103:8000"
-    INTEROP_USERNAME = "Flint"   #"img_proc_test"
-    INTEROP_PASSWORD = "271824758" #robotics
+    INTEROP_URL = "http://10.10.130.103:8000" # 10.10.130.2
+    INTEROP_USERNAME = "Flint"   # "img_proc_test"
+    INTEROP_PASSWORD = "271824758" # robotics
+
+    INTEROP_DISCONNECT_RETRY_RATE = 0.5
 
     MSL_ALT = 22#446.42
     SDA_MIN_ALT = 50

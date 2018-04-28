@@ -2,9 +2,70 @@
  * main script file for gcs:web ui
  *
  * @author		James Villemarette
- * @version 	1.2
- * @since		2018-02-22
+ * @version 	1.3
+ * @since		2018-04-26
  */
+
+// helper functions
+
+/**
+ * capitalizeFirstLetter(String str)
+ *
+ * Capitalizes the first letter of a string and returns of it.
+ *
+ * @param	str		String to be fixed.
+ *
+ * @returns	properly upper-cased string.
+ */
+function capitalizeFirstLetter(str) {
+	return str.toLowerCase().replace(/\b[a-z]/g, function(letter) {
+		return letter.toUpperCase();
+	});
+}
+
+/**
+ * calcCrow(double lat1, double lon1, double lat2, double lon2)
+ *
+ * Calculate the distance between two geographic coordinates; as the
+ * crow flies.
+ *
+ * Source: https://stackoverflow.com/a/18883819
+ *
+ * @param	lat1	first point's latitude.
+ * @param	lon1	first point's longitude.
+ * @param	lat2	second point's latitude.
+ * @param	lon2	second point's longitude.
+ *
+ * @returns	distance in kilometers.
+ */
+function calcCrow(lat1, lon1, lat2, lon2) {
+    var R = 6371; // km
+
+    var dLat = toRad(lat2 - lat1);
+	var dLon = toRad(lon2 - lon1);
+    var lat1 = toRad(lat1);
+    var lat2 = toRad(lat2);
+
+    var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+		Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2);
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    var d = R * c;
+
+    return d;
+}
+
+/**
+ * toRad(integer/double value)
+ *
+ * Converts numeric degrees to radians.
+ *
+ * @param	degrees.
+ * @returns	radians.
+ */
+function toRad(Value) {
+    return Value * Math.PI / 180;
+}
+
 
 // page init
 
@@ -156,7 +217,7 @@ $(document).ready(function() {
  * and there by as tall (within the aspect ratio) as it can be
  * within the viewer box.
  *
- * returns nothing.
+ * @returns nothing.
  */
 function switchImageHeightLock() {
 
@@ -185,8 +246,10 @@ var currentImage = 0, totalImages = 0, zoomLevel = 1;
 /**
  * updateCounters()
  *
- * Reflect the counters directly above this function onto the web 
+ * Reflect the counters directly above this function onto the web
  * page.
+ *
+ * @returns	nothing.
  */
 function updateCounters() {
 
@@ -199,10 +262,13 @@ function updateCounters() {
 /**
  * indexExistsIn(array arr, int i)
  *
- * arr is an array [] containing at least one element.
- * i is index.
+ * Determines if an index exists in an array, because this is somehow
+ * not a built-in function.
  *
- * returns true if an index, i, exists within array, arr.
+ * @param	arr		is an array [] containing at least one element.
+ * @param	i		is index.
+ *
+ * @returns true if an index, i, exists within array, arr.
  */
 function indexExistsIn(arr, i) {
 
@@ -218,7 +284,9 @@ function indexExistsIn(arr, i) {
  *
  * throws error if index below or beyond array elements.
  *
- * returns nothing.
+ * @param	index	the index of the image to display.
+ *
+ * @returns nothing.
  */
 function showImage(index) {
 
@@ -237,21 +305,17 @@ function showImage(index) {
 /**
  * imageSelect(string dir)
  *
+ * dir in this function stands for direction.
+ *
  * Moves "left" or "right" (dir:direction) by one image.
  *		  ^			^
  *
- * returns nothing.
+ * @param	dir		the direction to select images, either "left" or
+ *					"right".
+ *
+ * @returns nothing.
  */
 function imageSelect(dir) {
-
-	// prevent stretching
-	/*if(zoomLevel == 10) {
-		zoom('out');
-		zoom('in');
-	} else {
-		zoom('in');
-		zoom('out');
-	}*/
 
 	switchImageHeightLock();
 
@@ -278,7 +342,7 @@ function imageSelect(dir) {
  * Updates the directional buttons for switching between images
  * appropriately.
  *
- * returns nothing.
+ * @returns nothing.
  */
 function updateDirectionalButtons() {
 
@@ -303,11 +367,13 @@ function updateDirectionalButtons() {
  *
  * dir in this function stands for direction.
  *
- * Maintains the correct height and width pixel measurements for the 
+ * Maintains the correct height and width pixel measurements for the
  * #image-previewer-container div before and after unlocking or locking
  * the image size ratio.
  *
- * returns nothing.
+ * @param	dir		the depth to zoom in the image to.
+ *
+ * @returns nothing.
  */
 function updateImagePreviewDimensions(dir) {
 
@@ -384,7 +450,7 @@ function updateImagePreviewDimensions(dir) {
  *
  * Enables/disables the zoom in buttons, depending upon the zoomLevel.
  *
- * returns nothing.
+ * @returns nothing.
  */
 function updateZoomButtons() {
 
@@ -422,7 +488,7 @@ var zoomLevel = 1, zoomFactor = 1.5, zoomLimit = 10;
  *
  * zoom("in") zooms in on the image-preview by 1x.
  * zoom("out") zooms out of the image-preview by 1x.
- * 
+ *
  * No preconditions.
  *
  * zoomLevel is > 0 and <= zoomLimit
@@ -435,7 +501,10 @@ var zoomLevel = 1, zoomFactor = 1.5, zoomLimit = 10;
  *  deltaZ * Width of the actual image = new Width
  *  deltaZ * Height of the actual image = new Height
  *
- * returns nothing.
+ * @param	dir		the depth of the zoom, with 1 being regular fit, and
+ *					10 being a 10x zoom.
+ *
+ * @returns nothing.
  */
 function zoom(dir) {
 
@@ -458,7 +527,7 @@ function zoom(dir) {
 			// zoom in
 			zoomLevel++;
 
-			updateImagePreviewDimensions(dir);			
+			updateImagePreviewDimensions(dir);
 		}
 	} else if(dir == "out") {
 		if(zoomLevel > 0) {
@@ -494,13 +563,15 @@ var cropData = {
  *
  * Adds CSS stylings to a #image-preview div box that displays a rough preview
  * of the crop that was selected in MTS.
+ *
+ * @returns nothing.
  */
 function loadCropPreview() {
 
 	// display crop preview
 	$(document).ready(function() {
 
-		var imageW = $('#image-previewer')[0].naturalWidth; 
+		var imageW = $('#image-previewer')[0].naturalWidth;
 		var imageH = $('#image-previewer')[0].naturalHeight;
 
 		var cropperW = $("#image-previewer").width();
@@ -528,8 +599,8 @@ function loadCropPreview() {
 			"background-attachment": "scroll",
 
 			"background-size": transformedW + "px " + transformedH + "px",
-			"background-position": 
-				"-" + (transformed_topLeftX + 50) + "px " + 
+			"background-position":
+				"-" + (transformed_topLeftX + 50) + "px " +
 				"-" + (transformed_topLeftY + 34) + "px"
 		});
 
@@ -563,12 +634,16 @@ function loadCropPreview() {
  * Posts an AJAX request to back-end flask script the details of the crop, not
  * the actual crop itself. This also pushes the crop data (shape, color, etc.)
  *
- * Automatically determines the target type based on which target type is 
+ * Automatically determines the target type based on which target type is
  * currently selected.
  *
- * returns nothing.
+ * @param	ignoreDuplicatesCommand		instructs the backend to ignore the
+ *										possibility that the selected crop is
+ *										a duplicate.
+ *
+ * @returns nothing.
  */
-function submitTarget() {
+function submitTarget(ignoreDuplicatesCommand) {
 
 	var targetData;
 
@@ -576,6 +651,7 @@ function submitTarget() {
 		// if a standard target
 		targetData = {
 			type: "standard",
+			ignoreDuplicates: ignoreDuplicatesCommand,
 
 			targetTopLeftX: cropData.targetTopLeftX,
 			targetTopLeftY: cropData.targetTopLeftY,
@@ -595,6 +671,7 @@ function submitTarget() {
 		// if an emergent target
 		targetData = {
 			type: "emergent",
+			ignoreDuplicates: ignoreDuplicatesCommand,
 
 			targetTopLeftX: cropData.targetTopLeftX,
 			targetTopLeftY: cropData.targetTopLeftY,
@@ -625,15 +702,27 @@ function submitTarget() {
 		dataType: "json",
 
 		success: function(data) {
-			// target submitted
-			var $toastContent = $('<span><b>SUCCESS:</b> Sent target to backend script.</span>').add($('<button class="btn-flat toast-action" onclick="( $(\'.toast\').first()[0] ).M_Toast.remove();">X</button>'));
+			// target is potential duplicate; prompt user
+			if(data[0] != null) {
+				duplicatedTargetsInfo = [];
 
-			Materialize.toast($toastContent);
+				data.forEach(function(item) {
+					if(item["duplicatesPossible"] == null) // if not a duplicatesPossible notice
+						duplicatedTargetsInfo.push(item) // add duplicate target info
 
-			console.log("submitTarget(): ajax data:")
-			console.log(data);
+					duplicateTargets(duplicatedTargetsInfo);
+				});
+			} else {
+				// target submitted and was successful
+				var $toastContent = $('<span><b>SUCCESS:</b> Sent target to backend script.</span>').add($('<button class="btn-flat toast-action" onclick="( $(\'.toast\').first()[0] ).M_Toast.remove();">X</button>'));
 
-			updateCounters();
+				Materialize.toast($toastContent);
+
+				console.log("submitTarget(): ajax data:")
+				console.log(data);
+
+				updateCounters();
+			}
 		},
 
 		error: function(data) {
@@ -649,6 +738,216 @@ function submitTarget() {
 
 };
 
+duplicatedTargetsInfo = [
+	{
+		name: "target002",
+		matches: 0,
+
+		type: "standard",
+
+		imageURL: "get/crop/291015.jpg",
+		geo: "38.38093, 78.12923",
+		shape: "triangle",
+		shapeColor: "blue",
+		textColor: "red",
+		alphanumeric: "Z"
+	},
+	{
+		name: "target003",
+		matches: 2,
+
+		type: "standard",
+
+		imageURL: "get/crop/291012.jpg",
+		geo: "38.38109, 78.12915",
+		shape: "rectangle",
+		shapeColor: "blue",
+		textColor: "blue",
+		alphanumeric: "G"
+	}
+];
+
+/**
+ * duplicateTargets(Array info)
+ *
+ * Open and fill the duplicate targets modal with submitted target info.
+ * passed from info.
+ *
+ * @param	info	the array of duplicateTargetsInfo in the format of:
+ *					[
+ *						{
+ *							name: "target001",
+ *							matches: 3, // characteristics that match
+ *
+ * 							imageURL: "get/crop/001.jpg",
+ *							geo: "38.38101 N, 78.12919 W",
+ *							shape: "rectangle",
+ *							shapeColor: "red",
+ *							textColor: "blue",
+ *							alphanumeric: "G"
+ *						},
+ *						...
+ *					]
+ *
+ * @returns nothing.
+ */
+function duplicateTargets(info) {
+
+	// reset
+	$("#duplicate-target-collection").html("");
+	firstActive = " active";
+
+	// @TODO: add sort by number of matches per target
+	// determine number of matches and sort by them
+	//newDuplicatedTargetsInfo = [];
+	//newDuplicatedTargetsInfo.forEach(function(item) {
+	//})
+	//dulpicatedTargetsInfo = newDuplicatedTargetsInfo;
+
+	// fill collection
+	duplicatedTargetsInfo.forEach(function(item, index) {
+		var badgeColor = "";
+
+		switch(item.matches) {
+			case 4:
+				badgeColor = "red";
+				break;
+			case 3:
+				badgeColor = "orange";
+				break;
+			case 2:
+				badgeColor = "yellow darken-2";
+				break;
+			case 1:
+				badgeColor = "green";
+				break;
+			default:
+				badgeColor = "blue";
+				break;
+		}
+
+		match_grammar = "";
+
+		if(item.matches > 1)
+			match_grammar = "Matches";
+		else
+			match_grammar = "Match"
+
+		$("#duplicate-target-collection").html(
+			$("#duplicate-target-collection").html() + "<a id='dt-i-" + index +
+			"' href='#!' class='collection-item" + firstActive +
+			"' onclick='showDuplicateTarget(" + index + ")'>" + item.name +
+			"<span class='badge'>" + (item.type).toUpperCase() + "</span> <span class='new badge " + badgeColor + "' data-badge-caption='" + match_grammar + "'>" + item.matches +"</span></a>"
+		);
+
+		// set first item to active
+		if(firstActive.length > 0) {
+			showDuplicateTarget(0);
+			firstActive = "";
+		}
+
+	});
+
+	// show cropped selection
+	$("#duplicate-target-pending-image").html($("#crop-previewer").clone()).attr("transform", "scale(.5)");
+
+	// list characteristics
+	if( $("a[href='#standard-target']").hasClass("active") ) { // if standard target
+		$("#duplicate-target-pending-shape").html(capitalizeFirstLetter($("#target-shape").val()));
+		$("#duplicate-target-pending-shape-color").html(capitalizeFirstLetter($("#target-color").val()));
+		$("#duplicate-target-pending-text-color").html(capitalizeFirstLetter($("#content-color").val()));
+		$("#duplicate-target-pending-alphanumeric-content").html($("#target-content").val());
+	} else if( $("a[href='#emergent-target']").hasClass("active") ) { // if emergent target
+		$("#duplicate-target-pending-shape").html("<i>N/a</i>");
+		$("#duplicate-target-pending-shape-color").html("<i>N/a</i>");
+		$("#duplicate-target-pending-text-color").html("<i>N/a</i>");
+		$("#duplicate-target-pending-alphanumeric-content").html("<i>N/a</i>");
+	}
+
+	// fix grammar on notice text
+	if(info.length > 1) {
+		$("#dt-g-0").html("some");
+		$("#dt-g-1").html("targets");
+	} else {
+		$("#dt-g-0").html("a");
+		$("#dt-g-1").html("target");
+	}
+
+	// show
+	$("#duplicate-target").modal("open");
+
+};
+
+/**
+ * showDuplicateTarget(int index)
+ *
+ * Displays a selected duplicate target on the potential match
+ * visualizer inside of the Duplicate Targets modal.
+ *
+ * @param	index	the index of the duplcate target in
+ *					duplicateTargetsInfo.
+ *
+ * @throws	Error	index is not a valid duplicate target. out of
+ *						bounds.
+ *
+ * @returns nothing.
+ */
+function showDuplicateTarget(index) {
+
+	// update collection
+	duplicatedTargetsInfo.forEach(function(item, i) {
+
+		$("#dt-i-" + i).removeClass("active");
+
+	});
+
+	$("#dt-i-" + index).addClass("active");
+
+	// update table
+	$("#duplicate-target-compare-image").html("<img src='" + duplicatedTargetsInfo[index].imageURL + "'>");
+
+	// handle for different target types
+	if(duplicatedTargetsInfo[index].type == "standard") {
+		$("#duplicate-target-compare-shape").html(capitalizeFirstLetter(duplicatedTargetsInfo[index].shape));
+		$("#duplicate-target-compare-shape-color").html(capitalizeFirstLetter(duplicatedTargetsInfo[index].shapeColor));
+		$("#duplicate-target-compare-text-color").html(capitalizeFirstLetter(duplicatedTargetsInfo[index].textColor));
+		$("#duplicate-target-compare-alphanumeric-content").html(duplicatedTargetsInfo[index].alphanumeric);
+	} else if(duplicatedTargetsInfo[index].type == "emergent") {
+		$("#duplicate-target-compare-shape").html("<i>N/a</i>");
+		$("#duplicate-target-compare-shape-color").html("<i>N/a</i>");
+		$("#duplicate-target-compare-text-color").html("<i>N/a</i>");
+		$("#duplicate-target-compare-alphanumeric-content").html("<i>N/a</i>");
+	}
+
+	// check and highlight the similarities and differences
+	fieldsToCheck = [
+		"#duplicate-target*shape",
+		"#duplicate-target*shape-color",
+		"#duplicate-target*text-color",
+		"#duplicate-target*alphanumeric-content"
+	];
+
+	fieldsToCheck.forEach(function(item) {
+
+		if(duplicatedTargetsInfo[index].type == "emergent") {
+			$(item.replace("*", "-")).removeClass("green red");
+			return null;
+		}
+
+		if( ($(item.replace("*", "-pending-"))).html() == $(item.replace("*", "-compare-")).html() ) { // if they are the same
+			$(item.replace("*", "-")).removeClass("green");
+			$(item.replace("*", "-")).addClass("red");
+			$(item.replace("*", "-identifier-")).html("Same");
+		} else { // if they are different
+			$(item.replace("*", "-")).removeClass("red");
+			$(item.replace("*", "-")).addClass("green");
+			$(item.replace("*", "-identifier-")).html("Different");
+		}
+
+	});
+
+};
+
 // control panel code
 
 var refresh = null;
@@ -658,7 +957,7 @@ var refresh = null;
  *
  * Enable or disable the automatic control panel refresh.
  *
- * returns nothing.
+ * @returns nothing.
  */
 function switchControlPanelRefresh() {
 
@@ -683,10 +982,14 @@ function switchControlPanelRefresh() {
  *
  * Front-end update function that's used by statusPush() and statusGet().
  *
- * Updates the Control Panel slide with the data that was received by the back-
- * end script.
+ * Updates the Control Panel slide with the data that was received by
+ * the back-end script.
  *
- * returns nothing.
+ * # TODO: expand
+ * @param	programName		"interop", "img"
+ * @param	data			...
+ *
+ * @returns nothing.
  */
 function statusDisplay(programName, data) {
 
@@ -737,7 +1040,7 @@ function statusDisplay(programName, data) {
  *	- "image-processing"
  * by posting an AJAX request to the back-end script.
  *
- * returns nothing.
+ * @returns nothing.
  */
 function statusPush(process, cmd) {
 
@@ -748,7 +1051,7 @@ function statusPush(process, cmd) {
 		throw "statusChange(process, cmd ): Unknown String cmd '" + process + "'";
 
 	var program = "", friendlyProgramName = "";
-	
+
 	switch(process) {
 		case "sda":
 			program = "sda";
@@ -810,10 +1113,12 @@ function statusPush(process, cmd) {
 /**
  * statusGet()
  *
- * Retrieves the status informaition of the different subprocesses for the 
+ * Retrieves the status informaition of the different subprocesses for the
  * control panel.
  *
- * returns nothing.
+ * @param	programName		either "interop", "img_proc", or "sda".
+ *
+ * @returns nothing.
  */
 function statusGet(programName) {
 
@@ -869,9 +1174,9 @@ var imgs = [], ias = null, selectionPoints = [];
  *		n => ...
  * 	]
  *
- * throws nothing.
+ * @throws nothing.
  *
- * returns nothing.
+ * @returns nothing.
  */
 function loadImages() {
 
@@ -879,7 +1184,7 @@ function loadImages() {
 
 	$.ajax({
 		url: "get/imgs",
-		
+
 		success:function(data) {
 			console.log("loadImages(): Images Loaded:");
 			console.log(data);
@@ -900,7 +1205,7 @@ function loadImages() {
 
 				$("#current-image").html(0);
 				Materialize.toast("LOAD IMAGES SUCESS: No images available.", 3700);
-				
+
 				return;
 			} else {
 				enableMTSButtons();
@@ -915,8 +1220,8 @@ function loadImages() {
 				showImage(0);
 
 			// initialize image area selector
-			ias = $('#image-previewer').imgAreaSelect({ 
-				aspectRatio: '1:1', 
+			ias = $('#image-previewer').imgAreaSelect({
+				aspectRatio: '1:1',
 				handles: true,
 				keys: false,
 				fadeSpeed: 0.4,
@@ -995,7 +1300,7 @@ function enableMTSButtons() {
  * Opens a dialog to confirm a redownload/resetting of the waypoints sent to the
  * drone.
  *
- * returns nothing
+ * @returns nothing
  */
 function resetWaypoints() { $("#reset-waypoints").modal("open") }
 
@@ -1004,7 +1309,7 @@ function resetWaypoints() { $("#reset-waypoints").modal("open") }
  *
  * Redownloads/resets the waypoints sent to the drone.
  *
- * returns nothing.
+ * @returns nothing.
  */
 function resetWaypointsConfirm() {
 
@@ -1046,7 +1351,9 @@ function resetWaypointsConfirm() {
  * Sets the direction that the compass is point in the Image Previewer and
  * Cropper slide.
  *
- * returns nothing.
+ * @param	degrees		Degrees as an integer or double.
+ *
+ * @returns nothing.
  */
 function setCompassDirection(degrees) {
 
@@ -1054,4 +1361,3 @@ function setCompassDirection(degrees) {
 	$("#compass-number").html(degrees);
 
 }
-
