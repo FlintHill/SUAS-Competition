@@ -17,9 +17,11 @@ def autonomous_image_processing():
         try:
             map_list_response = requests.get("http://localhost:5000/get/imgs")
             target_map_list = map_list_response.json()
+            needs_refresh = False
         except:
             continue
 
+        print(target_map_list)
         interop_response = requests.get("http://localhost:5000/get/interop")
         interop_json = interop_response.json()
         fly_zones = construct_fly_zone_polygon_from_json(interop_json)
@@ -28,10 +30,17 @@ def autonomous_image_processing():
         location_log = location_log_response.json()["location_log"]
 
         for map_index in range(len(target_map_list)):
-            if not target_map_list[str(map_index)] in processed_target_maps:
+            if target_map_list[str(map_index)] in processed_target_maps:
+                if map_index + 1 == len(target_map_list):
+                    needs_refresh = True
+                continue
+            else:
                 current_target_map_name = target_map_list[str(map_index)]
                 processed_target_maps.append(current_target_map_name)
                 break
+
+        if len(target_map_list) == 0 or needs_refresh:
+            continue
 
         current_target_map_path = os.path.join(TARGET_MAP_PATH, current_target_map_name)
 

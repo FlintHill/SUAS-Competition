@@ -18,7 +18,7 @@ def run_img_proc_process(logger_queue, location_log, targets_to_submit, interop_
             closest_time_index = 0
             least_time_difference = location_log[0]["epoch_time"]
             for index in range(len(location_log)):
-                difference_in_times = target_time - location_log[closest_time_index]["epoch_time"]
+                difference_in_times = target_time - location_log[index]["epoch_time"]
                 if abs(difference_in_times) <= least_time_difference:
                     closest_time_index = index
                     least_time_difference = difference_in_times
