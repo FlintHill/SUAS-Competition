@@ -8,7 +8,7 @@ from time import sleep
 import random
 
 def autonomous_image_processing():
-    TARGET_MAP_PATH = "static/imgs/"
+    TARGET_MAP_PATH = "static/auto_imgs/"
     AUTONOMOUS_IMAGE_PROCESSING_SAVE_PATH = "static/autonomous_crops"
 
     processed_target_maps = []

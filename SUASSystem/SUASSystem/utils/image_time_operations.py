@@ -12,6 +12,6 @@ def get_image_timestamp_from_metadata(path_to_image):
     tags = exifread.process_file(image, details=False)
     image_raw_time = tags["Image DateTime"]
     image_date_time = int(datetime.strptime(str(image_raw_time), "%Y:%m:%d %H:%M:%S").strftime("%s"))
-    image_epoch_time = image_date_time - time.time()
+    image_epoch_time = image_date_time
 
     return image_epoch_time

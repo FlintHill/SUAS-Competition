@@ -25,6 +25,10 @@ def load_sd_card(location_log, interop_client_array):
         shutil.rmtree("static/autonomous_crops")
     os.makedirs("static/autonomous_crops")
 
+    if os.path.exists("static/auto_imgs"):
+        shutil.rmtree("static/auto_imgs")
+    os.makedirs("static/auto_imgs")
+
     print("Cleared Image Processing folders")
 
     while True:
@@ -53,7 +57,6 @@ def load_sd_card(location_log, interop_client_array):
                     least_time_difference = location_log[0]["epoch_time"]
                     for index in range(len(location_log)):
                         difference_in_times = target_time - location_log[index]["epoch_time"]
-                        print(difference_in_times)
                         if abs(difference_in_times) <= least_time_difference:
                             closest_time_index = index
                             least_time_difference = difference_in_times
@@ -74,4 +77,7 @@ def load_sd_card(location_log, interop_client_array):
                         print("is eleminated for being too low or too high")
                         continue
 
+
+                    shutil.copy2(pic_path, "static/auto_imgs")
                     shutil.copy2(pic_path, "static/imgs")
+                    print("successful copy")
