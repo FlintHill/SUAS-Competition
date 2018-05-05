@@ -21,9 +21,9 @@ def load_sd_card(location_log, interop_client_array):
         shutil.rmtree("static/crops")
     os.makedirs("static/crops")
 
-    if os.path.exists("static/autonomous_crops"):
-        shutil.rmtree("static/autonomous_crops")
-    os.makedirs("static/autonomous_crops")
+    if os.path.exists("static/auto_crops"):
+        shutil.rmtree("static/auto_crops")
+    os.makedirs("static/auto_crops")
 
     if os.path.exists("static/auto_imgs"):
         shutil.rmtree("static/auto_imgs")
@@ -76,7 +76,6 @@ def load_sd_card(location_log, interop_client_array):
                         print(drone_gps_location.get_alt())
                         print("is eleminated for being too low or too high")
                         continue
-
 
                     shutil.copy2(pic_path, "static/auto_imgs")
                     shutil.copy2(pic_path, "static/imgs")

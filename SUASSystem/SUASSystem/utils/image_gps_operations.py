@@ -43,7 +43,12 @@ def construct_fly_zone_polygon_from_json(interop_json):
     boundary_points = interop_json["search_grid_points"]
     point_list = []
     num_points = len(boundary_points)
-    order = 1
+
+    least_order = boundary_points[0]["order"]
+    for i in range(len(boundary_points)):
+        if boundary_points[i]["order"] < least_order:
+            least_order = boundary_points[i]["order"]
+    order = least_order
     count = 0
     while num_points > 0:
         if(count == len(boundary_points)):

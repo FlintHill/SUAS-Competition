@@ -317,7 +317,7 @@ function showImage(index) {
  */
 function imageSelect(dir) {
 
-	switchImageHeightLock();
+	//switchImageHeightLock();
 
 	// normal select
 	var change = 0;
@@ -1205,6 +1205,8 @@ function loadImages() {
 
 				$("#current-image").html(0);
 				Materialize.toast("LOAD IMAGES SUCESS: No images available.", 3700);
+
+				$("#loading-bar").addClass("hide");
 
 				return;
 			} else {
