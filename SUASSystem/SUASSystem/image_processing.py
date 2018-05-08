@@ -7,6 +7,7 @@ from .utils import *
 from UpdatedImageProcessing import *
 from .settings import GCSSettings
 from .converter_functions import inverse_haversine, get_mission_json
+from .location import Location
 
 def run_img_proc_process(logger_queue, location_log, targets_to_submit, interop_client_array):
     while True:
@@ -18,11 +19,11 @@ def run_img_proc_process(logger_queue, location_log, targets_to_submit, interop_
             closest_time_index = 0
             least_time_difference = location_log[0]["epoch_time"]
             for index in range(len(location_log)):
-                difference_in_times = target_time - location_log[closest_time_index]["epoch_time"]
+                difference_in_times = target_time - location_log[index]["epoch_time"]
                 if abs(difference_in_times) <= least_time_difference:
                     closest_time_index = index
                     least_time_difference = difference_in_times
-            drone_gps_location = location_log[closest_time_index]["current_location"]
+            drone_gps_location = Location(location_log[closest_time_index]["latitude"], location_log[closest_time_index]["longitude"], location_log[closest_time_index]["altitude"])
 
             image = Image.open("static/imgs/" + target_characteristics["base_image_filename"])
             image_midpoint = (image.width / 2, image.height / 2)
@@ -31,7 +32,7 @@ def run_img_proc_process(logger_queue, location_log, targets_to_submit, interop_
             target_characteristics["latitude"] = target_location.get_lat()
             target_characteristics["longitude"] = target_location.get_lon()
 
-            original_image_path = "static/imgs/" + target_characteristics["base_image_filename"]
+            original_image_path = "static/all_imgs/" + target_characteristics["base_image_filename"]
             cropped_target_path = "static/crops/" + str(len(os.listdir('static/crops'))) + ".jpg"
             cropped_target_data_path = "static/crops/" + str(len(os.listdir('static/crops'))) + ".json"
             crop_target(original_image_path, cropped_target_path, target_characteristics["target_top_left"], target_characteristics["target_bottom_right"])

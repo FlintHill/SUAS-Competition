@@ -8,8 +8,9 @@ from time import sleep
 import random
 
 def autonomous_image_processing():
-    TARGET_MAP_PATH = "static/imgs/"
-    AUTONOMOUS_IMAGE_PROCESSING_SAVE_PATH = "static/autonomous_crops"
+    TARGET_MAP_PATH = "../../scripts/gcs/static/auto_imgs/"
+    AUTONOMOUS_IMAGE_PROCESSING_SAVE_PATH = "../../scripts/gcs/static/auto_crops/"
+    SAVE_PATH_FOR_POSTING = "static/auto_crops/"
 
     processed_target_maps = []
     while True:
@@ -17,6 +18,7 @@ def autonomous_image_processing():
         try:
             map_list_response = requests.get("http://localhost:5000/get/imgs")
             target_map_list = map_list_response.json()
+            needs_refresh = False
         except:
             continue
 
@@ -28,13 +30,19 @@ def autonomous_image_processing():
         location_log = location_log_response.json()["location_log"]
 
         for map_index in range(len(target_map_list)):
-            if not target_map_list[str(map_index)] in processed_target_maps:
+            if target_map_list[str(map_index)] in processed_target_maps:
+                if map_index + 1 == len(target_map_list):
+                    needs_refresh = True
+                continue
+            else:
                 current_target_map_name = target_map_list[str(map_index)]
                 processed_target_maps.append(current_target_map_name)
                 break
 
-        current_target_map_path = os.path.join(TARGET_MAP_PATH, current_target_map_name)
+        if len(target_map_list) == 0 or needs_refresh:
+            continue
 
+        current_target_map_path = os.path.join(TARGET_MAP_PATH, current_target_map_name)
         combo_target_detection_result_list = SingleTargetMapDetector.detect_single_target_map(current_target_map_path)
 
         single_target_crops = combo_target_detection_result_list[0]
@@ -44,6 +52,7 @@ def autonomous_image_processing():
         json_file["target_map_center_location"] = (image.width / 2, image.height / 2)
         json_file["target_map_timestamp"] = get_image_timestamp_from_metadata(current_target_map_path)
 
+        print("Identifying targets within %s" % current_target_map_name)
         for index_in_single_target_crops in range(len(single_target_crops)):
             json_file["image_processing_results"][index_in_single_target_crops]["target_index"] = index_in_single_target_crops + 1
 
@@ -67,7 +76,7 @@ def autonomous_image_processing():
             target_location = get_target_gps_location(target_map_center_pixel_coordinates, target_pixel_coordinates, drone_gps_location)
 
             if fly_zones.contains_point([target_location.get_lat(), target_location.get_lon()]) == 0:
-                # not in range
+                print("target eleminated -- not in range")
                 continue
 
             json_file["image_processing_results"][index_in_single_target_crops]["latitude"] = target_location.get_lat()
@@ -95,9 +104,10 @@ def autonomous_image_processing():
                  "target_letter": letter,
                  "latitude": target_location.get_lat(),
                  "longitude": target_location.get_lon(),
-                 "current_crop_path": current_crop_path
+                 "current_crop_path": os.path.join(SAVE_PATH_FOR_POSTING, current_target_map_name + " - " + str(index_in_single_target_crops + 1) + ".png")
             })
             requests.post("http://localhost:5000/post/autonomous_img_proc_target", json=posting_json)
+            print("posted a %s %s" % (shape_color, shape_type))
 
         with open(os.path.join(AUTONOMOUS_IMAGE_PROCESSING_SAVE_PATH, current_target_map_name[:-4] + ".json"), 'w') as fp:
             json.dump(json_file, fp, indent=4)

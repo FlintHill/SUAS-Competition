@@ -15,12 +15,16 @@ def get_target_gps_location(image_midpoint, target_midpoint, drone_gps_location)
 
 def construct_fly_zone_polygon(interop_client_array):
     mission_information_data = (get_mission_json(interop_client_array[0].get_active_mission(), interop_client_array[0].get_obstacles()))
-    #mission_information_data["search_grid_points"]
-    boundary_points = mission_information_data["fly_zones"][0]["boundary_pts"]
+    boundary_points = mission_information_data["search_grid_points"]
     point_list = []
 
     num_points = len(boundary_points)
-    order = 1
+
+    least_order = boundary_points[0]["order"]
+    for i in range(len(boundary_points)):
+        if boundary_points[i]["order"] < least_order:
+            least_order = boundary_points[i]["order"]
+    order = least_order
     count = 0
     while num_points > 0:
         if(count == len(boundary_points)):
@@ -39,7 +43,12 @@ def construct_fly_zone_polygon_from_json(interop_json):
     boundary_points = interop_json["search_grid_points"]
     point_list = []
     num_points = len(boundary_points)
-    order = 1
+
+    least_order = boundary_points[0]["order"]
+    for i in range(len(boundary_points)):
+        if boundary_points[i]["order"] < least_order:
+            least_order = boundary_points[i]["order"]
+    order = least_order
     count = 0
     while num_points > 0:
         if(count == len(boundary_points)):

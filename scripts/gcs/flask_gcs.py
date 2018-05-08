@@ -101,6 +101,18 @@ class Client(object):
 app = Flask(__name__, static_url_path='')
 client = Client()
 
+@app.after_request
+def add_header(r):
+	"""
+	Add headers to both force latest IE rendering engine or Chrome Frameself.
+	"""
+	r.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+	r.headers["Pragma"] = "no-cache"
+	r.headers["Expires"] = "0"
+	r.headers['Cache-Control'] = 'public, max-age=0'
+
+	return r
+
 @app.route('/')
 def index():
 	try:
@@ -357,4 +369,5 @@ def post_target():
 
 		return jsonify({"request_status" : "failure"})
 
+app.config["CACHE_TYPE"] = "null"
 app.run(host="0.0.0.0")

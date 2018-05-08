@@ -196,7 +196,7 @@ class InteropClientConverter(object):
                     except:
                         print("Failed to connect to Interop., retrying...")
 
-    def post_autonomous_target(self, target, image_file_path, index):
+    def post_autonomous_target(self, target_info):
         """
         POST a standard ODLC object to the interoperability server.
 
