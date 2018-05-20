@@ -25,6 +25,7 @@ def autonomous_image_processing():
         interop_response = requests.get("http://localhost:5000/get/interop")
         interop_json = interop_response.json()
         fly_zones = construct_fly_zone_polygon_from_json(interop_json)
+        runway_zone, runway_grass1_zone, runway_grass2_zone, runway_grass3_zone, runway_grass4_zone, runway_grass5_zone = construct_runway_fly_zone():
 
         location_log_response = requests.get("http://localhost:5000/get/uav_location_log")
         location_log = location_log_response.json()["location_log"]
@@ -75,9 +76,27 @@ def autonomous_image_processing():
             drone_gps_location = Location(location_log[closest_time_index]["latitude"], location_log[closest_time_index]["longitude"], location_log[closest_time_index]["altitude"])
             target_location = get_target_gps_location(target_map_center_pixel_coordinates, target_pixel_coordinates, drone_gps_location)
 
+            # check if target is in fly zones
             if fly_zones.contains_point([target_location.get_lat(), target_location.get_lon()]) == 0:
                 print("target eleminated -- not in range")
                 continue
+
+            # check if target is in runway or runway grass. if on runway, eleminate, if on grass, do not eleminate
+            if runway_zone.contains_point([drone_gps_location.get_lat(), drone_gps_location.get_lon()]):
+                # target in runway zone -- check if on grass
+                if runway_grass1_zone.contains_point([drone_gps_location.get_lat(), drone_gps_location.get_lon()]):
+                    pass
+                elif runway_grass2_zone.contains_point([drone_gps_location.get_lat(), drone_gps_location.get_lon()]):
+                    pass
+                elif runway_grass3_zone.contains_point([drone_gps_location.get_lat(), drone_gps_location.get_lon()]):
+                    pass
+                elif runway_grass4_zone.contains_point([drone_gps_location.get_lat(), drone_gps_location.get_lon()]):
+                    pass
+                elif runway_grass5_zone.contains_point([drone_gps_location.get_lat(), drone_gps_location.get_lon()]):
+                    pass
+                else:
+                    # target not in grass; must be on runway -- eleminate
+                    continue
 
             json_file["image_processing_results"][index_in_single_target_crops]["latitude"] = target_location.get_lat()
             json_file["image_processing_results"][index_in_single_target_crops]["longitude"] = target_location.get_lon()

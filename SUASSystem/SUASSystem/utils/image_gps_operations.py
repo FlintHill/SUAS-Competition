@@ -62,3 +62,12 @@ def construct_fly_zone_polygon_from_json(interop_json):
     vertices = numpy.array(point_list)
 
     return matplotlib.path.Path(vertices)
+
+def construct_runway_fly_zone():
+    runway_zone = matplotlib.path.Path(numpy.array(GCSSettings.RUNWAY_POINTS))
+    grass1_zone = matplotlib.path.Path(numpy.array(GCSSettings.GRASS1_POINTS))
+    grass2_zone = matplotlib.path.Path(numpy.array(GCSSettings.GRASS2_POINTS))
+    grass3_zone = matplotlib.path.Path(numpy.array(GCSSettings.GRASS3_POINTS))
+    grass4_zone = matplotlib.path.Path(numpy.array(GCSSettings.GRASS4_POINTS))
+    grass5_zone = matplotlib.path.Path(numpy.array(GCSSettings.GRASS5_POINTS))
+    return runway_zone, grass1_zone, grass2_zone, grass3_zone, grass4_zone, grass5_zone
