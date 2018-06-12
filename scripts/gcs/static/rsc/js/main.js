@@ -295,7 +295,7 @@ function showImage(index) {
 
 	currentImage = index;
 
-	$("#image-previewer").attr("src", "get/imgs/" + imgs[index]);
+	$("#image-previewer").attr("src", "http://192.168.1.100:8888/imgs/" + imgs[index]); // "get/imgs/"
 	$("#current-image").html(currentImage);
 
 	updateCounters();

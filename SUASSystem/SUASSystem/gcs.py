@@ -44,24 +44,72 @@ def gcs_process(sda_status, img_proc_status, interop_client_array, targets_to_su
     #sda_process = initialize_sda_process(logger_queue, sda_status, UAV_status, waypoints, sda_avoid_coords, vehicle_state_data, mission_information_data)
     log(gcs_logger_name, "Completed instantiation of all child processes")
 
-    while True:
-        current_location = get_location(vehicle)
 
+    loop_init = time.time()
+
+    active_mission_json_data = interop_client_array[0].get_active_mission()
+
+    while True:
+        get_init = time.time()
+        current_location = get_location(vehicle)
+        get_end = time.time()
+
+        construct_init = time.time()
         current_location_json = {
             "latitude": current_location.get_lat(),
             "longitude": current_location.get_lon(),
             "altitude": current_location.get_alt(),
             "epoch_time": time.time()
         }
+        construct_end = time.time()
 
+        location_init = time.time()
         location_log.append(current_location_json)
+        location_end = time.time()
 
+        vehicle_init = time.time()
         vehicle_state_data[0] = SUASSystem.get_vehicle_state(vehicle, GCSSettings.MSL_ALT)
-        
-        if len(interop_client_array) != 0:
-            interop_client_array[0].post_telemetry(current_location, vehicle_state_data[0].get_direction())
-            mission_information_data[0] = get_mission_json(interop_client_array[0].get_active_mission(), interop_client_array[0].get_obstacles())
+        vehicle_end = time.time()
 
+        if len(interop_client_array) != 0:
+            tel_init_1 = time.time()
+            interop_client_array[0].post_telemetry(current_location, vehicle_state_data[0].get_direction())
+            tel_end_1 = time.time()
+            tel_init_2 = time.time()
+            mission_information_data[0] = get_mission_json(active_mission_json_data, interop_client_array[0].get_obstacles())
+            tel_end_2 = time.time()
+
+        get_diff = get_end - get_init
+        construct_diff = construct_end - construct_init
+        location_diff = location_end - location_init
+        vehicle_diff = vehicle_end - vehicle_init
+        tel_diff_1 = tel_end_1 - tel_init_1
+        tel_diff_2 = tel_end_2 - tel_init_2
+
+        loop_end = time.time()
+
+        loop_diff = loop_end - loop_init
+
+        if loop_diff > 1:
+            print("-----------------------------------")
+            print("Error -- Interop hasn't been updated for more than one second!")
+            print("get_location: " + str(get_diff))
+
+            print("current_location_json: " + str(construct_diff))
+
+            print("location_log.append: " + str(location_diff))
+
+            print("get_vehicle_state: " + str(vehicle_diff))
+
+            print("post_telemetry: " + str(tel_diff_1))
+
+            print("get_mission_json: " + str(tel_diff_2))
+
+            print("Total Loop time: " + str(loop_diff))
+            print("-----------------------------------")
+
+        loop_init = loop_end
+        
         # NOTE: The following commented code enables autonomous SDA. It has been left in this codebase to make it easier for future teams to
         #   understand the code. Please do not remove from codebase 2017/2018
         #if (vehicle.location.global_relative_frame.alt * 3.28084) > GCSSettings.SDA_MIN_ALT and sda_status.value.lower() == "connected":
@@ -73,7 +121,7 @@ def gcs_process(sda_status, img_proc_status, interop_client_array, targets_to_su
         #    if UAV_status.value == 'AUTO' and vehicle.mode.name != "AUTO":
         #        vehicle.mode = dronekit.VehicleMode("AUTO")
 
-        sleep(0.25)
+        #sleep(0.25)
 
 def initialize_competition_viewer_process(vehicle_state_data, mission_information_data):
     log(gcs_logger_name, "Instantiating Competition Viewer process")

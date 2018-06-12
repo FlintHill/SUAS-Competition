@@ -41,8 +41,6 @@ def load_sd_card(location_log, interop_client_array):
     print("SD Card loaded")
 
     fly_zones = construct_fly_zone_polygon(interop_client_array)
-    print(fly_zones)
-    print(location_log)
 
     for pic_folder in os.listdir(SD_PATH):
         if not "." in pic_folder:
@@ -62,6 +60,7 @@ def load_sd_card(location_log, interop_client_array):
                             least_time_difference = difference_in_times
                     drone_gps_location = Location(location_log[closest_time_index]["latitude"], location_log[closest_time_index]["longitude"], location_log[closest_time_index]["altitude"])
 
+                    """
                     if not fly_zones.contains_point([drone_gps_location.get_lat(), drone_gps_location.get_lon()]):
                         # not in designated flyzone from interop -- eleminate
                         print(pic_name)
@@ -69,14 +68,13 @@ def load_sd_card(location_log, interop_client_array):
                         print(drone_gps_location.get_lon())
                         print("is eleminated for not being in range")
                         continue
+                    """
 
                     if abs(drone_gps_location.get_alt() - GCSSettings.SEARCH_AREA_ALT) > 30:
-                        # drone too low -- eleminate
-                        print(pic_name)
-                        print(drone_gps_location.get_alt())
-                        print("is eleminated for being too low or too high")
+                        # drone too low -- eliminate
+                        print(pic_name + " is eleminated for being too low or too high at " + str(drone_gps_location.get_alt()) + " ft")
                         continue
 
                     shutil.copy2(pic_path, "static/auto_imgs")
                     shutil.copy2(pic_path, "static/imgs")
-                    print("successful copy")
+                    print(pic_name + " accepted at " + str(drone_gps_location.get_alt()) + " ft")
