@@ -1,7 +1,7 @@
 # SUAS-Competition
 
-This is Flint Hill School's code for the Student Unmanned Aerial Systems competition.
-
+*This is Flint Hill School's code for the Student Unmanned Aerial Systems competition.
+*
 ---
 
 ## License Information
