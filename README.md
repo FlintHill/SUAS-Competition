@@ -1,6 +1,6 @@
 # SUAS-Competition
 
-This is Flint Hill School's code for the Student Unmanned Aerial Systems competition.* 
+This is Flint Hill School's code for the Student Unmanned Aerial Systems competition.*
 
 ---
 
@@ -9,6 +9,7 @@ This is Flint Hill School's code for the Student Unmanned Aerial Systems competi
 - Developed in 2015-2016 by Vale Tolpegin.
 - Developed in 2016-2017 by Vale Tolpegin, Peter Hussisian, & James Villemarette.
 - Developed in 2017-2018 by Vale Tolpegin, James Villemarette, John Moxley, Zachary Yin, Rod Aryan, Leo Li, & Nathan Spivy.
+- Developed in 2018-2019 by Amrith Kumaar, Devin Host, Owen Krause, & Shiv Sharma.
 
 Licensed under the MIT License.
 
@@ -52,6 +53,14 @@ To run MAVProxy, find the ID of the radio module (run ```ls /dev/``` and find th
 
 ```
 sudo python mavproxy.py --console --master=/dev/tty.usbserial-DEVICE_ID --out=tcpin:127.0.0.1:14551 --out=tcpin:0.0.0.0:14550
+```
+
+To use MAVProxy to connect to and read telemetry from a simulated mission on ArduPilot Mission Planner follow the process below:
+
+1. cd into the ```scripts``` directory and run the ```run_dronekit_sitl.py``` file
+2. Open a new terminal window and run the following command
+
+```sudo python mavproxy.py --console --master=tcp:127.0.0.1:5760 --out=tcpin:127.0.0.1:14551 --out=tcpin:0.0.0.0:14550
 ```
 
 Assuming the ```python``` command references a Python 2.7.13 installation
