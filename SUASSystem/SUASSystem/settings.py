@@ -1,12 +1,18 @@
 class GCSSettings(object):
 
+    """
+    Contains constants used in codebase.
+    """
+
     CAMERA_NORTH_OFFSET = 20
 
     UAV_CONNECTION_STRING = "tcp:127.0.0.1:14551"
 
     INTEROP_URL = "http://10.10.130.2:8000"
-    INTEROP_USERNAME = "Flint"   #"img_proc_test"
-    INTEROP_PASSWORD = "271824758" #robotics
+    #INTEROP_URL = "http://192.168.1.239:8000"
+
+    INTEROP_USERNAME = "testuser"   #"img_proc_test"
+    INTEROP_PASSWORD = "testpass" #robotics
 
     INTEROP_DISCONNECT_RETRY_RATE = 0.5
 

@@ -8,7 +8,9 @@ from UpdatedImageProcessing import *
 from .settings import GCSSettings
 from .converter_functions import inverse_haversine, get_mission_json
 from .location import Location
-
+"""
+This file contains our image processing logic and utilizes our cropper function. 
+"""
 def run_img_proc_process(logger_queue, location_log, targets_to_submit, interop_client_array):
     while True:
         if len(targets_to_submit) > 0:

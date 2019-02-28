@@ -7,6 +7,11 @@ import os
 import json
 import traceback
 
+"""
+run this file in order to execute our code base through flask which is a python framework, similar to Django in that sense, but is lightweight
+and better suits API development. Makes calls to other files in the code base, including the gcs.py file which performs all necessary operations for compeition. 
+"""
+
 class Client(object):
 
 	def __init__(self):
@@ -24,6 +29,8 @@ class Client(object):
 		self.interop_data = self.manager.list()
 		self.interop_data.append(self.get_interop_data())
 
+		#call to the gcs.py file.
+		print("got to gcs process call in flask_gcs")
 		self.gcs_process = multiprocessing.Process(target=SUASSystem.gcs_process, args=(
 			self.sda_status,
 			self.img_proc_status,
@@ -35,12 +42,22 @@ class Client(object):
 		self.gcs_process.start()
 
 	def get_location_log(self):
+		"""
+		gets log of UAV loaction data in Json format
+		"""
 		return list(self.location_log)
 
 	def submit_autonomous_target(self, target):
+
+		"""
+		gets targets identififed autonomously for image processing.
+		"""
 		self.autonomous_targets_to_submit.append(target)
 
 	def get_interop_data(self):
+		"""
+		gets Json data on vehicle posiion needed for interop.
+		"""
 		try:
 			active_interop_mission = self.interop_client[0].get_active_mission()
 			obstacles = self.interop_client[0].get_obstacles()
@@ -122,6 +139,7 @@ def index():
 
 @app.route('/get/uav_location_log', methods=["GET"])
 def get_uav_location_log():
+	#gets UAV location formatted in Json data. Essentially makes call to get_location_log method
 	try:
 		return jsonify({"request_status" : "success", "location_log" : client.get_location_log()})
 	except:

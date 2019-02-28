@@ -1,15 +1,35 @@
-from interop import Client
-from interop import Telemetry
-from interop import Odlc
+#from interop import
+
+#from interop import Telemetry
+#from interop import Odlc
+#from auvsi_suas import client
+#from auvsi_suas.client import Odlc
+#from auvsi_suas import Telemetry
+from auvsi_suas.client.client import Client
+from auvsi_suas.client import types
+from auvsi_suas.client.client import AsyncClient
+from auvsi_suas.client.types import Telemetry
+
 from .settings import GCSSettings
 from time import sleep
 from time import time
 from requests.exceptions import ConnectionError
 
+
 class InteropClientConverter(object):
 
+    """
+    Contains methods related to sending and receiving various data from the interop server.
+    Contains a method to post our telemetry location to the interop server, get obstacles
+    and mission data from the interop server, and send ODLC data to the interop server.
+    """
+
     def __init__(self):
-        self.client = Client(GCSSettings.INTEROP_URL, GCSSettings.INTEROP_USERNAME, GCSSettings.INTEROP_PASSWORD)
+        try:
+            #establishes interop connect. Creating an interop client object automatically makes a call to connect to interop
+            self.client = Client(url=GCSSettings.INTEROP_URL, username=GCSSettings.INTEROP_USERNAME, password=GCSSettings.INTEROP_PASSWORD)
+    #    self.asyncClient = AsyncClient(GCSSettings.INTEROP_URL, GCSSettings.INTEROP_USERNAME, GCSSettings.INTEROP_PASSWORD)
+        except Exception as e: print(e)
 
     def post_telemetry(self, location, heading):
         """
@@ -20,6 +40,9 @@ class InteropClientConverter(object):
         :param heading:     The UAV's heading.
         :type heading:      Float
         """
+
+
+
         missing_data = True
 
         while missing_data:
@@ -29,12 +52,18 @@ class InteropClientConverter(object):
             except ConnectionError:
                 sleep(GCSSettings.INTEROP_DISCONNECT_RETRY_RATE)
 
-                try:
-                    self.client = Client(GCSSettings.INTEROP_URL, GCSSettings.INTEROP_USERNAME, GCSSettings.INTEROP_PASSWORD)
-                except:
-                    print("Failed to connect to Interop., retrying...")
-
         self.client.post_telemetry(telem_upload_data)
+        print("exited loop")
+#        try:
+#            print("Begin connected ")
+#            t = types.Telemetry(latitude=50, longitude=-76, altitude_msl=100, uas_heading=90)
+#            client = Client(url="http://10.10.130.2:8000", username="testuser", password="testpass")
+            #client = Client(args.url, args.username, password)
+
+#            print("Successfullly connected ")
+#            client.post_telemetry(t)
+
+#        except Exception as e: print(e)
 
     def get_obstacles(self):
         """
@@ -46,17 +75,17 @@ class InteropClientConverter(object):
 
         while missing_data:
             try:
-                stationary_obstacles, moving_obstacles = self.client.get_obstacles()
+                stationary_obstacles = self.client.get_obstacles()
                 missing_data = False
             except ConnectionError:
                 sleep(GCSSettings.INTEROP_DISCONNECT_RETRY_RATE) # todo: 0.5
 
                 try:
-                    self.client = Client(GCSSettings.INTEROP_URL, GCSSettings.INTEROP_USERNAME, GCSSettings.INTEROP_PASSWORD)
+                    self.client = Client(url="http://10.10.130.2:8000", username="testuser", password="testpass")
                 except:
                     print("Failed to connect to Interop., retrying...")
 
-        return stationary_obstacles, moving_obstacles
+        return stationary_obstacles
 
     def get_active_mission(self):
         """
@@ -80,9 +109,14 @@ class InteropClientConverter(object):
                 except:
                     print("Failed to connect to Interop., retrying...")
 
-        for mission in missions:
-            if mission.active:
-                return mission
+                try:
+                    for mission in missions:
+                        if mission.active:
+                            return mission
+
+                except:
+                    print("Failed to get missions")
+
 
         return None
 

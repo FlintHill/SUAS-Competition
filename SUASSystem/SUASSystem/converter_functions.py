@@ -1,9 +1,17 @@
 from .location import Location
 from .vehicle_state import VehicleState
-from interop import Odlc
+#from interop import Odlc
+#from auvsi_suas.client import Odlc
 import math
-import interop
+#import interop
+import auvsi_suas
+
 import numpy
+
+"""
+This file contains all the converter functions used in our codebase. This includes any function related to getting
+the position of the vehicle and objects and contains mathematical functions necessary for image processing and SDA.
+"""
 
 def get_location(vehicle):
     """
@@ -55,11 +63,17 @@ def get_mission_json(mission, obstacles):
     """
     Convert a Mission object to a JSON format
     """
+
+    print("got into get_mission json method")
+
     mission_in_json = {}
     mission_in_json["air_drop_pos"] = {
         "latitude" : mission.air_drop_pos.latitude,
         "longitude" : mission.air_drop_pos.longitude
     }
+
+    print("after air_drop_pos statement")
+
     mission_in_json["fly_zones"] = [
         {"altitude_msl_min" : fly_zone.altitude_msl_min,
         "altitude_msl_max" : fly_zone.altitude_msl_max,
@@ -71,6 +85,7 @@ def get_mission_json(mission, obstacles):
             } for point in fly_zone.boundary_pts
         ]} for fly_zone in mission.fly_zones
     ]
+    print("after fly_zones statement")
     mission_in_json["home_pos"] = {
         "latitude" : mission.home_pos.latitude,
         "longitude" : mission.home_pos.longitude
@@ -83,10 +98,12 @@ def get_mission_json(mission, obstacles):
             "order" : mission_waypoint.order
         } for mission_waypoint in mission.mission_waypoints
     ]
-    mission_in_json["off_axis_target_pos"] = {
-        "latitude" : mission.off_axis_odlc_pos.latitude,
-        "longitude" : mission.off_axis_odlc_pos.longitude
-    }
+    print("after mission_waypoint statement")
+    #mission_in_json["off_axis_target_pos"] = {
+    #    "latitude" : mission.off_axis_odlc_pos.latitude,
+        #"longitude" : mission.off_axis_odlc_pos.longitude
+    #}
+
     mission_in_json["emergent_last_known_pos"] = {
         "latitude" : mission.emergent_last_known_pos.latitude,
         "longitude" : mission.emergent_last_known_pos.longitude
@@ -116,7 +133,9 @@ def get_mission_json(mission, obstacles):
         } for moving_obstacle in obstacles[1]
     ]
 
+    print("mission in json return statement")
     return mission_in_json
+    print("after get mission json method call")
 
 def convert_to_point(initial_location, new_location):
     """
@@ -204,4 +223,4 @@ def convert_target(target_characteristics):
             "longitude" : float
         }
     """
-    return Odlc(target_characteristics)
+#    return Odlc(target_characteristics)

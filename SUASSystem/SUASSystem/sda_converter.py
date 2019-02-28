@@ -1,7 +1,7 @@
 from SDA import *
 from SUASSystem import *
 import numpy
-import interop
+import auvsi_suas
 
 class SDAConverter(object):
     """

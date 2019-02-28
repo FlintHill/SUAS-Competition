@@ -10,8 +10,18 @@ from .converter_functions import *
 
 gcs_logger_name = multiprocessing.current_process().name
 
+"""
+this file runs our code base and defines methods related to initializing compeition viewer, the sda process, image processing, waypoint data,
+and vehicle connection and location
+"""
+
 def gcs_process(sda_status, img_proc_status, interop_client_array, targets_to_submit, location_log, autonomous_targets_to_submit):
+    """
+    This method executes all interop functions and necessary vehicle logging and connection functionality.
+    """
+
     # Setup logging information
+    print("got to GCS process")
     logger_queue = multiprocessing.Queue(-1)
     logger_listener_process = multiprocessing.Process(target=listener_process, args=(
         logger_queue,
@@ -28,12 +38,32 @@ def gcs_process(sda_status, img_proc_status, interop_client_array, targets_to_su
     #waypoints = download_waypoints(vehicle)
     #sda_avoid_coords = manager.list()
     #UAV_status = manager.Value('s', "AUTO")
-
+    print("got to if statement before get missions")
     if len(interop_client_array) != 0:
-        mission_information_data.append(get_mission_json(interop_client_array[0].get_active_mission(), interop_client_array[0].get_obstacles()))
+        print("before get mission data statement")
+        #The line below is causing the program to break
+        print("before get active mission statement")
+        #interop_client_array[0].post_telemetry()
+        try:
+            interop_client_array[0].get_active_mission()
+            print("after get active mission statement")
+        except Exception as e: print(e)
+
+        print("before get obstacles statement")
+        interop_client_array[0].get_obstacles()
+        print("before get_mission_json statement")
+
+        try:
+            print("before original")
+            print(interop_client_array[0])
+            mission_information_data.append(get_mission_json(interop_client_array[0].get_active_mission(), interop_client_array[0].get_obstacles()))
+            #get_mission_json(interop_client_array[0].get_active_mission(), interop_client_array[0].get_obstacles())
+        except Exception as e: print(e)
+        #line below is the original:
     else:
         print("[Error] : The GCS process is unable to load mission data from the Interoperability server")
         mission_information_data.append({})
+    print("got to after the get missions if statement")
 
     vehicle_state_data.append(SUASSystem.get_vehicle_state(vehicle, GCSSettings.MSL_ALT))
     competition_viewer_process = initialize_competition_viewer_process(vehicle_state_data, mission_information_data)
@@ -57,11 +87,19 @@ def gcs_process(sda_status, img_proc_status, interop_client_array, targets_to_su
         location_log.append(current_location_json)
 
         vehicle_state_data[0] = SUASSystem.get_vehicle_state(vehicle, GCSSettings.MSL_ALT)
-        
+        print("got to if statement before post telem")
         if len(interop_client_array) != 0:
-            interop_client_array[0].post_telemetry(current_location, vehicle_state_data[0].get_direction())
-            mission_information_data[0] = get_mission_json(interop_client_array[0].get_active_mission(), interop_client_array[0].get_obstacles())
+            print("got to post telem statement")
 
+            interop_client_array[0].post_telemetry(current_location, vehicle_state_data[0].get_direction())
+
+            print("after post telem statement")
+            try:
+                print(interop_client_array[0])
+                #mission_information_data = mission_information_data.append(get_mission_json(interop_client_array[0].get_active_mission(), interop_client_array[0].get_obstacles()))
+                mission_information_data[0] = get_mission_json(interop_client_array[0].get_active_mission(), interop_client_array[0].get_obstacles())
+            except Exception as e: print(e)
+            print("after mission information data line")
         # NOTE: The following commented code enables autonomous SDA. It has been left in this codebase to make it easier for future teams to
         #   understand the code. Please do not remove from codebase 2017/2018
         #if (vehicle.location.global_relative_frame.alt * 3.28084) > GCSSettings.SDA_MIN_ALT and sda_status.value.lower() == "connected":

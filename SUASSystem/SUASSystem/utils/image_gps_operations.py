@@ -1,4 +1,7 @@
-from SUASSystem import GCSSettings, inverse_haversine, get_mission_json
+#from SUASSystem import GCSSetting, inverse_haversine, get_mission_json
+#from SUASSystem import GCSSetting
+from SUASSystem.settings import GCSSettings
+from SUASSystem.converter_functions import inverse_haversine, get_mission_json
 import matplotlib.path
 import numpy
 import math

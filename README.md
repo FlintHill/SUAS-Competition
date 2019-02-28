@@ -60,7 +60,8 @@ To use MAVProxy to connect to and read telemetry from a simulated mission on Ard
 1. cd into the ```scripts``` directory and run the ```run_dronekit_sitl.py``` file
 2. Open a new terminal window and run the following command
 
-```sudo python mavproxy.py --console --master=tcp:127.0.0.1:5760 --out=tcpin:127.0.0.1:14551 --out=tcpin:0.0.0.0:14550
+```
+sudo python mavproxy.py --console --master=tcp:127.0.0.1:5760 --out=tcpin:127.0.0.1:14551 --out=tcpin:0.0.0.0:14550
 ```
 
 Assuming the ```python``` command references a Python 2.7.13 installation
@@ -75,6 +76,14 @@ python -m flask run --with-threads
 ```
 
 Ensure that the version of Python that you are using is 2.7.x. If you attempt to use Python 3, the program will crash with a timeout exception.
+
+
+### Broad Overview
+The client script is run through the flask_gcs.py file. The gcs.py file, which runs processes relating to interop server communiation, vehicle connection, and image processing, is called from the flask_gcs.py file. We use MAVProxy to get data in JSON format from our unmanned aerial vehicle(UAV) which is then used in both the SDA process and getting necessary telemetry to forward to the interop server. Our code communicating to the interop server is in the interop_client.py file.
+
+Our autonomous image processing algorithm, which is built off of the open source OpenCV platform, makes use of a cropper function to more efficiently find relavent images containing targets. 
+
+
 
 ---
 

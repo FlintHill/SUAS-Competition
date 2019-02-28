@@ -1,0 +1,86 @@
+Processing ./UpdatedSyntheticDataset
+Processing ./UpdatedImageProcessing
+Processing ./SUASSystem
+Processing ./SDAPackage
+Processing ./SDAPackageWithVectorField
+Processing ./VectorFieldSDASimulatorPackage
+Requirement already up-to-date: nose in /usr/local/Cellar/numpy/1.15.1/libexec/nose/lib/python2.7/site-packages (from -r requirements.txt (line 8)) (1.3.7)
+Requirement already up-to-date: opencv-python in /usr/local/lib/python2.7/site-packages (from -r requirements.txt (line 9)) (4.0.0.21)
+Requirement already up-to-date: scikit-learn in /usr/local/lib/python2.7/site-packages (from -r requirements.txt (line 10)) (0.20.2)
+Requirement already up-to-date: scipy in /usr/local/lib/python2.7/site-packages (from -r requirements.txt (line 11)) (1.2.0)
+Requirement already up-to-date: dronekit in /usr/local/lib/python2.7/site-packages (from -r requirements.txt (line 12)) (2.9.1)
+Requirement already up-to-date: imutils in /usr/local/lib/python2.7/site-packages (from -r requirements.txt (line 13)) (0.5.2)
+Requirement already up-to-date: shapely in /usr/local/lib/python2.7/site-packages (from -r requirements.txt (line 14)) (1.6.4.post2)
+Requirement already satisfied, skipping upgrade: numpy in /usr/local/lib/python2.7/site-packages (from SyntheticDataset2==0.0.1->-r requirements.txt (line 1)) (1.15.1)
+Requirement already satisfied, skipping upgrade: pillow in /usr/local/lib/python2.7/site-packages (from SyntheticDataset2==0.0.1->-r requirements.txt (line 1)) (5.2.0)
+Requirement already satisfied, skipping upgrade: peakutils in /usr/local/lib/python2.7/site-packages (from UpdatedImageProcessing==0.0.1->-r requirements.txt (line 2)) (1.3.0)
+Requirement already satisfied, skipping upgrade: plotly in /usr/local/lib/python2.7/site-packages (from UpdatedImageProcessing==0.0.1->-r requirements.txt (line 2)) (3.2.1)
+Requirement already satisfied, skipping upgrade: exifread in /usr/local/lib/python2.7/site-packages (from SUASSystem==0.0.1->-r requirements.txt (line 3)) (2.1.2)
+Requirement already satisfied, skipping upgrade: jsonmerge in /usr/local/lib/python2.7/site-packages (from SUASSystem==0.0.1->-r requirements.txt (line 3)) (1.5.1)
+Requirement already satisfied, skipping upgrade: matplotlib in /usr/local/lib/python2.7/site-packages (from SDA==0.0.1->-r requirements.txt (line 4)) (2.2.3)
+Requirement already satisfied, skipping upgrade: pymavlink==2.0.6 in /usr/local/lib/python2.7/site-packages (from dronekit->-r requirements.txt (line 12)) (2.0.6)
+Requirement already satisfied, skipping upgrade: monotonic==1.2 in /usr/local/lib/python2.7/site-packages (from dronekit->-r requirements.txt (line 12)) (1.2)
+Requirement already satisfied, skipping upgrade: future==0.15.2 in /usr/local/lib/python2.7/site-packages (from dronekit->-r requirements.txt (line 12)) (0.15.2)
+Requirement already satisfied, skipping upgrade: nbformat>=4.2 in /usr/local/lib/python2.7/site-packages (from plotly->UpdatedImageProcessing==0.0.1->-r requirements.txt (line 2)) (4.4.0)
+Requirement already satisfied, skipping upgrade: six in /usr/local/lib/python2.7/site-packages (from plotly->UpdatedImageProcessing==0.0.1->-r requirements.txt (line 2)) (1.11.0)
+Requirement already satisfied, skipping upgrade: decorator>=4.0.6 in /usr/local/lib/python2.7/site-packages (from plotly->UpdatedImageProcessing==0.0.1->-r requirements.txt (line 2)) (4.3.0)
+Requirement already satisfied, skipping upgrade: retrying>=1.3.3 in /usr/local/lib/python2.7/site-packages (from plotly->UpdatedImageProcessing==0.0.1->-r requirements.txt (line 2)) (1.3.3)
+Requirement already satisfied, skipping upgrade: requests in /usr/local/lib/python2.7/site-packages (from plotly->UpdatedImageProcessing==0.0.1->-r requirements.txt (line 2)) (2.19.1)
+Requirement already satisfied, skipping upgrade: pytz in /usr/local/lib/python2.7/site-packages (from plotly->UpdatedImageProcessing==0.0.1->-r requirements.txt (line 2)) (2018.5)
+Requirement already satisfied, skipping upgrade: jsonschema in /usr/local/lib/python2.7/site-packages (from jsonmerge->SUASSystem==0.0.1->-r requirements.txt (line 3)) (2.6.0)
+Requirement already satisfied, skipping upgrade: cycler>=0.10 in /usr/local/lib/python2.7/site-packages (from matplotlib->SDA==0.0.1->-r requirements.txt (line 4)) (0.10.0)
+Requirement already satisfied, skipping upgrade: subprocess32 in /usr/local/lib/python2.7/site-packages (from matplotlib->SDA==0.0.1->-r requirements.txt (line 4)) (3.5.2)
+Requirement already satisfied, skipping upgrade: python-dateutil>=2.1 in /usr/local/lib/python2.7/site-packages (from matplotlib->SDA==0.0.1->-r requirements.txt (line 4)) (2.7.3)
+Requirement already satisfied, skipping upgrade: kiwisolver>=1.0.1 in /usr/local/lib/python2.7/site-packages (from matplotlib->SDA==0.0.1->-r requirements.txt (line 4)) (1.0.1)
+Requirement already satisfied, skipping upgrade: pyparsing!=2.0.4,!=2.1.2,!=2.1.6,>=2.0.1 in /usr/local/lib/python2.7/site-packages (from matplotlib->SDA==0.0.1->-r requirements.txt (line 4)) (2.2.1)
+Requirement already satisfied, skipping upgrade: backports.functools-lru-cache in /usr/local/lib/python2.7/site-packages (from matplotlib->SDA==0.0.1->-r requirements.txt (line 4)) (1.5)
+Requirement already satisfied, skipping upgrade: jupyter-core in /usr/local/lib/python2.7/site-packages (from nbformat>=4.2->plotly->UpdatedImageProcessing==0.0.1->-r requirements.txt (line 2)) (4.4.0)
+Requirement already satisfied, skipping upgrade: ipython-genutils in /usr/local/lib/python2.7/site-packages (from nbformat>=4.2->plotly->UpdatedImageProcessing==0.0.1->-r requirements.txt (line 2)) (0.2.0)
+Requirement already satisfied, skipping upgrade: traitlets>=4.1 in /usr/local/lib/python2.7/site-packages (from nbformat>=4.2->plotly->UpdatedImageProcessing==0.0.1->-r requirements.txt (line 2)) (4.3.2)
+Requirement already satisfied, skipping upgrade: certifi>=2017.4.17 in /usr/local/lib/python2.7/site-packages (from requests->plotly->UpdatedImageProcessing==0.0.1->-r requirements.txt (line 2)) (2018.8.24)
+Requirement already satisfied, skipping upgrade: urllib3<1.24,>=1.21.1 in /usr/local/lib/python2.7/site-packages (from requests->plotly->UpdatedImageProcessing==0.0.1->-r requirements.txt (line 2)) (1.23)
+Requirement already satisfied, skipping upgrade: chardet<3.1.0,>=3.0.2 in /usr/local/lib/python2.7/site-packages (from requests->plotly->UpdatedImageProcessing==0.0.1->-r requirements.txt (line 2)) (3.0.4)
+Requirement already satisfied, skipping upgrade: idna<2.8,>=2.5 in /usr/local/lib/python2.7/site-packages (from requests->plotly->UpdatedImageProcessing==0.0.1->-r requirements.txt (line 2)) (2.7)
+Requirement already satisfied, skipping upgrade: functools32; python_version == "2.7" in /usr/local/lib/python2.7/site-packages (from jsonschema->jsonmerge->SUASSystem==0.0.1->-r requirements.txt (line 3)) (3.2.3.post2)
+Requirement already satisfied, skipping upgrade: setuptools in /usr/local/lib/python2.7/site-packages (from kiwisolver>=1.0.1->matplotlib->SDA==0.0.1->-r requirements.txt (line 4)) (40.6.3)
+Requirement already satisfied, skipping upgrade: enum34; python_version == "2.7" in /usr/local/lib/python2.7/site-packages (from traitlets>=4.1->nbformat>=4.2->plotly->UpdatedImageProcessing==0.0.1->-r requirements.txt (line 2)) (1.1.6)
+Building wheels for collected packages: SyntheticDataset2, UpdatedImageProcessing, SUASSystem, SDA, SDAWithVectorField, VectorFieldSDASimulator
+  Building wheel for SyntheticDataset2 (setup.py): started
+  Building wheel for SyntheticDataset2 (setup.py): finished with status 'done'
+  Stored in directory: /private/tmp/pip-ephem-wheel-cache-OvDqwd/wheels/55/d0/2a/dcf18349115b00a65d3ff18465df468589593ce8bebb0c1ed5
+  Building wheel for UpdatedImageProcessing (setup.py): started
+  Building wheel for UpdatedImageProcessing (setup.py): finished with status 'done'
+  Stored in directory: /private/tmp/pip-ephem-wheel-cache-OvDqwd/wheels/d7/e4/a5/fc44b4720a237a1c267afda07a108f0d60fac8ea04fa9c29be
+  Building wheel for SUASSystem (setup.py): started
+  Building wheel for SUASSystem (setup.py): finished with status 'done'
+  Stored in directory: /private/tmp/pip-ephem-wheel-cache-OvDqwd/wheels/1e/ed/a8/fae4578b0dc7a258f17a95fde796d29adbf16c20f34de6b3f3
+  Building wheel for SDA (setup.py): started
+  Building wheel for SDA (setup.py): finished with status 'done'
+  Stored in directory: /private/tmp/pip-ephem-wheel-cache-OvDqwd/wheels/64/c4/bd/87070601111e4b301491c979a3facf23fe57390fa20bfaa20b
+  Building wheel for SDAWithVectorField (setup.py): started
+  Building wheel for SDAWithVectorField (setup.py): finished with status 'done'
+  Stored in directory: /private/tmp/pip-ephem-wheel-cache-OvDqwd/wheels/dd/3c/42/7fe98e9bd69fc84e7b154d0ec5ae3bd6d0b287eaedbf74862c
+  Building wheel for VectorFieldSDASimulator (setup.py): started
+  Building wheel for VectorFieldSDASimulator (setup.py): finished with status 'done'
+  Stored in directory: /private/tmp/pip-ephem-wheel-cache-OvDqwd/wheels/3f/f4/8a/f96df9d9c38fa389163277d676d3054a546339d5486019b158
+Successfully built SyntheticDataset2 UpdatedImageProcessing SUASSystem SDA SDAWithVectorField VectorFieldSDASimulator
+Installing collected packages: SyntheticDataset2, UpdatedImageProcessing, SUASSystem, SDA, SDAWithVectorField, VectorFieldSDASimulator
+  Found existing installation: SyntheticDataset2 0.0.1
+    Uninstalling SyntheticDataset2-0.0.1:
+      Successfully uninstalled SyntheticDataset2-0.0.1
+  Found existing installation: UpdatedImageProcessing 0.0.1
+    Uninstalling UpdatedImageProcessing-0.0.1:
+      Successfully uninstalled UpdatedImageProcessing-0.0.1
+  Found existing installation: SUASSystem 0.0.1
+    Uninstalling SUASSystem-0.0.1:
+      Successfully uninstalled SUASSystem-0.0.1
+  Found existing installation: SDA 0.0.1
+    Uninstalling SDA-0.0.1:
+      Successfully uninstalled SDA-0.0.1
+  Found existing installation: SDAWithVectorField 0.0.2
+    Uninstalling SDAWithVectorField-0.0.2:
+      Successfully uninstalled SDAWithVectorField-0.0.2
+  Found existing installation: VectorFieldSDASimulator 0.0.1
+    Uninstalling VectorFieldSDASimulator-0.0.1:
+      Successfully uninstalled VectorFieldSDASimulator-0.0.1
+Successfully installed SDA-0.0.1 SDAWithVectorField-0.0.2 SUASSystem-0.0.1 SyntheticDataset2-0.0.1 UpdatedImageProcessing-0.0.1 VectorFieldSDASimulator-0.0.1
