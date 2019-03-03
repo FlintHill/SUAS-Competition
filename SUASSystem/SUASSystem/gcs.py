@@ -40,29 +40,22 @@ def gcs_process(sda_status, img_proc_status, interop_client_array, targets_to_su
     #UAV_status = manager.Value('s', "AUTO")
     print("got to if statement before get missions")
     if len(interop_client_array) != 0:
-        print("before get mission data statement")
-        #The line below is causing the program to break
-        print("before get active mission statement")
-        #interop_client_array[0].post_telemetry()
-        try:
-            interop_client_array[0].get_active_mission()
-            print("after get active mission statement")
-        except Exception as e: print(e)
 
-        print("before get obstacles statement")
-        interop_client_array[0].get_obstacles()
-        print("before get_mission_json statement")
+
 
         try:
-            print("before original")
-            print(interop_client_array[0])
-            mission_information_data.append(get_mission_json(interop_client_array[0].get_active_mission(), interop_client_array[0].get_obstacles()))
+            mission = interop_client_array[0].get_active_mission()
+            stationaryobstacles = interop_client_array[0].get_obstacles()
+            mission_information_data.append(   get_mission_json( mission,stationaryobstacles) )
+            print("after mission_information_data append statement")
             #get_mission_json(interop_client_array[0].get_active_mission(), interop_client_array[0].get_obstacles())
         except Exception as e: print(e)
         #line below is the original:
     else:
         print("[Error] : The GCS process is unable to load mission data from the Interoperability server")
         mission_information_data.append({})
+        print ("after mission information data append 2 statement")
+
     print("got to after the get missions if statement")
 
     vehicle_state_data.append(SUASSystem.get_vehicle_state(vehicle, GCSSettings.MSL_ALT))
@@ -95,9 +88,15 @@ def gcs_process(sda_status, img_proc_status, interop_client_array, targets_to_su
 
             print("after post telem statement")
             try:
-                print(interop_client_array[0])
+                #print(interop_client_array[0])
                 #mission_information_data = mission_information_data.append(get_mission_json(interop_client_array[0].get_active_mission(), interop_client_array[0].get_obstacles()))
-                mission_information_data[0] = get_mission_json(interop_client_array[0].get_active_mission(), interop_client_array[0].get_obstacles())
+                #mission_information_data = mission_information_data.append(mission, stationaryobstacles)
+                mission = interop_client_array[0].get_active_mission()
+                print("after get active mission")
+                stationaryobstacles = interop_client_array[0].get_obstacles()
+                print("before get active mission append statement")
+                mission_information_data.append(   get_mission_json( mission,stationaryobstacles) )
+                #mission_information_data[0] = get_mission_json(interop_client_array[0].get_active_mission(), interop_client_array[0].get_obstacles())
             except Exception as e: print(e)
             print("after mission information data line")
         # NOTE: The following commented code enables autonomous SDA. It has been left in this codebase to make it easier for future teams to

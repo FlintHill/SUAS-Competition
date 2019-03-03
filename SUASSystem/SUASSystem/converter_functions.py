@@ -16,7 +16,6 @@ the position of the vehicle and objects and contains mathematical functions nece
 def get_location(vehicle):
     """
     Convert the vehicle's current location to a Location object
-
     :param vehicle: The vehicle to convert
     """
     latitude = vehicle.location.global_relative_frame.lat
@@ -29,7 +28,6 @@ def get_vehicle_state(vehicle, MSL_ALT):
     """
     Convert the vehicle's current position and information into a vehicle
     state object
-
     :param vehicle: The vehicle to convert
     :param sda_converter: The sda converter
     :type sda_converter: SDAConverter
@@ -46,7 +44,6 @@ def get_vehicle_state(vehicle, MSL_ALT):
 def get_obstacle_location(obstacle, MSL_ALT):
     """
     Get an Obstacle's location
-
     :param obstacle: The obstacle to convert
     :type obstacle: StationaryObstacle or MovingObstacle
     """
@@ -122,17 +119,19 @@ def get_mission_json(mission, obstacles):
             "longitude" : stationary_obstacle.longitude,
             "cylinder_radius" : stationary_obstacle.cylinder_radius,
             "cylinder_height" : stationary_obstacle.cylinder_height
-        } for stationary_obstacle in obstacles[0]
+        } for stationary_obstacle in obstacles
     ]
-    mission_in_json["moving_obstacles"] = [
-        {
-            "altitude_msl" : moving_obstacle.altitude_msl,
-            "latitude" : moving_obstacle.latitude,
-            "longitude" : moving_obstacle.longitude,
-            "cylinder_radius" : moving_obstacle.sphere_radius
-        } for moving_obstacle in obstacles[1]
-    ]
+    print("after statioary obstacles for loop")
 
+    #mission_in_json["moving_obstacles"] = [
+    #    {
+    #        "altitude_msl" : moving_obstacle.altitude_msl,
+    #        "latitude" : moving_obstacle.latitude,
+    #        "longitude" : moving_obstacle.longitude,
+    #        "cylinder_radius" : moving_obstacle.sphere_radius
+    #    } for moving_obstacle in obstacles[1]
+    #]
+    print("after moving obstacles statement")
     print("mission in json return statement")
     return mission_in_json
     print("after get mission json method call")
@@ -140,7 +139,6 @@ def get_mission_json(mission, obstacles):
 def convert_to_point(initial_location, new_location):
     """
     Convert a location into a cartesian plane coordinate
-
     :param initial_location: The initial GPS location
     :type initial_location: Location
     :param new_location: The new location to convert to a cartesian point, based
@@ -155,7 +153,6 @@ def haversine(location1, location2, units="METRIC"):
     """
     Calculates the great circle distance between two points
     on the earth (specified in decimal degrees)
-
     :param location1: The first GPS location
     :type location1: Location
     :param location2: The second GPS location
@@ -178,7 +175,6 @@ def inverse_haversine(location1, point):
     """
     Calculate a second GPS point through using a single GPS point and a
     different in XY units
-
     :param location1: The first GPS coordinate
     :type location1: Location
     :param point: The point in the map that the obstacle occupies
@@ -196,7 +192,6 @@ def inverse_haversine(location1, point):
 def bearing(location1, location2):
     """
     Calculates the bearing between two points
-
     :param location1: The first GPS location
     :type location1: Location
     :param location2: The second GPS location
@@ -211,7 +206,6 @@ def convert_target(target_characteristics):
     """
     Converts a target from the JSON data from the web UI to the interop
     compatible version.
-
     :param target_characteristics: dictionary
     :type target_characteristics: {
             "alphanumeric" : String,

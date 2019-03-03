@@ -16,7 +16,10 @@ class GCSSettings(object):
 
     INTEROP_DISCONNECT_RETRY_RATE = 0.5
 
-    MSL_ALT = 446.42
+    #Flint hill mean sea level:
+    #MSL_ALT = 446.42
+    #Competition mean sea level:
+    MSL_ALT = 22
     SDA_MIN_ALT = 50
 
     GENERATED_DATA_LOCATION = "image_data"

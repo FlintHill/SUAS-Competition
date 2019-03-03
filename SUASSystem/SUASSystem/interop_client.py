@@ -76,6 +76,7 @@ class InteropClientConverter(object):
         while missing_data:
             try:
                 stationary_obstacles = self.client.get_obstacles()
+                print(stationary_obstacles)
                 missing_data = False
             except ConnectionError:
                 sleep(GCSSettings.INTEROP_DISCONNECT_RETRY_RATE) # todo: 0.5
@@ -96,10 +97,19 @@ class InteropClientConverter(object):
         :return type:   Mission / None
         """
         missing_data = True
+        mission =""
+
+
 
         while missing_data:
             try:
                 missions = self.client.get_missions()
+                for missiontemp in missions:
+                    if missiontemp.active:
+                        mission = missiontemp
+                        print(mission)
+                        return mission
+
                 missing_data = False
             except ConnectionError:
                 sleep(GCSSettings.INTEROP_DISCONNECT_RETRY_RATE) # todo: 0.5
@@ -111,14 +121,17 @@ class InteropClientConverter(object):
 
                 try:
                     for mission in missions:
+                        print("inside the mission for loop")
                         if mission.active:
+                            print("mission data")
+                            print(mission)
                             return mission
 
                 except:
                     print("Failed to get missions")
 
 
-        return None
+
 
     def post_manual_standard_target(self, target, image_file_path):
         """
