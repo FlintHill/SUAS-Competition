@@ -34,6 +34,7 @@ def gcs_process(sda_status, img_proc_status, interop_client_array, targets_to_su
     vehicle_state_data = manager.list()
     mission_information_data = manager.list()
     vehicle = connect_to_vehicle()
+    rover = connect_to_rover()
     # SDA
     #waypoints = download_waypoints(vehicle)
     #sda_avoid_coords = manager.list()
@@ -182,6 +183,12 @@ def connect_to_vehicle():
     SUASSystem.suas_logging.log_vehicle_state(vehicle, gcs_logger_name)
 
     return vehicle
+
+def connect_to_rover():
+    rover = dronekit.connect(GCSSettings.UGV_CONNECTION_STRING, wait_ready=True)
+    rover.wait_ready('autopilot_version')
+
+    return rover
 
 def download_waypoints(vehicle):
     log(gcs_logger_name, "Downloading waypoints from UAV on: %s" % GCSSettings.UAV_CONNECTION_STRING)
