@@ -53,12 +53,12 @@ To run MAVProxy, find the ID of the radio module (run ```ls /dev/``` and find th
 
 For the UAV
 ```
-sudo python mavproxy.py --console --master=/dev/tty.usbserial-DEVICE_ID --out=tcpin:127.0.0.1:14551 --out=tcpin:0.0.0.0:14550 --source-system=1
+sudo python mavproxy.py --console --master=/dev/tty.usbserial-DEVICE_ID_UAV --out=tcpin:127.0.0.1:14551 --out=tcpin:0.0.0.0:14550
 ```
 
 For the UGV
 ```
-sudo python mavproxy.py --console --master=/dev/tty.usbserial-DEVICE_ID --out=tcpin:127.0.0.1:14561 --out=tcpin:0.0.0.0:14560 --source-system=2
+sudo python mavproxy.py --console --master=/dev/tty.usbserial-DEVICE_ID_UGV --out=tcpin:127.0.0.1:14561 --out=tcpin:0.0.0.0:14560
 ```
 
 To use MAVProxy to connect to and read telemetry from a simulated mission on ArduPilot Mission Planner follow the process below:
