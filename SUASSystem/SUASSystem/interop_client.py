@@ -5,10 +5,11 @@
 #from auvsi_suas import client
 #from auvsi_suas.client import Odlc
 #from auvsi_suas import Telemetry
-from auvsi_suas.client.client import Client
-from auvsi_suas.client import types
-from auvsi_suas.client.client import AsyncClient
-from auvsi_suas.client.types import Telemetry
+from auvsi_suas.client import client
+#from auvsi_suas.client import types
+#from auvsi_suas.client.client import AsyncClient
+#from auvsi_suas.client.types import Telemetry
+from auvsi_suas.proto import interop_api_pb2
 
 from .settings import GCSSettings
 from time import sleep
@@ -26,8 +27,9 @@ class InteropClientConverter(object):
 
     def __init__(self):
         try:
+            print("got into init")
             #establishes interop connect. Creating an interop client object automatically makes a call to connect to interop
-            self.client = Client(url=GCSSettings.INTEROP_URL, username=GCSSettings.INTEROP_USERNAME, password=GCSSettings.INTEROP_PASSWORD)
+            self.client1 = client.Client(url=GCSSettings.INTEROP_URL, username=GCSSettings.INTEROP_USERNAME, password=GCSSettings.INTEROP_PASSWORD)
     #    self.asyncClient = AsyncClient(GCSSettings.INTEROP_URL, GCSSettings.INTEROP_USERNAME, GCSSettings.INTEROP_PASSWORD)
         except Exception as e: print(e)
 
@@ -42,18 +44,29 @@ class InteropClientConverter(object):
         """
 
 
-
+        print (location)
+        print(heading)
         missing_data = True
 
         while missing_data:
             try:
-                telem_upload_data = Telemetry(location.get_lat(), location.get_lon(), location.get_alt() + GCSSettings.MSL_ALT, heading)
+                telem_upload_data = interop_api_pb2.Telemetry()
+                print("after telem upload data initialization  interopclient")
+                telem_upload_data.longitude = location.get_lon()
+                print("after get lon  interopclient")
+                telem_upload_data.altitude = location.get_alt()
+                print("after get alt interopclient")
+                telem_upload_data.latitude = (location.get_lat() + GCSSettings.MSL_ALT)
+                print("after get lat interopclient")
+                telem_upload_data.heading = heading
+
                 missing_data = False
             except ConnectionError:
                 sleep(GCSSettings.INTEROP_DISCONNECT_RETRY_RATE)
 
-        self.client.post_telemetry(telem_upload_data)
-        print("exited loop")
+        print("before post_telemery statement interopclient")
+        self.client1.post_telemetry(telem_upload_data)
+        #print("exited loop"#)
 #        try:
 #            print("Begin connected ")
 #            t = types.Telemetry(latitude=50, longitude=-76, altitude_msl=100, uas_heading=90)
@@ -75,17 +88,23 @@ class InteropClientConverter(object):
 
         while missing_data:
             try:
-                stationary_obstacles = self.client.get_obstacles()
+                stationary_obstacles = self.client1.get_obstacles()
+                print("from interop_client.py get Obstacle")
                 print(stationary_obstacles)
+            #    print(stationary_obstacles[0])
+        #        print( len ( stationary_obstacles) )
                 missing_data = False
+
             except ConnectionError:
                 sleep(GCSSettings.INTEROP_DISCONNECT_RETRY_RATE) # todo: 0.5
 
                 try:
-                    self.client = Client(url="http://10.10.130.2:8000", username="testuser", password="testpass")
+                    self.client1 = Client(url="http://192.168.1.86:8000", username="testuser", password="testpass")
                 except:
                     print("Failed to connect to Interop., retrying...")
-
+        print("inside get_obstacles()")
+        #print(stationary_obstacles)
+#        print(len (stationary_obstacles ))
         return stationary_obstacles
 
     def get_active_mission(self):
@@ -103,29 +122,32 @@ class InteropClientConverter(object):
 
         while missing_data:
             try:
-                missions = self.client.get_missions()
-                for missiontemp in missions:
-                    if missiontemp.active:
-                        mission = missiontemp
-                        print(mission)
-                        return mission
-
+                missiontemp = self.client1.get_mission(2)
+                print(missiontemp)
+#                for missiontemp in missions:
+#                if missiontemp.active:
+#                    mission = missiontemp
+#                    print(mission)
+            #    else
+            #        print("no active mission")
                 missing_data = False
+                return missiontemp
+
             except ConnectionError:
                 sleep(GCSSettings.INTEROP_DISCONNECT_RETRY_RATE) # todo: 0.5
 
                 try:
-                    self.client = Client(GCSSettings.INTEROP_URL, GCSSettings.INTEROP_USERNAME, GCSSettings.INTEROP_PASSWORD)
+                    client1 = Client(GCSSettings.INTEROP_URL, GCSSettings.INTEROP_USERNAME, GCSSettings.INTEROP_PASSWORD)
                 except:
                     print("Failed to connect to Interop., retrying...")
 
                 try:
-                    for mission in missions:
-                        print("inside the mission for loop")
-                        if mission.active:
-                            print("mission data")
-                            print(mission)
-                            return mission
+    #                for mission in missions:
+                    print("inside the mission for loop")
+                    if mission.active:
+                        print("mission data")
+                        print(mission)
+                        return mission
 
                 except:
                     print("Failed to get missions")
@@ -170,18 +192,18 @@ class InteropClientConverter(object):
 
         while missing_data:
             try:
-                returned_odlc = self.client.post_odlc(odlc_target)
+                returned_odlc = client1.post_odlc(odlc_target)
                 missing_data = False
             except ConnectionError:
                 sleep(GCSSettings.INTEROP_DISCONNECT_RETRY_RATE) # todo: 0.5
 
                 try:
-                    self.client = Client(GCSSettings.INTEROP_URL, GCSSettings.INTEROP_USERNAME, GCSSettings.INTEROP_PASSWORD)
+                    client1 = Client(GCSSettings.INTEROP_URL, GCSSettings.INTEROP_USERNAME, GCSSettings.INTEROP_PASSWORD)
                 except:
                     print("Failed to connect to Interop, retrying...")
 
         with open(image_file_path) as img_file:
-            self.client.post_odlc_image(returned_odlc.id, img_file.read())
+            client1.post_odlc_image(returned_odlc.id, img_file.read())
 
     def post_manual_emergent_target(self, target, image_file_path):
         """
@@ -209,22 +231,22 @@ class InteropClientConverter(object):
 
         # TODO: remove after testing
         """
-        returned_odlc = self.client.post_odlc(odlc_target)
+        returned_odlc = client1.post_odlc(odlc_target)
 
         with open(image_file_path) as img_file:
-            self.client.post_odlc_image(returned_odlc.id, img_file.read())
+            client1.post_odlc_image(returned_odlc.id, img_file.read())
         """
         missing_data = True
 
         while missing_data:
             try:
-                returned_odlc = self.client.post_odlc(odlc_target)
+                returned_odlc = client1.post_odlc(odlc_target)
                 missing_data = False
             except ConnectionError:
                 sleep(GCSSettings.INTEROP_DISCONNECT_RETRY_RATE)
 
                 try:
-                    self.client = Client(GCSSettings.INTEROP_URL, GCSSettings.INTEROP_USERNAME, GCSSettings.INTEROP_PASSWORD)
+                    client1 = Client(GCSSettings.INTEROP_URL, GCSSettings.INTEROP_USERNAME, GCSSettings.INTEROP_PASSWORD)
                 except:
                     print("Failed to connect to Interop., retrying...")
 
@@ -233,13 +255,13 @@ class InteropClientConverter(object):
         with open(image_file_path) as img_file:
             while missing_data:
                 try:
-                    self.client.post_odlc_image(returned_odlc.id, img_file.read())
+                    client1.post_odlc_image(returned_odlc.id, img_file.read())
                     missing_data = False
                 except:
                     sleep(GCSSettings.INTEROP_DISCONNECT_RETRY_RATE)
 
                     try:
-                        self.client = Client(GCSSettings.INTEROP_URL, GCSSettings.INTEROP_USERNAME, GCSSettings.INTEROP_PASSWORD)
+                        client1 = Client(GCSSettings.INTEROP_URL, GCSSettings.INTEROP_USERNAME, GCSSettings.INTEROP_PASSWORD)
                     except:
                         print("Failed to connect to Interop., retrying...")
 
@@ -278,10 +300,10 @@ class InteropClientConverter(object):
             alphanumeric_color=target_info["target"][0]["target_letter_color"],
             description="Flint Hill School -- ODLC Standard Target Submission")
 
-        returned_odlc = self.client.post_odlc(odlc_target)
+        returned_odlc = client1.post_odlc(odlc_target)
 
         with open(image_file_path) as img_file:
-            self.client.post_odlc_image(returned_odlc.id, img_file.read())
+            client1.post_odlc_image(returned_odlc.id, img_file.read())
 """my_client = InteropClientConverter()
 
 while True:

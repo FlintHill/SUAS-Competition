@@ -62,6 +62,9 @@ def get_mission_json(mission, obstacles):
     """
 
     print("got into get_mission json method")
+    stationary_obstacle= obstacles
+    #moving_obstacle = obstacles[1]
+    #print(moving_obstacle)
 
     mission_in_json = {}
     mission_in_json["air_drop_pos"] = {
@@ -69,37 +72,41 @@ def get_mission_json(mission, obstacles):
         "longitude" : mission.air_drop_pos.longitude
     }
 
-    print("after air_drop_pos statement")
-
+    #print("after air_drop_pos statement")
+    print("air drop pos json ")
     mission_in_json["fly_zones"] = [
-        {"altitude_msl_min" : fly_zone.altitude_msl_min,
-        "altitude_msl_max" : fly_zone.altitude_msl_max,
+        {"altitude_msl_min" : fly_zone.altitude_min,
+        "altitude_msl_max" : fly_zone.altitude_max,
         "boundary_pts" : [
             {
                 "latitude" : point.latitude,
                 "longitude" : point.longitude,
-                "order" : point.order
-            } for point in fly_zone.boundary_pts
+                #"order" : point.order
+            } for point in fly_zone.boundary_points
         ]} for fly_zone in mission.fly_zones
     ]
-    print("after fly_zones statement")
-    mission_in_json["home_pos"] = {
-        "latitude" : mission.home_pos.latitude,
-        "longitude" : mission.home_pos.longitude
-    }
+    #print("after fly_zones statement")
+#    mission_in_json["home_pos"] = {
+#        "latitude" : mission.home_pos.latitude,
+#        "longitude" : mission.home_pos.longitude
+#    }
+    print("after fly zones json")
+    print (mission)
+    print (mission.waypoints)
     mission_in_json["mission_waypoints"] = [
         {
-            "altitude_msl" : mission_waypoint.altitude_msl,
+            "altitude_msl" : mission_waypoint.altitude,
             "latitude" : mission_waypoint.latitude,
             "longitude" : mission_waypoint.longitude,
-            "order" : mission_waypoint.order
-        } for mission_waypoint in mission.mission_waypoints
+            #"order" : mission_waypoint.order
+        } for mission_waypoint in mission.waypoints
     ]
+    print(mission_in_json["mission_waypoints"])
     print("after mission_waypoint statement")
-    #mission_in_json["off_axis_target_pos"] = {
-    #    "latitude" : mission.off_axis_odlc_pos.latitude,
-        #"longitude" : mission.off_axis_odlc_pos.longitude
-    #}
+    mission_in_json["off_axis_target_pos"] = {
+        "latitude" : mission.off_axis_odlc_pos.latitude,
+        "longitude" : mission.off_axis_odlc_pos.longitude
+    }
 
     mission_in_json["emergent_last_known_pos"] = {
         "latitude" : mission.emergent_last_known_pos.latitude,
@@ -107,34 +114,50 @@ def get_mission_json(mission, obstacles):
     }
     mission_in_json["search_grid_points"] = [
         {
-            "altitude_msl" : search_grid_point.altitude_msl,
+            #"altitude_msl" : search_grid_point.altitude_msl,
             "latitude" : search_grid_point.latitude,
             "longitude" : search_grid_point.longitude,
-            "order" : search_grid_point.order
+            #"order" : search_grid_point.order
         } for search_grid_point in mission.search_grid_points
     ]
+#    print(len ( obstacles) )
+#    print(obstacles[0])
+    #print(stationary_obstacle)
+    print("before obstacl initialitazion")
+    print(type(obstacles.stationary_obstacles))
+    print(obstacles.stationary_obstacles)
+    #obstaclelist = obstacles.stationary_obstacles
+    #obstaclelist = list(obstacles)
+    #print(len (obstaclelist))
     mission_in_json["stationary_obstacles"] = [
         {
             "latitude" : stationary_obstacle.latitude,
             "longitude" : stationary_obstacle.longitude,
-            "cylinder_radius" : stationary_obstacle.cylinder_radius,
-            "cylinder_height" : stationary_obstacle.cylinder_height
-        } for stationary_obstacle in obstacles
+            "cylinder_radius" : stationary_obstacle.radius,
+            "cylinder_height" : stationary_obstacle.height
+        } for stationary_obstacle in obstacles.stationary_obstacles
     ]
     print("after statioary obstacles for loop")
 
+
+
     #mission_in_json["moving_obstacles"] = [
     #    {
-    #        "altitude_msl" : moving_obstacle.altitude_msl,
+            # The Obstacles JSON data doesn't comtain the altitude_msl attribute
+            #"altitude_msl" : moving_obstacle.altitude_msl,
     #        "latitude" : moving_obstacle.latitude,
     #        "longitude" : moving_obstacle.longitude,
-    #        "cylinder_radius" : moving_obstacle.sphere_radius
-    #    } for moving_obstacle in obstacles[1]
+            #"cylinder_radius" : moving_obstacle.sphere_radius, no such attribute as sphere_radius
+    #        "cylinder_radius" :moving_obstacle.cylinder_radius,  # I have used same attribtute as stationary for placeholder
+    #        "cylinder_height" : moving_obstacle.cylinder_height
+    #    }
+        #for moving_obstacle in obstacles[1]
     #]
-    print("after moving obstacles statement")
+    #print("after moving obstacles statement")
+    print( stationary_obstacle)
     print("mission in json return statement")
     return mission_in_json
-    print("after get mission json method call")
+    #print("after get mission json method call")
 
 def convert_to_point(initial_location, new_location):
     """

@@ -14,6 +14,7 @@ class SimpleEcho(WebSocket):
    def handleMessage(self):
       self.sendMessage(self.data)
 
+
    def handleConnected(self):
       pass
 
