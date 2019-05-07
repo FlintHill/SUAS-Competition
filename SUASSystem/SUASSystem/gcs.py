@@ -38,15 +38,16 @@ def gcs_process(sda_status, img_proc_status, interop_client_array, targets_to_su
     #waypoints = download_waypoints(vehicle)
     #sda_avoid_coords = manager.list()
     #UAV_status = manager.Value('s', "AUTO")
-    print("got to if statement before get missions")
+    print("got to if statement before get missions1")
     if len(interop_client_array) != 0:
-
 
 
         try:
             mission = interop_client_array[0].get_active_mission()
             stationaryobstacles = interop_client_array[0].get_obstacles()
-            mission_information_data.append(   get_mission_json( mission,stationaryobstacles) )
+            print("checking get_obstacles() ")
+        #    print( stationaryobstacles )
+            mission_information_data.append( get_mission_json( mission,stationaryobstacles) )
             print("after mission_information_data append statement")
             #get_mission_json(interop_client_array[0].get_active_mission(), interop_client_array[0].get_obstacles())
         except Exception as e: print(e)
@@ -84,21 +85,25 @@ def gcs_process(sda_status, img_proc_status, interop_client_array, targets_to_su
         if len(interop_client_array) != 0:
             print("got to post telem statement")
 
-            interop_client_array[0].post_telemetry(current_location, vehicle_state_data[0].get_direction())
-
-            print("after post telem statement")
+            try:
+                interop_client_array[0].post_telemetry(current_location, vehicle_state_data[0].get_direction())
+                print ("after telemetry posted")
+            except Exception as e: print(e)
+            #print("after post telem statement")
             try:
                 #print(interop_client_array[0])
                 #mission_information_data = mission_information_data.append(get_mission_json(interop_client_array[0].get_active_mission(), interop_client_array[0].get_obstacles()))
                 #mission_information_data = mission_information_data.append(mission, stationaryobstacles)
-                mission = interop_client_array[0].get_active_mission()
-                print("after get active mission")
-                stationaryobstacles = interop_client_array[0].get_obstacles()
-                print("before get active mission append statement")
-                mission_information_data.append(   get_mission_json( mission,stationaryobstacles) )
+                #mission = interop_client_array[0].get_active_mission()
+                #print("after get active mission")
+                #print(mission)
+                #stationaryobstacles = interop_client_array[0].get_obstacles()
+                #print("before get active mission append statement")
+                #print(stationaryobstacles)
+                mission_information_data.append(   get_mission_json( interop_client_array[0].get_active_mission() , interop_client_array[0].get_obstacles()) )
                 #mission_information_data[0] = get_mission_json(interop_client_array[0].get_active_mission(), interop_client_array[0].get_obstacles())
             except Exception as e: print(e)
-            print("after mission information data line")
+            #print("after mission information data line")
         # NOTE: The following commented code enables autonomous SDA. It has been left in this codebase to make it easier for future teams to
         #   understand the code. Please do not remove from codebase 2017/2018
         #if (vehicle.location.global_relative_frame.alt * 3.28084) > GCSSettings.SDA_MIN_ALT and sda_status.value.lower() == "connected":

@@ -14,11 +14,13 @@ class CompetitionViewerSocket(WebSocket):
 
 		self.vehicle_state_data = vehicle_state_data
 		self.mission_data = mission_data
+		print(mission_data)
 
 	def handleMessage(self):
 		"""
 		initializes data being sent to competition viewer with vehicle position telemetry.
 		"""
+		print("IN Viewer  handle message")
 		try:
 			data = '{"obstacle_present":' + str(self.vehicle_state_data[0].get_obstacle_in_path()).lower() +  ', '
 			data += '"0": ' + str(self.mission_data[0]) + ', '
@@ -28,10 +30,13 @@ class CompetitionViewerSocket(WebSocket):
 			data += ', "velocity": ' + str(self.vehicle_state_data[0].get_velocity())
 			data += ', "lat": ' + str(self.vehicle_state_data[0].get_lat()) + ', "long": ' + str(self.vehicle_state_data[0].get_lon()) + "}"
 			data = data.replace("\'", "\"")
-
+			print(data)
 			self.sendMessage(u'' + data)
 		except:
 			traceback.print_exc()
+
+	if __name__ == '__main__':
+	    handleMessage(self)
 
 	def handleConnected(self):
 		print(self.address, 'connected')

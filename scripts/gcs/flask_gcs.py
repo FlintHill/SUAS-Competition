@@ -9,7 +9,7 @@ import traceback
 
 """
 run this file in order to execute our code base through flask which is a python framework, similar to Django in that sense, but is lightweight
-and better suits API development. Makes calls to other files in the code base, including the gcs.py file which performs all necessary operations for compeition. 
+and better suits API development. Makes calls to other files in the code base, including the gcs.py file which performs all necessary operations for compeition.
 """
 
 class Client(object):
@@ -61,6 +61,8 @@ class Client(object):
 		try:
 			active_interop_mission = self.interop_client[0].get_active_mission()
 			obstacles = self.interop_client[0].get_obstacles()
+			print("in flask_gcs")
+			print( len(obstacles))
 			active_interop_mission_json = SUASSystem.get_mission_json(active_interop_mission, obstacles)
 
 			data = {
