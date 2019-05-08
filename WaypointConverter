@@ -1,18 +1,20 @@
 from auvsi_suas.client import client
-from auvsi_suas.client import types
-
-client = client.Client(url='http://192.168.1.124:8000',
+#from auvsi_suas.client import types
+#from auvsi_suas.client.client import Client
+from auvsi_suas.proto import interop_api_pb2
+client1 = client.Client(url='http://10.43.4.247:8000',
                        username='testuser',
                        password='testpass')
 
-mission_waypoints = client.get_missions()[2].mission_waypoints
+mission_waypoints = client1.get_missions(1)
+#[2].mission_waypoints      
 converted = ["QGC WPL 110\n"]
 
 #print(type(mission_waypoints))
 
 for waypoint in mission_waypoints:
     converted.append(str(waypoint.order) + "\t0\t0\t16\t0.000000\t0.000000\t0.000000\t0.000000\t" + str(waypoint.latitude) + "\t" + str(waypoint.longitude) + "\t" + str(waypoint.altitude_msl) + "\t1\n")
-    
+
 
 f = open("output.txt", "w")
 f.write(''.join(converted))
