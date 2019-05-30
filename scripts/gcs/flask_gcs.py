@@ -60,6 +60,7 @@ class Client(object):
 		"""
 		try:
 			active_interop_mission = self.interop_client[0].get_active_mission()
+			print(active_interop_mission)
 			obstacles = self.interop_client[0].get_obstacles()
 			print("in flask_gcs")
 			print( len(obstacles))

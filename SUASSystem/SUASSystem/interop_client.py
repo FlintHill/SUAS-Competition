@@ -54,9 +54,9 @@ class InteropClientConverter(object):
                 print("after telem upload data initialization  interopclient")
                 telem_upload_data.longitude = location.get_lon()
                 print("after get lon  interopclient")
-                telem_upload_data.altitude = location.get_alt()
+                telem_upload_data.altitude = (location.get_alt() + GCSSettings.MSL_ALT)
                 print("after get alt interopclient")
-                telem_upload_data.latitude = (location.get_lat() + GCSSettings.MSL_ALT)
+                telem_upload_data.latitude = location.get_lat()
                 print("after get lat interopclient")
                 telem_upload_data.heading = heading
 
@@ -85,12 +85,11 @@ class InteropClientConverter(object):
         :return: [StationaryObstacle], [MovingObstacle]
         """
         missing_data = True
-
         while missing_data:
             try:
-                stationary_obstacles = self.client1.get_obstacles()
-                print("from interop_client.py get Obstacle")
-                print(stationary_obstacles)
+                #stationary_obstacles = self.client1.get_obstacles()
+                #print("from interop_client.py get Obstacle")
+                #print(stationary_obstacles)
             #    print(stationary_obstacles[0])
         #        print( len ( stationary_obstacles) )
                 missing_data = False
@@ -99,7 +98,7 @@ class InteropClientConverter(object):
                 sleep(GCSSettings.INTEROP_DISCONNECT_RETRY_RATE) # todo: 0.5
 
                 try:
-                    self.client1 = Client(url="http://192.168.1.86:8000", username="testuser", password="testpass")
+                    self.client1 = client.Client(url="http://192.168.1.86:8000", username="testuser", password="testpass")
                 except:
                     print("Failed to connect to Interop., retrying...")
         print("inside get_obstacles()")
@@ -122,6 +121,7 @@ class InteropClientConverter(object):
 
         while missing_data:
             try:
+                print('inside get_active_mission ')
                 missiontemp = self.client1.get_mission(2)
                 print(missiontemp)
 #                for missiontemp in missions:
@@ -137,7 +137,7 @@ class InteropClientConverter(object):
                 sleep(GCSSettings.INTEROP_DISCONNECT_RETRY_RATE) # todo: 0.5
 
                 try:
-                    client1 = Client(GCSSettings.INTEROP_URL, GCSSettings.INTEROP_USERNAME, GCSSettings.INTEROP_PASSWORD)
+                    client1 = client.Client(GCSSettings.INTEROP_URL, GCSSettings.INTEROP_USERNAME, GCSSettings.INTEROP_PASSWORD)
                 except:
                     print("Failed to connect to Interop., retrying...")
 
@@ -307,5 +307,5 @@ class InteropClientConverter(object):
 """my_client = InteropClientConverter()
 
 while True:
-    print(my_client.get_obstacles())
+    #print(my_client.get_obstacles())
     time.sleep(1)"""

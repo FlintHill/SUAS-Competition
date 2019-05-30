@@ -27,7 +27,7 @@ setup(
 
     packages = find_packages(),
 
-    install_requires = ['numpy', 'exifread', 'pillow', 'dronekit', 'jsonmerge'],
+    install_requires = [ 'exifread', 'pillow', 'dronekit', 'jsonmerge'],
 
     keywords = ['SUAS'],
 )

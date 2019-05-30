@@ -34,6 +34,7 @@ def gcs_process(sda_status, img_proc_status, interop_client_array, targets_to_su
     vehicle_state_data = manager.list()
     mission_information_data = manager.list()
     vehicle = connect_to_vehicle()
+    #rover = connect_to_rover()
     # SDA
     #waypoints = download_waypoints(vehicle)
     #sda_avoid_coords = manager.list()
@@ -44,10 +45,13 @@ def gcs_process(sda_status, img_proc_status, interop_client_array, targets_to_su
 
         try:
             mission = interop_client_array[0].get_active_mission()
-            stationaryobstacles = interop_client_array[0].get_obstacles()
+            print(mission)
+            stationaryobstacles = ""
+            #interop_client_array[0].get_obstacles()
             print("checking get_obstacles() ")
         #    print( stationaryobstacles )
-            mission_information_data.append( get_mission_json( mission,stationaryobstacles) )
+            #mission_information_data.append( get_mission_json( mission,stationaryobstacles) )
+            mission_information_data.append( get_mission_json( mission) )
             print("after mission_information_data append statement")
             #get_mission_json(interop_client_array[0].get_active_mission(), interop_client_array[0].get_obstacles())
         except Exception as e: print(e)
@@ -100,7 +104,10 @@ def gcs_process(sda_status, img_proc_status, interop_client_array, targets_to_su
                 #stationaryobstacles = interop_client_array[0].get_obstacles()
                 #print("before get active mission append statement")
                 #print(stationaryobstacles)
-                mission_information_data.append(   get_mission_json( interop_client_array[0].get_active_mission() , interop_client_array[0].get_obstacles()) )
+                print(interop_client_array[0].get_active_mission())
+                #mission_information_data.append(   get_mission_json( interop_client_array[0].get_active_mission() , interop_client_array[0].get_obstacles()) )
+                mission_information_data.append(   get_mission_json( interop_client_array[0].get_active_mission() ) )
+
                 #mission_information_data[0] = get_mission_json(interop_client_array[0].get_active_mission(), interop_client_array[0].get_obstacles())
             except Exception as e: print(e)
             #print("after mission information data line")
@@ -181,12 +188,18 @@ def load_sd_card(location_log, interop_client_array):
 
 def connect_to_vehicle():
     log(gcs_logger_name, "Connecting to UAV on: %s" % GCSSettings.UAV_CONNECTION_STRING)
-    vehicle = dronekit.connect(GCSSettings.UAV_CONNECTION_STRING, wait_ready=True)
+    vehicle = dronekit.connect(GCSSettings.UAV_CONNECTION_STRING, wait_ready=False)
     vehicle.wait_ready('autopilot_version')
     log(gcs_logger_name, "Connected to UAV on: %s" % GCSSettings.UAV_CONNECTION_STRING)
     SUASSystem.suas_logging.log_vehicle_state(vehicle, gcs_logger_name)
 
     return vehicle
+
+def connect_to_rover():
+    rover = dronekit.connect(GCSSettings.UGV_CONNECTION_STRING, wait_ready=True)
+    rover.wait_ready('autopilot_version')
+
+    return rover
 
 def download_waypoints(vehicle):
     log(gcs_logger_name, "Downloading waypoints from UAV on: %s" % GCSSettings.UAV_CONNECTION_STRING)
