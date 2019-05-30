@@ -13,7 +13,7 @@ def has_rover_reached_airdrop():
         rover_location = converter_functions.get_location(rover)
         print(rover_location)
 
-        lat_from_drop = abs(GCSSettings.AIRDROP_POINT[0][0] - rover_location.get_lat()) #AIRDOP
+        lat_from_drop = abs(GCSSettings.AIRDROP_POINT[0][0] - rover_location.get_lat()) #AIRDROP
         lon_from_drop = abs(GCSSettings.AIRDROP_POINT[0][1] - rover_location.get_lon())
         print("Latitude from Drop: " + str(lat_from_drop))
         print("Longitude from Drop: " + str(lon_from_drop) + "\n")
