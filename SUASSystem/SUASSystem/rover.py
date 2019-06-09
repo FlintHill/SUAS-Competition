@@ -29,7 +29,7 @@ def has_rover_reached_airdrop(rover):
         print("Longitude from Drop: " + str(lon_from_drop) + "\n")
 
         if (rover_location.get_alt() < 10 and rover_location.get_alt() > -1
-        and lat_from_drop < 0.00027 and lon_from_drop < 0.00027):
+        and lat_from_drop < 0.0003 and lon_from_drop < 0.0003):
             print("Rover Has Reached AirDrop")
             sleep(45)
             rover.armed = True
@@ -38,5 +38,5 @@ def has_rover_reached_airdrop(rover):
             
             
             
-rover = gcs.connect_to_rover()
+rover = connect_to_rover()
 has_rover_reached_airdrop(rover)
