@@ -7,6 +7,7 @@ class GCSSettings(object):
     CAMERA_NORTH_OFFSET = 20
 
     UAV_CONNECTION_STRING = "tcp:127.0.0.1:14551"
+    UGV_CONNECTION_STRING = "tcp:127.0.0.1:14561"
     INTEROP_URL = "http://10.43.4.247:8000"
     #INTEROP_URL = "http://192.168.1.86:8000"
 
