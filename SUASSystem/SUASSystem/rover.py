@@ -7,6 +7,15 @@ from SUASSystem import converter_functions
 from SUASSystem import gcs
 from settings import GCSSettings
 
+def connect_to_rover():
+    print("Connecting to rover")
+    rover = dronekit.connect(GCSSettings.UGV_CONNECTION_STRING, wait_ready=True)
+    rover.wait_ready('autopilot_version')
+    print("Connected to rover")
+
+    return rover
+
+
 def has_rover_reached_airdrop(rover):
     landed = False
 
@@ -26,6 +35,7 @@ def has_rover_reached_airdrop(rover):
             rover.armed = True
             rover.mode = dronekit.VehicleMode("AUTO")
             landed = True;
+            
             
             
 rover = gcs.connect_to_rover()
