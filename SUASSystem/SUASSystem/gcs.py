@@ -91,7 +91,6 @@ def gcs_process(sda_status, img_proc_status, interop_client_array, targets_to_su
             
             
             if (has_rover_reached_airdrop(rover)):
-                sleep(30)
                 rover.armed = True
                 rover.mode = dronekit.VehicleMode("AUTO")
              
@@ -232,8 +231,8 @@ def has_rover_reached_airdrop(rover):
     rover_location = converter_functions.get_location(rover)
     print(rover_location)
 
-    lat_from_drop = abs(GCSSettings.AIRDROP_POINT[0][0] - rover_location.get_lat()) #AIRDOP
-    lon_from_drop = abs(GCSSettings.AIRDROP_POINT[0][1] - rover_location.get_lon())
+    lat_from_drop = abs(GCSSettings.AIRDROP_POINT_SCHOOL[0][0] - rover_location.get_lat()) #AIRDOP
+    lon_from_drop = abs(GCSSettings.AIRDROP_POINT_SCHOOL[0][1] - rover_location.get_lon())
     print("Latitude from Drop: " + str(lat_from_drop))
     print("Longitude from Drop: " + str(lon_from_drop) + "\n")
 
