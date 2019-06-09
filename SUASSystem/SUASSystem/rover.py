@@ -29,4 +29,4 @@ def has_rover_reached_airdrop(rover):
             
             
 rover = gcs.connect_to_rover()
-has_rover_reached_airdrop()
+has_rover_reached_airdrop(rover)
