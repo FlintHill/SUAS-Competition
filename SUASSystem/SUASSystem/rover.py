@@ -22,10 +22,11 @@ def has_rover_reached_airdrop(rover):
         if (rover_location.get_alt() < 10 and rover_location.get_alt() > -1
         and lat_from_drop < 0.00027 and lon_from_drop < 0.00027):
             print("Rover Has Reached AirDrop")
-            sleep(30)
+            sleep(45)
             rover.armed = True
             rover.mode = dronekit.VehicleMode("AUTO")
             landed = True;
+            
             
 rover = gcs.connect_to_rover()
 has_rover_reached_airdrop()
