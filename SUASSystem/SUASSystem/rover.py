@@ -29,9 +29,9 @@ def has_rover_reached_airdrop(rover):
         print("Longitude from Drop: " + str(lon_from_drop) + "\n")
 
         if (rover_location.get_alt() < 10 and rover_location.get_alt() > -1
-        and lat_from_drop < 0.0003 and lon_from_drop < 0.0003):
+        and lat_from_drop < 0.00035 and lon_from_drop < 0.00035):
             print("Rover Has Reached AirDrop")
-            sleep(45)
+            sleep(90)
             rover.armed = True
             rover.mode = dronekit.VehicleMode("AUTO")
             landed = True;
