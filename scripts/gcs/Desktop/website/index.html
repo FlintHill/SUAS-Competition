@@ -1,0 +1,189 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>MTSS 2020 Alpha</title>
+	<script   src="https://code.jquery.com/jquery-3.4.1.js"   integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="   crossorigin="anonymous"></script>
+	<link href="main.css" rel="stylesheet">
+	<link  href="node_modules/cropperjs/dist/cropper.min.css" rel="stylesheet">
+	<script src="node_modules/cropperjs/dist/cropper.min.js"></script>
+</head>
+<body onLoad="initCropper()">
+	<div id="navbar"><1>Animus Ferus Manual Target Submission System Test</div>
+	<div class="app-container" id="cropzone">
+		<!--<input type="file" name="image" id="image" onchange="readURL(this);"/>-->
+		<div id="image_container">
+			<img id="blah" src="getmapping_aerialimagery_vertical_hamptoncourt_1_0.jpg" alt="your image" />
+		</div>	
+		<br>
+		<button id="crop_button">Crop</button> 
+		<button id="export_button">Export</button>
+		<button id="previous">⇦</button>
+		<button id="next">⇨</button>
+	</div>
+	<div id="stats" class="app-container">
+		<div id="stats-container">
+			<style type="text/css">
+				.tg  {border-collapse:collapse;border-spacing:0;}
+				.tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:black;}
+				.tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:black;}
+				.tg .tg-t5ii{background-color:#b6ff0d0;text-align:left;vertical-align:top}
+				.tg .tg-og2p{background-color:#3e5488;color:#ffffff;text-align:left;vertical-align:top}
+			</style>
+			<table class="tg">
+			  <tr>
+				<th class="tg-og2p">Offset X</th>
+			<th class="tg-t5ii" id="x">0</th>
+			  </tr>
+			  <tr>
+				<td class="tg-og2p">Offset Y</td>
+				<td class="tg-t5ii" id="y">0</td>
+			  </tr>
+			  <tr>
+				<td class="tg-og2p">Altitude</td>
+				<td class="tg-t5ii" id="alt">0</td>
+			  </tr>
+			  <tr>
+				<td class="tg-og2p">Heading</td>
+				<td class="tg-t5ii" id="hdng">0</td>
+			  </tr>
+		</table>
+
+		</div>
+	</div>
+	<br>
+	<div id="cropped_result" class="app-container"></div>
+	<script type="text/javascript" defer>
+		var angle_x = 70.7; //test values
+		var angle_y = 28.0;
+		var height = 100;
+		var heading = 0.0;
+		var toRad = Math.PI/180;
+		var ppm_x;
+		var ppm_y;
+		var img64;
+		var num_img=0;
+		/*function readURL(input) {
+			if (input.files && input.files[0]) {
+				var reader = new FileReader();
+				reader.onload = function (e) {
+					$('#blah').attr('src', e.target.result)
+				};
+				reader.readAsDataURL(input.files[0]);
+				setTimeout(initCropper, 1000);
+			}
+		}*/
+		function initCropper(){
+			var image = document.getElementById('blah');
+			var cropper = new Cropper(image, {
+			  aspectRatio: 1 / 1,
+			  crop: function(e) {
+				console.log(image.naturalWidth);
+				console.log(image.naturalHeight)
+				console.log(e.detail.x);
+				console.log(e.detail.y);
+				//pixels per meter for each dimension
+				ppm_x= (2*height*Math.tan((angle_x/2)*toRad))/image.naturalWidth;
+				ppm_y= (2*height*Math.tan((angle_y/2)*toRad))/image.naturalHeight
+				console.log(ppm_x);
+				console.log(ppm_y);
+				//offset
+				var offset_x= ppm_x*(Math.round((e.detail.x+(e.detail.width/2))-(image.naturalWidth/2)));
+				var offset_y= ppm_y*(textContent=Math.round((image.naturalHeight/2)-(e.detail.y+(e.detail.height/2))));
+				//display
+				document.getElementById("x").textContent=offset_x.toFixed(4);
+				document.getElementById("y").textContent=offset_y.toFixed(4);
+				document.getElementById("alt").textContent=height.toFixed(2);
+				document.getElementById("hdng").textContent=heading.toFixed(4);
+			  }
+			});
+
+			// On crop button clicked
+			document.getElementById('crop_button').addEventListener('click', function(){
+				var imgurl =  cropper.getCroppedCanvas().toDataURL();
+				var img = document.createElement("img");
+				img.src = imgurl;
+				img.setAttribute("class", "resultimage");
+				console.log(imgurl);
+				img64 = imgurl;
+				document.getElementById("cropped_result").appendChild(img);
+
+				/* ---------------- SEND IMAGE TO THE SERVER-------------------------
+
+					cropper.getCroppedCanvas().toBlob(function (blob) {
+						  var formData = new FormData();
+						  formData.append('croppedImage', blob);
+						  // Use `jQuery.ajax` method
+						  $.ajax('/path/to/upload', {
+							method: "POST",
+							data: formData,
+							processData: false,
+							contentType: false,
+							success: function () {
+							  console.log('Upload success');
+							},
+							error: function () {
+							  console.log('Upload error');
+							}
+						  });
+					});
+				----------------------------------------------------*/
+			})
+			document.getElementById('export_button').addEventListener('click', function(){
+				console.log(ppm_x);
+				console.log(ppm_y);
+				var exportString = img64.substring(22);
+				console.log(exportString);
+				
+				/*$.ajax({
+					url: 'upload.php';
+				})*/
+				/*
+				cropper.getCroppedCanvas().toBlob(function (blob) {
+						  var formData = new FormData();
+						  formData.append('avatar', blob);
+						  // Use `jQuery.ajax` method
+						  $.ajax('/output', {
+							method: "POST",
+							data: formData,
+							processData: false,
+							contentType: false,
+							success: function () {
+							  console.log('Upload success');
+							},
+							error: function () {
+							  console.log('Upload error');
+							}
+						  });
+					});
+				*/
+				$.ajax({
+					url: 'upload.php',
+					contentType: 'text',
+					type: 'post',
+					contentType: 'none',
+					data: exportString,
+					success: function(){
+						console.log("POST success");
+					},
+					error: function(){
+						console.log("POST failure");
+					}
+				})
+			})
+		}
+		function getImg(index){
+			Document.getElementById('blah').setAttribute("src", "image-"+index.toString);
+			initCropper();
+		}
+		document.getElementById('previous').addEventListener('click', function(){
+			num_img++;
+			getImg(num_img);
+		})
+		document.getElementById('next').addEventListener('click', function(){
+			num_img--;
+			getImg(numImg);
+		})
+	</script>
+</body>
+</html>
